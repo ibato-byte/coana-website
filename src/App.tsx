@@ -876,6 +876,9 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
   );
 }
 
+// お問い合わせフォームの送信先（Google Apps Script ウェブアプリ。受信内容は info@ に通知され、スプレッドシート「HP問い合わせ受信ログ_COANA TOKYO」に記録）
+const CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbyg8vAr_zinCs47Z4W0oxCK0YUoA-gLL-453lv1rvcTlpXerIGSdZRIg7zdLLRS3d9u/exec";
+
 type FormData = { company: string; name: string; email: string; type: string; message: string; consent: boolean };
 const emptyForm: FormData = { company: "", name: "", email: "", type: "", message: "", consent: false };
 
@@ -898,8 +901,9 @@ function Contact() {
         message: data.message,
         consent: data.consent ? "同意する" : "",
       });
-      const res = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() });
-      if (!res.ok) throw new Error(String(res.status));
+      const res = await fetch(CONTACT_ENDPOINT, { method: "POST", body });
+      const result = await res.json().catch(() => null);
+      if (!res.ok || !result || !result.ok) throw new Error(String(res.status));
       setStep("complete");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
