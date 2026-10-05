@@ -59,6 +59,17 @@ collections:
           - { label: キャッチコピー2行目, name: hero_line2, widget: string }
           - { label: About 見出し, name: about_title, widget: string }
           - { label: About 本文, name: about_text, widget: text }
+          - { label: 対応ツール 見出し, name: tools_title, widget: string }
+          - { label: 対応ツール 説明, name: tools_text, widget: text }
+          - label: 対応ツール
+            name: tools
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: ツール名, name: name, widget: string }
+              - { label: ロゴ画像, name: logo, widget: image }
+              - { label: カテゴリー, name: category, widget: string }
+              - { label: 説明, name: text, widget: text }
           - label: 選ばれる理由（タブ）
             name: strengths
             widget: list
