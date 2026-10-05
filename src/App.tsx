@@ -1,4 +1,4 @@
-import { FormEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, type Article } from "./content";
 
 type Nav = (page: Page, hash?: string, slug?: string) => void;
@@ -125,6 +125,19 @@ function Header({
   navigate: Nav;
 }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const progressRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const links: [Page, string][] = [
     ["home", "ホーム"],
     ["about", "会社概要"],
@@ -136,7 +149,8 @@ function Header({
     navigate(target);
   };
   return (
-    <header className="site-header">
+    <header className={scrolled ? "site-header is-scrolled" : "site-header"}>
+      <div className="scroll-progress" ref={progressRef} aria-hidden="true" />
       <div className="header-inner">
         <Logo navigate={navigate} />
         <nav className="desktop-nav" aria-label="メインナビゲーション">
@@ -439,24 +453,88 @@ function StrengthsTabs() {
   );
 }
 
+function HeroSection({ navigate }: { navigate: Nav }) {
+  const ref = useRef<HTMLElement | null>(null);
+  const words: string[] = (home as { hero_words?: string[] }).hero_words ?? ["経理", "業務フロー", "ERP", "営業・集客"];
+  const [wordIndex, setWordIndex] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2600);
+    return () => window.clearInterval(id);
+  }, [words.length]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", String((e.clientX - r.left) / r.width - 0.5));
+        el.style.setProperty("--my", String((e.clientY - r.top) / r.height - 0.5));
+      });
+    };
+    const onScroll = () => el.style.setProperty("--sy", String(Math.min(window.scrollY, 900)));
+    el.addEventListener("pointermove", onMove);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { el.removeEventListener("pointermove", onMove); window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <section className="hero" ref={ref}>
+      <div className="hero-bg" aria-hidden="true" />
+      <div className="hero-glow" aria-hidden="true" />
+      <svg className="hero-network" viewBox="0 0 800 600" aria-hidden="true">
+        <path className="net-line" d="M80 470 C 220 380, 260 300, 400 300 S 600 160, 740 110" />
+        <path className="net-line l2" d="M120 140 C 260 200, 330 420, 470 430 S 660 380, 760 470" />
+        <path className="net-line l3" d="M60 300 C 200 260, 300 120, 430 150 S 650 300, 780 260" />
+        <circle className="net-node" cx="400" cy="300" r="6" />
+        <circle className="net-node n2" cx="470" cy="430" r="5" />
+        <circle className="net-node n3" cx="430" cy="150" r="5" />
+        <circle className="net-node n4" cx="740" cy="110" r="6" />
+        <circle className="net-node n5" cx="760" cy="470" r="5" />
+      </svg>
+      <div className="container hero-grid">
+        <div className="hero-copy">
+          <p className="hero-kicker hero-anim" style={{ animationDelay: "0.1s" }}><span />BACK OFFICE × MARKETING</p>
+          <h1 className="hero-title-marker">
+            <span className="hero-line" style={{ animationDelay: "0.25s" }}>{home.hero_line1}</span>
+            <span className="hero-line" style={{ animationDelay: "0.45s" }}>{home.hero_line2}</span>
+          </h1>
+          <p className="hero-rotator hero-anim" style={{ animationDelay: "0.75s" }}>
+            <span className="rotator-box" aria-live="polite">
+              {words.map((w, i) => (
+                <span key={w} className={i === wordIndex ? "rotator-word is-active" : i === (wordIndex + words.length - 1) % words.length ? "rotator-word is-leaving" : "rotator-word"}>{w}</span>
+              ))}
+            </span>
+            <span className="rotator-rest">の悩みを、仕組みで解決。</span>
+          </p>
+          <div className="button-row hero-anim" style={{ animationDelay: "0.95s" }}>
+            <LinkButton onClick={() => navigate("contact")}>まずは相談してみる</LinkButton>
+            <LinkButton secondary onClick={() => navigate("services")}>サービスを見る</LinkButton>
+          </div>
+        </div>
+        <div className="hero-cards" aria-hidden="true">
+          <div className="hero-card c1"><b>01</b><span>経理 × IT</span><small>業務フローから再設計</small></div>
+          <div className="hero-card c2"><b>02</b><span>クラウド導入</span><small>会計・ERP・グループウェア</small></div>
+          <div className="hero-card c3"><b>03</b><span>集客・営業</span><small>成長につながる仕組みへ</small></div>
+        </div>
+      </div>
+      <div className="hero-tools hero-anim" style={{ animationDelay: "1.2s" }}>
+        <span className="hero-tools-label">導入支援ツール</span>
+        <ul>
+          {home.tools.map((t) => <li key={t.name}><img src={t.logo} alt={t.name} /></li>)}
+        </ul>
+      </div>
+      <div className="hero-scroll" aria-hidden="true"><span>SCROLL</span><i /></div>
+    </section>
+  );
+}
+
 function Home({ navigate }: { navigate: Nav }) {
   return (
     <>
       <main>
-        <section className="hero">
-          <div className="container hero-grid">
-            <div className="hero-copy">
-              <h1 className="hero-title-marker">
-                <span>{home.hero_line1}</span>
-                <span>{home.hero_line2}</span>
-              </h1>
-              <div className="button-row">
-                <LinkButton onClick={() => navigate("services")}>サービスを見る</LinkButton>
-                <LinkButton secondary onClick={() => navigate("about")}>COANA TOKYOについて</LinkButton>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HeroSection navigate={navigate} />
 
         <section className="section about-intro">
           <div className="container about-grid">
@@ -464,11 +542,11 @@ function Home({ navigate }: { navigate: Nav }) {
             <div className="about-content">
               <div className="about-copy">
                 <p>{home.about_text}</p>
-                <img
-                  className="block h-auto w-full rounded-2xl"
-                  src="/images/accounting-certifications.png"
-                  alt="freee認定アドバイザー、Money Forwardクラウド公認メンバー"
-                />
+                <ul className="tool-logo-row" aria-label="導入支援に対応しているツール">
+                  {home.tools.map((t) => (
+                    <li key={t.name}><img src={t.logo} alt={t.name} loading="lazy" /></li>
+                  ))}
+                </ul>
               </div>
               <figure className="about-image">
                 <img src="/images/about-backoffice.jpg" alt="オフィスで打ち合わせをするビジネスパーソン" />
@@ -476,6 +554,33 @@ function Home({ navigate }: { navigate: Nav }) {
             </div>
           </div>
         </section>
+
+        <section className="section tools-section">
+          <div className="container">
+            <div className="tools-head">
+              <SectionTitle en="Tools">{home.tools_title}</SectionTitle>
+              <p>{home.tools_text}</p>
+            </div>
+            <div className="tools-grid">
+              {home.tools.map((t, i) => (
+                <article className="tool-card" key={t.name} style={{ ["--i" as string]: i } as React.CSSProperties}>
+                  <div className="tool-logo"><img src={t.logo} alt={t.name} loading="lazy" /></div>
+                  <p className="tool-category">{t.category}</p>
+                  <h3>{t.name}</h3>
+                  <p>{t.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <div className="marquee" aria-hidden="true">
+          <div className="marquee-track">
+            {[0, 1].map((k) => (
+              <span key={k}>BACK OFFICE <i /> MARKETING <i /> CLOUD DX <i /> ERP <i /> GROWTH <i /> </span>
+            ))}
+          </div>
+        </div>
 
         <section className="section strengths-section">
           <div className="container">
@@ -493,7 +598,7 @@ function Home({ navigate }: { navigate: Nav }) {
                 <p className="service-en">{services.backoffice.en}</p>
                 <h3>{services.backoffice.title}</h3>
                 <p className="service-tagline"><Tagline text={services.backoffice.lead} /></p>
-                <ul>{services.backoffice.items.map((i) => <li key={i.name}>{i.name}</li>)}</ul>
+                <ul>{(services.backoffice.items as { name: string; tags?: string[] }[]).map((i) => <li key={i.name}>{i.name}{i.tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}</li>)}</ul>
                 <button className="circle-link" onClick={() => navigate("services", "backoffice")} aria-label="バックオフィス支援を見る"><span>詳しく見る</span><Icon name="arrow" /></button>
               </article>
               <article className="service-panel yellow-panel">
@@ -588,9 +693,14 @@ function About({ navigate }: { navigate: Nav }) {
         <div className="container">
           <span className="section-index">02　Profile</span>
           <div className="profile-grid">
-            <div className="photo-placeholder">
-              <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
-            </div>
+            <figure className="profile-photo">
+              <span className="profile-photo-deco" aria-hidden="true" />
+              <span className="profile-photo-dots" aria-hidden="true" />
+              <div className="profile-photo-frame">
+                <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
+              </div>
+              <figcaption><span>{about.profile_role}</span>{about.profile_name_en}</figcaption>
+            </figure>
             <div>
               <p className="profile-role">{about.profile_role}</p>
               <h2>{about.profile_name} <span>{about.profile_name_en}</span></h2>
@@ -616,7 +726,7 @@ function About({ navigate }: { navigate: Nav }) {
   );
 }
 
-function ServiceBlock({ id, number, en, title, lead, items, tone }: { id: string; number: string; en: string; title: string; lead: string; items: { name: string; text: string }[]; tone: "blue" | "yellow" }) {
+function ServiceBlock({ id, number, en, title, lead, items, tone }: { id: string; number: string; en: string; title: string; lead: string; items: { name: string; text: string; tags?: string[] }[]; tone: "blue" | "yellow" }) {
   return (
     <section id={id} className={`section service-detail ${tone}`}>
       <div className="container">
@@ -625,10 +735,10 @@ function ServiceBlock({ id, number, en, title, lead, items, tone }: { id: string
           <div><p>{en}</p><h2>{title}</h2><h3>{lead}</h3></div>
         </div>
         <div className="service-list">
-          {items.map(({ name, text }, index) => (
+          {items.map(({ name, text, tags }, index) => (
             <article key={name}>
               <span>{String(index + 1).padStart(2, "0")}</span>
-              <div><h3>{name}</h3><p>{text}</p></div>
+              <div><h3>{name}{tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}</h3><p>{text}</p></div>
             </article>
           ))}
         </div>
@@ -912,7 +1022,7 @@ export default function App() {
   useEffect(() => {
     const targets = Array.from(
       document.querySelectorAll<HTMLElement>(
-        "main > section, main > article, .strength-item, .service-panel, .service-list article, .flow-list li, .company-table > div",
+        "main > section, main > article, .strength-item, .service-panel, .service-list article, .flow-list li, .company-table > div, .tool-card, .section-title, .profile-photo, .about-image",
       ),
     );
 
