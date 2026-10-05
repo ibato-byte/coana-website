@@ -450,3 +450,4 @@ body { font-feature-settings: "palt"; }
 @media (max-width: 640px) { .hero h1 span + span { white-space: nowrap; } }
 .hero h1 { font-size: clamp(38px, 4.2vw, 62px); }
 @media (max-width: 640px) { .hero h1 { font-size: clamp(20px, 6.2vw, 25px); } }
+.profile-photo::before { z-index: 0; left: -34px; top: auto; bottom: 18%; mix-blend-mode: normal; }
