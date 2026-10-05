@@ -676,6 +676,7 @@ function Topics({ navigate }: { navigate: Nav }) {
   const filtered = articles.filter((a) => filter === "すべて" || a.category === filter);
   const pages = Math.max(1, Math.ceil(filtered.length / PER));
   const shown = filtered.slice((pageNo - 1) * PER, pageNo * PER);
+  return (
     <main>
       <section
         className="page-hero"
