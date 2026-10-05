@@ -57,6 +57,7 @@ collections:
         fields:
           - { label: キャッチコピー1行目, name: hero_line1, widget: string }
           - { label: キャッチコピー2行目, name: hero_line2, widget: string }
+          - { label: 切り替わるキーワード（「〜の悩みを、仕組みで解決。」の前に表示）, name: hero_words, widget: list, field: { label: キーワード, name: word, widget: string } }
           - { label: About 見出し, name: about_title, widget: string }
           - { label: About 本文, name: about_text, widget: text }
           - { label: 対応ツール 見出し, name: tools_title, widget: string }
@@ -121,6 +122,7 @@ collections:
                 fields:
                   - { label: 名称, name: name, widget: string }
                   - { label: 説明, name: text, widget: text }
+                  - { label: タグ（例：実務代行にも対応）, name: tags, widget: list, required: false, field: { label: タグ, name: tag, widget: string } }
           - label: マーケティング支援
             name: marketing
             widget: object
