@@ -1,0 +1,141 @@
+backend:
+  name: github
+  repo: ibato-byte/coana-website
+  branch: main
+  base_url: https://api.netlify.com
+  commit_messages:
+    create: "{{collection}}「{{slug}}」を作成"
+    update: "{{collection}}「{{slug}}」を更新"
+    delete: "{{collection}}「{{slug}}」を削除"
+    uploadMedia: "画像「{{path}}」をアップロード"
+    deleteMedia: "画像「{{path}}」を削除"
+
+locale: ja
+site_url: https://coana.co.jp
+display_url: https://coana.co.jp
+media_folder: public/uploads
+public_folder: /uploads
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: topics
+    label: トピックス（お知らせ・実績・事例）
+    label_singular: 記事
+    folder: content/topics
+    create: true
+    extension: md
+    format: frontmatter
+    slug: "{{year}}{{month}}{{day}}-{{fields.slug}}"
+    summary: "{{date | date('YYYY.MM.DD')}}｜{{category}}｜{{title}}"
+    sortable_fields: [date, title, category]
+    view_filters:
+      - { label: お知らせ, field: category, pattern: お知らせ }
+      - { label: サービス, field: category, pattern: サービス }
+      - { label: イベント, field: category, pattern: イベント }
+      - { label: 実績・事例, field: category, pattern: 実績・事例 }
+      - { label: 下書き, field: draft, pattern: true }
+    fields:
+      - { label: タイトル, name: title, widget: string }
+      - { label: URL用の英字名（例：new-service）, name: slug, widget: string, pattern: ["^[a-z0-9-]+$", "半角英小文字・数字・ハイフンのみ"] }
+      - { label: 公開日, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY.MM.DD", time_format: false }
+      - { label: カテゴリー, name: category, widget: select, options: [お知らせ, サービス, イベント, 実績・事例], default: お知らせ }
+      - { label: 概要（一覧・冒頭に表示）, name: summary, widget: text, required: false }
+      - { label: アイキャッチ画像, name: thumbnail, widget: image, required: false }
+      - { label: 下書き（チェックすると非公開）, name: draft, widget: boolean, default: false, required: false }
+      - { label: 本文, name: body, widget: markdown }
+
+  - name: pages
+    label: ページの文章
+    editor:
+      preview: false
+    files:
+      - name: home
+        label: トップページ
+        file: content/home.json
+        fields:
+          - { label: キャッチコピー1行目, name: hero_line1, widget: string }
+          - { label: キャッチコピー2行目, name: hero_line2, widget: string }
+          - { label: About 見出し, name: about_title, widget: string }
+          - { label: About 本文, name: about_text, widget: text }
+          - label: 選ばれる理由（タブ）
+            name: strengths
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: タブ名, name: title, widget: string }
+              - { label: 見出し, name: heading, widget: string }
+              - { label: 説明, name: description, widget: text }
+              - { label: 企業を取り巻く課題, name: challenges, widget: list, field: { label: 課題, name: item, widget: string } }
+              - { label: 対応サービスの例, name: services, widget: list, field: { label: サービス, name: item, widget: string } }
+              - { label: イラスト, name: illustration, widget: select, options: [{ label: 専門性, value: expertise }, { label: チーム, value: team }, { label: ワンストップ, value: one-stop }, { label: 柔軟性, value: flexible }] }
+
+      - name: about
+        label: 会社概要ページ
+        file: content/about.json
+        fields:
+          - { label: メッセージ見出し（改行可）, name: message_heading, widget: text }
+          - { label: メッセージ本文（段落ごと）, name: message, widget: list, field: { label: 段落, name: p, widget: text } }
+          - { label: 署名, name: signature, widget: string }
+          - { label: 役職, name: profile_role, widget: string }
+          - { label: 氏名, name: profile_name, widget: string }
+          - { label: 氏名（英字）, name: profile_name_en, widget: string }
+          - { label: プロフィール写真, name: profile_photo, widget: image }
+          - { label: プロフィール（段落ごと）, name: profile, widget: list, field: { label: 段落, name: p, widget: text } }
+          - label: 会社情報
+            name: company
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { label: 項目名, name: label, widget: string }
+              - { label: 内容（改行可）, name: value, widget: text }
+
+      - name: services
+        label: サービスページ
+        file: content/services.json
+        fields:
+          - { label: 導入文, name: intro, widget: text }
+          - label: バックオフィス支援
+            name: backoffice
+            widget: object
+            fields: &serviceFields
+              - { label: 英字ラベル, name: en, widget: string }
+              - { label: 名称, name: title, widget: string }
+              - { label: リード文（「、」の後で改行されます）, name: lead, widget: string }
+              - label: サービス項目
+                name: items
+                widget: list
+                summary: "{{fields.name}}"
+                fields:
+                  - { label: 名称, name: name, widget: string }
+                  - { label: 説明, name: text, widget: text }
+          - label: マーケティング支援
+            name: marketing
+            widget: object
+            fields: *serviceFields
+          - { label: 料金について, name: pricing, widget: text }
+          - { label: ご利用までの流れ, name: flow, widget: list, field: { label: ステップ, name: step, widget: string } }
+
+      - name: privacy
+        label: プライバシーポリシー
+        file: content/privacy.json
+        fields:
+          - { label: 本文（空欄の場合は「掲載予定」と表示）, name: body, widget: markdown, required: false }
+
+      - name: settings
+        label: 会社情報・共通設定
+        file: content/settings.json
+        fields:
+          - { label: 会社名, name: company_name, widget: string }
+          - { label: 郵便番号, name: postal_code, widget: string }
+          - { label: 住所, name: address, widget: string }
+          - { label: メールアドレス, name: email, widget: string }
+          - { label: フッターのキャッチコピー, name: footer_tagline, widget: string }
+          - { label: コピーライト, name: copyright, widget: string }
+          - label: お問い合わせ誘導エリア
+            name: contact_band
+            widget: object
+            fields:
+              - { label: 見出し, name: heading, widget: string }
+              - { label: 本文（改行可）, name: text, widget: text }
