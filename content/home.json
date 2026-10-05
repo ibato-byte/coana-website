@@ -2,7 +2,7 @@
   "hero_line1": "経営の基盤を整えて",
   "hero_line2": "ビジネスの成長を加速させる",
   "about_title": "経理をはじめとする、バックオフィス業務の効率化が得意です",
-  "about_text": "バックオフィスの課題整理から、仕組みづくりまで。COANA TOKYOは、事業者の身近なパートナーとして、バックオフィスとマーケティングの両面から、企業の挑戦と成長を支えます。",
+  "about_text": "バックオフィスの課題整理から、仕組みづくりまで。freee・マネーフォワード クラウドに加え、Odoo（ERP）やGoogle Workspaceの導入・活用支援にも対応。COANA TOKYOは、事業者の身近なパートナーとして、バックオフィスとマーケティングの両面から、企業の挑戦と成長を支えます。",
   "strengths": [
     {
       "title": "専門性と質の高さ",
@@ -15,7 +15,8 @@
       ],
       "services": [
         "経理業務の改善・設計支援",
-        "会計システムの導入・運用支援",
+        "会計・ERPシステムの導入・運用支援（freee・マネーフォワード・Odoo）",
+        "Google Workspaceの導入・活用支援",
         "バックオフィス業務の改善・DX支援"
       ],
       "illustration": "expertise"
@@ -69,6 +70,34 @@
         "業務範囲に応じたお見積もり"
       ],
       "illustration": "flexible"
+    }
+  ],
+  "tools_title": "クラウドツールの選定・導入から、現場への定着まで。",
+  "tools_text": "会計ソフトだけでなく、ERPやグループウェアまで。業務フローに合わせてツールを選び、設定・データ移行・運用ルールづくりまで一貫して支援します。",
+  "tools": [
+    {
+      "name": "freee",
+      "logo": "/images/tools/freee.png",
+      "category": "会計・人事労務",
+      "text": "会計・請求・経費精算のクラウド化と、自動化ルールの設計"
+    },
+    {
+      "name": "マネーフォワード クラウド",
+      "logo": "/images/tools/moneyforward.png",
+      "category": "会計・バックオフィス",
+      "text": "会計・請求書・経費などのシリーズ導入と運用フローの整備"
+    },
+    {
+      "name": "Odoo",
+      "logo": "/images/tools/odoo.png",
+      "category": "ERP（統合業務システム）",
+      "text": "販売・在庫・購買・会計・CRMなどをひとつにつなぐERPの導入支援"
+    },
+    {
+      "name": "Google Workspace",
+      "logo": "/images/tools/google-workspace.png",
+      "category": "グループウェア",
+      "text": "メール・カレンダー・ドライブ等の導入、権限設計と社内定着支援"
     }
   ]
 }
