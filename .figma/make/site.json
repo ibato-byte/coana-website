@@ -8,5 +8,14 @@
     "ignoreReducedMotion": false
   },
   "title": "COANA TOKYO合同会社 | バックオフィス・マーケティング支援",
-  "language": "ja"
+  "language": "ja",
+  "icons": {
+    "icon": "/favicon.svg"
+  },
+  "openGraph": {
+    "image": "https://coana.co.jp/og-image.jpg"
+  },
+  "analytics": {
+    "googleAnalyticsId": "G-TK6G6E66L7"
+  }
 }
