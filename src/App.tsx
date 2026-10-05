@@ -457,6 +457,12 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const ref = useRef<HTMLElement | null>(null);
   const words: string[] = (home as { hero_words?: string[] }).hero_words ?? ["経理", "業務フロー", "ERP", "営業・集客"];
   const [wordIndex, setWordIndex] = useState(0);
+  const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const [boxWidth, setBoxWidth] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    const el = wordRefs.current[wordIndex];
+    if (el) setBoxWidth(el.offsetWidth);
+  }, [wordIndex]);
   useEffect(() => {
     const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2600);
     return () => window.clearInterval(id);
@@ -501,9 +507,9 @@ function HeroSection({ navigate }: { navigate: Nav }) {
             <span className="hero-line" style={{ animationDelay: "0.45s" }}>{home.hero_line2}</span>
           </h1>
           <p className="hero-rotator hero-anim" style={{ animationDelay: "0.75s" }}>
-            <span className="rotator-box" aria-live="polite">
+            <span className="rotator-box" aria-live="polite" style={boxWidth ? { width: boxWidth } : undefined}>
               {words.map((w, i) => (
-                <span key={w} className={i === wordIndex ? "rotator-word is-active" : i === (wordIndex + words.length - 1) % words.length ? "rotator-word is-leaving" : "rotator-word"}>{w}</span>
+                <span key={w} ref={(el) => { wordRefs.current[i] = el; }} className={i === wordIndex ? "rotator-word is-active" : i === (wordIndex + words.length - 1) % words.length ? "rotator-word is-leaving" : "rotator-word"}>{w}</span>
               ))}
             </span>
             <span className="rotator-rest">の悩みを、仕組みで解決。</span>

@@ -440,3 +440,13 @@ body { font-feature-settings: "palt"; }
   .net-line { stroke-dashoffset: 0 !important; animation: none !important; }
   .hero-bg::after { animation: none !important; }
 }
+
+/* hero v2 fixes */
+.rotator-box { min-width: 0; transition: width .6s var(--ease-out); margin-right: 4px; }
+.hero-grid { grid-template-columns: 1fr; }
+.hero h1 span { white-space: nowrap; }
+.hero-cards { position: absolute; right: max(3vw, calc((100vw - 1160px) / 2 - 140px)); top: 50%; width: 280px; margin-top: -230px; }
+@media (max-width: 1280px) { .hero-cards { display: none; } }
+@media (max-width: 640px) { .hero h1 span + span { white-space: nowrap; } }
+.hero h1 { font-size: clamp(38px, 4.2vw, 62px); }
+@media (max-width: 640px) { .hero h1 { font-size: clamp(20px, 6.2vw, 25px); } }
