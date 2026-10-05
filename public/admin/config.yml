@@ -3,6 +3,7 @@ backend:
   repo: ibato-byte/coana-website
   branch: main
   base_url: https://api.netlify.com
+  site_domain: coana-tokyo.netlify.app
   commit_messages:
     create: "{{collection}}「{{slug}}」を作成"
     update: "{{collection}}「{{slug}}」を更新"
