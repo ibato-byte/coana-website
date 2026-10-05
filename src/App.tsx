@@ -651,7 +651,8 @@ function Tagline({ text }: { text: string }) {
 
 function ArticleRow({ article, navigate }: { article: Article; navigate: Nav }) {
   return (
-    <button className="article-row" onClick={() => navigate("article", undefined, article.slug)}>
+    <button className={article.thumbnail ? "article-row has-thumb" : "article-row"} onClick={() => navigate("article", undefined, article.slug)}>
+      {article.thumbnail && <span className="article-row-thumb"><img src={article.thumbnail} alt="" loading="lazy" /></span>}
       <span className="article-meta"><time>{article.date}</time><i>{article.category}</i></span>
       <strong>{article.title}</strong><Icon name="arrow" />
     </button>
