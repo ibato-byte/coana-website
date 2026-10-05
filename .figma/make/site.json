@@ -1,0 +1,12 @@
+{
+  "description": "COANA TOKYO合同会社は、経理をはじめとするバックオフィス業務の効率化・DX支援と、営業・SNS・Web制作などのマーケティング支援で、中小企業の成長を支えます。",
+  "robots": {
+    "index": true
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  },
+  "title": "COANA TOKYO合同会社 | バックオフィス・マーケティング支援",
+  "language": "ja"
+}
