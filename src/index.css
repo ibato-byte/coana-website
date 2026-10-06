@@ -55,7 +55,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 ::selection { background: rgba(85, 184, 243, .35); }
 
 .app-shell { min-height: 100vh; overflow-x: clip; }
-.container { width: min(1140px, calc(100% - 48px)); margin: 0 auto; }
+.container { width: min(1140px, calc(100% - 48px)); max-width: none; margin: 0 auto; }
 .narrow { max-width: 860px; }
 .section { padding: 120px 0; }
 
@@ -185,8 +185,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .text-link:hover { color: var(--sky-deep); gap: 18px; }
 .text-link:hover::after { transform: scaleX(.55); transform-origin: 0 50%; }
-.text-link.invert { color: var(--white); }
-.text-link.invert:hover { color: var(--yellow); }
+.text-link-light { color: var(--white); }
+.text-link-light:hover { color: var(--yellow); }
 
 .button-row { display: flex; flex-wrap: wrap; gap: 14px; }
 .center-button { display: flex; justify-content: center; }
@@ -903,8 +903,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .faq-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--navy); color: var(--white); display: grid; place-items: center; font-family: var(--font-en); font-weight: 700; font-size: 15px; }
 .faq-item.open .faq-mark { background: var(--sky-deep); }
-.faq-toggle { color: var(--sky-deep); display: grid; place-items: center; transition: transform .45s var(--ease-out); }
-.faq-item.open .faq-toggle { transform: rotate(45deg); }
+.faq-toggle { color: var(--sky-deep); display: grid; place-items: center; transition: transform .45s var(--ease-out), opacity .3s; }
+.faq-item.open .faq-q { cursor: default; }
+.faq-item.open .faq-toggle { opacity: 0; transform: rotate(90deg) scale(.6); }
 .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--ease-out); }
 .faq-item.open .faq-a { grid-template-rows: 1fr; }
 .faq-a-inner { overflow: hidden; }
