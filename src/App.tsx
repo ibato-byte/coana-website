@@ -364,19 +364,19 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const base = firstRun.current ? 1.35 : 0;
   return (
     <section className="hero" ref={ref}>
-      <div className="hero-bg" aria-hidden="true" />
+      <div className="hero-bg" aria-hidden="true" style={home.hero_image ? { backgroundImage: 'url("' + home.hero_image + '")' } : undefined} />
       <div className="hero-veil" aria-hidden="true" />
       <div className="container hero-grid">
         <div className="hero-copy">
-          <p className="hero-kicker hero-anim" style={{ animationDelay: "0.1s" }}><span />BACK OFFICE × MARKETING</p>
+          <p className="hero-kicker hero-anim" style={{ animationDelay: "0.1s" }}><span />{home.hero_kicker}</p>
           <h1 className="hero-title-marker">
             <span className="hero-line" style={{ animationDelay: "0.3s" }}>{home.hero_line1}</span>
             <span className="hero-line" style={{ animationDelay: "0.5s" }}>{home.hero_line2}</span>
           </h1>
           <div className="hero-actions hero-anim" style={{ animationDelay: "0.85s" }}>
             <div className="button-row">
-              <LinkButton onClick={() => navigate("contact")}>まずは相談してみる</LinkButton>
-              <LinkButton secondary onClick={() => navigate("services")}>サービスを見る</LinkButton>
+              <LinkButton onClick={() => navigate("contact")}>{home.hero_button_primary}</LinkButton>
+              <LinkButton secondary onClick={() => navigate("services")}>{home.hero_button_secondary}</LinkButton>
             </div>
           </div>
         </div>
@@ -402,7 +402,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
                 </span>
               ))}
             </span>
-            <span className="solve-rest">の悩みを、仕組みで解決。</span>
+            <span className="solve-rest">{home.hero_solve_text}</span>
           </span>
         </p>
         <span className="solve-progress" aria-hidden="true">
@@ -432,7 +432,7 @@ function AboutIntro({ navigate }: { navigate: Nav }) {
             </div>
           </div>
           <figure className="about-image" data-reveal>
-            <img src="/images/about-backoffice.jpg" alt="オフィスで打ち合わせをするビジネスパーソン" />
+            <img src={home.about_image} alt="オフィスで打ち合わせをするビジネスパーソン" />
             <figcaption aria-hidden="true">COANA TOKYO</figcaption>
           </figure>
         </div>
@@ -443,13 +443,13 @@ function AboutIntro({ navigate }: { navigate: Nav }) {
 
 function ServicesHome({ navigate }: { navigate: Nav }) {
   const panels = [
-    { key: "backoffice", n: "01", data: services.backoffice, note: "守りを固める" },
-    { key: "marketing", n: "02", data: services.marketing, note: "攻めを支える" },
+    { key: "backoffice", n: "01", data: services.backoffice, note: services.backoffice.note },
+    { key: "marketing", n: "02", data: services.marketing, note: services.marketing.note },
   ] as const;
   return (
     <section className="section services-home">
       <div className="container">
-        <SectionTitle en="Services" lead="守りのバックオフィスと、攻めのマーケティング。2つの軸で、事業の課題にワンストップで応えます。">サービス</SectionTitle>
+        <SectionTitle en="Services" lead={home.services_lead}>{home.services_title}</SectionTitle>
         <div className="service-home-grid">
           {panels.map(({ key, n, data, note }, pi) => (
             <article className="service-panel" key={key} data-reveal style={{ transitionDelay: `${pi * 120}ms` }}>
@@ -657,7 +657,7 @@ function ToolsSection() {
             </article>
           ))}
         </div>
-        <p className="tools-foot" data-reveal>上記以外のツールについても、業務内容に合わせて選定からご相談いただけます。</p>
+        {home.tools_note && <p className="tools-foot" data-reveal>{home.tools_note}</p>}
       </div>
     </section>
   );
@@ -682,7 +682,7 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
     <section className="section topics-home">
       <div className="container">
         <div className="title-with-link">
-          <SectionTitle en="Topics" lead="セミナー登壇やメディア掲載など、最近の活動をお知らせしています。">トピックス</SectionTitle>
+          <SectionTitle en="Topics" lead={home.topics_lead}>{home.topics_title}</SectionTitle>
           <button className="text-link" data-reveal onClick={() => navigate("topics")}>一覧を見る<Icon name="arrow" size={19} /></button>
         </div>
         {latest.length ? (
@@ -721,10 +721,8 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
           <img src={about.profile_photo} alt={`${settings.company_name} ${about.profile_role} ${about.profile_name}`} loading="lazy" />
         </figure>
         <div className="teaser-copy">
-          <SectionTitle en="Message">現場を知るパートナーとして、実行まで伴走します</SectionTitle>
-          <p data-reveal>
-            大手クラウド会計ソフト企業、スタートアップ、税理士事務所など、複数の現場で経理とITの実務に携わってきました。その経験をもとに、一社一社の状況に寄り添い、無理なく続けられる仕組みに落とし込むことを大切にしています。
-          </p>
+          <SectionTitle en="Message">{home.message_title}</SectionTitle>
+          <p data-reveal>{home.message_text}</p>
           <p className="teaser-name" data-reveal>{about.profile_role}　<b>{about.profile_name}</b><span>{about.profile_name_en}</span></p>
           <div data-reveal>
             <button className="text-link" onClick={() => navigate("about", "profile")}>代表のプロフィールを見る<Icon name="arrow" size={19} /></button>
@@ -735,31 +733,14 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
   );
 }
 
-const faqItems: { q: string; a: ReactNode }[] = [
-  {
-    q: "相談から契約までは、どのような流れですか？",
-    a: <>お問い合わせフォームからご連絡ください。内容を確認のうえ担当者からご連絡し、ヒアリングで現状の業務や課題を伺います。そのうえで支援内容とお見積もりをご提案し、ご納得いただけてからのご契約となります。</>,
-  },
-  {
-    q: "料金はどのように決まりますか？",
-    a: <>支援内容や業務範囲に応じて、個別にお見積もりいたします。ヒアリングで課題と優先順位を整理したうえで、必要な範囲に絞ったご提案も可能です。</>,
-  },
-  {
-    q: "一部の業務だけ、ツールの導入だけでもお願いできますか？",
-    a: <>可能です。「経理業務の設計だけ」「クラウドツールの導入だけ」など、必要な業務や不足している部分だけのご依頼も承っています。状況に合わせて、支援の組み合わせをご提案します。</>,
-  },
-  {
-    q: "日々の実務の代行もお願いできますか？",
-    a: <>可能です。経理をはじめとするバックオフィス業務は、仕組みを整えたあとの日々の実務まで、まとめてお任せいただけます。</>,
-  },
-];
+const faqItems: { q: string; a: string }[] = home.faqs ?? [];
 
 function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
   return (
     <section className="section faq-section">
       <div className="container narrow">
-        <SectionTitle en="FAQ" center>よくあるご質問</SectionTitle>
+        <SectionTitle en="FAQ" center>{home.faq_title}</SectionTitle>
         <div className="faq-list">
           {faqItems.map((item, i) => {
             const open = openIndex === i;
@@ -797,7 +778,7 @@ function Home({ navigate }: { navigate: Nav }) {
       <ServicesHome navigate={navigate} />
       <section className="section strengths-section">
         <div className="container">
-          <SectionTitle en="Our strengths" center>COANA TOKYOが選ばれる理由</SectionTitle>
+          <SectionTitle en="Our strengths" center>{home.strengths_title}</SectionTitle>
           <StrengthsTabs />
         </div>
       </section>
@@ -816,7 +797,7 @@ function Home({ navigate }: { navigate: Nav }) {
 function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
-      <PageHero en="About us" title="会社概要" image="/images/about-hero.png" />
+      <PageHero en="About us" title="会社概要" image={about.hero_image} />
       <section id="message" className="section message-section">
         <div className="container narrow">
           <span className="section-index" data-reveal>01<i>Message</i></span>
@@ -910,7 +891,7 @@ function ServiceBlock({ id, number, en, title, lead, items, note }: {
 function Services({ navigate }: { navigate: Nav }) {
   return (
     <main className="services-page">
-      <PageHero en="Services" title="サービス" image="/images/services-hero.png" />
+      <PageHero en="Services" title="サービス" image={services.hero_image} />
       <section className="services-intro">
         <div className="container" data-reveal>
           <p>{services.intro}</p>
@@ -922,14 +903,14 @@ function Services({ navigate }: { navigate: Nav }) {
         <div className="container pricing-box" data-reveal>
           <div>
             <span className="eyebrow">Price</span>
-            <h2>料金について</h2>
+            <h2>{services.pricing_title}</h2>
           </div>
           <p>{services.pricing}</p>
         </div>
       </section>
       <section className="section flow-section">
         <div className="container">
-          <SectionTitle en="Flow" center>ご利用までの流れ</SectionTitle>
+          <SectionTitle en="Flow" center>{services.flow_title}</SectionTitle>
           <ol className="flow-list">
             {services.flow.map((item, index) => (
               <li key={item} data-reveal style={{ transitionDelay: `${index * 90}ms` }}>
@@ -971,7 +952,7 @@ function Topics({ navigate }: { navigate: Nav }) {
   const shown = filtered.slice((pageNo - 1) * PER, pageNo * PER);
   return (
     <main>
-      <PageHero en="Topics" title="トピックス" image="/images/topics-hero.jpg" />
+      <PageHero en="Topics" title="トピックス" image={settings.topics_hero_image} />
       <section className="section topics-page">
         <div className="container">
           <div className="filter-row" aria-label="カテゴリーで絞り込む" data-reveal>
@@ -1153,7 +1134,7 @@ function Contact() {
   }
   return (
     <main>
-      <PageHero en="Contact" title="お問い合わせ" intro="事業や業務についてのお悩みをお聞かせください。内容を確認のうえ、ご連絡いたします。" />
+      <PageHero en="Contact" title="お問い合わせ" intro={settings.contact_intro} />
       <section className="section form-section">
         <form className="container form-wrap" name="contact" onSubmit={submit} noValidate>
           <p className="form-note"><span>必須</span>の項目は必ずご入力ください。</p>
