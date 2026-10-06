@@ -680,7 +680,7 @@ function MissionBand({ navigate }: { navigate: Nav }) {
       <div className="container" data-reveal>
         <span className="eyebrow">Our mission</span>
         <p className="mission-statement"><Lines text={about.message_heading} /></p>
-        <button className="text-link text-link-light" onClick={() => navigate("about")}>代表メッセージを読む<Icon name="arrow" size={19} /></button>
+        <button className="text-link text-link-light" onClick={() => navigate("about", "message")}>代表メッセージを読む<Icon name="arrow" size={19} /></button>
       </div>
     </section>
   );
@@ -738,7 +738,7 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
           </p>
           <p className="teaser-name" data-reveal>{about.profile_role}　<b>{about.profile_name}</b><span>{about.profile_name_en}</span></p>
           <div data-reveal>
-            <button className="text-link" onClick={() => navigate("about")}>代表メッセージ・プロフィール<Icon name="arrow" size={19} /></button>
+            <button className="text-link" onClick={() => navigate("about", "profile")}>代表のプロフィールを見る<Icon name="arrow" size={19} /></button>
           </div>
         </div>
       </div>
@@ -833,7 +833,7 @@ function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
       <PageHero en="About us" title="会社概要" image="/images/about-hero.png" />
-      <section className="section message-section">
+      <section id="message" className="section message-section">
         <div className="container narrow">
           <span className="section-index" data-reveal>01<i>Message</i></span>
           <h2 data-reveal><Lines text={about.message_heading} /></h2>
@@ -843,7 +843,7 @@ function About({ navigate }: { navigate: Nav }) {
           <p className="signature" data-reveal><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
         </div>
       </section>
-      <section className="section profile-section">
+      <section id="profile" className="section profile-section">
         <div className="container">
           <span className="section-index" data-reveal>02<i>Profile</i></span>
           <div className="profile-grid">
@@ -1272,6 +1272,12 @@ export default function App() {
     const base = "COANA TOKYO合同会社 | バックオフィス・マーケティング支援";
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
+  useEffect(() => {
+    const hash = decodeURIComponent(window.location.hash.slice(1));
+    if (!hash) return;
+    const timer = window.setTimeout(() => document.getElementById(hash)?.scrollIntoView(), 120);
+    return () => window.clearTimeout(timer);
+  }, []);
   useEffect(() => {
     const handler = () => { setPage(pageFromPath()); setRouteKey((k) => k + 1); window.scrollTo(0, 0); };
     window.addEventListener("popstate", handler);
