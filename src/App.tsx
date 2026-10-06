@@ -1297,7 +1297,8 @@ export default function App() {
   const [page, setPage] = useState<Page>(pageFromPath);
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
-    const titles: Record<Page, string> = { home: "", about: "会社概要", services: "サービス", topics: "トピックス", article: "トピックス", contact: "お問い合わせ", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
+    // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
+    const titles: Record<Page, string> = { home: "", about: "会社概要・代表メッセージ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
     const base = "中小企業のバックオフィス・マーケティング支援 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article") return; // 記事ページは記事タイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
