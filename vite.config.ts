@@ -364,27 +364,30 @@ function figmaMakeKitPlugin(options: { storiesGlob: string | string[] }): Plugin
 }
 
 /**
- * 各ページ・各トピックス記事ごとに、タイトル・説明文・OGP画像を埋め込んだ HTML を書き出す。
- * SNSで共有したときや検索結果に、そのページの内容が正しく表示されるようにする。
- * 例：dist/about.html、dist/topics/20260911-media.html（/about や /topics/20260911-media で配信される）
- * あわせて、全ページと公開中の記事を含む sitemap.xml を生成する。
+ * SEO：各ページ・各トピックス記事ごとに、タイトル・説明文・OGP・構造化データ（JSON-LD）を埋め込んだ HTML を書き出す。
+ * あわせて sitemap.xml、RSS（feed.xml）、llms.txt、404.html を生成する。
+ * 会社情報・サービス名・FAQ は content/ の JSON（CMSで編集する内容）から読み込む。
  */
 function coanaPageMeta(): Plugin {
   const SITE = 'https://coana.co.jp'
   const SUFFIX = ' | COANA TOKYO合同会社'
   let outDir = 'dist'
 
-  type PageMeta = { path: string; title: string; description: string; image?: string; type?: string; lastmod?: string }
+  type PageMeta = { path: string; title: string; description: string; image?: string; type?: string; lastmod?: string; crumb?: string; jsonld?: object[]; preload?: string }
 
+  const readJson = (rel: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, rel), 'utf8'))
   const escapeAttr = (value: string) =>
     value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const escapeXml = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const absoluteUrl = (value: string) => (/^https?:\/\//.test(value) ? value : SITE + (value.startsWith('/') ? value : '/' + value))
+  const stripHtml = (value: string) => value.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
 
   function setMeta(html: string, attr: 'name' | 'property', key: string, content: string) {
     const tag = '<meta ' + attr + '="' + key + '" content="' + escapeAttr(content) + '" />'
     const pattern = new RegExp('<meta\\s+' + attr + '="' + key.replace(/[.:]/g, '\\$&') + '"[^>]*>')
     return pattern.test(html) ? html.replace(pattern, () => tag) : html.replace('</head>', () => '    ' + tag + '\n  </head>')
   }
+  function appendHead(html: string, tag: string) { return html.replace('</head>', () => '    ' + tag + '\n  </head>') }
 
   function render(shell: string, page: PageMeta, defaultDescription: string, defaultImage: string) {
     const url = SITE + (page.path === '/' ? '/' : page.path)
@@ -398,15 +401,25 @@ function coanaPageMeta(): Plugin {
     html = setMeta(html, 'property', 'og:description', description)
     if (image) {
       html = setMeta(html, 'property', 'og:image', image)
+      html = setMeta(html, 'property', 'og:image:alt', page.title)
       html = setMeta(html, 'name', 'twitter:card', 'summary_large_image')
       html = setMeta(html, 'name', 'twitter:image', image)
     }
     html = setMeta(html, 'name', 'twitter:title', page.title)
     html = setMeta(html, 'name', 'twitter:description', description)
+    if (page.type === 'article' && page.lastmod) {
+      html = setMeta(html, 'property', 'article:published_time', page.lastmod)
+      html = setMeta(html, 'property', 'article:modified_time', page.lastmod)
+    }
     const canonical = '<link rel="canonical" href="' + escapeAttr(url) + '" />'
     html = /<link\s+rel="canonical"[^>]*>/.test(html)
       ? html.replace(/<link\s+rel="canonical"[^>]*>/, () => canonical)
-      : html.replace('</head>', () => '    ' + canonical + '\n  </head>')
+      : appendHead(html, canonical)
+    html = appendHead(html, '<link rel="alternate" type="application/rss+xml" title="COANA TOKYO トピックス" href="' + SITE + '/feed.xml" />')
+    if (page.preload) html = appendHead(html, '<link rel="preload" as="image" href="' + escapeAttr(page.preload) + '" fetchpriority="high" />')
+    for (const data of page.jsonld ?? []) {
+      html = appendHead(html, '<script type="application/ld+json">' + JSON.stringify(data).replace(/</g, '\\u003c') + '</script>')
+    }
     return html
   }
 
@@ -422,16 +435,63 @@ function coanaPageMeta(): Plugin {
       const shell = fs.readFileSync(shellPath, 'utf8')
       const defaultDescription = (shell.match(/<meta\s+name="description"\s+content="([^"]*)"/) || [])[1] || ''
       const defaultImage = (shell.match(/<meta\s+property="og:image"\s+content="([^"]*)"/) || [])[1] || ''
+      const homeTitle = (shell.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'COANA TOKYO合同会社'
+
+      const settings = readJson('content/settings.json')
+      const about = readJson('content/about.json')
+      const home = readJson('content/home.json')
+      const services = readJson('content/services.json')
+
+      // 住所を都道府県・市区町村・それ以降に分ける（構造化データ用）
+      const address: string = String(settings.address || '')
+      const regionMatch = address.match(/^(東京都|北海道|(?:大阪|京都)府|.{2,3}県)/)
+      const region = regionMatch ? regionMatch[1] : ''
+      const rest = address.slice(region.length)
+      const localityMatch = rest.match(/^(.+?[市区町村])/)
+      const locality = localityMatch ? localityMatch[1] : ''
+      const street = rest.slice(locality.length)
+
+      const orgId = SITE + '/#organization'
+      const organization = {
+        '@type': ['Organization', 'ProfessionalService'],
+        '@id': orgId,
+        name: settings.company_name || 'COANA TOKYO合同会社',
+        alternateName: 'COANA TOKYO',
+        url: SITE,
+        logo: SITE + '/apple-touch-icon.png',
+        image: defaultImage,
+        description: defaultDescription,
+        email: settings.email,
+        address: { '@type': 'PostalAddress', postalCode: String(settings.postal_code || '').replace(/^〒/, ''), addressRegion: region, addressLocality: locality, streetAddress: street, addressCountry: 'JP' },
+        areaServed: { '@type': 'Country', name: '日本' },
+        founder: { '@type': 'Person', name: about.profile_name, jobTitle: about.profile_role },
+        foundingDate: '2025-10',
+        knowsAbout: ['経理業務の改善', 'バックオフィス業務のDX', 'クラウド会計ソフトの導入', 'ERPの導入', 'グループウェアの導入', '営業・販路開拓支援', 'SNS運用支援', 'Webサイト制作'],
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: 'サービス',
+          itemListElement: ['backoffice', 'marketing'].flatMap((key) => ((services[key]?.items ?? []) as { name: string; text: string }[]).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item.name, description: item.text, provider: { '@id': orgId }, areaServed: 'JP' } }))),
+        },
+      }
+      const website = { '@type': 'WebSite', '@id': SITE + '/#website', url: SITE, name: 'COANA TOKYO', publisher: { '@id': orgId }, inLanguage: 'ja' }
+      const graph = (...items: object[]) => [{ '@context': 'https://schema.org', '@graph': [organization, website, ...items] }]
+      const crumbs = (items: { name: string; url: string }[]) => ({ '@type': 'BreadcrumbList', itemListElement: items.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: item.url })) })
+      const homeCrumb = { name: 'ホーム', url: SITE + '/' }
+
+      const faqs = ((home.faqs ?? []) as { q: string; a: string }[]).filter((f) => f.q && f.a)
+      const faqPage = faqs.length ? [{ '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []
 
       const pages: PageMeta[] = [
-        { path: '/', title: (shell.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'COANA TOKYO合同会社', description: '' },
-        { path: '/about', title: '会社概要' + SUFFIX, description: 'COANA TOKYO合同会社の会社概要。代表メッセージ、代表プロフィール、会社情報をご紹介します。' },
-        { path: '/services', title: 'サービス' + SUFFIX, description: '中小企業・小規模事業者に向けた、経理・業務フローの改善、ITツール・クラウドツールの導入、実務代行などのバックオフィス支援と、営業・セミナー・SNS・Webサイト制作のマーケティング支援をご紹介します。' },
-        { path: '/topics', title: 'トピックス' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。' },
-        { path: '/contact', title: 'お問い合わせ' + SUFFIX, description: '中小企業・小規模事業者のバックオフィスやマーケティングのお悩みは、こちらからお気軽にご相談ください。内容を確認のうえ、担当者よりご連絡いたします。' },
-        { path: '/privacy', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシーです。' },
+        { path: '/', title: homeTitle, description: '', preload: home.hero_image, jsonld: graph(...faqPage) },
+        { path: '/about', crumb: '会社概要', title: '会社概要・代表メッセージ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者のバックオフィスとマーケティングを支える当社の考え方、代表メッセージ、代表プロフィール、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
+        { path: '/services', crumb: 'サービス', title: 'サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援' + SUFFIX, description: '中小企業・小規模事業者に向けた、経理・業務フローの改善と実務代行、創業支援、会計・勤怠・販売管理などITツール・クラウドツールの導入支援、営業・セミナー・SNS・Webサイト制作のマーケティング支援。料金は個別お見積もり。', jsonld: graph(crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }])) },
+        { path: '/topics', crumb: 'トピックス', title: 'トピックス｜セミナー登壇・メディア掲載・お知らせ' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。経理DXやクラウド会計に関する講座・記事もご紹介。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
+        { path: '/contact', crumb: 'お問い合わせ', title: 'お問い合わせ｜バックオフィス・マーケティングのご相談' + SUFFIX, description: '経理やバックオフィスの見直し、ITツール導入、集客・営業のご相談はこちらから。中小企業・小規模事業者の小さな困りごとでもお気軽に。内容を確認のうえ担当者よりご連絡いたします。', jsonld: graph(crumbs([homeCrumb, { name: 'お問い合わせ', url: SITE + '/contact' }])) },
+        { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシーです。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
       ]
 
+      type Feed = { title: string; url: string; date: string; description: string }
+      const feedItems: Feed[] = []
       const topicsDir = path.resolve(__dirname, 'content/topics')
       if (fs.existsSync(topicsDir)) {
         for (const file of fs.readdirSync(topicsDir).filter((name) => name.endsWith('.md'))) {
@@ -441,14 +501,24 @@ function coanaPageMeta(): Plugin {
           if (fm.draft) continue
           const slug = file.replace(/\.md$/, '')
           const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : String(fm.date ?? '').slice(0, 10)
+          const isDate = /^\d{4}-\d{2}-\d{2}$/.test(date)
+          const title = String(fm.title ?? slug)
+          const url = SITE + '/topics/' + slug
+          const image = fm.thumbnail ? absoluteUrl(String(fm.thumbnail)) : defaultImage
+          const description = String(fm.summary ?? '')
           pages.push({
             path: '/topics/' + slug,
-            title: String(fm.title ?? slug) + SUFFIX,
-            description: String(fm.summary ?? ''),
-            image: fm.thumbnail ? absoluteUrl(String(fm.thumbnail)) : undefined,
+            title: title + SUFFIX,
+            description,
+            image,
             type: 'article',
-            lastmod: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : undefined,
+            lastmod: isDate ? date : undefined,
+            jsonld: graph(
+              crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }, { name: title, url }]),
+              { '@type': 'Article', headline: title, description, image: [image], datePublished: isDate ? date : undefined, dateModified: isDate ? date : undefined, author: { '@id': orgId }, publisher: { '@id': orgId }, mainEntityOfPage: url, inLanguage: 'ja', articleSection: String(fm.category ?? 'お知らせ') },
+            ),
           })
+          feedItems.push({ title, url, date: isDate ? date : new Date().toISOString().slice(0, 10), description })
         }
       }
 
@@ -458,8 +528,7 @@ function coanaPageMeta(): Plugin {
         fs.writeFileSync(file, render(shell, page, defaultDescription, defaultImage))
       }
 
-      // 存在しないURLは 404 を返す。
-      // （これがないと、公開前の画像のURLにトップページのHTMLが返り、それがブラウザに保存されてCMSで画像が壊れて見える）
+      // 存在しないURLは 404 を返す（画像の取り違えキャッシュ対策を兼ねる）
       const notFound = render(shell, { path: '/404', title: 'ページが見つかりません' + SUFFIX, description: '' }, defaultDescription, defaultImage)
         .replace(/\s*<link\s+rel="canonical"[^>]*>/, '')
         .replace('</head>', () => '    <meta name="robots" content="noindex" />\n  </head>')
@@ -467,12 +536,48 @@ function coanaPageMeta(): Plugin {
 
       const sitemap = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        ...pages.map((page) => '  <url><loc>' + SITE + page.path + '</loc>' + (page.lastmod ? '<lastmod>' + page.lastmod + '</lastmod>' : '') + '</url>'),
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
+        ...pages.map((page) => '  <url><loc>' + SITE + page.path + '</loc>' + (page.lastmod ? '<lastmod>' + page.lastmod + '</lastmod>' : '') + (page.image ? '<image:image><image:loc>' + escapeXml(page.image) + '</image:loc></image:image>' : '') + '</url>'),
         '</urlset>',
         '',
       ].join('\n')
       fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap)
+
+      feedItems.sort((a, b) => (a.date < b.date ? 1 : -1))
+      const rss = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+        '  <channel>',
+        '    <title>COANA TOKYO トピックス</title>',
+        '    <link>' + SITE + '/topics</link>',
+        '    <description>' + escapeXml(defaultDescription) + '</description>',
+        '    <language>ja</language>',
+        '    <atom:link href="' + SITE + '/feed.xml" rel="self" type="application/rss+xml" />',
+        ...feedItems.map((item) => '    <item><title>' + escapeXml(item.title) + '</title><link>' + item.url + '</link><guid>' + item.url + '</guid><pubDate>' + new Date(item.date + 'T00:00:00+09:00').toUTCString() + '</pubDate><description>' + escapeXml(item.description) + '</description></item>'),
+        '  </channel>',
+        '</rss>',
+        '',
+      ].join('\n')
+      fs.writeFileSync(path.join(outDir, 'feed.xml'), rss)
+
+      const llms = [
+        '# ' + (settings.company_name || 'COANA TOKYO合同会社'),
+        '',
+        '> ' + defaultDescription,
+        '',
+        '所在地: ' + address + ' / メール: ' + settings.email,
+        '',
+        '## ページ',
+        ...pages.filter((p) => p.type !== 'article').map((p) => '- [' + stripHtml(p.title.replace(SUFFIX, '')) + '](' + SITE + p.path + '): ' + (p.description || defaultDescription)),
+        '',
+        '## サービス',
+        ...['backoffice', 'marketing'].flatMap((key) => ((services[key]?.items ?? []) as { name: string; text: string }[]).map((item) => '- ' + item.name + ': ' + item.text)),
+        '',
+        '## トピックス',
+        ...feedItems.map((item) => '- [' + item.title + '](' + item.url + ') (' + item.date + ')'),
+        '',
+      ].join('\n')
+      fs.writeFileSync(path.join(outDir, 'llms.txt'), llms)
     },
   }
 }
