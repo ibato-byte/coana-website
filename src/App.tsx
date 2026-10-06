@@ -1253,12 +1253,13 @@ export default function App() {
     if (page === "article") return; // 記事ページは記事タイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
+  // URLに #message などの指定があれば、ページが描画されたあとにその位置までスクロールする（初回表示とサイト内移動の両方）
   useEffect(() => {
     const hash = decodeURIComponent(window.location.hash.slice(1));
     if (!hash) return;
-    const timer = window.setTimeout(() => document.getElementById(hash)?.scrollIntoView(), 120);
+    const timer = window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 150);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [page, routeKey]);
   useEffect(() => {
     const handler = () => { setPage(pageFromPath()); setRouteKey((k) => k + 1); window.scrollTo(0, 0); };
     window.addEventListener("popstate", handler);
@@ -1302,8 +1303,7 @@ export default function App() {
     setPage(target);
     setRouteKey((k) => k + 1);
     window.gtag?.("event", "page_view", { page_path: url });
-    if (hash) requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }));
-    else window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!hash) window.scrollTo({ top: 0, behavior: "smooth" });
   };
   let content: ReactNode;
   if (page === "about") content = <About navigate={navigate} />;
