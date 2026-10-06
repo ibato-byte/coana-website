@@ -54,6 +54,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 ::selection { background: rgba(85, 184, 243, .35); }
 
+/* 日本語の改行を文節単位にし、見出しの行バランスと段落末の1文字残りを防ぐ */
+h1, h2, h3, h4 { word-break: auto-phrase; text-wrap: balance; }
+p, li, dd, figcaption { text-wrap: pretty; }
+.section-lead, .services-intro p, .mission-statement, .page-intro, .strength-description { word-break: auto-phrase; }
+
 .app-shell { min-height: 100vh; overflow-x: clip; }
 .container { width: min(1140px, calc(100% - 48px)); max-width: none; margin: 0 auto; }
 .narrow { max-width: 860px; }
@@ -106,7 +111,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background: linear-gradient(90deg, var(--sky-deep), var(--yellow));
   transform: translateX(-50%);
 }
-.section-lead { max-width: 640px; margin: 20px 0 0; color: var(--navy-soft); line-height: 2.1; }
+.section-lead { max-width: 680px; margin: 20px 0 0; color: var(--navy-soft); line-height: 2.1; }
 .section-title.center .section-lead { margin-inline: auto; }
 
 .section-index {
@@ -390,7 +395,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   gap: 34px;
   padding: 24px 34px 26px;
   border-radius: 22px;
-  background: linear-gradient(120deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05) 60%, rgba(85, 184, 243, .08));
+  background: linear-gradient(120deg, rgba(10, 38, 64, .62), rgba(10, 38, 64, .38) 60%, rgba(8, 127, 229, .22));
   border: 1px solid rgba(255, 255, 255, .24);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
@@ -451,11 +456,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @keyframes solve-ch { from { opacity: 0; transform: translateY(.6em); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
 .solve-list { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
 .solve-list button {
-  border: 1px solid rgba(255, 255, 255, .22);
+  border: 1px solid rgba(255, 255, 255, .3);
   border-radius: 999px;
   background: transparent;
   padding: 6px 14px;
-  color: rgba(255, 255, 255, .72);
+  color: rgba(255, 255, 255, .86);
   font-size: 12.5px;
   font-weight: 700;
   line-height: 1.5;
