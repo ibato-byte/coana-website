@@ -2,6 +2,8 @@ import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
+import fs from 'node:fs'
+import { parse as parseYaml } from 'yaml'
 
 import siteConfiguration from './.figma/make/site.json'
 
@@ -21,6 +23,7 @@ export default defineConfig(({ mode }) => {
 react(),
       tailwindcss(),
       figmaSiteConfiguration(siteConfiguration),
+      coanaPageMeta(),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: '/src/**/*.stories.{ts,tsx,js,jsx}' }),
@@ -356,6 +359,113 @@ function figmaMakeKitPlugin(options: { storiesGlob: string | string[] }): Plugin
           next(err as Error)
         }
       })
+    },
+  }
+}
+
+/**
+ * 各ページ・各トピックス記事ごとに、タイトル・説明文・OGP画像を埋め込んだ HTML を書き出す。
+ * SNSで共有したときや検索結果に、そのページの内容が正しく表示されるようにする。
+ * 例：dist/about.html、dist/topics/20260911-media.html（/about や /topics/20260911-media で配信される）
+ * あわせて、全ページと公開中の記事を含む sitemap.xml を生成する。
+ */
+function coanaPageMeta(): Plugin {
+  const SITE = 'https://coana.co.jp'
+  const SUFFIX = ' | COANA TOKYO合同会社'
+  let outDir = 'dist'
+
+  type PageMeta = { path: string; title: string; description: string; image?: string; type?: string; lastmod?: string }
+
+  const escapeAttr = (value: string) =>
+    value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const absoluteUrl = (value: string) => (/^https?:\/\//.test(value) ? value : SITE + (value.startsWith('/') ? value : '/' + value))
+
+  function setMeta(html: string, attr: 'name' | 'property', key: string, content: string) {
+    const tag = '<meta ' + attr + '="' + key + '" content="' + escapeAttr(content) + '" />'
+    const pattern = new RegExp('<meta\\s+' + attr + '="' + key.replace(/[.:]/g, '\\$&') + '"[^>]*>')
+    return pattern.test(html) ? html.replace(pattern, () => tag) : html.replace('</head>', () => '    ' + tag + '\n  </head>')
+  }
+
+  function render(shell: string, page: PageMeta, defaultDescription: string, defaultImage: string) {
+    const url = SITE + (page.path === '/' ? '/' : page.path)
+    const description = page.description || defaultDescription
+    const image = page.image || defaultImage
+    let html = shell.replace(/<title>[\s\S]*?<\/title>/, () => '<title>' + escapeAttr(page.title) + '</title>')
+    html = setMeta(html, 'name', 'description', description)
+    html = setMeta(html, 'property', 'og:type', page.type || 'website')
+    html = setMeta(html, 'property', 'og:url', url)
+    html = setMeta(html, 'property', 'og:title', page.title)
+    html = setMeta(html, 'property', 'og:description', description)
+    if (image) {
+      html = setMeta(html, 'property', 'og:image', image)
+      html = setMeta(html, 'name', 'twitter:card', 'summary_large_image')
+      html = setMeta(html, 'name', 'twitter:image', image)
+    }
+    html = setMeta(html, 'name', 'twitter:title', page.title)
+    html = setMeta(html, 'name', 'twitter:description', description)
+    const canonical = '<link rel="canonical" href="' + escapeAttr(url) + '" />'
+    html = /<link\s+rel="canonical"[^>]*>/.test(html)
+      ? html.replace(/<link\s+rel="canonical"[^>]*>/, () => canonical)
+      : html.replace('</head>', () => '    ' + canonical + '\n  </head>')
+    return html
+  }
+
+  return {
+    name: 'coana-page-meta',
+    apply: 'build',
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir)
+    },
+    closeBundle() {
+      const shellPath = path.join(outDir, 'index.html')
+      if (!fs.existsSync(shellPath)) return
+      const shell = fs.readFileSync(shellPath, 'utf8')
+      const defaultDescription = (shell.match(/<meta\s+name="description"\s+content="([^"]*)"/) || [])[1] || ''
+      const defaultImage = (shell.match(/<meta\s+property="og:image"\s+content="([^"]*)"/) || [])[1] || ''
+
+      const pages: PageMeta[] = [
+        { path: '/', title: (shell.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'COANA TOKYO合同会社', description: '' },
+        { path: '/about', title: '会社概要' + SUFFIX, description: 'COANA TOKYO合同会社の会社概要。代表メッセージ、代表プロフィール、会社情報をご紹介します。' },
+        { path: '/services', title: 'サービス' + SUFFIX, description: '経理・業務フローの改善、ITツール・クラウドツールの導入、実務代行などのバックオフィス支援と、営業・セミナー・SNS・Webサイト制作のマーケティング支援をご紹介します。' },
+        { path: '/topics', title: 'トピックス' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。' },
+        { path: '/contact', title: 'お問い合わせ' + SUFFIX, description: 'バックオフィスやマーケティングのお悩みは、こちらからお気軽にご相談ください。内容を確認のうえ、担当者よりご連絡いたします。' },
+        { path: '/privacy', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシーです。' },
+      ]
+
+      const topicsDir = path.resolve(__dirname, 'content/topics')
+      if (fs.existsSync(topicsDir)) {
+        for (const file of fs.readdirSync(topicsDir).filter((name) => name.endsWith('.md'))) {
+          const raw = fs.readFileSync(path.join(topicsDir, file), 'utf8')
+          const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
+          const fm = (match ? parseYaml(match[1]) : {}) ?? {}
+          if (fm.draft) continue
+          const slug = file.replace(/\.md$/, '')
+          const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : String(fm.date ?? '').slice(0, 10)
+          pages.push({
+            path: '/topics/' + slug,
+            title: String(fm.title ?? slug) + SUFFIX,
+            description: String(fm.summary ?? ''),
+            image: fm.thumbnail ? absoluteUrl(String(fm.thumbnail)) : undefined,
+            type: 'article',
+            lastmod: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : undefined,
+          })
+        }
+      }
+
+      for (const page of pages) {
+        const file = page.path === '/' ? shellPath : path.join(outDir, page.path.slice(1) + '.html')
+        fs.mkdirSync(path.dirname(file), { recursive: true })
+        fs.writeFileSync(file, render(shell, page, defaultDescription, defaultImage))
+      }
+
+      const sitemap = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ...pages.map((page) => '  <url><loc>' + SITE + page.path + '</loc>' + (page.lastmod ? '<lastmod>' + page.lastmod + '</lastmod>' : '') + '</url>'),
+        '</urlset>',
+        '',
+      ].join('\n')
+      fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap)
     },
   }
 }
