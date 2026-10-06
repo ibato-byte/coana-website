@@ -296,7 +296,8 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .footer-links button:hover { color: var(--yellow); transform: translateX(4px); }
 .footer-bottom { position: relative; border-top: 1px solid rgba(219, 232, 242, .16); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
 .footer-bottom small { font-family: var(--font-en); font-size: 11px; letter-spacing: .1em; color: #8aa2b5; }
-.footer-en { letter-spacing: .3em !important; }
+.footer-privacy { border: 0; background: transparent; padding: 0; color: #8aa2b5; font-size: 12px; transition: color .25s; }
+.footer-privacy:hover { color: var(--yellow); }
 
 /* ───────────────────────────── Hero ───────────────────────────── */
 
