@@ -466,7 +466,7 @@ function coanaPageMeta(): Plugin {
         name: settings.company_name || 'COANA TOKYO合同会社',
         alternateName: 'COANA TOKYO',
         url: SITE,
-        sameAs: settings.same_as || ['https://www.facebook.com/profile.php?id=61589875101798'],
+        sameAs: settings.same_as || ['https://www.facebook.com/profile.php?id=61589876101798', 'https://maps.google.com/?cid=15984393387638365667'],
         logo: SITE + '/apple-touch-icon.png',
         image: defaultImage,
         description: defaultDescription,
