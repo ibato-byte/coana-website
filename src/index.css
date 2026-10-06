@@ -1043,7 +1043,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   line-height: 2;
   text-align: center;
 }
-.service-detail { scroll-margin-top: 90px; }
+.service-detail, .message-section, .profile-section { scroll-margin-top: 80px; }
 .service-detail + .service-detail { padding-top: 0; }
 .service-detail-head { display: grid; grid-template-columns: 130px 1fr; gap: 30px; margin-bottom: 56px; }
 .service-detail-num { font-family: var(--font-en); font-size: 64px; line-height: 1; font-weight: 700; color: transparent; -webkit-text-stroke: 1.5px var(--sky-deep); }
