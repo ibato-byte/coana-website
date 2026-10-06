@@ -779,19 +779,21 @@ function FaqSection() {
           {faqItems.map((item, i) => {
             const open = openIndex === i;
             return (
-              <div key={item.q} className={open ? "faq-item open" : "faq-item"} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
-                <button
-                  className="faq-q"
-                  aria-expanded={open}
-                  aria-controls={`faq-a-${i}`}
-                  onClick={() => setOpenIndex(i)}
-                >
-                  <span className="faq-mark">Q</span>
-                  <span className="faq-q-text">{item.q}</span>
-                  <span className="faq-toggle" aria-hidden="true"><Icon name="plus" size={18} /></span>
-                </button>
-                <div id={`faq-a-${i}`} className="faq-a" role="region">
-                  <div className="faq-a-inner"><p>{item.a}</p></div>
+              <div key={item.q} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+                <div className={open ? "faq-item open" : "faq-item"}>
+                  <button
+                    className="faq-q"
+                    aria-expanded={open}
+                    aria-controls={`faq-a-${i}`}
+                    onClick={() => setOpenIndex(i)}
+                  >
+                    <span className="faq-mark">Q</span>
+                    <span className="faq-q-text">{item.q}</span>
+                    <span className="faq-toggle" aria-hidden="true"><Icon name="plus" size={18} /></span>
+                  </button>
+                  <div id={`faq-a-${i}`} className="faq-a" role="region">
+                    <div className="faq-a-inner"><p>{item.a}</p></div>
+                  </div>
                 </div>
               </div>
             );
