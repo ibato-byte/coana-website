@@ -57,7 +57,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 /* 日本語の改行を文節単位にし、見出しの行バランスと段落末の1文字残りを防ぐ */
 h1, h2, h3, h4 { word-break: auto-phrase; text-wrap: balance; }
 p, li, dd, figcaption { text-wrap: pretty; }
-.section-lead, .services-intro p, .mission-statement, .page-intro, .strength-description { word-break: auto-phrase; }
+.section-lead, .services-intro p, .mission-statement, .page-intro, .strength-description, .message-body p, .contact-band p { word-break: auto-phrase; }
 
 .app-shell { min-height: 100vh; overflow-x: clip; }
 .container { width: min(1140px, calc(100% - 48px)); max-width: none; margin: 0 auto; }
@@ -386,7 +386,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .hero-solve {
   position: absolute;
   left: 50%;
-  bottom: 118px;
+  bottom: 84px;
   transform: translateX(-50%);
   width: calc(100% - 48px);
   display: flex;
@@ -447,30 +447,11 @@ p, li, dd, figcaption { text-wrap: pretty; }
 @keyframes solve-ch { from { opacity: 0; transform: translateY(.6em); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
 .solve-progress { position: relative; width: 72px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .2); overflow: hidden; }
 .solve-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--sky), var(--yellow)); transform: scaleX(0); transform-origin: 0 50%; animation: solve-progress 3.8s linear both; }
-.solve-progress i.is-paused { animation-play-state: paused; }
 @keyframes solve-progress { to { transform: scaleX(1); } }
 
 /* 一覧の絞り込み切り替え時のフェード */
 .swap-in { animation: fade-up .55s var(--ease-out) both; }
 
-.hero-scroll {
-  position: absolute;
-  left: 50%;
-  bottom: 20px;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 9px;
-  color: rgba(255, 255, 255, .85);
-  font-family: var(--font-en);
-  font-size: 10px;
-  letter-spacing: .32em;
-  font-weight: 600;
-}
-.hero-scroll i { position: relative; width: 1px; height: 38px; background: rgba(255, 255, 255, .3); overflow: hidden; }
-.hero-scroll i::after { content: ""; position: absolute; left: 0; top: -40%; width: 100%; height: 40%; background: var(--yellow); animation: scroll-line 2.1s var(--ease-out) infinite; }
-@keyframes scroll-line { 0% { top: -40%; } 100% { top: 110%; } }
 
 /* ───────────────────────────── About intro ───────────────────────────── */
 
@@ -980,6 +961,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
 
 .company-inner { display: grid; grid-template-columns: 1fr 1.6fr; gap: 100px; }
 .company-inner h2 { margin: 0; font-size: 40px; font-weight: 900; }
+.company-inner > div:first-child { position: sticky; top: 120px; align-self: start; }
 .company-table { margin: 0; }
 .company-table > div { display: grid; grid-template-columns: 150px 1fr; padding: 23px 4px; border-bottom: 1px solid var(--line); transition: background .3s; }
 .company-table > div:first-child { border-top: 1px solid var(--line); }
@@ -1270,8 +1252,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
     width: 100%;
     height: 100dvh;
     padding: 110px 28px 40px;
-    background: rgba(251, 253, 255, .97);
-    backdrop-filter: blur(16px);
+    background: var(--paper);
     flex-direction: column;
     gap: 4px;
     z-index: -1;
@@ -1336,7 +1317,6 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .hero .button-row { width: 100%; }
   .button-row { flex-direction: column; }
   .button-row .button { width: 100%; }
-  .hero-scroll { display: none; }
 
   .about-intro { padding-top: 72px; }
   .about-copy > p { line-height: 2.05; }
@@ -1449,5 +1429,5 @@ p, li, dd, figcaption { text-wrap: pretty; }
   .solve-word, .solve-ch, .solve-word::before, .swap-in { animation: none !important; }
   .solve-word::before { transform: scaleX(1); }
   .solve-word.is-leaving { visibility: hidden; }
-  .contact-band, .contact-orbit, .hero-bg, .hero-scroll i::after { animation: none !important; }
+  .contact-band, .contact-orbit, .hero-bg { animation: none !important; }
 }
