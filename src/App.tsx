@@ -357,7 +357,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     el.addEventListener("pointermove", onMove);
     return () => { el.removeEventListener("pointermove", onMove); cancelAnimationFrame(raf); };
   }, [reduceMotion]);
-  const pad = (n: number) => String(n).padStart(2, "0");
   const base = firstRun.current ? 1.35 : 0;
   return (
     <section className="hero" ref={ref}>
@@ -384,35 +383,26 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <div className="solve-meta" aria-hidden="true">
-          <span className="solve-label">We solve</span>
-          <span className="solve-count"><b key={wordIndex}>{pad(wordIndex + 1)}</b> / {pad(words.length)}</span>
-        </div>
         <p className="solve-text">
-          <span className="solve-box" style={boxWidth ? { width: boxWidth } : undefined}>
-            {words.map((w, i) => (
-              <span
-                key={w}
-                ref={(el) => { wordRefs.current[i] = el; }}
-                className={i === wordIndex ? "solve-word is-active" : i === (wordIndex + words.length - 1) % words.length && !firstRun.current ? "solve-word is-leaving" : "solve-word"}
-                style={{ ["--d" as string]: base + "s" } as React.CSSProperties}
-                aria-hidden={i !== wordIndex}
-              >
-                {Array.from(w).map((ch, ci) => (
-                  <span key={ci} className="solve-ch" style={{ animationDelay: (base + 0.12 + ci * 0.045).toFixed(3) + "s" }}>{ch}</span>
-                ))}
-              </span>
-            ))}
+          <span className="solve-line">
+            <span className="solve-box" style={boxWidth ? { width: boxWidth } : undefined}>
+              {words.map((w, i) => (
+                <span
+                  key={w}
+                  ref={(el) => { wordRefs.current[i] = el; }}
+                  className={i === wordIndex ? "solve-word is-active" : i === (wordIndex + words.length - 1) % words.length && !firstRun.current ? "solve-word is-leaving" : "solve-word"}
+                  style={{ ["--d" as string]: base + "s" } as React.CSSProperties}
+                  aria-hidden={i !== wordIndex}
+                >
+                  {Array.from(w).map((ch, ci) => (
+                    <span key={ci} className="solve-ch" style={{ animationDelay: (base + 0.12 + ci * 0.045).toFixed(3) + "s" }}>{ch}</span>
+                  ))}
+                </span>
+              ))}
+            </span>
+            <span className="solve-rest">の悩みを、仕組みで解決。</span>
           </span>
-          <span className="solve-rest">の悩みを、仕組みで解決。</span>
         </p>
-        <ul className="solve-list" aria-label="解決できるお悩みを切り替える">
-          {words.map((w, i) => (
-            <li key={w}>
-              <button type="button" className={i === wordIndex ? "is-active" : ""} aria-pressed={i === wordIndex} onClick={() => goTo(i)}>{w}</button>
-            </li>
-          ))}
-        </ul>
         <span className="solve-progress" aria-hidden="true">
           <i
             key={wordIndex}
@@ -996,7 +986,7 @@ function Topics({ navigate }: { navigate: Nav }) {
             ))}
           </div>
           {shown.length ? (
-            <div className="article-list" data-reveal>
+            <div key={"list-" + filter + "-" + pageNo} className="article-list swap-in">
               {shown.map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
               {pages > 1 && (
                 <nav className="pagination" aria-label="ページネーション">
@@ -1009,7 +999,7 @@ function Topics({ navigate }: { navigate: Nav }) {
               )}
             </div>
           ) : (
-            <div className="empty-topics large" data-reveal>
+            <div key={"empty-" + filter} className="empty-topics large swap-in">
               <span className="empty-icon"><Icon name="spark" /></span>
               <div>
                 <h2>{articles.length ? "このカテゴリーの記事はまだありません" : "お知らせは準備中です"}</h2>
