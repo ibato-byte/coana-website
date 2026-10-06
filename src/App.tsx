@@ -843,7 +843,6 @@ function About({ navigate }: { navigate: Nav }) {
               <div className="profile-photo-frame">
                 <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
               </div>
-              <figcaption><span>{about.profile_role}</span>{about.profile_name_en}</figcaption>
             </figure>
             <div data-reveal>
               <p className="profile-role">{about.profile_role}</p>
