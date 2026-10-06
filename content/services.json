@@ -1,8 +1,10 @@
 {
+  "hero_image": "/images/services-hero.png",
   "intro": "バックオフィスを整え、事業の成長を支える。COANA TOKYOは、守りと攻めの両面から、企業の課題に合わせた支援を行います。",
   "backoffice": {
     "en": "Back office",
     "title": "バックオフィス支援",
+    "note": "守りを固める",
     "lead": "日々の業務を整え、本業に集中できる仕組みを。",
     "items": [
       {
@@ -32,6 +34,7 @@
   "marketing": {
     "en": "Marketing",
     "title": "マーケティング支援",
+    "note": "攻めを支える",
     "lead": "事業の魅力を届け、成長につながる仕組みを。",
     "items": [
       {
@@ -52,7 +55,9 @@
       }
     ]
   },
+  "pricing_title": "料金について",
   "pricing": "支援内容や業務範囲に応じて、個別にお見積もりいたします。まずはお問い合わせください。",
+  "flow_title": "ご利用までの流れ",
   "flow": [
     "お問い合わせフォーム",
     "ヒアリング",
