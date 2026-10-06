@@ -1333,9 +1333,9 @@ p, li, dd, figcaption { text-wrap: pretty; }
 
   .strengths-tabs { margin-top: 38px; }
   .strength-tab-list { gap: 9px; }
-  .strength-tab { min-height: 106px; padding: 38px 8px 14px; }
+  .strength-tab { min-height: 106px; padding: 38px 6px 14px; }
   .strength-tab-number { left: 10px; top: 8px; font-size: 34px; }
-  .strength-tab-label { font-size: 13px; }
+  .strength-tab-label { font-size: 12px; letter-spacing: -.01em; }
   .strength-tab-panel { padding: 30px 20px; }
   .strength-cols { grid-template-columns: 1fr; gap: 26px; }
   .strength-panel-copy h3 { padding-left: 13px; font-size: 20px; }
