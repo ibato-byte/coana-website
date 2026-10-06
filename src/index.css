@@ -883,7 +883,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-radius: 14px;
   background: var(--paper);
   overflow: hidden;
-  transition: opacity .7s var(--ease-out), transform .7s var(--ease-out), border-color .35s, box-shadow .35s;
+  transition: border-color .35s, box-shadow .35s;
 }
 .faq-item:hover { border-color: rgba(8, 127, 229, .4); }
 .faq-item.open { border-color: rgba(8, 127, 229, .5); box-shadow: var(--shadow-sm); background: var(--white); }
