@@ -43,7 +43,7 @@ collections:
       - { label: 公開日, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY.MM.DD", time_format: false }
       - { label: カテゴリー, name: category, widget: select, options: [お知らせ, サービス, イベント, 実績・事例], default: お知らせ }
       - { label: 概要（SNS共有・検索結果の説明文に使用）, name: summary, widget: text, required: false }
-      - { label: アイキャッチ画像, name: thumbnail, widget: image, required: false }
+      - { label: アイキャッチ画像, name: thumbnail, widget: image, required: false, hint: "記事一覧・記事ページ・SNS共有時に表示されます。横長（16:9）がおすすめです。公開すると約1〜2分でサイトに反映されます。" }
       - { label: 下書き（チェックすると非公開）, name: draft, widget: boolean, default: false, required: false }
       - { label: 本文, name: body, widget: markdown }
 
@@ -63,10 +63,10 @@ collections:
           - { label: ヒーロー｜キーワードに続く文, name: hero_solve_text, widget: string }
           - { label: ヒーロー｜相談ボタンの文言, name: hero_button_primary, widget: string }
           - { label: ヒーロー｜サービスボタンの文言, name: hero_button_secondary, widget: string }
-          - { label: ヒーロー｜背景画像, name: hero_image, widget: image }
+          - { label: ヒーロー｜背景画像, name: hero_image, widget: image, hint: "トップページの一番上（キャッチコピーの背景）の画像です。横長の写真がおすすめです。公開すると約1〜2分でサイトに反映されます。" }
           - { label: About｜見出し, name: about_title, widget: string }
           - { label: About｜本文, name: about_text, widget: text }
-          - { label: About｜画像, name: about_image, widget: image }
+          - { label: About｜画像, name: about_image, widget: image, hint: "トップページの「ABOUT US」欄の右側の画像です。公開すると約1〜2分でサイトに反映されます。" }
           - { label: サービス｜見出し, name: services_title, widget: string }
           - { label: サービス｜リード文, name: services_lead, widget: text }
           - { label: 選ばれる理由｜見出し, name: strengths_title, widget: string }
@@ -110,14 +110,14 @@ collections:
         label: 会社概要ページ
         file: content/about.json
         fields:
-          - { label: ページ上部の画像, name: hero_image, widget: image }
+          - { label: ページ上部の画像, name: hero_image, widget: image, hint: "会社概要ページ（/about）の一番上、「会社概要」の文字の背景に薄く表示される画像です。トップページの「ABOUT US」の画像は「ページの文章→トップページ→About｜画像」で変更できます。公開すると約1〜2分でサイトに反映されます。" }
           - { label: メッセージ見出し（改行可）, name: message_heading, widget: text }
           - { label: メッセージ本文（段落ごと）, name: message, widget: list, field: { label: 段落, name: p, widget: text } }
           - { label: 署名, name: signature, widget: string }
           - { label: 役職, name: profile_role, widget: string }
           - { label: 氏名, name: profile_name, widget: string }
           - { label: 氏名（英字）, name: profile_name_en, widget: string }
-          - { label: プロフィール写真, name: profile_photo, widget: image }
+          - { label: プロフィール写真, name: profile_photo, widget: image, hint: "会社概要ページのプロフィールと、トップページの「Message」欄の代表写真です。縦長の写真がおすすめです。公開すると約1〜2分でサイトに反映されます。" }
           - { label: プロフィール（段落ごと）, name: profile, widget: list, field: { label: 段落, name: p, widget: text } }
           - label: 会社情報
             name: company
@@ -131,7 +131,7 @@ collections:
         label: サービスページ
         file: content/services.json
         fields:
-          - { label: ページ上部の画像, name: hero_image, widget: image }
+          - { label: ページ上部の画像, name: hero_image, widget: image, hint: "サービスページ（/services）の一番上、「サービス」の文字の背景に薄く表示される画像です。公開すると約1〜2分でサイトに反映されます。" }
           - { label: 導入文, name: intro, widget: text }
           - label: バックオフィス支援
             name: backoffice
@@ -180,5 +180,5 @@ collections:
             fields:
               - { label: 見出し, name: heading, widget: string }
               - { label: 本文（改行可）, name: text, widget: text }
-          - { label: トピックス一覧ページ上部の画像, name: topics_hero_image, widget: image }
+          - { label: トピックス一覧ページ上部の画像, name: topics_hero_image, widget: image, hint: "トピックス一覧ページ（/topics）の一番上の背景に薄く表示される画像です。公開すると約1〜2分でサイトに反映されます。" }
           - { label: お問い合わせページの導入文, name: contact_intro, widget: text }
