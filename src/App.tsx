@@ -223,19 +223,18 @@ function Footer({ navigate }: { navigate: Nav }) {
             <button onClick={() => navigate("about")}>会社概要</button>
             <button onClick={() => navigate("services")}>サービス</button>
             <button onClick={() => navigate("topics")}>トピックス</button>
+            <button onClick={() => navigate("contact")}>お問い合わせ</button>
           </div>
           <div>
             <p className="footer-links-title">Services</p>
             <button onClick={() => navigate("services", "backoffice")}>バックオフィス支援</button>
             <button onClick={() => navigate("services", "marketing")}>マーケティング支援</button>
-            <button onClick={() => navigate("contact")}>お問い合わせ</button>
-            <button onClick={() => navigate("privacy")}>プライバシーポリシー</button>
           </div>
         </nav>
       </div>
       <div className="container footer-bottom">
         <small>{settings.copyright}</small>
-        <small className="footer-en">BACK OFFICE × MARKETING</small>
+        <button className="footer-privacy" onClick={() => navigate("privacy")}>プライバシーポリシー</button>
       </div>
     </footer>
   );
@@ -714,8 +713,7 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
         <div className="teaser-copy">
           <SectionTitle en="Message">現場を知るパートナーとして、実行まで伴走します</SectionTitle>
           <p data-reveal>
-            大手クラウド会計ソフト企業や税理士事務所などでの実務経験をもとに、「経理×IT」の両面から業務を見直します。
-            改善案の提示にとどまらず、仕組みづくりから日々の実務まで。現場で使い続けられるかたちに落とし込むことを大切にしています。
+            大手クラウド会計ソフト企業、スタートアップ、税理士事務所など、複数の現場で経理とITの実務に携わってきました。その経験をもとに、一社一社の状況に寄り添い、無理なく続けられる仕組みに落とし込むことを大切にしています。
           </p>
           <p className="teaser-name" data-reveal>{about.profile_role}　<b>{about.profile_name}</b><span>{about.profile_name_en}</span></p>
           <div data-reveal>
@@ -743,10 +741,6 @@ const faqItems: { q: string; a: ReactNode }[] = [
   {
     q: "日々の実務の代行もお願いできますか？",
     a: <>可能です。経理業務やバックオフィス業務は、仕組みの設計だけでなく、日々の実務をお任せいただくこともできます。</>,
-  },
-  {
-    q: "どのようなツールに対応していますか？",
-    a: <>freee、マネーフォワード クラウド、ERPの「Odoo」、Google Workspaceなどの導入・活用を支援しています。特定のツールありきではなく、業務フローに合わせた選定からご相談いただけます。</>,
   },
 ];
 
@@ -1034,7 +1028,6 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
             ? <img className="article-thumb" src={article.thumbnail} alt="" />
             : <div className="article-visual"><Icon name="spark" size={42} /><span>TOPICS</span></div>}
           <div className="article-body">
-            {article.summary && <p className="article-summary">{article.summary}</p>}
             <div dangerouslySetInnerHTML={{ __html: article.html }} />
           </div>
           <nav className="article-nav" aria-label="前後の記事">
