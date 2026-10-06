@@ -432,15 +432,23 @@ function coanaPageMeta(): Plugin {
     closeBundle() {
       const shellPath = path.join(outDir, 'index.html')
       if (!fs.existsSync(shellPath)) return
-      const shell = fs.readFileSync(shellPath, 'utf8')
-      const defaultDescription = (shell.match(/<meta\s+name="description"\s+content="([^"]*)"/) || [])[1] || ''
-      const defaultImage = (shell.match(/<meta\s+property="og:image"\s+content="([^"]*)"/) || [])[1] || ''
-      const homeTitle = (shell.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'COANA TOKYO合同会社'
+      const builtShell = fs.readFileSync(shellPath, 'utf8')
+      const defaultDescription = (builtShell.match(/<meta\s+name="description"\s+content="([^"]*)"/) || [])[1] || ''
+      const builtImage = (builtShell.match(/<meta\s+property="og:image"\s+content="([^"]*)"/) || [])[1] || ''
+      const homeTitle = (builtShell.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'COANA TOKYO合同会社'
 
       const settings = readJson('content/settings.json')
       const about = readJson('content/about.json')
       const home = readJson('content/home.json')
       const services = readJson('content/services.json')
+
+      // ファビコン・スマホ用アイコン・SNS共有画像は CMS（content/settings.json）の設定を優先する
+      const defaultImage = settings.og_image ? absoluteUrl(String(settings.og_image)) : builtImage
+      const faviconHref = String(settings.favicon || '/favicon.svg')
+      const touchIconHref = String(settings.apple_touch_icon || '/apple-touch-icon.png')
+      const faviconType = /\.svg$/i.test(faviconHref) ? 'image/svg+xml' : /\.png$/i.test(faviconHref) ? 'image/png' : /\.ico$/i.test(faviconHref) ? 'image/x-icon' : ''
+      let shell = builtShell.replace(/\s*<link\s+rel="(?:icon|apple-touch-icon)"[^>]*>/g, '')
+      shell = shell.replace('</head>', () => '    <link rel="icon" href="' + escapeAttr(faviconHref) + '"' + (faviconType ? ' type="' + faviconType + '"' : '') + ' />\n    ' + (faviconHref !== '/favicon.ico' ? '<link rel="icon" href="/favicon.ico" sizes="any" />\n    ' : '') + '<link rel="apple-touch-icon" href="' + escapeAttr(touchIconHref) + '" />\n  </head>')
 
       // 住所を都道府県・市区町村・それ以降に分ける（構造化データ用）
       const address: string = String(settings.address || '')
