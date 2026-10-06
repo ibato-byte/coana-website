@@ -1232,7 +1232,7 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     const titles: Record<Page, string> = { home: "", about: "会社概要", services: "サービス", topics: "トピックス", article: "トピックス", contact: "お問い合わせ", privacy: "プライバシーポリシー" };
-    const base = "COANA TOKYO合同会社 | バックオフィス・マーケティング支援";
+    const base = "COANA TOKYO合同会社 | 中小企業のバックオフィス・マーケティング支援";
     if (page === "article") return; // 記事ページは記事タイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
