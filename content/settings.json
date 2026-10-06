@@ -10,5 +10,8 @@
     "text": "業務の見直しから、集客・営業のご相談まで。\n小さな困りごとでも、お気軽にお聞かせください。"
   },
   "topics_hero_image": "/images/topics-hero.jpg",
-  "contact_intro": "事業や業務についてのお悩みをお聞かせください。内容を確認のうえ、ご連絡いたします。"
+  "contact_intro": "事業や業務についてのお悩みをお聞かせください。内容を確認のうえ、ご連絡いたします。",
+  "favicon": "/favicon.svg",
+  "apple_touch_icon": "/apple-touch-icon.png",
+  "og_image": "/og-image.jpg"
 }
