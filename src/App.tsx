@@ -434,7 +434,7 @@ function AboutIntro({ navigate }: { navigate: Nav }) {
             </div>
           </div>
           <figure className="about-image" data-reveal>
-            <img src={home.about_image} alt="オフィスで打ち合わせをするビジネスパーソン" />
+            <img src={home.about_image} alt="中小企業のバックオフィス業務を改善する打ち合わせの様子" />
             <figcaption aria-hidden="true">COANA TOKYO</figcaption>
           </figure>
         </div>
@@ -693,11 +693,11 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
               <button key={a.slug} className="topic-card" data-reveal style={{ transitionDelay: `${i * 100}ms` }} onClick={() => navigate("article", undefined, a.slug)}>
                 <span className="topic-card-thumb">
                   {a.thumbnail
-                    ? <img src={a.thumbnail} alt="" loading="lazy" />
+                    ? <img src={a.thumbnail} alt={a.title} loading="lazy" />
                     : <span className="topic-card-fallback"><Icon name="spark" size={30} /></span>}
                 </span>
                 <span className="topic-card-body">
-                  <span className="article-meta"><time>{a.date}</time><i>{a.category}</i></span>
+                  <span className="article-meta"><time dateTime={a.sortKey.slice(0, 10)}>{a.date}</time><i>{a.category}</i></span>
                   <strong>{a.title}</strong>
                   <span className="topic-card-more">読む<Icon name="arrow" size={15} /></span>
                 </span>
@@ -934,9 +934,9 @@ function Services({ navigate }: { navigate: Nav }) {
 function ArticleRow({ article, navigate }: { article: Article; navigate: Nav }) {
   return (
     <button className={article.thumbnail ? "article-row has-thumb" : "article-row"} onClick={() => navigate("article", undefined, article.slug)}>
-      {article.thumbnail && <span className="article-row-thumb"><img src={article.thumbnail} alt="" loading="lazy" /></span>}
+      {article.thumbnail && <span className="article-row-thumb"><img src={article.thumbnail} alt={article.title} loading="lazy" /></span>}
       <span className="article-row-main">
-        <span className="article-meta"><time>{article.date}</time><i>{article.category}</i></span>
+        <span className="article-meta"><time dateTime={article.sortKey.slice(0, 10)}>{article.date}</time><i>{article.category}</i></span>
         <strong>{article.title}</strong>
       </span>
       <Icon name="arrow" />
@@ -1014,10 +1014,10 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
       <article className="article-page">
         <div className="container article-container">
           <button className="back-link" onClick={() => navigate("topics")}>← トピックス一覧に戻る</button>
-          <div className="article-meta"><time>{article.date}</time><i>{article.category}</i></div>
+          <div className="article-meta"><time dateTime={article.sortKey.slice(0, 10)}>{article.date}</time><i>{article.category}</i></div>
           <h1>{article.title}</h1>
           {article.thumbnail
-            ? <img className="article-thumb" src={article.thumbnail} alt="" />
+            ? <img className="article-thumb" src={article.thumbnail} alt={article.title} fetchPriority="high" />
             : <div className="article-visual"><Icon name="spark" size={42} /><span>TOPICS</span></div>}
           <div className="article-body">
             <div dangerouslySetInnerHTML={{ __html: article.html }} />
@@ -1249,7 +1249,7 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     const titles: Record<Page, string> = { home: "", about: "会社概要", services: "サービス", topics: "トピックス", article: "トピックス", contact: "お問い合わせ", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
-    const base = "COANA TOKYO合同会社 | 中小企業のバックオフィス・マーケティング支援";
+    const base = "中小企業のバックオフィス・マーケティング支援 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article") return; // 記事ページは記事タイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
