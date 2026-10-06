@@ -31,12 +31,23 @@ const files = import.meta.glob("../content/topics/*.md", {
   eager: true,
 }) as Record<string, string>;
 
+const p = (n: number) => String(n).padStart(2, "0");
+
+// 日付は閲覧者のタイムゾーンに左右されず、日本時間の表記で表示する
 function toDate(value: unknown) {
-  const d = value instanceof Date ? value : new Date(String(value ?? ""));
-  if (isNaN(d.getTime())) return { label: String(value ?? ""), key: String(value ?? "") };
-  const p = (n: number) => String(n).padStart(2, "0");
+  const raw = value instanceof Date ? value.toISOString() : String(value ?? "").trim();
+  const dateOnly = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:T00:00(?::00(?:\.000)?)?Z?)?$/);
+  if (dateOnly) {
+    return {
+      label: `${dateOnly[1]}.${dateOnly[2]}.${dateOnly[3]}`,
+      key: `${dateOnly[1]}-${dateOnly[2]}-${dateOnly[3]}`,
+    };
+  }
+  const d = value instanceof Date ? value : new Date(raw);
+  if (isNaN(d.getTime())) return { label: raw, key: raw };
+  const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
   return {
-    label: `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())}`,
+    label: `${jst.getUTCFullYear()}.${p(jst.getUTCMonth() + 1)}.${p(jst.getUTCDate())}`,
     key: d.toISOString(),
   };
 }
