@@ -680,7 +680,7 @@ function MissionBand({ navigate }: { navigate: Nav }) {
       <div className="container" data-reveal>
         <span className="eyebrow">Our mission</span>
         <p className="mission-statement"><Lines text={about.message_heading} /></p>
-        <button className="text-link invert" onClick={() => navigate("about")}>代表メッセージを読む<Icon name="arrow" size={19} /></button>
+        <button className="text-link text-link-light" onClick={() => navigate("about")}>代表メッセージを読む<Icon name="arrow" size={19} /></button>
       </div>
     </section>
   );
@@ -770,7 +770,7 @@ const faqItems: { q: string; a: ReactNode }[] = [
 ];
 
 function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState(0);
   return (
     <section className="section faq-section">
       <div className="container narrow">
@@ -784,7 +784,7 @@ function FaqSection() {
                   className="faq-q"
                   aria-expanded={open}
                   aria-controls={`faq-a-${i}`}
-                  onClick={() => setOpenIndex(open ? null : i)}
+                  onClick={() => setOpenIndex(i)}
                 >
                   <span className="faq-mark">Q</span>
                   <span className="faq-q-text">{item.q}</span>
