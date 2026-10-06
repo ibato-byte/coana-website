@@ -354,8 +354,21 @@ p, li, dd, figcaption { text-wrap: pretty; }
   font-weight: 900;
   text-shadow: 0 3px 14px rgba(0, 38, 70, .3);
 }
-.hero h1 span { position: relative; display: table; white-space: nowrap; }
-.hero h1 span + span { margin-top: 2px; }
+.hero h1 span { position: relative; display: table; z-index: 0; padding: 0 20px 3px 12px; white-space: nowrap; }
+.hero h1 span + span { margin-top: 6px; margin-left: 56px; }
+.hero h1.hero-title-marker span::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 -1%;
+  background: linear-gradient(transparent 60%, rgba(255, 216, 90, .95) 60%, rgba(255, 216, 90, .95) 88%, transparent 88%);
+  transform: rotate(-1deg);
+  transform-origin: 0 50%;
+  animation: marker-draw .8s var(--ease-out) both;
+}
+.hero h1 .hero-line:nth-child(1)::before { animation-delay: .85s; }
+.hero h1 .hero-line:nth-child(2)::before { animation-delay: 1.05s; }
+@keyframes marker-draw { from { transform: rotate(-1deg) scaleX(0); } to { transform: rotate(-1deg) scaleX(1); } }
 
 .hero-anim { opacity: 0; animation: fade-up .9s var(--ease-out) both; }
 .hero-line { opacity: 0; animation: line-in .95s var(--ease-out) both; }
@@ -366,8 +379,8 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .hero .button-row { margin-top: 0; }
 .hero .button { border-color: var(--sky-deep); background: var(--sky-deep); box-shadow: 0 10px 26px rgba(0, 48, 91, .3); }
 .hero .button:hover { border-color: var(--sky-ink); background: var(--sky-ink); }
-.hero .button-outline { border-color: rgba(255, 255, 255, .65); background: rgba(255, 255, 255, .04); color: var(--white); box-shadow: none; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-.hero .button-outline:hover { border-color: var(--white); background: var(--white); color: var(--navy-ink); }
+.hero .button-outline { border-color: var(--white); background: var(--white); color: var(--navy); box-shadow: 0 10px 26px rgba(0, 30, 58, .22); }
+.hero .button-outline:hover { border-color: var(--yellow); background: var(--yellow); color: var(--navy-ink); }
 
 
 /* 「〇〇の悩みを、仕組みで解決。」：ヒーロー下部の一行ステートメント */
@@ -1294,7 +1307,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
   .hero-veil { background: linear-gradient(100deg, rgba(7, 32, 55, .9) 0%, rgba(9, 52, 86, .68) 60%, rgba(10, 80, 128, .3) 100%), linear-gradient(0deg, rgba(7, 28, 48, .6), transparent 45%); }
   .hero-kicker { font-size: 11px; margin-bottom: 20px; letter-spacing: .2em; }
   .hero h1 { font-size: clamp(21px, 6.4vw, 27px); line-height: 1.6; letter-spacing: -.04em; }
-  .hero h1 span { display: block; width: max-content; max-width: 100%; }
+  .hero h1 span { display: block; width: max-content; max-width: 100%; padding: 1px 10px 2px 8px; }
   .hero h1 span + span { margin-top: 5px; margin-left: 0; }
   .hero-solve { bottom: 44px; width: calc(100% - 32px); gap: 14px; }
   .solve-text { font-size: clamp(14px, 4vw, 18px); letter-spacing: 0; }
