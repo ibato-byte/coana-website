@@ -896,7 +896,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(240, 247, 253, .96) 0%, rgba(240, 247, 253, .82) 46%, rgba(240, 247, 253, .3) 100%);
+  background: linear-gradient(90deg, rgba(240, 247, 253, .94) 0%, rgba(240, 247, 253, .7) 42%, rgba(240, 247, 253, .05) 100%);
 }
 .page-hero .container { position: relative; z-index: 2; }
 .page-hero-en { margin: 0; color: var(--sky-deep); font-family: var(--font-en); font-size: 13px; letter-spacing: .26em; font-weight: 600; text-transform: uppercase; animation: fade-up .8s var(--ease-out) both; }
