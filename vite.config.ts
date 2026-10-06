@@ -530,10 +530,92 @@ function coanaPageMeta(): Plugin {
         }
       }
 
+      // ── JavaScript を実行しないクローラー（AI 検索や一部の検索エンジン）にも内容とサイト内リンクが伝わるよう、
+      //    各ページの本文を HTML に埋め込む。画面には表示せず、React の起動時に #root の中身ごと置き換わる。
+      const esc = (value: unknown) => escapeAttr(String(value ?? ''))
+      const paras = (value: unknown) =>
+        String(value ?? '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => '<p>' + esc(t) + '</p>').join('')
+      const anchor = (href: string, text: string) => '<a href="' + esc(href) + '">' + esc(text) + '</a>'
+      const serviceSections = (['backoffice', 'marketing'] as const).map((key) => {
+        const group = services[key] || {}
+        const items = (group.items || []) as { name: string; text: string; tags?: string[] }[]
+        return '<section id="' + key + '"><h2>' + esc(group.title) + '</h2>' + paras(group.lead) +
+          items.map((item) => '<h3>' + esc(item.name) + '</h3>' + paras(item.text) +
+            ((item.tags || []).length ? '<p>' + esc((item.tags || []).join('・')) + '</p>' : '')).join('') + '</section>'
+      }).join('')
+      const sortedTopics = [...feedItems].sort((a, b) => b.date.localeCompare(a.date))
+      const topicList = (items: Feed[]) => '<ul>' + items.map((item) =>
+        '<li>' + anchor(item.url.replace(SITE, ''), item.title) + ' <time datetime="' + esc(item.date) + '">' + esc(item.date) + '</time></li>').join('') + '</ul>'
+      const inlineMd = (text: string) => esc(stripHtml(text))
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+        .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => '<a href="' + href + '">' + label + '</a>')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+      const mdToHtml = (md: string): string => md.split(/\n{2,}/).map((chunk) => {
+        const lines = chunk.trim().split('\n').map((l) => l.trim()).filter(Boolean)
+        if (!lines.length) return ''
+        const heading = lines[0].match(/^(#{1,6})\s+(.*)$/)
+        if (heading) {
+          const level = Math.min(6, Math.max(2, heading[1].length))
+          return '<h' + level + '>' + inlineMd(heading[2]) + '</h' + level + '>' + (lines.length > 1 ? mdToHtml(lines.slice(1).join('\n')) : '')
+        }
+        if (lines.every((l) => /^[-*]\s+/.test(l))) return '<ul>' + lines.map((l) => '<li>' + inlineMd(l.replace(/^[-*]\s+/, '')) + '</li>').join('') + '</ul>'
+        if (lines.every((l) => /^\d+[.)]\s+/.test(l))) return '<ol>' + lines.map((l) => '<li>' + inlineMd(l.replace(/^\d+[.)]\s+/, '')) + '</li>').join('') + '</ol>'
+        const text = lines.map(inlineMd).filter(Boolean).join('<br>')
+        return text ? '<p>' + text + '</p>' : ''
+      }).join('')
+      const fallbackMain = (pagePath: string): string => {
+        if (pagePath === '/') {
+          const strengths = (home.strengths || []) as { title: string; heading: string; description: string }[]
+          const faqItems = (home.faqs || []) as { q: string; a: string }[]
+          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + paras(home.hero_solve_text) +
+            '<section><h2>' + esc(home.about_title) + '</h2>' + paras(home.about_text) + anchor('/about', '会社概要を見る') + '</section>' +
+            '<section><h2>' + esc(home.services_title) + '</h2>' + paras(home.services_lead) + serviceSections + anchor('/services', 'サービスを詳しく見る') + '</section>' +
+            '<section><h2>' + esc(home.strengths_title) + '</h2>' + strengths.map((st) => '<h3>' + esc(st.title) + '：' + esc(st.heading) + '</h3>' + paras(st.description)).join('') + '</section>' +
+            '<section><h2>' + esc(home.faq_title) + '</h2><dl>' + faqItems.map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' +
+            '<section><h2>' + esc(home.topics_title) + '</h2>' + topicList(sortedTopics.slice(0, 5)) + anchor('/topics', 'トピックス一覧') + '</section>' +
+            '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
+        }
+        if (pagePath === '/about') {
+          const rows = (about.company || []) as { label: string; value: string }[]
+          return '<h1>会社概要</h1>' +
+            '<section id="message"><h2>' + esc(about.message_heading) + '</h2>' + ((about.message || []) as string[]).map((t) => paras(t)).join('') + paras(about.signature) + '</section>' +
+            '<section id="profile"><h2>代表プロフィール</h2><p>' + esc(about.profile_role) + ' ' + esc(about.profile_name) + '</p>' + ((about.profile || []) as string[]).map((t) => paras(t)).join('') + '</section>' +
+            '<section id="company"><h2>会社概要</h2><dl>' + rows.map((r) => '<dt>' + esc(r.label) + '</dt><dd>' + esc(r.value).replace(/\n/g, '<br>') + '</dd>').join('') + '</dl></section>'
+        }
+        if (pagePath === '/services') {
+          const flow = (services.flow || []) as unknown[]
+          return '<h1>サービス</h1>' + paras(services.intro) + serviceSections +
+            '<section><h2>' + esc(services.pricing_title) + '</h2>' + paras(services.pricing) + '</section>' +
+            '<section><h2>' + esc(services.flow_title) + '</h2><ol>' + flow.map((step) => '<li>' + esc(typeof step === 'string' ? step : Object.values(step as object).join(' ')) + '</li>').join('') + '</ol></section>' +
+            '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
+        }
+        if (pagePath === '/topics') return '<h1>トピックス</h1>' + topicList(sortedTopics)
+        if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro) + '<p>メール：' + esc(settings.email) + '</p>'
+        if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>'
+        if (pagePath.startsWith('/topics/')) {
+          const slug = pagePath.slice('/topics/'.length)
+          const file = path.join(topicsDir, slug + '.md')
+          const raw = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
+          const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
+          const fm = (match ? parseYaml(match[1]) : {}) || {}
+          const item = feedItems.find((f) => f.url === SITE + pagePath)
+          return '<article><h1>' + esc(fm.title ?? slug) + '</h1>' + (item ? '<time datetime="' + esc(item.date) + '">' + esc(item.date) + '</time>' : '') +
+            (fm.category ? '<p>' + esc(fm.category) + '</p>' : '') + mdToHtml(match ? match[2] : raw) + '</article>' + anchor('/topics', 'トピックス一覧へ戻る')
+        }
+        return ''
+      }
+      const fallbackHeader = '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +
+        [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
+      const fallbackFooter = '<footer><p>' + esc(settings.company_name) + '</p><address>' + esc(settings.postal_code) + ' ' + esc(settings.address) + '</address><nav aria-label="フッター">' +
+        anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
+      const withFallback = (html: string, pagePath: string) => html.replace('<div id="root"></div>', () =>
+        '<div id="root"><div class="seo-fallback" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);border:0">' +
+        fallbackHeader + '<main>' + fallbackMain(pagePath) + '</main>' + fallbackFooter + '</div></div>')
+
       for (const page of pages) {
         const file = page.path === '/' ? shellPath : path.join(outDir, page.path.slice(1) + '.html')
         fs.mkdirSync(path.dirname(file), { recursive: true })
-        fs.writeFileSync(file, render(shell, page, defaultDescription, defaultImage))
+        fs.writeFileSync(file, withFallback(render(shell, page, defaultDescription, defaultImage), page.path))
       }
 
       // 存在しないURLは 404 を返す（画像の取り違えキャッシュ対策を兼ねる）
