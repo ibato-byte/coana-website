@@ -1,4 +1,4 @@
-import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, type Article } from "./content";
 
 declare global {
@@ -1073,6 +1073,7 @@ function Contact() {
       const result = await res.json().catch(() => null);
       if (!res.ok || !result || !result.ok) throw new Error(String(res.status));
       setStep("complete");
+      window.gtag?.("event", "generate_lead", { form_name: "contact", inquiry_type: data.type });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setSendError(`送信に失敗しました。時間をおいて再度お試しいただくか、${settings.email} まで直接ご連絡ください。`);
@@ -1261,7 +1262,7 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [page, routeKey]);
   useEffect(() => {
-    const handler = () => { setPage(pageFromPath()); setRouteKey((k) => k + 1); window.scrollTo(0, 0); };
+    const handler = () => { setPage(pageFromPath()); setRouteKey((k) => k + 1); };
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
   }, []);
@@ -1296,14 +1297,31 @@ export default function App() {
     mutation.observe(document.body, { childList: true, subtree: true });
     return () => { observer.disconnect(); mutation.disconnect(); };
   }, [page, routeKey]);
+  // ページ切り替え直後（描画前）に、アニメーションなしで先頭へ戻す。
+  // なめらかスクロールを描画前に開始すると、スマホでは新しいページの描画で途中停止し、
+  // 前のページの位置（フッター付近）に取り残されるため、描画後に即時スクロールする。
+  useLayoutEffect(() => {
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+  }, []);
+  useLayoutEffect(() => {
+    if (routeKey === 0 || window.location.hash) return;
+    const root = document.documentElement;
+    root.classList.remove("menu-open");
+    const prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    const raf = window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      root.style.scrollBehavior = prev;
+    });
+    return () => window.cancelAnimationFrame(raf);
+  }, [page, routeKey]);
   const navigate: Nav = (target, hash, slug) => {
     const base = target === "article" ? `/topics/${slug ?? ""}` : paths[target];
     const url = `${base}${hash ? `#${hash}` : ""}`;
     window.history.pushState({}, "", url);
     setPage(target);
     setRouteKey((k) => k + 1);
-    window.gtag?.("event", "page_view", { page_path: url });
-    if (!hash) window.scrollTo({ top: 0, behavior: "smooth" });
   };
   let content: ReactNode;
   if (page === "about") content = <About navigate={navigate} />;
