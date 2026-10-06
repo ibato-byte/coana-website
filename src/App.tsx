@@ -1300,7 +1300,18 @@ export default function App() {
       { threshold: 0.08, rootMargin: "0px 0px -4% 0px" },
     );
     targets.forEach((target) => observer.observe(target));
-    return () => observer.disconnect();
+    // 絞り込みなどで後から表示された要素も、スクロール表示の対象にする
+    const mutation = new MutationObserver((records) => {
+      records.forEach((record) => record.addedNodes.forEach((node) => {
+        if (!(node instanceof HTMLElement)) return;
+        const added: HTMLElement[] = node.matches("[data-reveal]") ? [node] : [];
+        added.concat(Array.from(node.querySelectorAll<HTMLElement>("[data-reveal]")))
+          .filter((el) => !el.classList.contains("in"))
+          .forEach((el) => observer.observe(el));
+      }));
+    });
+    mutation.observe(document.body, { childList: true, subtree: true });
+    return () => { observer.disconnect(); mutation.disconnect(); };
   }, [page, routeKey]);
   const navigate: Nav = (target, hash, slug) => {
     const base = target === "article" ? `/topics/${slug ?? ""}` : paths[target];
