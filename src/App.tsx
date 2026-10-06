@@ -317,19 +317,33 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const ref = useRef<HTMLElement | null>(null);
   const words: string[] = (home as { hero_words?: string[] }).hero_words ?? ["経理", "業務フロー", "ERP・ツール導入", "営業・集客"];
   const [wordIndex, setWordIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const firstRun = useRef(true);
   const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const [boxWidth, setBoxWidth] = useState<number | undefined>(undefined);
+  const goTo = (i: number) => {
+    firstRun.current = false;
+    setWordIndex(i);
+  };
+  const next = () => goTo((wordIndex + 1) % words.length);
   useEffect(() => {
-    const el = wordRefs.current[wordIndex];
-    if (el) setBoxWidth(el.offsetWidth);
+    const measure = () => {
+      const el = wordRefs.current[wordIndex];
+      if (el) setBoxWidth(el.offsetWidth);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, [wordIndex]);
   useEffect(() => {
-    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 3000);
+    if (!reduceMotion) return;
+    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 3600);
     return () => window.clearInterval(id);
-  }, [words.length]);
+  }, [reduceMotion, words.length]);
   useEffect(() => {
     const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!el || reduceMotion) return;
     let raf = 0;
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
@@ -342,7 +356,9 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     };
     el.addEventListener("pointermove", onMove);
     return () => { el.removeEventListener("pointermove", onMove); cancelAnimationFrame(raf); };
-  }, []);
+  }, [reduceMotion]);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const base = firstRun.current ? 1.35 : 0;
   return (
     <section className="hero" ref={ref}>
       <div className="hero-bg" aria-hidden="true" />
@@ -359,26 +375,52 @@ function HeroSection({ navigate }: { navigate: Nav }) {
               <LinkButton onClick={() => navigate("contact")}>まずは相談してみる</LinkButton>
               <LinkButton secondary onClick={() => navigate("services")}>サービスを見る</LinkButton>
             </div>
-            <p className="hero-rotator">
-              <span className="rotator-box" aria-live="polite" style={boxWidth ? { width: boxWidth } : undefined}>
-                {words.map((w, i) => (
-                  <span
-                    key={w}
-                    ref={(el) => { wordRefs.current[i] = el; }}
-                    className={i === wordIndex ? "rotator-word is-active" : i === (wordIndex + words.length - 1) % words.length ? "rotator-word is-leaving" : "rotator-word"}
-                  >{w}</span>
-                ))}
-              </span>
-              <span className="rotator-rest">の悩みを、仕組みで解決。</span>
-            </p>
           </div>
         </div>
       </div>
-      <div className="hero-tools hero-anim" style={{ animationDelay: "1.25s" }}>
-        <span className="hero-tools-label">導入支援ツール</span>
-        <ul>
-          {home.tools.map((t) => <li key={t.name}><img src={t.logo} alt={t.name} /></li>)}
+      <div
+        className="hero-solve hero-anim"
+        style={{ animationDelay: "1.15s" }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        <div className="solve-meta" aria-hidden="true">
+          <span className="solve-label">We solve</span>
+          <span className="solve-count"><b key={wordIndex}>{pad(wordIndex + 1)}</b> / {pad(words.length)}</span>
+        </div>
+        <p className="solve-text">
+          <span className="solve-box" style={boxWidth ? { width: boxWidth } : undefined}>
+            {words.map((w, i) => (
+              <span
+                key={w}
+                ref={(el) => { wordRefs.current[i] = el; }}
+                className={i === wordIndex ? "solve-word is-active" : i === (wordIndex + words.length - 1) % words.length && !firstRun.current ? "solve-word is-leaving" : "solve-word"}
+                style={{ ["--d" as string]: base + "s" } as React.CSSProperties}
+                aria-hidden={i !== wordIndex}
+              >
+                {Array.from(w).map((ch, ci) => (
+                  <span key={ci} className="solve-ch" style={{ animationDelay: (base + 0.12 + ci * 0.045).toFixed(3) + "s" }}>{ch}</span>
+                ))}
+              </span>
+            ))}
+          </span>
+          <span className="solve-rest">の悩みを、仕組みで解決。</span>
+        </p>
+        <ul className="solve-list" aria-label="解決できるお悩みを切り替える">
+          {words.map((w, i) => (
+            <li key={w}>
+              <button type="button" className={i === wordIndex ? "is-active" : ""} aria-pressed={i === wordIndex} onClick={() => goTo(i)}>{w}</button>
+            </li>
+          ))}
         </ul>
+        <span className="solve-progress" aria-hidden="true">
+          <i
+            key={wordIndex}
+            className={paused ? "is-paused" : undefined}
+            style={{ animationDelay: base + "s" }}
+            onAnimationEnd={reduceMotion ? undefined : next}
+          />
+        </span>
       </div>
       <div className="hero-scroll" aria-hidden="true"><span>SCROLL</span><i /></div>
     </section>
