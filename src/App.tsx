@@ -327,11 +327,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const firstRun = useRef(true);
   const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const [boxWidth, setBoxWidth] = useState<number | undefined>(undefined);
-  const goTo = (i: number) => {
-    firstRun.current = false;
-    setWordIndex(i);
-  };
-  const next = () => goTo((wordIndex + 1) % words.length);
   useEffect(() => {
     const measure = () => {
       const el = wordRefs.current[wordIndex];
@@ -342,8 +337,10 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     return () => window.removeEventListener("resize", measure);
   }, [wordIndex]);
   useEffect(() => {
-    if (!reduceMotion) return;
-    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 3600);
+    const id = window.setInterval(() => {
+      firstRun.current = false;
+      setWordIndex((i) => (i + 1) % words.length);
+    }, 4200);
     return () => window.clearInterval(id);
   }, [reduceMotion, words.length]);
   useEffect(() => {
@@ -406,13 +403,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
             <span className="solve-rest">の悩みを、仕組みで解決。</span>
           </span>
         </p>
-        <span className="solve-progress" aria-hidden="true">
-          <i
-            key={wordIndex}
-            style={{ animationDelay: base + "s" }}
-            onAnimationEnd={reduceMotion ? undefined : next}
-          />
-        </span>
       </div>
     </section>
   );
