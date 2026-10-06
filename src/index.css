@@ -450,6 +450,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .hero-tools-label { flex: 0 0 auto; padding-right: 24px; border-right: 1px solid var(--line); color: var(--navy); font-size: 12px; font-weight: 800; letter-spacing: .08em; }
 .hero-tools ul { flex: 1; list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-around; align-items: center; gap: 20px; }
 .hero-tools img { display: block; height: 30px; max-width: 170px; object-fit: contain; }
+/* ロゴごとに見た目の大きさをそろえる */
+.hero-tools img[src$="freee.png"] { height: 34px; }
+.hero-tools img[src$="moneyforward.png"] { height: 42px; margin: -6px 0; }
+.hero-tools img[src$="odoo.png"] { height: 27px; }
+.hero-tools img[src$="google-workspace.png"] { height: 23px; max-width: 190px; }
 
 .hero-scroll {
   position: absolute;
@@ -466,7 +471,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: .32em;
   font-weight: 600;
 }
-.hero-scroll i { position: relative; width: 1px; height: 52px; background: rgba(255, 255, 255, .3); overflow: hidden; }
+.hero-scroll i { position: relative; width: 1px; height: 38px; background: rgba(255, 255, 255, .3); overflow: hidden; }
 .hero-scroll i::after { content: ""; position: absolute; left: 0; top: -40%; width: 100%; height: 40%; background: var(--yellow); animation: scroll-line 2.1s var(--ease-out) infinite; }
 @keyframes scroll-line { 0% { top: -40%; } 100% { top: 110%; } }
 
@@ -753,7 +758,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .tool-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: transparent; }
 .tool-card:hover::after { transform: scaleX(1); }
 .tool-logo { height: 58px; display: flex; align-items: center; margin-bottom: 20px; }
-.tool-logo img { max-width: 76%; max-height: 42px; object-fit: contain; transition: transform .5s var(--ease-out); }
+.tool-logo img { display: block; width: auto; max-width: 100%; height: 40px; object-fit: contain; object-position: left center; transition: transform .5s var(--ease-out); }
+.tool-logo img[src$="freee.png"] { height: 44px; }
+.tool-logo img[src$="moneyforward.png"] { height: 52px; }
+.tool-logo img[src$="odoo.png"] { height: 34px; }
+.tool-logo img[src$="google-workspace.png"] { height: auto; width: min(92%, 190px); }
 .tool-card:hover .tool-logo img { transform: scale(1.05); }
 .tool-category { margin: 0 0 4px; color: var(--sky-deep); font-size: 12px; font-weight: 700; letter-spacing: .05em; }
 .tool-card h3 { margin: 0 0 10px; font-size: 18px; font-weight: 800; }
@@ -1363,6 +1372,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .hero-tools-label { border-right: 0; padding-right: 0; }
   .hero-tools ul { flex-wrap: wrap; justify-content: center; gap: 12px 24px; }
   .hero-tools img { height: 24px; }
+  .hero-tools img[src$="freee.png"] { height: 27px; }
+  .hero-tools img[src$="moneyforward.png"] { height: 34px; margin: -5px 0; }
+  .hero-tools img[src$="odoo.png"] { height: 22px; }
+  .hero-tools img[src$="google-workspace.png"] { height: 18px; }
   .hero { padding-bottom: 260px; }
 }
 
@@ -1386,6 +1399,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .hero-tools { bottom: 24px; width: calc(100% - 40px); }
   .hero-tools ul { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; }
   .hero-tools img { height: 20px; max-width: 130px; }
+  .hero-tools img[src$="freee.png"] { height: 23px; }
+  .hero-tools img[src$="moneyforward.png"] { height: 28px; margin: -4px 0; }
+  .hero-tools img[src$="odoo.png"] { height: 18px; }
+  .hero-tools img[src$="google-workspace.png"] { height: 15px; }
   .hero-scroll { display: none; }
 
   .issue-grid { grid-template-columns: 1fr; margin-top: 40px; }
