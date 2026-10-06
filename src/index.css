@@ -44,6 +44,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 button, input, select, textarea { font: inherit; }
+:where(a.go-link) {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
 button, a { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; cursor: pointer; }
 a { color: inherit; }
@@ -292,8 +300,10 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 .footer-links > div { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
 .footer-links-title { margin: 0 0 6px; color: var(--sky); font-family: var(--font-en); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; font-weight: 600; }
-.footer-links button { border: 0; background: transparent; padding: 3px 0; font-size: 14px; font-weight: 500; color: #dbe8f2; transition: color .25s, transform .25s var(--ease-out); }
-.footer-links button:hover { color: var(--yellow); transform: translateX(4px); }
+.footer-links button,
+.footer-links a:where(.go-link) { border: 0; background: transparent; padding: 3px 0; font-size: 14px; font-weight: 500; color: #dbe8f2; transition: color .25s, transform .25s var(--ease-out); }
+.footer-links button:hover,
+.footer-links a:where(.go-link):hover { color: var(--yellow); transform: translateX(4px); }
 .footer-bottom { position: relative; border-top: 1px solid rgba(219, 232, 242, .16); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
 .footer-bottom small { font-family: var(--font-en); font-size: 11px; letter-spacing: .1em; color: #8aa2b5; }
 .footer-privacy { border: 0; background: transparent; padding: 0; color: #8aa2b5; font-size: 12px; transition: color .25s; }
@@ -1138,7 +1148,8 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .rich-text { padding: 0; }
 
 .article-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 50px 0 30px; }
-.article-nav button {
+.article-nav button,
+.article-nav a:where(.go-link) {
   display: grid;
   gap: 6px;
   text-align: left;
@@ -1148,9 +1159,12 @@ p, li, dd, figcaption { text-wrap: pretty; }
   background: var(--paper);
   transition: border-color .3s, box-shadow .3s, transform .3s var(--ease-out);
 }
-.article-nav button:hover { border-color: rgba(8, 127, 229, .5); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
-.article-nav button small { color: var(--sky-deep); font-weight: 700; font-size: 12px; }
-.article-nav button span { font-size: 13.5px; font-weight: 600; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.article-nav button:hover,
+.article-nav a:where(.go-link):hover { border-color: rgba(8, 127, 229, .5); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+.article-nav button small,
+.article-nav a:where(.go-link) small { color: var(--sky-deep); font-weight: 700; font-size: 12px; }
+.article-nav button span,
+.article-nav a:where(.go-link) span { font-size: 13.5px; font-weight: 600; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .article-nav .next { text-align: right; }
 .article-nav-empty { display: block; }
 .back-link.bottom { margin: 10px 0 0; }
@@ -1261,7 +1275,8 @@ p, li, dd, figcaption { text-wrap: pretty; }
     gap: 4px;
     z-index: -1;
   }
-  .mobile-nav button {
+  .mobile-nav button,
+.mobile-nav a:where(.go-link) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1275,8 +1290,10 @@ p, li, dd, figcaption { text-wrap: pretty; }
     opacity: 0;
     animation: fade-up .5s var(--ease-out) forwards;
   }
-  .mobile-nav button small { display: block; color: var(--sky-deep); font-family: var(--font-en); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; font-weight: 600; }
-  .mobile-nav button svg { color: var(--sky-deep); }
+  .mobile-nav button small,
+.mobile-nav a:where(.go-link) small { display: block; color: var(--sky-deep); font-family: var(--font-en); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; font-weight: 600; }
+  .mobile-nav button svg,
+.mobile-nav a:where(.go-link) svg { color: var(--sky-deep); }
   .mobile-nav-foot { margin-top: auto; color: var(--navy-soft); font-size: 12px; }
 
   .about-content { grid-template-columns: 1fr; gap: 44px; }
