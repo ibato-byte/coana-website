@@ -393,47 +393,46 @@ p, li, dd, figcaption { text-wrap: pretty; }
   gap: 26px;
   white-space: nowrap;
   font-size: clamp(20px, 2.1vw, 28px);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.5;
   letter-spacing: .02em;
   text-shadow: 0 2px 16px rgba(0, 30, 55, .5);
 }
-.solve-text::before, .solve-text::after { content: ""; flex: 0 0 auto; width: clamp(32px, 5vw, 80px); height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .4)); }
-.solve-text::after { background: linear-gradient(90deg, rgba(255, 255, 255, .4), transparent); }
+.solve-text::before, .solve-text::after { content: ""; flex: 0 0 auto; width: clamp(36px, 6vw, 96px); height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .65)); }
+.solve-text::after { background: linear-gradient(90deg, rgba(255, 255, 255, .65), transparent); }
 .solve-line { display: inline-flex; align-items: center; gap: 4px; }
 .solve-box { position: relative; display: inline-grid; margin-right: 6px; transition: width .7s var(--ease-out); }
 .solve-word {
   grid-area: 1 / 1;
   position: relative;
+  isolation: isolate;
   width: max-content;
-  padding: 0 2px 4px;
-  color: var(--yellow);
+  padding: 1px 14px 3px;
+  color: var(--navy-ink);
+  text-shadow: none;
   white-space: nowrap;
   visibility: hidden;
 }
-/* キーワードの下に細い線を静かに引く */
 .solve-word::before {
   content: "";
   position: absolute;
-  left: 2px;
-  right: 2px;
-  bottom: 0;
-  height: 1.5px;
-  border-radius: 2px;
-  background: currentColor;
-  opacity: .8;
+  inset: 0;
+  z-index: -1;
+  border-radius: 10px;
+  background: var(--yellow);
+  box-shadow: 0 10px 28px rgba(255, 216, 90, .28);
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
 .solve-word.is-active { visibility: visible; }
-.solve-word.is-active::before { animation: solve-marker .9s var(--ease-out) calc(var(--d, 0s) + .35s) both; }
-.solve-word.is-leaving { visibility: visible; animation: solve-leave .6s var(--ease-out) both; }
+.solve-word.is-active::before { animation: solve-marker .75s var(--ease-out) var(--d, 0s) both; }
+.solve-word.is-leaving { visibility: visible; animation: solve-leave .55s var(--ease-out) both; }
 .solve-word.is-leaving::before { transform: scaleX(1); }
 .solve-ch { display: inline-block; white-space: pre; }
-.solve-word.is-active .solve-ch { animation: solve-ch .8s var(--ease-out) both; }
+.solve-word.is-active .solve-ch { animation: solve-ch .75s var(--ease-out) both; }
 @keyframes solve-marker { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes solve-leave { to { opacity: 0; transform: translateY(-30%); } }
-@keyframes solve-ch { from { opacity: 0; transform: translateY(.35em); } to { opacity: 1; transform: none; } }
+@keyframes solve-leave { to { opacity: 0; transform: translateY(-45%); filter: blur(6px); } }
+@keyframes solve-ch { from { opacity: 0; transform: translateY(.6em); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
 .solve-progress { position: relative; width: 72px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .2); overflow: hidden; }
 .solve-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--sky), var(--yellow)); transform: scaleX(0); transform-origin: 0 50%; animation: solve-progress 3.8s linear both; }
 @keyframes solve-progress { to { transform: scaleX(1); } }
@@ -1300,7 +1299,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
   .hero-solve { bottom: 44px; width: calc(100% - 32px); gap: 14px; }
   .solve-text { font-size: clamp(14px, 4vw, 18px); letter-spacing: 0; }
   .solve-text::before, .solve-text::after { display: none; }
-  .solve-word { padding: 0 1px 3px; }
+  .solve-word { padding: 0 8px 2px; }
   .solve-box { margin-right: 3px; }
   .hero-actions { margin-top: 30px; gap: 22px; }
 .hero .button-row { width: 100%; }
