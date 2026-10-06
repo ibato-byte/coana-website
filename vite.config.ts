@@ -458,6 +458,13 @@ function coanaPageMeta(): Plugin {
         fs.writeFileSync(file, render(shell, page, defaultDescription, defaultImage))
       }
 
+      // 存在しないURLは 404 を返す。
+      // （これがないと、公開前の画像のURLにトップページのHTMLが返り、それがブラウザに保存されてCMSで画像が壊れて見える）
+      const notFound = render(shell, { path: '/404', title: 'ページが見つかりません' + SUFFIX, description: '' }, defaultDescription, defaultImage)
+        .replace(/\s*<link\s+rel="canonical"[^>]*>/, '')
+        .replace('</head>', () => '    <meta name="robots" content="noindex" />\n  </head>')
+      fs.writeFileSync(path.join(outDir, '404.html'), notFound)
+
       const sitemap = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
