@@ -426,9 +426,9 @@ function coanaPageMeta(): Plugin {
       const pages: PageMeta[] = [
         { path: '/', title: (shell.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'COANA TOKYO合同会社', description: '' },
         { path: '/about', title: '会社概要' + SUFFIX, description: 'COANA TOKYO合同会社の会社概要。代表メッセージ、代表プロフィール、会社情報をご紹介します。' },
-        { path: '/services', title: 'サービス' + SUFFIX, description: '経理・業務フローの改善、ITツール・クラウドツールの導入、実務代行などのバックオフィス支援と、営業・セミナー・SNS・Webサイト制作のマーケティング支援をご紹介します。' },
+        { path: '/services', title: 'サービス' + SUFFIX, description: '中小企業・小規模事業者に向けた、経理・業務フローの改善、ITツール・クラウドツールの導入、実務代行などのバックオフィス支援と、営業・セミナー・SNS・Webサイト制作のマーケティング支援をご紹介します。' },
         { path: '/topics', title: 'トピックス' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。' },
-        { path: '/contact', title: 'お問い合わせ' + SUFFIX, description: 'バックオフィスやマーケティングのお悩みは、こちらからお気軽にご相談ください。内容を確認のうえ、担当者よりご連絡いたします。' },
+        { path: '/contact', title: 'お問い合わせ' + SUFFIX, description: '中小企業・小規模事業者のバックオフィスやマーケティングのお悩みは、こちらからお気軽にご相談ください。内容を確認のうえ、担当者よりご連絡いたします。' },
         { path: '/privacy', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシーです。' },
       ]
 
