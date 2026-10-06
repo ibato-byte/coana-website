@@ -42,7 +42,7 @@ collections:
       - { label: URL用の英字名（例：new-service）, name: slug, widget: string, pattern: ["^[a-z0-9-]+$", "半角英小文字・数字・ハイフンのみ"] }
       - { label: 公開日, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY.MM.DD", time_format: false }
       - { label: カテゴリー, name: category, widget: select, options: [お知らせ, サービス, イベント, 実績・事例], default: お知らせ }
-      - { label: 概要（一覧・冒頭に表示）, name: summary, widget: text, required: false }
+      - { label: 概要（SNS共有・検索結果の説明文に使用）, name: summary, widget: text, required: false }
       - { label: アイキャッチ画像, name: thumbnail, widget: image, required: false }
       - { label: 下書き（チェックすると非公開）, name: draft, widget: boolean, default: false, required: false }
       - { label: 本文, name: body, widget: markdown }
@@ -56,22 +56,20 @@ collections:
         label: トップページ
         file: content/home.json
         fields:
-          - { label: キャッチコピー1行目, name: hero_line1, widget: string }
-          - { label: キャッチコピー2行目, name: hero_line2, widget: string }
-          - { label: 切り替わるキーワード（「〜の悩みを、仕組みで解決。」の前に表示）, name: hero_words, widget: list, field: { label: キーワード, name: word, widget: string } }
-          - { label: About 見出し, name: about_title, widget: string }
-          - { label: About 本文, name: about_text, widget: text }
-          - { label: 対応ツール 見出し, name: tools_title, widget: string }
-          - { label: 対応ツール 説明, name: tools_text, widget: text }
-          - label: 対応ツール
-            name: tools
-            widget: list
-            summary: "{{fields.name}}"
-            fields:
-              - { label: ツール名, name: name, widget: string }
-              - { label: ロゴ画像, name: logo, widget: image }
-              - { label: カテゴリー, name: category, widget: string }
-              - { label: 説明, name: text, widget: text }
+          - { label: ヒーロー｜小見出し（英字）, name: hero_kicker, widget: string }
+          - { label: ヒーロー｜キャッチコピー1行目, name: hero_line1, widget: string }
+          - { label: ヒーロー｜キャッチコピー2行目, name: hero_line2, widget: string }
+          - { label: ヒーロー｜切り替わるキーワード, name: hero_words, widget: list, field: { label: キーワード, name: word, widget: string } }
+          - { label: ヒーロー｜キーワードに続く文, name: hero_solve_text, widget: string }
+          - { label: ヒーロー｜相談ボタンの文言, name: hero_button_primary, widget: string }
+          - { label: ヒーロー｜サービスボタンの文言, name: hero_button_secondary, widget: string }
+          - { label: ヒーロー｜背景画像, name: hero_image, widget: image }
+          - { label: About｜見出し, name: about_title, widget: string }
+          - { label: About｜本文, name: about_text, widget: text }
+          - { label: About｜画像, name: about_image, widget: image }
+          - { label: サービス｜見出し, name: services_title, widget: string }
+          - { label: サービス｜リード文, name: services_lead, widget: text }
+          - { label: 選ばれる理由｜見出し, name: strengths_title, widget: string }
           - label: 選ばれる理由（タブ）
             name: strengths
             widget: list
@@ -84,10 +82,35 @@ collections:
               - { label: 対応サービスの例, name: services, widget: list, field: { label: サービス, name: item, widget: string } }
               - { label: イラスト, name: illustration, widget: select, options: [{ label: 専門性, value: expertise }, { label: チーム, value: team }, { label: ワンストップ, value: one-stop }, { label: 柔軟性, value: flexible }] }
 
+          - { label: 対応ツール｜見出し, name: tools_title, widget: string }
+          - { label: 対応ツール｜説明, name: tools_text, widget: text }
+          - label: 対応ツール
+            name: tools
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: ツール名, name: name, widget: string }
+              - { label: ロゴ画像, name: logo, widget: image }
+              - { label: カテゴリー, name: category, widget: string }
+              - { label: 説明, name: text, widget: text }
+          - { label: 対応ツール｜一覧の下の補足, name: tools_note, widget: string, required: false }
+          - { label: トピックス｜見出し, name: topics_title, widget: string }
+          - { label: トピックス｜リード文, name: topics_lead, widget: text }
+          - { label: 代表メッセージ｜見出し, name: message_title, widget: string }
+          - { label: 代表メッセージ｜本文, name: message_text, widget: text }
+          - { label: よくあるご質問｜見出し, name: faq_title, widget: string }
+          - label: よくあるご質問
+            name: faqs
+            widget: list
+            summary: "{{fields.q}}"
+            fields:
+              - { label: 質問, name: q, widget: string }
+              - { label: 回答, name: a, widget: text }
       - name: about
         label: 会社概要ページ
         file: content/about.json
         fields:
+          - { label: ページ上部の画像, name: hero_image, widget: image }
           - { label: メッセージ見出し（改行可）, name: message_heading, widget: text }
           - { label: メッセージ本文（段落ごと）, name: message, widget: list, field: { label: 段落, name: p, widget: text } }
           - { label: 署名, name: signature, widget: string }
@@ -108,6 +131,7 @@ collections:
         label: サービスページ
         file: content/services.json
         fields:
+          - { label: ページ上部の画像, name: hero_image, widget: image }
           - { label: 導入文, name: intro, widget: text }
           - label: バックオフィス支援
             name: backoffice
@@ -115,6 +139,7 @@ collections:
             fields: &serviceFields
               - { label: 英字ラベル, name: en, widget: string }
               - { label: 名称, name: title, widget: string }
+              - { label: 補足ラベル（例：守りを固める）, name: note, widget: string }
               - { label: リード文（「、」の後で改行されます）, name: lead, widget: string }
               - label: サービス項目
                 name: items
@@ -128,8 +153,10 @@ collections:
             name: marketing
             widget: object
             fields: *serviceFields
-          - { label: 料金について, name: pricing, widget: text }
-          - { label: ご利用までの流れ, name: flow, widget: list, field: { label: ステップ, name: step, widget: string } }
+          - { label: 料金｜見出し, name: pricing_title, widget: string }
+          - { label: 料金｜本文, name: pricing, widget: text }
+          - { label: ご利用までの流れ｜見出し, name: flow_title, widget: string }
+          - { label: ご利用までの流れ｜ステップ, name: flow, widget: list, field: { label: ステップ, name: step, widget: string } }
 
       - name: privacy
         label: プライバシーポリシー
@@ -153,3 +180,5 @@ collections:
             fields:
               - { label: 見出し, name: heading, widget: string }
               - { label: 本文（改行可）, name: text, widget: text }
+          - { label: トピックス一覧ページ上部の画像, name: topics_hero_image, widget: image }
+          - { label: お問い合わせページの導入文, name: contact_intro, widget: text }
