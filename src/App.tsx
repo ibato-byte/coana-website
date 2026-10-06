@@ -343,11 +343,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     el.addEventListener("pointermove", onMove);
     return () => { el.removeEventListener("pointermove", onMove); cancelAnimationFrame(raf); };
   }, []);
-  const pillars = [
-    { n: "01", t: "経理 × IT", d: "業務フローから再設計" },
-    { n: "02", t: "クラウド導入", d: "会計・ERP・グループウェア" },
-    { n: "03", t: "集客・営業", d: "成長につながる仕組みへ" },
-  ];
   return (
     <section className="hero" ref={ref}>
       <div className="hero-bg" aria-hidden="true" />
@@ -359,27 +354,24 @@ function HeroSection({ navigate }: { navigate: Nav }) {
             <span className="hero-line" style={{ animationDelay: "0.3s" }}>{home.hero_line1}</span>
             <span className="hero-line" style={{ animationDelay: "0.5s" }}>{home.hero_line2}</span>
           </h1>
-          <p className="hero-rotator hero-anim" style={{ animationDelay: "0.85s" }}>
-            <span className="rotator-box" aria-live="polite" style={boxWidth ? { width: boxWidth } : undefined}>
-              {words.map((w, i) => (
-                <span
-                  key={w}
-                  ref={(el) => { wordRefs.current[i] = el; }}
-                  className={i === wordIndex ? "rotator-word is-active" : i === (wordIndex + words.length - 1) % words.length ? "rotator-word is-leaving" : "rotator-word"}
-                >{w}</span>
-              ))}
-            </span>
-            <span className="rotator-rest">の悩みを、仕組みで解決。</span>
-          </p>
-          <div className="button-row hero-anim" style={{ animationDelay: "1.05s" }}>
-            <LinkButton onClick={() => navigate("contact")}>まずは相談してみる</LinkButton>
-            <LinkButton secondary onClick={() => navigate("services")}>サービスを見る</LinkButton>
+          <div className="hero-actions hero-anim" style={{ animationDelay: "0.85s" }}>
+            <div className="button-row">
+              <LinkButton onClick={() => navigate("contact")}>まずは相談してみる</LinkButton>
+              <LinkButton secondary onClick={() => navigate("services")}>サービスを見る</LinkButton>
+            </div>
+            <p className="hero-rotator">
+              <span className="rotator-box" aria-live="polite" style={boxWidth ? { width: boxWidth } : undefined}>
+                {words.map((w, i) => (
+                  <span
+                    key={w}
+                    ref={(el) => { wordRefs.current[i] = el; }}
+                    className={i === wordIndex ? "rotator-word is-active" : i === (wordIndex + words.length - 1) % words.length ? "rotator-word is-leaving" : "rotator-word"}
+                  >{w}</span>
+                ))}
+              </span>
+              <span className="rotator-rest">の悩みを、仕組みで解決。</span>
+            </p>
           </div>
-        </div>
-        <div className="hero-cards" aria-hidden="true">
-          {pillars.map((p, i) => (
-            <div key={p.n} className={`hero-card c${i + 1}`}><b>{p.n}</b><span>{p.t}</span><small>{p.d}</small></div>
-          ))}
         </div>
       </div>
       <div className="hero-tools hero-anim" style={{ animationDelay: "1.25s" }}>
@@ -389,40 +381,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         </ul>
       </div>
       <div className="hero-scroll" aria-hidden="true"><span>SCROLL</span><i /></div>
-    </section>
-  );
-}
-
-/* ───────────────────────── Home: Issues ───────────────────────── */
-
-const issueList = [
-  "会計ソフトやITツールを導入しても、業務が効率化されない",
-  "手入力や重複作業が多く、ミスや確認の負担が大きい",
-  "経営判断に必要な数字を把握するまでに時間がかかる",
-  "担当者に業務が集中し、属人化している",
-  "日々の事務作業に追われ、集客や営業に手が回らない",
-  "課題が複数あり、何から取り組めばよいかわからない",
-];
-
-function IssuesSection() {
-  return (
-    <section className="section issues-section">
-      <div className="container">
-        <SectionTitle en="Issues" center>こんなお悩みは、ありませんか？</SectionTitle>
-        <ul className="issue-grid">
-          {issueList.map((text, i) => (
-            <li key={text} data-reveal style={{ transitionDelay: `${(i % 3) * 90}ms` }}>
-              <span className="issue-check" aria-hidden="true"><Icon name="check" size={15} /></span>
-              {text}
-            </li>
-          ))}
-        </ul>
-        <div className="issues-answer" data-reveal>
-          <span className="issues-answer-line" aria-hidden="true" />
-          <p>その悩み、<b>「仕組み」</b>で解決できます。</p>
-          <span className="issues-answer-line" aria-hidden="true" />
-        </div>
-      </div>
     </section>
   );
 }
@@ -442,7 +400,7 @@ function AboutIntro({ navigate }: { navigate: Nav }) {
             </div>
           </div>
           <figure className="about-image" data-reveal>
-            <img src="/images/about-backoffice.jpg" alt="オフィスで打ち合わせをするビジネスパーソン" loading="lazy" />
+            <img src="/images/about-backoffice.jpg" alt="オフィスで打ち合わせをするビジネスパーソン" />
             <figcaption aria-hidden="true">COANA TOKYO</figcaption>
           </figure>
         </div>
@@ -808,7 +766,6 @@ function Home({ navigate }: { navigate: Nav }) {
   return (
     <main>
       <HeroSection navigate={navigate} />
-      <IssuesSection />
       <AboutIntro navigate={navigate} />
       <ServicesHome navigate={navigate} />
       <section className="section strengths-section">
