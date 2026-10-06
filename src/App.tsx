@@ -787,7 +787,6 @@ function Home({ navigate }: { navigate: Nav }) {
       <ToolsSection />
       <MissionBand navigate={navigate} />
       <TopicsHome navigate={navigate} />
-      <MessageTeaser navigate={navigate} />
       <FaqSection />
       <ContactBand navigate={navigate} />
     </main>
