@@ -16,9 +16,10 @@ type Page =
   | "topics"
   | "article"
   | "contact"
-  | "privacy";
+  | "privacy"
+  | "notfound";
 
-const paths: Record<Exclude<Page, "article">, string> = {
+const paths: Record<Exclude<Page, "article" | "notfound">, string> = {
   home: "/",
   about: "/about",
   services: "/services",
@@ -35,7 +36,8 @@ function pageFromPath(): Page {
   if (path === "/topics") return "topics";
   if (path === "/contact") return "contact";
   if (path === "/privacy") return "privacy";
-  return "home";
+  if (path === "/" || path === "/index.html") return "home";
+  return "notfound";
 }
 
 function slugFromPath() {
@@ -1205,6 +1207,22 @@ function Privacy() {
   );
 }
 
+/* ───────────────────────── Not found ───────────────────────── */
+
+function NotFound({ navigate }: { navigate: Nav }) {
+  return (
+    <main>
+      <PageHero en="404 Not found" title="ページが見つかりません" intro="お探しのページは、移動または削除された可能性があります。" />
+      <section className="section">
+        <div className="container button-row" style={{ justifyContent: "center" }}>
+          <LinkButton onClick={() => navigate("home")}>トップページへ</LinkButton>
+          <LinkButton secondary onClick={() => navigate("contact")}>お問い合わせ</LinkButton>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 /* ───────────────────────── App shell ───────────────────────── */
 
 function BackToTop() {
@@ -1231,7 +1249,7 @@ export default function App() {
   const [page, setPage] = useState<Page>(pageFromPath);
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
-    const titles: Record<Page, string> = { home: "", about: "会社概要", services: "サービス", topics: "トピックス", article: "トピックス", contact: "お問い合わせ", privacy: "プライバシーポリシー" };
+    const titles: Record<Page, string> = { home: "", about: "会社概要", services: "サービス", topics: "トピックス", article: "トピックス", contact: "お問い合わせ", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
     const base = "COANA TOKYO合同会社 | 中小企業のバックオフィス・マーケティング支援";
     if (page === "article") return; // 記事ページは記事タイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
@@ -1295,6 +1313,7 @@ export default function App() {
   else if (page === "article") content = <ArticlePage key={routeKey} navigate={navigate} />;
   else if (page === "contact") content = <Contact />;
   else if (page === "privacy") content = <Privacy />;
+  else if (page === "notfound") content = <NotFound navigate={navigate} />;
   else content = <Home navigate={navigate} />;
   return (
     <div className="app-shell">
