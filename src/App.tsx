@@ -141,6 +141,12 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   useEffect(() => {
+    if (!open) return;
+    const onKey = (e: globalThis.KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  useEffect(() => {
     document.documentElement.classList.toggle("menu-open", open);
     return () => document.documentElement.classList.remove("menu-open");
   }, [open]);
@@ -163,7 +169,7 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
           {links.map(([target, label]) => (
             <button
               key={target}
-              className={page === target ? "nav-link active" : "nav-link"}
+              className={page === target || (page === "article" && target === "topics") ? "nav-link active" : "nav-link"}
               onClick={() => go(target)}
             >
               {label}
@@ -317,7 +323,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const ref = useRef<HTMLElement | null>(null);
   const words: string[] = (home as { hero_words?: string[] }).hero_words ?? ["経理", "業務フロー", "ERP・ツール導入", "営業・集客"];
   const [wordIndex, setWordIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const firstRun = useRef(true);
   const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
@@ -380,8 +385,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
       <div
         className="hero-solve hero-anim"
         style={{ animationDelay: "1.15s" }}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
       >
         <p className="solve-text">
           <span className="solve-line">
@@ -406,13 +409,11 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         <span className="solve-progress" aria-hidden="true">
           <i
             key={wordIndex}
-            className={paused ? "is-paused" : undefined}
             style={{ animationDelay: base + "s" }}
             onAnimationEnd={reduceMotion ? undefined : next}
           />
         </span>
       </div>
-      <div className="hero-scroll" aria-hidden="true"><span>SCROLL</span><i /></div>
     </section>
   );
 }
@@ -1259,6 +1260,7 @@ export default function App() {
   useEffect(() => {
     const titles: Record<Page, string> = { home: "", about: "会社概要", services: "サービス", topics: "トピックス", article: "トピックス", contact: "お問い合わせ", privacy: "プライバシーポリシー" };
     const base = "COANA TOKYO合同会社 | バックオフィス・マーケティング支援";
+    if (page === "article") return; // 記事ページは記事タイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
   useEffect(() => {
