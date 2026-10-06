@@ -962,7 +962,10 @@ p, li, dd, figcaption { text-wrap: pretty; }
 
 .company-inner { display: grid; grid-template-columns: 1fr 1.6fr; gap: 100px; }
 .company-inner h2 { margin: 0; font-size: 40px; font-weight: 900; }
-.company-inner > div:first-child { position: sticky; top: 120px; align-self: start; }
+/* パソコンのみ：会社情報の見出しを表のスクロールに追従させる（スマホでは重なるため無効） */
+@media (min-width: 981px) {
+  .company-inner > div:first-child { position: sticky; top: 120px; align-self: start; }
+}
 .company-table { margin: 0; }
 .company-table > div { display: grid; grid-template-columns: 150px 1fr; padding: 23px 4px; border-bottom: 1px solid var(--line); transition: background .3s; }
 .company-table > div:first-child { border-top: 1px solid var(--line); }
