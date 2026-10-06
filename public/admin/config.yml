@@ -96,8 +96,6 @@ collections:
           - { label: 対応ツール｜一覧の下の補足, name: tools_note, widget: string, required: false }
           - { label: トピックス｜見出し, name: topics_title, widget: string }
           - { label: トピックス｜リード文, name: topics_lead, widget: text }
-          - { label: 代表メッセージ｜見出し, name: message_title, widget: string }
-          - { label: 代表メッセージ｜本文, name: message_text, widget: text }
           - { label: よくあるご質問｜見出し, name: faq_title, widget: string }
           - label: よくあるご質問
             name: faqs
