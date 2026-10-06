@@ -28,6 +28,43 @@ const paths: Record<Exclude<Page, "article" | "notfound">, string> = {
   privacy: "/privacy",
 };
 
+type NavArgs = [Page, string?, string?];
+
+// サイト内リンク。検索エンジンが辿れるよう実際の <a href> を出力しつつ、
+// 通常のクリックはページ遷移せずに画面を切り替える（新しいタブで開く操作はそのまま有効）。
+function hrefFor(target: Page, hash?: string, slug?: string) {
+  const base = target === "article" ? `/topics/${slug ?? ""}` : target === "notfound" ? "/" : paths[target];
+  return `${base}${hash ? `#${hash}` : ""}`;
+}
+
+function GoLink({
+  go,
+  args,
+  className,
+  children,
+  ...rest
+}: {
+  go: (...a: NavArgs) => void;
+  args: NavArgs;
+  className?: string;
+  children: ReactNode;
+} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "onClick" | "className" | "children">) {
+  return (
+    <a
+      {...rest}
+      href={hrefFor(...args)}
+      className={className ? `go-link ${className}` : "go-link"}
+      onClick={(e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        go(...args);
+      }}
+    >
+      {children}
+    </a>
+  );
+}
+
 function pageFromPath(): Page {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   if (path.startsWith("/topics/")) return "article";
@@ -118,10 +155,10 @@ function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
 
 function Logo({ navigate }: { navigate: Nav }) {
   return (
-    <button className="wordmark" onClick={() => navigate("home")} aria-label="ホームへ">
+    <GoLink className="wordmark" go={navigate} args={["home"]} aria-label="ホームへ">
       <span className="logo-mark"><span /><span /></span>
       <span>COANA TOKYO</span>
-    </button>
+    </GoLink>
   );
 }
 
@@ -169,18 +206,18 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
         <Logo navigate={navigate} />
         <nav className="desktop-nav" aria-label="メインナビゲーション">
           {links.map(([target, label]) => (
-            <button
+            <GoLink
               key={target}
               className={page === target || (page === "article" && target === "topics") ? "nav-link active" : "nav-link"}
-              onClick={() => go(target)}
+              go={go} args={[target]}
             >
               {label}
-            </button>
+            </GoLink>
           ))}
-          <button className="button button-small" onClick={() => go("contact")}>
+          <GoLink className="button button-small" go={go} args={["contact"]}>
             お問い合わせ
             <Icon name="arrow" size={17} />
-          </button>
+          </GoLink>
         </nav>
         <button
           className="menu-button"
@@ -194,13 +231,13 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
       {open && (
         <nav className="mobile-nav" aria-label="モバイルナビゲーション">
           {links.map(([target, label, en], i) => (
-            <button key={target} style={{ animationDelay: `${i * 0.05}s` }} onClick={() => go(target)}>
+            <GoLink key={target} style={{ animationDelay: `${i * 0.05}s` }} go={go} args={[target]}>
               <span><small>{en}</small>{label}</span><Icon name="arrow" size={18} />
-            </button>
+            </GoLink>
           ))}
-          <button style={{ animationDelay: "0.2s" }} onClick={() => go("contact")}>
+          <GoLink style={{ animationDelay: "0.2s" }} go={go} args={["contact"]}>
             <span><small>Contact</small>お問い合わせ</span><Icon name="arrow" size={18} />
-          </button>
+          </GoLink>
           <p className="mobile-nav-foot">{settings.company_name}</p>
         </nav>
       )}
@@ -221,22 +258,22 @@ function Footer({ navigate }: { navigate: Nav }) {
         <nav className="footer-links" aria-label="フッターナビゲーション">
           <div>
             <p className="footer-links-title">Menu</p>
-            <button onClick={() => navigate("home")}>ホーム</button>
-            <button onClick={() => navigate("about")}>会社概要</button>
-            <button onClick={() => navigate("services")}>サービス</button>
-            <button onClick={() => navigate("topics")}>トピックス</button>
-            <button onClick={() => navigate("contact")}>お問い合わせ</button>
+            <GoLink go={navigate} args={["home"]}>ホーム</GoLink>
+            <GoLink go={navigate} args={["about"]}>会社概要</GoLink>
+            <GoLink go={navigate} args={["services"]}>サービス</GoLink>
+            <GoLink go={navigate} args={["topics"]}>トピックス</GoLink>
+            <GoLink go={navigate} args={["contact"]}>お問い合わせ</GoLink>
           </div>
           <div>
             <p className="footer-links-title">Services</p>
-            <button onClick={() => navigate("services", "backoffice")}>バックオフィス支援</button>
-            <button onClick={() => navigate("services", "marketing")}>マーケティング支援</button>
+            <GoLink go={navigate} args={["services", "backoffice"]}>バックオフィス支援</GoLink>
+            <GoLink go={navigate} args={["services", "marketing"]}>マーケティング支援</GoLink>
           </div>
         </nav>
       </div>
       <div className="container footer-bottom">
         <small>{settings.copyright}</small>
-        <button className="footer-privacy" onClick={() => navigate("privacy")}>プライバシーポリシー</button>
+        <GoLink className="footer-privacy" go={navigate} args={["privacy"]}>プライバシーポリシー</GoLink>
       </div>
     </footer>
   );
@@ -267,15 +304,26 @@ function SectionTitle({
 function LinkButton({
   children,
   onClick,
+  go,
+  args,
   secondary = false,
   large = false,
 }: {
   children: ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
+  go?: Nav;
+  args?: NavArgs;
   secondary?: boolean;
   large?: boolean;
 }) {
   const cls = ["button", secondary ? "button-outline" : "", large ? "button-large" : ""].filter(Boolean).join(" ");
+  if (go && args) {
+    return (
+      <GoLink className={cls} go={go} args={args}>
+        {children}<Icon name="arrow" size={19} />
+      </GoLink>
+    );
+  }
   return (
     <button className={cls} onClick={onClick}>
       {children}<Icon name="arrow" size={19} />
@@ -295,7 +343,7 @@ function ContactBand({ navigate }: { navigate: Nav }) {
           <p><Lines text={settings.contact_band.text} /></p>
         </div>
         <div className="contact-band-action">
-          <LinkButton large onClick={() => navigate("contact")}>お問い合わせ</LinkButton>
+          <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
           <a className="contact-band-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
       </div>
@@ -377,8 +425,8 @@ function HeroSection({ navigate }: { navigate: Nav }) {
           </h1>
           <div className="hero-actions hero-anim" style={{ animationDelay: "0.85s" }}>
             <div className="button-row">
-              <LinkButton onClick={() => navigate("contact")}>{home.hero_button_primary}</LinkButton>
-              <LinkButton secondary onClick={() => navigate("services")}>{home.hero_button_secondary}</LinkButton>
+              <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
+              <LinkButton secondary go={navigate} args={["services"]}>{home.hero_button_secondary}</LinkButton>
             </div>
           </div>
         </div>
@@ -430,7 +478,7 @@ function AboutIntro({ navigate }: { navigate: Nav }) {
             <SectionTitle en="About us">{home.about_title}</SectionTitle>
             <p data-reveal>{home.about_text}</p>
             <div data-reveal>
-              <button className="text-link" onClick={() => navigate("about")}>会社概要を見る<Icon name="arrow" size={19} /></button>
+              <GoLink className="text-link" go={navigate} args={["about"]}>会社概要を見る<Icon name="arrow" size={19} /></GoLink>
             </div>
           </div>
           <figure className="about-image" data-reveal>
@@ -472,9 +520,9 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
                   </li>
                 ))}
               </ul>
-              <button className="panel-link" onClick={() => navigate("services", key)} aria-label={`${data.title}を詳しく見る`}>
+              <GoLink className="panel-link" go={navigate} args={["services", key]} aria-label={`${data.title}を詳しく見る`}>
                 <span>詳しく見る</span><Icon name="arrow" size={20} />
-              </button>
+              </GoLink>
             </article>
           ))}
         </div>
@@ -672,7 +720,7 @@ function MissionBand({ navigate }: { navigate: Nav }) {
       <div className="container" data-reveal>
         <span className="eyebrow">Our mission</span>
         <p className="mission-statement"><Lines text={about.message_heading} /></p>
-        <button className="text-link text-link-light" onClick={() => navigate("about", "message")}>代表メッセージを読む<Icon name="arrow" size={19} /></button>
+        <GoLink className="text-link text-link-light" go={navigate} args={["about", "message"]}>代表メッセージを読む<Icon name="arrow" size={19} /></GoLink>
       </div>
     </section>
   );
@@ -685,12 +733,12 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
       <div className="container">
         <div className="title-with-link">
           <SectionTitle en="Topics" lead={home.topics_lead}>{home.topics_title}</SectionTitle>
-          <button className="text-link" data-reveal onClick={() => navigate("topics")}>一覧を見る<Icon name="arrow" size={19} /></button>
+          <GoLink className="text-link" data-reveal go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={19} /></GoLink>
         </div>
         {latest.length ? (
           <div className="topics-card-grid">
             {latest.map((a, i) => (
-              <button key={a.slug} className="topic-card" data-reveal style={{ transitionDelay: `${i * 100}ms` }} onClick={() => navigate("article", undefined, a.slug)}>
+              <GoLink key={a.slug} className="topic-card" data-reveal style={{ transitionDelay: `${i * 100}ms` }} go={navigate} args={["article", undefined, a.slug]}>
                 <span className="topic-card-thumb">
                   {a.thumbnail
                     ? <img src={a.thumbnail} alt={a.title} loading="lazy" />
@@ -701,7 +749,7 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
                   <strong>{a.title}</strong>
                   <span className="topic-card-more">読む<Icon name="arrow" size={15} /></span>
                 </span>
-              </button>
+              </GoLink>
             ))}
           </div>
         ) : (
@@ -727,7 +775,7 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
           <p data-reveal>{home.message_text}</p>
           <p className="teaser-name" data-reveal>{about.profile_role}　<b>{about.profile_name}</b><span>{about.profile_name_en}</span></p>
           <div data-reveal>
-            <button className="text-link" onClick={() => navigate("about", "profile")}>代表のプロフィールを見る<Icon name="arrow" size={19} /></button>
+            <GoLink className="text-link" go={navigate} args={["about", "profile"]}>代表のプロフィールを見る<Icon name="arrow" size={19} /></GoLink>
           </div>
         </div>
       </div>
@@ -921,7 +969,7 @@ function Services({ navigate }: { navigate: Nav }) {
             ))}
           </ol>
           <div className="center-button" data-reveal>
-            <LinkButton large onClick={() => navigate("contact")}>お問い合わせ</LinkButton>
+            <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
           </div>
         </div>
       </section>
@@ -933,14 +981,14 @@ function Services({ navigate }: { navigate: Nav }) {
 
 function ArticleRow({ article, navigate }: { article: Article; navigate: Nav }) {
   return (
-    <button className={article.thumbnail ? "article-row has-thumb" : "article-row"} onClick={() => navigate("article", undefined, article.slug)}>
+    <GoLink className={article.thumbnail ? "article-row has-thumb" : "article-row"} go={navigate} args={["article", undefined, article.slug]}>
       {article.thumbnail && <span className="article-row-thumb"><img src={article.thumbnail} alt={article.title} loading="lazy" /></span>}
       <span className="article-row-main">
         <span className="article-meta"><time dateTime={article.sortKey.slice(0, 10)}>{article.date}</time><i>{article.category}</i></span>
         <strong>{article.title}</strong>
       </span>
       <Icon name="arrow" />
-    </button>
+    </GoLink>
   );
 }
 
@@ -1000,7 +1048,7 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
       <main>
         <article className="article-page">
           <div className="container article-container">
-            <button className="back-link" onClick={() => navigate("topics")}>← トピックス一覧に戻る</button>
+            <GoLink className="back-link" go={navigate} args={["topics"]}>← トピックス一覧に戻る</GoLink>
             <h1>記事が見つかりませんでした</h1>
           </div>
         </article>
@@ -1013,7 +1061,7 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
     <main>
       <article className="article-page">
         <div className="container article-container">
-          <button className="back-link" onClick={() => navigate("topics")}>← トピックス一覧に戻る</button>
+          <GoLink className="back-link" go={navigate} args={["topics"]}>← トピックス一覧に戻る</GoLink>
           <div className="article-meta"><time dateTime={article.sortKey.slice(0, 10)}>{article.date}</time><i>{article.category}</i></div>
           <h1>{article.title}</h1>
           {article.thumbnail
@@ -1024,17 +1072,17 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
           </div>
           <nav className="article-nav" aria-label="前後の記事">
             {prev ? (
-              <button onClick={() => navigate("article", undefined, prev.slug)}>
+              <GoLink go={navigate} args={["article", undefined, prev.slug]}>
                 <small>← 前の記事</small><span>{prev.title}</span>
-              </button>
+              </GoLink>
             ) : <span className="article-nav-empty" />}
             {next ? (
-              <button className="next" onClick={() => navigate("article", undefined, next.slug)}>
+              <GoLink className="next" go={navigate} args={["article", undefined, next.slug]}>
                 <small>次の記事 →</small><span>{next.title}</span>
-              </button>
+              </GoLink>
             ) : <span className="article-nav-empty" />}
           </nav>
-          <button className="back-link bottom" onClick={() => navigate("topics")}>← トピックス一覧に戻る</button>
+          <GoLink className="back-link bottom" go={navigate} args={["topics"]}>← トピックス一覧に戻る</GoLink>
         </div>
       </article>
       <ContactBand navigate={navigate} />
@@ -1215,8 +1263,8 @@ function NotFound({ navigate }: { navigate: Nav }) {
       <PageHero en="404 Not found" title="ページが見つかりません" intro="お探しのページは、移動または削除された可能性があります。" />
       <section className="section">
         <div className="container button-row" style={{ justifyContent: "center" }}>
-          <LinkButton onClick={() => navigate("home")}>トップページへ</LinkButton>
-          <LinkButton secondary onClick={() => navigate("contact")}>お問い合わせ</LinkButton>
+          <LinkButton go={navigate} args={["home"]}>トップページへ</LinkButton>
+          <LinkButton secondary go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
         </div>
       </section>
     </main>
