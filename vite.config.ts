@@ -466,6 +466,7 @@ function coanaPageMeta(): Plugin {
         name: settings.company_name || 'COANA TOKYO合同会社',
         alternateName: 'COANA TOKYO',
         url: SITE,
+        sameAs: settings.same_as || ['https://www.facebook.com/profile.php?id=61589875101798'],
         logo: SITE + '/apple-touch-icon.png',
         image: defaultImage,
         description: defaultDescription,
@@ -567,7 +568,7 @@ function coanaPageMeta(): Plugin {
         if (pagePath === '/') {
           const strengths = (home.strengths || []) as { title: string; heading: string; description: string }[]
           const faqItems = (home.faqs || []) as { q: string; a: string }[]
-          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + paras(home.hero_solve_text) +
+          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + '<p>' + esc((home.hero_words || []).join('・')) + esc(home.hero_solve_text) + '</p>' +
             '<section><h2>' + esc(home.about_title) + '</h2>' + paras(home.about_text) + anchor('/about', '会社概要を見る') + '</section>' +
             '<section><h2>' + esc(home.services_title) + '</h2>' + paras(home.services_lead) + serviceSections + anchor('/services', 'サービスを詳しく見る') + '</section>' +
             '<section><h2>' + esc(home.strengths_title) + '</h2>' + strengths.map((st) => '<h3>' + esc(st.title) + '：' + esc(st.heading) + '</h3>' + paras(st.description)).join('') + '</section>' +
