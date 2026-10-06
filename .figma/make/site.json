@@ -1,5 +1,5 @@
 {
-  "description": "COANA TOKYO合同会社は、経理をはじめとするバックオフィス業務の効率化・DX支援と、営業・SNS・Web制作などのマーケティング支援で、中小企業・小規模事業者の成長を支えます。",
+  "description": "東京・港区のCOANA TOKYO合同会社は、中小企業・小規模事業者向けに、経理・バックオフィス業務の改善と実務代行、クラウド会計・ERP・グループウェアなどITツールの導入支援、営業・SNS・Web制作のマーケティング支援をワンストップで提供します。全国オンライン対応。",
   "robots": {
     "index": true
   },
@@ -7,7 +7,7 @@
     "addBypassLinks": false,
     "ignoreReducedMotion": false
   },
-  "title": "COANA TOKYO合同会社 | 中小企業のバックオフィス・マーケティング支援",
+  "title": "中小企業のバックオフィス・マーケティング支援 | COANA TOKYO合同会社（東京・港区）",
   "language": "ja",
   "icons": {
     "icon": "/favicon.svg"
