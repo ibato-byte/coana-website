@@ -499,6 +499,35 @@ function coanaPageMeta(): Plugin {
         { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシーです。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
       ]
 
+      // サービス別の専用ページ（content/solutions/*.json）
+      type Solution = { slug: string; order?: number; nav_label?: string; title: string; seo_title?: string; description?: string; lead?: string; hero_image?: string; problems?: string[]; features?: { name: string; text: string }[]; tools?: string[]; steps?: string[]; faqs?: { q: string; a: string }[] }
+      const solutionsDir = path.resolve(__dirname, 'content/solutions')
+      const solutionList: Solution[] = fs.existsSync(solutionsDir)
+        ? fs.readdirSync(solutionsDir)
+            .filter((name) => name.endsWith('.json'))
+            .map((name) => JSON.parse(fs.readFileSync(path.join(solutionsDir, name), 'utf8')) as Solution)
+            .filter((sol) => sol && sol.slug)
+            .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
+        : []
+      for (const sol of solutionList) {
+        const url = SITE + '/services/' + sol.slug
+        const label = sol.nav_label || sol.title
+        const description = String(sol.description || sol.lead || '')
+        const faqList = sol.faqs || []
+        pages.push({
+          path: '/services/' + sol.slug,
+          crumb: label,
+          title: (sol.seo_title || sol.title) + SUFFIX,
+          description,
+          preload: sol.hero_image || services.hero_image,
+          jsonld: graph(
+            crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }, { name: label, url }]),
+            { '@type': 'Service', name: sol.title, serviceType: label, description, url, provider: { '@id': orgId }, areaServed: { '@type': 'Country', name: '日本' } },
+            ...(faqList.length ? [{ '@type': 'FAQPage', mainEntity: faqList.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
+          ),
+        })
+      }
+
       type Feed = { title: string; url: string; date: string; description: string }
       const feedItems: Feed[] = []
       const topicsDir = path.resolve(__dirname, 'content/topics')
@@ -593,6 +622,17 @@ function coanaPageMeta(): Plugin {
         if (pagePath === '/topics') return '<h1>トピックス</h1>' + topicList(sortedTopics)
         if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro) + '<p>メール：' + esc(settings.email) + '</p>'
         if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>'
+        if (pagePath.startsWith('/services/')) {
+          const sol = solutionList.find((item) => '/services/' + item.slug === pagePath)
+          if (!sol) return ''
+          return '<h1>' + esc(sol.title) + '</h1>' + paras(sol.lead) +
+            '<section><h2>こんなお悩みはありませんか</h2><ul>' + (sol.problems || []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul></section>' +
+            '<section><h2>支援内容</h2>' + (sol.features || []).map((f) => '<h3>' + esc(f.name) + '</h3>' + paras(f.text)).join('') +
+            ((sol.tools || []).length ? '<p>対応ツールの例：' + esc((sol.tools || []).join('、')) + '</p>' : '') + '</section>' +
+            '<section><h2>支援の進め方</h2><ol>' + (sol.steps || []).map((step) => '<li>' + esc(step) + '</li>').join('') + '</ol></section>' +
+            ((sol.faqs || []).length ? '<section><h2>よくあるご質問</h2><dl>' + (sol.faqs || []).map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' : '') +
+            '<p>' + anchor('/services', 'サービス一覧') + ' ' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
+        }
         if (pagePath.startsWith('/topics/')) {
           const slug = pagePath.slice('/topics/'.length)
           const file = path.join(topicsDir, slug + '.md')
@@ -608,7 +648,7 @@ function coanaPageMeta(): Plugin {
       const fallbackHeader = '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +
         [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
       const fallbackFooter = '<footer><p>' + esc(settings.company_name) + '</p><address>' + esc(settings.postal_code) + ' ' + esc(settings.address) + '</address><nav aria-label="フッター">' +
-        anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
+        anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + solutionList.map((sol) => anchor('/services/' + sol.slug, sol.nav_label || sol.title)).join(' ') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
       const withFallback = (html: string, pagePath: string) => html.replace('<div id="root"></div>', () =>
         '<div id="root"><div class="seo-fallback" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);border:0">' +
         fallbackHeader + '<main>' + fallbackMain(pagePath) + '</main>' + fallbackFooter + '</div></div>')
