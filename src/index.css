@@ -1452,3 +1452,95 @@ p, li, dd, figcaption { text-wrap: pretty; }
   .solve-word.is-leaving { visibility: hidden; }
   .contact-band, .contact-orbit, .hero-bg { animation: none !important; }
 }
+
+/* ───────────────────────────── サービス別の専用ページ ───────────────────────────── */
+.service-more {
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: var(--sky-ink);
+  gap: 8px;
+  padding: 2px 0 4px;
+}
+.service-more:hover { color: var(--sky-deep); }
+.solution-problems {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.solution-problems li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 22px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
+  line-height: 1.75;
+}
+.solution-problems li svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--sky-deep);
+}
+.solution-tools {
+  margin-top: 32px;
+  padding: 22px 26px;
+  border-radius: var(--radius);
+  background: var(--sky-soft);
+}
+.solution-tools p {
+  margin: 0 0 12px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--navy);
+}
+.solution-tools ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.solution-tools li {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 500;
+}
+.solution-other-list {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+a.solution-other {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  background: var(--white);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  text-align: left;
+  transition: border-color .25s, box-shadow .25s, transform .25s var(--ease-out);
+}
+a.solution-other:hover {
+  border-color: var(--sky);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+a.solution-other svg { flex: none; color: var(--sky-deep); }
+.solution-related .article-list { margin-top: 24px; }
+@media (max-width: 640px) {
+  .solution-problems li { padding: 15px 16px; font-size: 14.5px; }
+  .solution-tools { padding: 18px; }
+}
