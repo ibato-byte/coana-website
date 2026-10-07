@@ -1590,3 +1590,10 @@ a.line-button svg { flex: none; }
   .line-notice { flex-direction: column; align-items: stretch; text-align: center; }
   .line-notice a.line-button { width: 100%; }
 }
+.solution-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
