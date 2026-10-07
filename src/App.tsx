@@ -1,5 +1,5 @@
 import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, type Article } from "./content";
+import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions, type Article } from "./content";
 
 declare global {
   interface Window {
@@ -15,11 +15,12 @@ type Page =
   | "services"
   | "topics"
   | "article"
+  | "solution"
   | "contact"
   | "privacy"
   | "notfound";
 
-const paths: Record<Exclude<Page, "article" | "notfound">, string> = {
+const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, string> = {
   home: "/",
   about: "/about",
   services: "/services",
@@ -33,7 +34,7 @@ type NavArgs = [Page, string?, string?];
 // サイト内リンク。検索エンジンが辿れるよう実際の <a href> を出力しつつ、
 // 通常のクリックはページ遷移せずに画面を切り替える（新しいタブで開く操作はそのまま有効）。
 function hrefFor(target: Page, hash?: string, slug?: string) {
-  const base = target === "article" ? `/topics/${slug ?? ""}` : target === "notfound" ? "/" : paths[target];
+  const base = target === "article" ? `/topics/${slug ?? ""}` : target === "solution" ? `/services/${slug ?? ""}` : target === "notfound" ? "/" : paths[target];
   return `${base}${hash ? `#${hash}` : ""}`;
 }
 
@@ -68,6 +69,7 @@ function GoLink({
 function pageFromPath(): Page {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   if (path.startsWith("/topics/")) return "article";
+  if (path.startsWith("/services/")) return "solution";
   if (path === "/about") return "about";
   if (path === "/services") return "services";
   if (path === "/topics") return "topics";
@@ -208,7 +210,7 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
           {links.map(([target, label]) => (
             <GoLink
               key={target}
-              className={page === target || (page === "article" && target === "topics") ? "nav-link active" : "nav-link"}
+              className={page === target || (page === "article" && target === "topics") || (page === "solution" && target === "services") ? "nav-link active" : "nav-link"}
               go={go} args={[target]}
             >
               {label}
@@ -785,14 +787,14 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
 
 const faqItems: { q: string; a: string }[] = home.faqs ?? [];
 
-function FaqSection() {
+function FaqSection({ items = faqItems, title = home.faq_title }: { items?: { q: string; a: string }[]; title?: string } = {}) {
   const [openIndex, setOpenIndex] = useState(0);
   return (
     <section className="section faq-section">
       <div className="container narrow">
-        <SectionTitle en="FAQ" center>{home.faq_title}</SectionTitle>
+        <SectionTitle en="FAQ" center>{title}</SectionTitle>
         <div className="faq-list">
-          {faqItems.map((item, i) => {
+          {items.map((item, i) => {
             const open = openIndex === i;
             return (
               <div key={item.q} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
@@ -901,13 +903,14 @@ function About({ navigate }: { navigate: Nav }) {
 
 /* ───────────────────────── Services ───────────────────────── */
 
-function ServiceBlock({ id, number, en, title, lead, items, note }: {
+function ServiceBlock({ id, number, en, title, lead, items, note, navigate }: {
+  navigate: Nav;
   id: string;
   number: string;
   en: string;
   title: string;
   lead: string;
-  items: { name: string; text: string; tags?: string[] }[];
+  items: { name: string; text: string; tags?: string[]; page?: string }[];
   note: string;
 }) {
   return (
@@ -922,12 +925,17 @@ function ServiceBlock({ id, number, en, title, lead, items, note }: {
           </div>
         </div>
         <div className="service-list">
-          {items.map(({ name, text, tags }, index) => (
+          {items.map(({ name, text, tags, page }, index) => (
             <article key={name} data-reveal style={{ transitionDelay: `${(index % 2) * 80}ms` }}>
               <span>{String(index + 1).padStart(2, "0")}</span>
               <div>
                 <h3>{name}{tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}</h3>
                 <p>{text}</p>
+                {page && solutions.some((sol) => sol.slug === page) && (
+                  <GoLink className="text-link service-more" go={navigate} args={["solution", undefined, page]}>
+                    詳しく見る<Icon name="arrow" size={16} />
+                  </GoLink>
+                )}
               </div>
             </article>
           ))}
@@ -946,8 +954,8 @@ function Services({ navigate }: { navigate: Nav }) {
           <p>{services.intro}</p>
         </div>
       </section>
-      <ServiceBlock id="backoffice" number="01" note="守りを固める" {...services.backoffice} />
-      <ServiceBlock id="marketing" number="02" note="攻めを支える" {...services.marketing} />
+      <ServiceBlock navigate={navigate} id="backoffice" number="01" note="守りを固める" {...services.backoffice} />
+      <ServiceBlock navigate={navigate} id="marketing" number="02" note="攻めを支える" {...services.marketing} />
       <section className="section pricing-section">
         <div className="container pricing-box" data-reveal>
           <div>
@@ -978,6 +986,105 @@ function Services({ navigate }: { navigate: Nav }) {
 }
 
 /* ───────────────────────── Topics / Article ───────────────────────── */
+
+function SolutionPage({ navigate }: { navigate: Nav }) {
+  const slug = decodeURIComponent(window.location.pathname.replace(/^\/services\//, "").replace(/\/+$/, ""));
+  const sol = solutions.find((s) => s.slug === slug);
+  useEffect(() => {
+    if (sol) document.title = `${sol.seo_title || sol.title} | COANA TOKYO合同会社`;
+  }, [sol]);
+  if (!sol) return <NotFound navigate={navigate} />;
+  const related = (sol.related ?? [])
+    .map((r) => articles.find((a) => a.slug === r))
+    .filter((a): a is Article => Boolean(a));
+  const others = solutions.filter((s) => s.slug !== sol.slug);
+  return (
+    <main className="services-page solution-page">
+      <PageHero en={sol.en || "Service"} title={sol.title} intro={sol.lead} image={sol.hero_image || services.hero_image} />
+      <section className="section">
+        <div className="container narrow">
+          <SectionTitle en="Problems">{sol.problems_title || "こんなお悩みはありませんか"}</SectionTitle>
+          <ul className="solution-problems">
+            {sol.problems.map((p, i) => (
+              <li key={p} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+                <Icon name="check" size={20} />
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <section className="section service-detail">
+        <div className="container">
+          <SectionTitle en="Support">{sol.features_title || "支援内容"}</SectionTitle>
+          <div className="service-list">
+            {sol.features.map(({ name, text }, index) => (
+              <article key={name} data-reveal style={{ transitionDelay: `${(index % 2) * 80}ms` }}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3>{name}</h3>
+                  <p>{text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          {(sol.tools ?? []).length > 0 && (
+            <div className="solution-tools" data-reveal>
+              <p>{sol.tools_title || "対応ツールの例"}</p>
+              <ul>
+                {(sol.tools ?? []).map((t) => <li key={t}>{t}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+      <section className="section flow-section">
+        <div className="container">
+          <SectionTitle en="Flow" center>{sol.steps_title || "支援の進め方"}</SectionTitle>
+          <ol className="flow-list">
+            {sol.steps.map((item, index) => (
+              <li key={item} data-reveal style={{ transitionDelay: `${index * 90}ms` }}>
+                <span>STEP {index + 1}</span>
+                <strong>{item}</strong>
+              </li>
+            ))}
+          </ol>
+          <div className="center-button" data-reveal>
+            <LinkButton large go={navigate} args={["contact"]}>まずは相談してみる</LinkButton>
+          </div>
+        </div>
+      </section>
+      {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || "よくあるご質問"} />}
+      {related.length > 0 && (
+        <section className="section solution-related">
+          <div className="container narrow">
+            <SectionTitle en="Column">関連するコラム</SectionTitle>
+            <div className="article-list">
+              {related.map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
+            </div>
+          </div>
+        </section>
+      )}
+      <section className="section solution-others">
+        <div className="container">
+          <SectionTitle en="Services">そのほかのサービス</SectionTitle>
+          <div className="solution-other-list">
+            {others.map((o) => (
+              <GoLink key={o.slug} className="solution-other" go={navigate} args={["solution", undefined, o.slug]}>
+                <span>{o.nav_label}</span>
+                <Icon name="arrow" size={18} />
+              </GoLink>
+            ))}
+            <GoLink className="solution-other" go={navigate} args={["services"]}>
+              <span>サービス一覧を見る</span>
+              <Icon name="arrow" size={18} />
+            </GoLink>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
 
 function ArticleRow({ article, navigate }: { article: Article; navigate: Nav }) {
   return (
@@ -1042,7 +1149,7 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
   const slug = slugFromPath();
   const index = articles.findIndex((a) => a.slug === slug);
   const article = index >= 0 ? articles[index] : undefined;
-  useEffect(() => { if (article) document.title = `${article.title} | COANA TOKYO`; }, [article]);
+  useEffect(() => { if (article) document.title = `${article.title} | COANA TOKYO合同会社`; }, [article]);
   if (!article) {
     return (
       <main>
@@ -1298,9 +1405,9 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
-    const titles: Record<Page, string> = { home: "", about: "会社概要・代表メッセージ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
+    const titles: Record<Page, string> = { home: "", about: "会社概要・代表メッセージ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
     const base = "中小企業のバックオフィス・マーケティング支援 | COANA TOKYO合同会社（東京・港区）";
-    if (page === "article") return; // 記事ページは記事タイトルを優先
+    if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
   // URLに #message などの指定があれば、ページが描画されたあとにその位置までスクロールする（初回表示とサイト内移動の両方）
@@ -1366,7 +1473,7 @@ export default function App() {
     return () => window.cancelAnimationFrame(raf);
   }, [page, routeKey]);
   const navigate: Nav = (target, hash, slug) => {
-    const base = target === "article" ? `/topics/${slug ?? ""}` : paths[target];
+    const base = target === "article" ? `/topics/${slug ?? ""}` : target === "solution" ? `/services/${slug ?? ""}` : target === "notfound" ? "/" : paths[target];
     const url = `${base}${hash ? `#${hash}` : ""}`;
     window.history.pushState({}, "", url);
     setPage(target);
@@ -1377,6 +1484,7 @@ export default function App() {
   else if (page === "services") content = <Services navigate={navigate} />;
   else if (page === "topics") content = <Topics navigate={navigate} />;
   else if (page === "article") content = <ArticlePage key={routeKey} navigate={navigate} />;
+  else if (page === "solution") content = <SolutionPage key={routeKey} navigate={navigate} />;
   else if (page === "contact") content = <Contact />;
   else if (page === "privacy") content = <Privacy />;
   else if (page === "notfound") content = <NotFound navigate={navigate} />;
