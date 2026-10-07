@@ -270,6 +270,9 @@ function Footer({ navigate }: { navigate: Nav }) {
             <p className="footer-links-title">Services</p>
             <GoLink go={navigate} args={["services", "backoffice"]}>バックオフィス支援</GoLink>
             <GoLink go={navigate} args={["services", "marketing"]}>マーケティング支援</GoLink>
+            {solutions.map((sol) => (
+              <GoLink key={sol.slug} go={navigate} args={["solution", undefined, sol.slug]}>{sol.nav_label}</GoLink>
+            ))}
           </div>
         </nav>
       </div>
