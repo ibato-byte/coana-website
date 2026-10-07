@@ -77,3 +77,36 @@ export const articles: Article[] = Object.entries(files)
 export function renderMarkdown(md: string) {
   return marked.parse(md || "", { async: false }) as string;
 }
+
+/** サービス別の専用ページ（content/solutions/*.json、CMSの「サービス別ページ」から編集） */
+export type Solution = {
+  slug: string;
+  order?: number;
+  nav_label: string;
+  en?: string;
+  title: string;
+  seo_title?: string;
+  description?: string;
+  lead: string;
+  hero_image?: string;
+  problems_title?: string;
+  problems: string[];
+  features_title?: string;
+  features: { name: string; text: string }[];
+  tools_title?: string;
+  tools?: string[];
+  steps_title?: string;
+  steps: string[];
+  faq_title?: string;
+  faqs?: { q: string; a: string }[];
+  related?: string[];
+};
+
+const solutionFiles = import.meta.glob("../content/solutions/*.json", {
+  import: "default",
+  eager: true,
+}) as Record<string, Solution>;
+
+export const solutions: Solution[] = Object.values(solutionFiles)
+  .filter((s) => s && s.slug)
+  .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
