@@ -1074,8 +1074,9 @@ function SolutionPage({ navigate }: { navigate: Nav }) {
               </li>
             ))}
           </ol>
-          <div className="center-button" data-reveal>
+          <div className="center-button solution-cta" data-reveal>
             <LinkButton large go={navigate} args={["contact"]}>まずは相談してみる</LinkButton>
+            <LineButton place="solution_page" />
           </div>
         </div>
       </section>
