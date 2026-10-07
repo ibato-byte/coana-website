@@ -47,6 +47,59 @@ collections:
       - { label: 下書き（チェックすると非公開）, name: draft, widget: boolean, default: false, required: false }
       - { label: 本文, name: body, widget: markdown }
 
+  - name: solutions
+    label: サービス別ページ
+    label_singular: サービス別ページ
+    folder: content/solutions
+    create: true
+    extension: json
+    format: json
+    slug: "{{fields.slug}}"
+    identifier_field: title
+    summary: "{{order}}｜{{nav_label}}"
+    sortable_fields: [order, nav_label]
+    fields:
+      - { label: URL（半角英小文字・数字・ハイフン。例：cloud-accounting → /services/cloud-accounting）, name: slug, widget: string, pattern: ['^[a-z0-9-]+$', '半角英小文字・数字・ハイフンで入力してください'] }
+      - { label: 表示順, name: order, widget: number, value_type: int, default: 99 }
+      - { label: 短い名前（一覧やリンクに表示）, name: nav_label, widget: string }
+      - { label: 英語の小見出し, name: en, widget: string, required: false }
+      - { label: ページの見出し, name: title, widget: string }
+      - { label: 検索結果に出すタイトル, name: seo_title, widget: string, required: false, hint: "空欄の場合はページの見出しを使います" }
+      - { label: 検索結果に出す説明文（120文字前後）, name: description, widget: text, required: false }
+      - { label: リード文, name: lead, widget: text }
+      - { label: 上部の背景画像, name: hero_image, widget: image, required: false, hint: "空欄の場合はサービスページと同じ画像を使います。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、公開後は正しく表示されます。" }
+      - { label: お悩みの見出し, name: problems_title, widget: string, required: false, default: こんなお悩みはありませんか }
+      - { label: お悩み, name: problems, widget: list, field: { label: お悩み, name: problem, widget: string } }
+      - { label: 支援内容の見出し, name: features_title, widget: string, required: false, default: 支援内容 }
+      - label: 支援内容
+        name: features
+        widget: list
+        summary: "{{fields.name}}"
+        fields:
+          - { label: 名称, name: name, widget: string }
+          - { label: 説明, name: text, widget: text }
+      - { label: 対応ツールの見出し, name: tools_title, widget: string, required: false, default: 対応ツールの例 }
+      - { label: 対応ツール, name: tools, widget: list, required: false, field: { label: ツール名, name: tool, widget: string } }
+      - { label: 進め方の見出し, name: steps_title, widget: string, required: false, default: 支援の進め方 }
+      - { label: 進め方, name: steps, widget: list, field: { label: ステップ, name: step, widget: string } }
+      - { label: よくある質問の見出し, name: faq_title, widget: string, required: false, default: よくあるご質問 }
+      - label: よくある質問
+        name: faqs
+        widget: list
+        required: false
+        summary: "{{fields.q}}"
+        fields:
+          - { label: 質問, name: q, widget: string }
+          - { label: 回答, name: a, widget: text }
+      - label: 関連するコラム
+        name: related
+        widget: relation
+        collection: topics
+        value_field: "{{slug}}"
+        search_fields: [title]
+        display_fields: [title]
+        multiple: true
+        required: false
   - name: pages
     label: ページの文章
     editor:
@@ -147,6 +200,7 @@ collections:
                   - { label: 名称, name: name, widget: string }
                   - { label: 説明, name: text, widget: text }
                   - { label: タグ（例：実務代行にも対応）, name: tags, widget: list, required: false, field: { label: タグ, name: tag, widget: string } }
+                  - { label: 専用ページ（選ぶと「詳しく見る」リンクが表示されます）, name: page, widget: relation, collection: solutions, value_field: slug, search_fields: [nav_label, title], display_fields: [nav_label], required: false }
           - label: マーケティング支援
             name: marketing
             widget: object
