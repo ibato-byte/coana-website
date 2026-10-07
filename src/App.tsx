@@ -1322,7 +1322,7 @@ function Contact() {
         <form className="container form-wrap" name="contact" onSubmit={submit} noValidate>
           {lineUrl && (
             <div className="line-notice">
-              <p>LINEでのご相談も受け付けています。ちょっとした疑問でも、お気軽にお送りください。</p>
+              <p>LINEでもご相談を受け付けています。ちょっとしたご質問でも、お気軽にどうぞ。</p>
               <LineButton place="contact_page" />
             </div>
           )}
