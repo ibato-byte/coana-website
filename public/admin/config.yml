@@ -221,6 +221,7 @@ collections:
         file: content/settings.json
         fields:
           - { label: 会社名, name: company_name, widget: string }
+          - { label: 公式LINEの友だち追加URL（空欄にするとLINEボタンを非表示）, name: line_url, widget: string, required: false, hint: "例：https://line.me/R/ti/p/@229ymxxk" }
           - { label: ファビコン（ブラウザのタブに出るアイコン）, name: favicon, widget: image, hint: "正方形のSVGまたはPNG（32×32以上）をおすすめします。公開すると約1〜2分で反映されますが、ブラウザによっては古いアイコンがしばらく残ります。" }
           - { label: スマホホーム画面用アイコン, name: apple_touch_icon, widget: image, hint: "180×180のPNG。iPhoneでホーム画面に追加したときに表示されます。" }
           - { label: SNS共有時の画像（共通）, name: og_image, widget: image, hint: "XやFacebook、LINEでURLを共有したときに表示される画像です。1200×630のJPGまたはPNG。記事ページは各記事のアイキャッチが優先されます。" }
