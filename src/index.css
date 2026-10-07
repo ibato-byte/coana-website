@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Outfit:wght@400;500;600;700&display=swap");
+/* Webフォントは index.html の <link> で読み込み（CSS内の@importより速く表示されるため） */
 @import "tailwindcss";
 
 /* ───────────────────────────── Design tokens ───────────────────────────── */
