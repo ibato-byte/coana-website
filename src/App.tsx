@@ -336,6 +336,27 @@ function LinkButton({
   );
 }
 
+const lineUrl = (settings as { line_url?: string }).line_url || "";
+
+/** LINE公式アカウントへの相談ボタン（URLはCMSの「会社情報・共通設定」で変更） */
+function LineButton({ place, label = "LINEで気軽に相談する" }: { place: string; label?: string }) {
+  if (!lineUrl) return null;
+  return (
+    <a
+      className="line-button"
+      href={lineUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => window.gtag?.("event", "line_click", { link_location: place })}
+    >
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path fill="currentColor" d="M12 3C6.48 3 2 6.58 2 11c0 3.9 3.5 7.15 8.24 7.85.32.07.76.21.87.49.1.25.06.64.03.9l-.14.84c-.04.25-.2.98.86.53 1.06-.45 5.7-3.36 7.78-5.75C21.06 14.3 22 12.75 22 11c0-4.42-4.48-8-10-8z" />
+      </svg>
+      <span>{label}</span>
+    </a>
+  );
+}
+
 function ContactBand({ navigate }: { navigate: Nav }) {
   return (
     <section className="contact-band">
@@ -349,6 +370,7 @@ function ContactBand({ navigate }: { navigate: Nav }) {
         </div>
         <div className="contact-band-action">
           <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
+          <LineButton place="contact_band" />
           <a className="contact-band-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
       </div>
@@ -1297,6 +1319,12 @@ function Contact() {
       <PageHero en="Contact" title="お問い合わせ" intro={settings.contact_intro} />
       <section className="section form-section">
         <form className="container form-wrap" name="contact" onSubmit={submit} noValidate>
+          {lineUrl && (
+            <div className="line-notice">
+              <p>フォームの入力が面倒な方は、LINEからもお気軽にご相談いただけます。</p>
+              <LineButton place="contact_page" />
+            </div>
+          )}
           <p className="form-note"><span>必須</span>の項目は必ずご入力ください。</p>
           <Field label="会社名" optional error={errors.company}>
             <input value={data.company} onChange={(e) => update("company", e.target.value)} placeholder="例）COANA TOKYO合同会社" />
