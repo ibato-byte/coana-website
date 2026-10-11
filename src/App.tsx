@@ -1,5 +1,7 @@
 import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions, type Article } from "./content";
+import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
+import { ArticleRow, ContactBand, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, type Nav, type Page } from "./shared";
+import { SolutionPage } from "./SolutionPage";
 
 declare global {
   interface Window {
@@ -7,64 +9,6 @@ declare global {
   }
 }
 
-type Nav = (page: Page, hash?: string, slug?: string) => void;
-
-type Page =
-  | "home"
-  | "about"
-  | "services"
-  | "topics"
-  | "article"
-  | "solution"
-  | "contact"
-  | "privacy"
-  | "notfound";
-
-const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, string> = {
-  home: "/",
-  about: "/about",
-  services: "/services",
-  topics: "/topics",
-  contact: "/contact",
-  privacy: "/privacy",
-};
-
-type NavArgs = [Page, string?, string?];
-
-// サイト内リンク。検索エンジンが辿れるよう実際の <a href> を出力しつつ、
-// 通常のクリックはページ遷移せずに画面を切り替える（新しいタブで開く操作はそのまま有効）。
-function hrefFor(target: Page, hash?: string, slug?: string) {
-  const base = target === "article" ? `/topics/${slug ?? ""}` : target === "solution" ? `/services/${slug ?? ""}` : target === "notfound" ? "/" : paths[target];
-  return `${base}${hash ? `#${hash}` : ""}`;
-}
-
-function GoLink({
-  go,
-  args,
-  className,
-  children,
-  ...rest
-}: {
-  go: (...a: NavArgs) => void;
-  args: NavArgs;
-  className?: string;
-  children: ReactNode;
-} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "onClick" | "className" | "children">) {
-  return (
-    <a
-      {...rest}
-      href={hrefFor(...args)}
-      className={className ? `go-link ${className}` : "go-link"}
-      onClick={(e) => {
-        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        go(...args);
-      }}
-    >
-      {children}
-    </a>
-  );
-}
 
 function pageFromPath(): Page {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -83,77 +27,6 @@ function slugFromPath() {
   return decodeURIComponent(window.location.pathname.replace(/^\/topics\//, "").replace(/\/+$/, ""));
 }
 
-function Lines({ text }: { text: string }) {
-  const parts = (text || "").split("\n");
-  return <>{parts.map((p, i) => <span key={i}>{p}{i < parts.length - 1 && <br />}</span>)}</>;
-}
-
-type IconName =
-  | "arrow" | "menu" | "close" | "chat" | "spark" | "check"
-  | "mail" | "plus" | "up" | "quote" | "shield" | "compass" | "handshake" | "pin";
-
-function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
-  const common = {
-    width: size,
-    height: size,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.8,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
-  };
-  switch (name) {
-    case "menu":
-      return <svg {...common}><path d="M4 7h16M4 12h16M4 17h16" /></svg>;
-    case "close":
-      return <svg {...common}><path d="m6 6 12 12M18 6 6 18" /></svg>;
-    case "arrow":
-      return <svg {...common}><path d="M5 12h14M14 7l5 5-5 5" /></svg>;
-    case "chat":
-      return (
-        <svg {...common}>
-          <path d="M20 14a4 4 0 0 1-4 4H9l-5 3v-7a4 4 0 0 1-1-2.6V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4Z" />
-          <path d="M8 9h8M8 13h5" />
-        </svg>
-      );
-    case "spark":
-      return (
-        <svg {...common}>
-          <path d="M12 2c.6 5.1 2.9 7.4 8 8-5.1.6-7.4 2.9-8 8-.6-5.1-2.9-7.4-8-8 5.1-.6 7.4-2.9 8-8Z" />
-          <path d="M19 17c.2 1.9 1.1 2.8 3 3-1.9.2-2.8 1.1-3 3-.2-1.9-1.1-2.8-3-3 1.9-.2 2.8-1.1 3-3Z" />
-        </svg>
-      );
-    case "mail":
-      return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m4 7 8 6 8-6" /></svg>;
-    case "plus":
-      return <svg {...common}><path d="M12 5v14M5 12h14" /></svg>;
-    case "up":
-      return <svg {...common}><path d="M12 19V5M6 11l6-6 6 6" /></svg>;
-    case "quote":
-      return (
-        <svg {...common} fill="currentColor" stroke="none">
-          <path d="M10.2 6.2c-3 1.6-4.7 3.9-4.7 7.2 0 2.6 1.5 4.4 3.7 4.4 1.9 0 3.3-1.4 3.3-3.3 0-1.8-1.3-3.1-3-3.1-.3 0-.6 0-.8.1.3-1.7 1.5-3.2 3.2-4.3l-1.7-1Zm8 0c-3 1.6-4.7 3.9-4.7 7.2 0 2.6 1.5 4.4 3.7 4.4 1.9 0 3.3-1.4 3.3-3.3 0-1.8-1.3-3.1-3-3.1-.3 0-.6 0-.8.1.3-1.7 1.5-3.2 3.2-4.3l-1.7-1Z" />
-        </svg>
-      );
-    case "shield":
-      return <svg {...common}><path d="M12 3 5 6v5c0 4.4 2.8 8 7 10 4.2-2 7-5.6 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4.5" /></svg>;
-    case "compass":
-      return <svg {...common}><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" /></svg>;
-    case "handshake":
-      return (
-        <svg {...common}>
-          <path d="M3 7.5 7.2 6l4.8 1.8L16.8 6 21 7.5V15l-4.5 4-4.5-3.4L7.5 19 3 15V7.5Z" />
-          <path d="m12 7.8-3.3 3.3a1.6 1.6 0 0 0 2.2 2.2l1.4-1.3 3.5 3" />
-        </svg>
-      );
-    case "pin":
-      return <svg {...common}><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" /><circle cx="12" cy="10" r="2.6" /></svg>;
-    default:
-      return <svg {...common}><path d="m5 12 4 4L19 6" /></svg>;
-  }
-}
 
 function Logo({ navigate }: { navigate: Nav }) {
   return (
@@ -284,114 +157,6 @@ function Footer({ navigate }: { navigate: Nav }) {
   );
 }
 
-/* ───────────────────────── Shared parts ───────────────────────── */
-
-function SectionTitle({
-  en,
-  children,
-  center = false,
-  lead,
-}: {
-  en: string;
-  children: ReactNode;
-  center?: boolean;
-  lead?: string;
-}) {
-  return (
-    <div className={center ? "section-title center" : "section-title"} data-reveal>
-      <span className="eyebrow">{en}</span>
-      <h2>{children}</h2>
-      {lead && <p className="section-lead">{lead}</p>}
-    </div>
-  );
-}
-
-function LinkButton({
-  children,
-  onClick,
-  go,
-  args,
-  secondary = false,
-  large = false,
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-  go?: Nav;
-  args?: NavArgs;
-  secondary?: boolean;
-  large?: boolean;
-}) {
-  const cls = ["button", secondary ? "button-outline" : "", large ? "button-large" : ""].filter(Boolean).join(" ");
-  if (go && args) {
-    return (
-      <GoLink className={cls} go={go} args={args}>
-        {children}<Icon name="arrow" size={19} />
-      </GoLink>
-    );
-  }
-  return (
-    <button className={cls} onClick={onClick}>
-      {children}<Icon name="arrow" size={19} />
-    </button>
-  );
-}
-
-const lineUrl = (settings as { line_url?: string }).line_url || "";
-
-/** LINE公式アカウントへの相談ボタン（URLはCMSの「会社情報・共通設定」で変更） */
-function LineButton({ place, label = "LINEで気軽に相談する" }: { place: string; label?: string }) {
-  if (!lineUrl) return null;
-  return (
-    <a
-      className="line-button"
-      href={lineUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => window.gtag?.("event", "line_click", { link_location: place })}
-    >
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-        <path fill="currentColor" d="M12 3C6.48 3 2 6.58 2 11c0 3.9 3.5 7.15 8.24 7.85.32.07.76.21.87.49.1.25.06.64.03.9l-.14.84c-.04.25-.2.98.86.53 1.06-.45 5.7-3.36 7.78-5.75C21.06 14.3 22 12.75 22 11c0-4.42-4.48-8-10-8z" />
-      </svg>
-      <span>{label}</span>
-    </a>
-  );
-}
-
-function ContactBand({ navigate }: { navigate: Nav }) {
-  return (
-    <section className="contact-band">
-      <div className="contact-orbit orbit-one" aria-hidden="true" />
-      <div className="contact-orbit orbit-two" aria-hidden="true" />
-      <div className="container contact-band-inner" data-reveal>
-        <div>
-          <span className="eyebrow">Contact</span>
-          <h2>{settings.contact_band.heading}</h2>
-          <p><Lines text={settings.contact_band.text} /></p>
-        </div>
-        <div className="contact-band-action">
-          <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
-          <LineButton place="contact_band" />
-          <a className="contact-band-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PageHero({ en, title, intro, image }: { en: string; title: string; intro?: string; image?: string }) {
-  return (
-    <section
-      className={image ? "page-hero has-image" : "page-hero"}
-      style={image ? { backgroundImage: `url("${image}")` } : undefined}
-    >
-      <div className="container">
-        <p className="page-hero-en">{en}</p>
-        <h1>{title}</h1>
-        {intro && <div className="page-intro">{intro}</div>}
-      </div>
-    </section>
-  );
-}
 
 /* ───────────────────────── Home: Hero ───────────────────────── */
 
@@ -810,42 +575,6 @@ function MessageTeaser({ navigate }: { navigate: Nav }) {
   );
 }
 
-const faqItems: { q: string; a: string }[] = home.faqs ?? [];
-
-function FaqSection({ items = faqItems, title = home.faq_title }: { items?: { q: string; a: string }[]; title?: string } = {}) {
-  const [openIndex, setOpenIndex] = useState(0);
-  return (
-    <section className="section faq-section">
-      <div className="container narrow">
-        <SectionTitle en="FAQ" center>{title}</SectionTitle>
-        <div className="faq-list">
-          {items.map((item, i) => {
-            const open = openIndex === i;
-            return (
-              <div key={item.q} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
-                <div className={open ? "faq-item open" : "faq-item"}>
-                  <button
-                    className="faq-q"
-                    aria-expanded={open}
-                    aria-controls={`faq-a-${i}`}
-                    onClick={() => setOpenIndex(i)}
-                  >
-                    <span className="faq-mark">Q</span>
-                    <span className="faq-q-text">{item.q}</span>
-                    <span className="faq-toggle" aria-hidden="true"><Icon name="plus" size={18} /></span>
-                  </button>
-                  <div id={`faq-a-${i}`} className="faq-a" role="region">
-                    <div className="faq-a-inner"><p>{item.a}</p></div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Home({ navigate }: { navigate: Nav }) {
   return (
@@ -1012,118 +741,6 @@ function Services({ navigate }: { navigate: Nav }) {
 
 /* ───────────────────────── Topics / Article ───────────────────────── */
 
-function SolutionPage({ navigate }: { navigate: Nav }) {
-  const slug = decodeURIComponent(window.location.pathname.replace(/^\/services\//, "").replace(/\/+$/, ""));
-  const sol = solutions.find((s) => s.slug === slug);
-  useEffect(() => {
-    if (sol) document.title = `${sol.seo_title || sol.title} | COANA TOKYO合同会社`;
-  }, [sol]);
-  if (!sol) return <NotFound navigate={navigate} />;
-  const related = (sol.related ?? [])
-    .map((r) => articles.find((a) => a.slug === r))
-    .filter((a): a is Article => Boolean(a));
-  const others = solutions.filter((s) => s.slug !== sol.slug);
-  return (
-    <main className="services-page solution-page">
-      <PageHero en={sol.en || "Service"} title={sol.title} intro={sol.lead} image={sol.hero_image || services.hero_image} />
-      <section className="section">
-        <div className="container narrow">
-          <SectionTitle en="Problems">{sol.problems_title || "こんなお悩みはありませんか"}</SectionTitle>
-          <ul className="solution-problems">
-            {sol.problems.map((p, i) => (
-              <li key={p} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
-                <Icon name="check" size={20} />
-                <span>{p}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-      <section className="section service-detail">
-        <div className="container">
-          <SectionTitle en="Support">{sol.features_title || "支援内容"}</SectionTitle>
-          <div className="service-list">
-            {sol.features.map(({ name, text }, index) => (
-              <article key={name} data-reveal style={{ transitionDelay: `${(index % 2) * 80}ms` }}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3>{name}</h3>
-                  <p>{text}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-          {(sol.tools ?? []).length > 0 && (
-            <div className="solution-tools" data-reveal>
-              <p>{sol.tools_title || "対応ツールの例"}</p>
-              <ul>
-                {(sol.tools ?? []).map((t) => <li key={t}>{t}</li>)}
-              </ul>
-            </div>
-          )}
-        </div>
-      </section>
-      <section className="section flow-section">
-        <div className="container">
-          <SectionTitle en="Flow" center>{sol.steps_title || "支援の進め方"}</SectionTitle>
-          <ol className="flow-list">
-            {sol.steps.map((item, index) => (
-              <li key={item} data-reveal style={{ transitionDelay: `${index * 90}ms` }}>
-                <span>STEP {index + 1}</span>
-                <strong>{item}</strong>
-              </li>
-            ))}
-          </ol>
-          <div className="center-button solution-cta" data-reveal>
-            <LinkButton large go={navigate} args={["contact"]}>まずは相談してみる</LinkButton>
-            <LineButton place="solution_page" />
-          </div>
-        </div>
-      </section>
-      {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || "よくあるご質問"} />}
-      {related.length > 0 && (
-        <section className="section solution-related">
-          <div className="container narrow">
-            <SectionTitle en="Column">関連するコラム</SectionTitle>
-            <div className="article-list">
-              {related.map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
-            </div>
-          </div>
-        </section>
-      )}
-      <section className="section solution-others">
-        <div className="container">
-          <SectionTitle en="Services">そのほかのサービス</SectionTitle>
-          <div className="solution-other-list">
-            {others.map((o) => (
-              <GoLink key={o.slug} className="solution-other" go={navigate} args={["solution", undefined, o.slug]}>
-                <span>{o.nav_label}</span>
-                <Icon name="arrow" size={18} />
-              </GoLink>
-            ))}
-            <GoLink className="solution-other" go={navigate} args={["services"]}>
-              <span>サービス一覧を見る</span>
-              <Icon name="arrow" size={18} />
-            </GoLink>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-
-function ArticleRow({ article, navigate }: { article: Article; navigate: Nav }) {
-  return (
-    <GoLink className={article.thumbnail ? "article-row has-thumb" : "article-row"} go={navigate} args={["article", undefined, article.slug]}>
-      {article.thumbnail && <span className="article-row-thumb"><img src={article.thumbnail} alt={article.title} loading="lazy" /></span>}
-      <span className="article-row-main">
-        <span className="article-meta"><time dateTime={article.sortKey.slice(0, 10)}>{article.date}</time><i>{article.category}</i></span>
-        <strong>{article.title}</strong>
-      </span>
-      <Icon name="arrow" />
-    </GoLink>
-  );
-}
 
 function Topics({ navigate }: { navigate: Nav }) {
   const [filter, setFilter] = useState("すべて");
@@ -1394,21 +1011,6 @@ function Privacy() {
   );
 }
 
-/* ───────────────────────── Not found ───────────────────────── */
-
-function NotFound({ navigate }: { navigate: Nav }) {
-  return (
-    <main>
-      <PageHero en="404 Not found" title="ページが見つかりません" intro="お探しのページは、移動または削除された可能性があります。" />
-      <section className="section">
-        <div className="container button-row" style={{ justifyContent: "center" }}>
-          <LinkButton go={navigate} args={["home"]}>トップページへ</LinkButton>
-          <LinkButton secondary go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
-        </div>
-      </section>
-    </main>
-  );
-}
 
 /* ───────────────────────── App shell ───────────────────────── */
 

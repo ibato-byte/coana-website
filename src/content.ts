@@ -92,7 +92,7 @@ export type Solution = {
   problems_title?: string;
   problems: string[];
   features_title?: string;
-  features: { name: string; text: string }[];
+  features: { name: string; text: string; icon?: string }[];
   tools_title?: string;
   tools?: string[];
   steps_title?: string;
@@ -100,6 +100,26 @@ export type Solution = {
   faq_title?: string;
   faqs?: { q: string; a: string }[];
   related?: string[];
+  /* ── 以下はランディングページ用の追加項目（すべて任意。空欄の場合はそのセクションを表示しない） ── */
+  catch?: string;
+  hero_points?: string[];
+  show_certifications?: boolean;
+  target_title?: string;
+  target?: { name: string; text: string; icon?: string }[];
+  problems_image?: string;
+  outcome_title?: string;
+  outcome_lead?: string;
+  outcomes?: { label: string; before: string; after: string }[];
+  features_lead?: string;
+  features_image?: string;
+  reasons_title?: string;
+  reasons?: { name: string; text: string; image?: string }[];
+  flow?: { name: string; text: string }[];
+  flow_note?: string;
+  message_title?: string;
+  message?: string;
+  cta_title?: string;
+  cta_text?: string;
 };
 
 const solutionFiles = import.meta.glob("../content/solutions/*.json", {
