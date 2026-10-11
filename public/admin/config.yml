@@ -66,11 +66,38 @@ collections:
       - { label: ページの見出し, name: title, widget: string }
       - { label: 検索結果に出すタイトル, name: seo_title, widget: string, required: false, hint: "空欄の場合はページの見出しを使います" }
       - { label: 検索結果に出す説明文（120文字前後）, name: description, widget: text, required: false }
+      - { label: ページ上部｜キャッチコピー（改行で2行まで。空欄の場合はページの見出しを大きく表示）, name: catch, widget: text, required: false }
       - { label: リード文, name: lead, widget: text }
-      - { label: 上部の背景画像, name: hero_image, widget: image, required: false, hint: "空欄の場合はサービスページと同じ画像を使います。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、公開後は正しく表示されます。" }
+      - { label: ページ上部｜3つのポイント（短い言葉で）, name: hero_points, widget: list, required: false, field: { label: ポイント, name: point, widget: string } }
+      - { label: 上部の背景画像, name: hero_image, widget: image, required: false, hint: "空欄の場合はサービスページと同じ画像を使います。横長の写真がおすすめです。外部の画像URL（https://〜）も指定できます。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、公開後は正しく表示されます。" }
+      - { label: 認定資格（freee認定アドバイザー等）のバッジを表示する, name: show_certifications, widget: boolean, default: false, required: false }
+      - { label: 「こんな方におすすめ」の見出し, name: target_title, widget: string, required: false, default: こんな方におすすめです }
+      - label: こんな方におすすめ（3つ程度）
+        name: target
+        widget: list
+        required: false
+        summary: "{{fields.name}}"
+        fields:
+          - { label: 見出し, name: name, widget: string }
+          - { label: 説明, name: text, widget: text }
+          - { label: アイコン, name: icon, widget: select, required: false, default: person, options: [person, users, building, store, chart, search, refresh, handshake, target, megaphone, mic, rocket, globe, cloud, doc, invoice, calendar, tools, rules, link, camera, shield, clock, yen, layout, bank, mail, sparkle, check] }
       - { label: お悩みの見出し, name: problems_title, widget: string, required: false, default: こんなお悩みはありませんか }
       - { label: お悩み, name: problems, widget: list, field: { label: お悩み, name: problem, widget: string } }
+      - { label: お悩みの横に表示する写真, name: problems_image, widget: image, required: false, hint: "横長〜やや縦長の写真がおすすめです。外部の画像URLも指定できます。" }
+      - { label: 「Before / After」の見出し, name: outcome_title, widget: string, required: false, default: 支援後に、こう変わります }
+      - { label: 「Before / After」のリード文, name: outcome_lead, widget: text, required: false }
+      - label: Before / After（3つ程度）
+        name: outcomes
+        widget: list
+        required: false
+        summary: "{{fields.label}}"
+        fields:
+          - { label: 項目名（例：月次の数字）, name: label, widget: string }
+          - { label: Before（支援前）, name: before, widget: text }
+          - { label: After（支援後）, name: after, widget: text }
       - { label: 支援内容の見出し, name: features_title, widget: string, required: false, default: 支援内容 }
+      - { label: 支援内容のリード文, name: features_lead, widget: text, required: false }
+      - { label: 支援内容の横に表示する写真, name: features_image, widget: image, required: false }
       - label: 支援内容
         name: features
         widget: list
@@ -78,10 +105,34 @@ collections:
         fields:
           - { label: 名称, name: name, widget: string }
           - { label: 説明, name: text, widget: text }
+          - { label: アイコン, name: icon, widget: select, required: false, default: check, options: [check, search, tools, link, rules, calendar, handshake, doc, invoice, yen, chart, refresh, layout, cloud, target, megaphone, camera, shield, mail, mic, users, person, globe, rocket, building, store, clock, bank, sparkle] }
       - { label: 対応ツールの見出し, name: tools_title, widget: string, required: false, default: 対応ツールの例 }
-      - { label: 対応ツール, name: tools, widget: list, required: false, field: { label: ツール名, name: tool, widget: string } }
+      - { label: 対応ツール, name: tools, widget: list, required: false, field: { label: ツール名, name: tool, widget: string }, hint: "トップページ「対応ツール」に登録したツール名を含めると、ロゴが自動で表示されます（例：freee会計）。" }
+      - { label: 「選ばれる理由」の見出し, name: reasons_title, widget: string, required: false, default: COANA TOKYOが選ばれる理由 }
+      - label: 選ばれる理由（3つ程度）
+        name: reasons
+        widget: list
+        required: false
+        summary: "{{fields.name}}"
+        fields:
+          - { label: 見出し, name: name, widget: string }
+          - { label: 説明, name: text, widget: text }
+          - { label: 写真, name: image, widget: image, required: false }
       - { label: 進め方の見出し, name: steps_title, widget: string, required: false, default: 支援の進め方 }
-      - { label: 進め方, name: steps, widget: list, field: { label: ステップ, name: step, widget: string } }
+      - { label: 進め方（見出しのみの簡易版。下の「進め方（詳細）」を入力した場合はそちらを優先）, name: steps, widget: list, field: { label: ステップ, name: step, widget: string } }
+      - label: 進め方（詳細・4ステップ程度）
+        name: flow
+        widget: list
+        required: false
+        summary: "{{fields.name}}"
+        fields:
+          - { label: ステップ名, name: name, widget: string }
+          - { label: 説明, name: text, widget: text }
+      - { label: 進め方の下の補足（期間の目安など）, name: flow_note, widget: string, required: false }
+      - { label: 代表メッセージの見出し, name: message_title, widget: string, required: false, default: 代表からのメッセージ }
+      - { label: 代表メッセージ本文（改行可。空欄の場合は非表示）, name: message, widget: text, required: false }
+      - { label: 「お問い合わせ」帯の見出し, name: cta_title, widget: string, required: false, default: まずは、現状をお聞かせください。 }
+      - { label: 「お問い合わせ」帯の本文（改行可）, name: cta_text, widget: text, required: false }
       - { label: よくある質問の見出し, name: faq_title, widget: string, required: false, default: よくあるご質問 }
       - label: よくある質問
         name: faqs
