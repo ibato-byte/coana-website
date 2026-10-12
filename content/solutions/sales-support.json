@@ -8,7 +8,7 @@
   "description": "商品・サービスの強みと対象顧客を整理し、営業の進め方と販路づくりを設計・実行支援。インサイドセールス組織の立ち上げ経験をもとに、中小企業・小規模事業者の「売れる仕組み」をつくります。全国オンライン対応。",
   "catch": "「誰に・何を・どう届けるか」を整え、\n売れる仕組みをつくる。",
   "lead": "紹介頼み、担当者の頑張り頼みの営業から、続けられて改善できる営業へ。商品やサービスの強みと対象顧客を整理し、見込み客の獲得から商談・受注までの流れを設計。営業ツールの整備と実行の伴走まで支援します。",
-  "hero_image": "https://images.unsplash.com/photo-1758691737278-3af15b37af48?auto=format&fit=crop&w=1600&q=80",
+  "hero_image": "https://images.unsplash.com/photo-1758876022836-70b89d3e6944?auto=format&fit=crop&w=1600&q=80",
   "hero_points": [
     "強み・顧客像の整理から着手",
     "営業の仕組み化と実行を伴走",
@@ -259,17 +259,17 @@
     {
       "name": "営業組織立ち上げの実務経験",
       "text": "代表はインサイドセールスやカスタマーサクセス組織の立ち上げに携わり、プロセス設計とデータ活用で成果を出してきました。",
-      "image": "/images/strengths/strength-02.jpg"
+      "image": "https://images.unsplash.com/photo-1790597035898-95815872211e?auto=format&fit=crop&w=900&q=80"
     },
     {
       "name": "数字で改善する営業",
       "text": "活動量や進捗を見える化し、感覚ではなく数字をもとに改善します。バックオフィス支援で培った「仕組み化」の考え方を営業にも活かします。",
-      "image": "/images/strengths/strength-01.jpg"
+      "image": "https://images.unsplash.com/photo-1659479749984-d48333116052?auto=format&fit=crop&w=900&q=80"
     },
     {
       "name": "攻めと守りをワンストップで",
       "text": "SNS運用やWebサイト制作、セミナー開催とあわせて集客の流れをつくれるのが、COANA TOKYOの強みです。",
-      "image": "/images/strengths/strength-03.jpg"
+      "image": "https://images.unsplash.com/photo-1758519288905-38b7b00c1023?auto=format&fit=crop&w=900&q=80"
     }
   ],
   "scenarios": {

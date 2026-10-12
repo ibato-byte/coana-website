@@ -53,7 +53,7 @@
     "ツールを導入したが、使われずに元のやり方に戻ってしまった",
     "勤怠・給与・請求など、ツールがばらばらで連携していない"
   ],
-  "problems_image": "https://images.unsplash.com/photo-1529119368496-2dfda6ec2804?auto=format&fit=crop&w=1600&q=80",
+  "problems_image": "https://images.unsplash.com/photo-1583521214690-73421a1829a9?auto=format&fit=crop&w=1600&q=80",
   "scheme": {
     "type": "hub",
     "title": "御社専属の「バックオフィスチーム」として",
@@ -346,17 +346,17 @@
     {
       "name": "業務全体を見渡して設計",
       "text": "ツール単位の「部分最適」ではなく、経理・労務・総務・営業事務のつながりを踏まえて、会社全体の業務を設計します。",
-      "image": "/images/about-backoffice.jpg"
+      "image": "https://images.unsplash.com/photo-1590103514966-5e2a11c13e21?auto=format&fit=crop&w=900&q=80"
     },
     {
       "name": "経理×ITの実務経験",
       "text": "クラウド会計・ERP・グループウェアの導入支援と、経理の現場経験の両方をもとに、現実的に回る仕組みをつくります。",
-      "image": "/images/strengths/strength-03.jpg"
+      "image": "https://images.unsplash.com/photo-1772588627342-5ec373e236d8?auto=format&fit=crop&w=900&q=80"
     },
     {
       "name": "小さな会社に合うスケール感",
       "text": "高価なシステムや大人数の体制ではなく、身近なクラウドツールと必要な分だけの代行で効果を出します。",
-      "image": "/images/strengths/strength-02.jpg"
+      "image": "https://images.unsplash.com/photo-1777037448516-df8c62680083?auto=format&fit=crop&w=900&q=80"
     }
   ],
   "scenarios": {

@@ -276,12 +276,12 @@
     {
       "name": "経理×IT×営業の実務経験",
       "text": "クラウド会計ソフト企業、スタートアップ、税理士事務所での経験と、インサイドセールス立ち上げの経験。守りと攻めの両方から創業を支えます。",
-      "image": "/images/strengths/strength-01.jpg"
+      "image": "https://images.unsplash.com/photo-1738566061714-9c3ca1c87769?auto=format&fit=crop&w=900&q=80"
     },
     {
       "name": "専門家ネットワーク",
       "text": "税理士・司法書士・行政書士・社労士・弁護士と連携。必要なタイミングで適切な専門家につなぎ、やりとりを整理します。",
-      "image": "/images/strengths/strength-02.jpg"
+      "image": "https://images.unsplash.com/photo-1785902082866-384f1df89285?auto=format&fit=crop&w=900&q=80"
     }
   ],
   "scenarios": {
