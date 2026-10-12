@@ -6,8 +6,8 @@
   "nav_label": "Startup Support (English)",
   "en": "For international founders",
   "title": "Startup support for founders in Japan",
-  "seo_title": "Start a Business in Japan｜Bilingual startup support: business plan, funding prep, back office, and professional introductions",
-  "description": "Bilingual (English/Japanese) support for founders starting a business in Japan: business plan, funding preparation, accounting and back-office setup, Japanese business customs, and introductions to licensed professionals (judicial scriveners, administrative scriveners, tax accountants, labor consultants). Based in Tokyo, available online nationwide.",
+  "seo_title": "Start a Business in Japan | Bilingual startup support (business plan, back office, professionals)",
+  "description": "Bilingual support for founders starting a business in Japan: business plan, funding preparation, accounting and back-office setup, business customs, and introductions to licensed professionals.",
   "catch": "Start your business in Japan\nwith a partner who speaks both languages.",
   "lead": "Starting a company in Japan means navigating unfamiliar procedures, a different business culture, and a lot of paperwork in Japanese. COANA TOKYO is your single point of contact: we help you plan, set up your back office, understand how business is done here, and connect you with the right licensed professionals at the right time.",
   "hero_image": "/images/tokyo-skyline-hero.jpg",
@@ -16,7 +16,7 @@
     "Accounting and back-office setup",
     "Introductions to licensed professionals"
   ],
-  "hero_note": "Free consultation in English. Online nationwide, office in Minato-ku, Tokyo.",
+  "hero_note": "Free consultation in English. Online nationwide, office in Minato-ku, Tokyo. Inquiries are received through our contact form (Japanese page); please write in English.",
   "hero_facts": [
     {
       "value": "English / 日本語",
@@ -53,7 +53,7 @@
   "problems": [
     "You do not know which professional handles what: incorporation, visas, taxes, labor",
     "Every form, bank, and government office communicates only in Japanese",
-    "You need a business plan for a visa, a loan, or investors, in a format Japan expects",
+    "You need a business plan for a loan or investors, and are not sure what format Japan expects",
     "Japanese invoicing, seals (hanko), payment terms, and bank transfers are confusing",
     "You are not sure which accounting software and tools to use",
     "You want someone who can answer practical questions quickly, in English"
@@ -71,7 +71,7 @@
       {
         "label": "Business plan",
         "sub": "Plan, budget, cash-flow",
-        "sub2": "In the format Japan expects"
+        "sub2": "Structured the Japanese way"
       },
       {
         "label": "Funding preparation",
@@ -90,8 +90,8 @@
       },
       {
         "label": "Licensed professionals",
-        "sub": "Judicial / administrative scriveners",
-        "sub2": "Tax accountants, labor consultants"
+        "sub": "Scriveners (registration, permits)",
+        "sub2": "Tax and labor professionals"
       },
       {
         "label": "You",
@@ -103,7 +103,7 @@
       {
         "icon": "doc",
         "name": "A plan you can actually use",
-        "text": "We help you write a business plan and financial projections that work for Japanese banks, subsidy programs, and visa applications."
+        "text": "We help you structure your idea, target customers, revenue model, budget, and cash-flow projections into a business plan you can present to banks and partners. Documents submitted for subsidy or visa applications are prepared by the licensed professionals we introduce."
       },
       {
         "icon": "handshake",
@@ -148,7 +148,7 @@
     {
       "icon": "doc",
       "name": "Business plan support",
-      "text": "We structure your idea, target customers, revenue model, budget, and cash-flow projections into a plan that Japanese banks, subsidy programs, and visa applications expect."
+      "text": "We structure your idea, target customers, revenue model, budget, and cash-flow projections into a plan you can present to Japanese banks and partners. Where a document must be filed with a government office (subsidies, visas), we introduce the licensed professional who prepares it."
     },
     {
       "icon": "bank",
@@ -158,7 +158,7 @@
     {
       "icon": "cloud",
       "name": "Accounting and back-office setup",
-      "text": "We choose and configure cloud accounting software, connect bank accounts and cards, and set up invoicing, expenses, and receipt rules that comply with Japanese requirements (invoice system, electronic record keeping)."
+      "text": "We choose and configure cloud accounting software, connect bank accounts and cards, and set up invoicing, expense, and receipt rules designed with the Japanese invoice system and electronic record-keeping requirements in mind (tax judgments are confirmed with a licensed tax accountant)."
     },
     {
       "icon": "globe",
@@ -179,9 +179,9 @@
   "tools_title": "Tools we work with",
   "tools": [
     "freee",
-    "マネーフォワード クラウド",
+    "Money Forward Cloud",
     "Google Workspace",
-    "Chatwork・Slack",
+    "Chatwork / Slack",
     "Invoicing tools",
     "Notion"
   ],
@@ -205,7 +205,7 @@
         "icon": "building",
         "items": [
           "Roadmap for incorporation and registrations",
-          "Sole proprietor vs. company comparison",
+          "Sole proprietor vs. company: practical differences (tax impact confirmed with a tax accountant)",
           "Checklist of required filings and permits",
           "Introductions to licensed professionals"
         ]
@@ -255,7 +255,7 @@
         "featured": true,
         "text": "Everything in Plan & Prepare, plus setting up your back office and tools so the company runs from day one.",
         "includes": [
-          "Plan & Prepare contents",
+          "Everything in Plan & Prepare",
           "Coordination of incorporation with professionals",
           "Accounting software and tools setup",
           "Invoicing and expense rules",
@@ -282,7 +282,7 @@
   "reasons": [
     {
       "name": "Bilingual, hands-on, local",
-      "text": "We communicate in English and handle the Japanese side for you, from reading documents to speaking with banks and professionals.",
+      "text": "We communicate in English and support you on the Japanese side, from reading documents to joining meetings with banks and professionals.",
       "image": "https://images.unsplash.com/photo-1538128844159-f08f41bfb169?auto=format&fit=crop&w=900&q=80"
     },
     {
@@ -298,7 +298,7 @@
   ],
   "scenarios": {
     "title": "Example situations",
-    "lead": "Illustrative examples of the situations we support.",
+    "lead": "Illustrative examples of typical situations (not case studies of specific clients).",
     "items": [
       {
         "tag": "Restaurant / sole proprietor",
@@ -352,7 +352,7 @@
   ],
   "flow_note": "We work around your target launch date. Early-stage conversations are welcome.",
   "message_title": "Japan is a great place to build a business. It should not be a lonely one.",
-  "message": "Many founders from overseas arrive with a strong idea and plenty of energy, and then lose months to paperwork, language barriers, and not knowing who to ask. Having worked inside a cloud accounting company, a tax accounting firm, and startups, I know where those months go.\nCOANA TOKYO exists so you can spend that time on customers and products instead. We will handle the Japanese side, explain how things work here, and bring in the right professionals when you need them.",
+  "message": "Many founders from overseas arrive with a strong idea and plenty of energy, and then lose months to paperwork, language barriers, and not knowing who to ask. Having worked inside a cloud accounting company, a tax accounting firm, and startups, I know where those months go.\nCOANA TOKYO exists so you can spend that time on customers and products instead. We will support you on the Japanese side, explain how things work here, and bring in the right professionals when you need them.",
   "faq_title": "FAQ",
   "faqs": [
     {
@@ -361,11 +361,11 @@
     },
     {
       "q": "Do you file taxes or handle social insurance?",
-      "a": "Tax filing and advice are reserved for licensed tax accountants, and social-insurance procedures for labor and social security attorneys. We set up your bookkeeping and connect you with the right professional for filings."
+      "a": "Tax filing and tax advice are reserved for licensed tax accountants, and social-insurance filings for licensed labor and social security attorneys (shakai hoken roumushi). We set up your bookkeeping and connect you with the right professional for filings."
     },
     {
       "q": "Is all communication in English?",
-      "a": "Yes. We communicate with you in English and handle Japanese-language documents, tools, and conversations with professionals and banks on your behalf."
+      "a": "Yes. We communicate with you in English, help you read and understand Japanese-language documents and tools, and join conversations with professionals and banks as your bilingual support (not as your legal representative)."
     },
     {
       "q": "Can you help before I arrive in Japan?",
@@ -373,7 +373,7 @@
     },
     {
       "q": "Do you work with sole proprietors and freelancers?",
-      "a": "Yes. We support individuals as well as companies, and help you decide which structure fits your situation."
+      "a": "Yes. We support individuals as well as companies, and help you understand the practical differences between the two. Tax implications are confirmed with a licensed tax accountant."
     },
     {
       "q": "How much does it cost?",
@@ -381,7 +381,6 @@
     }
   ],
   "cta_title": "Tell us about your plan. We will tell you what comes next.",
-  "cta_text": "Free consultation in English, online.\nNo obligation, and no question is too basic.",
-  "related": [],
-  "show_certifications": false
+  "cta_text": "Free consultation in English, online.\nNo obligation, and no question is too basic. The contact form is in Japanese, but you can write your message in English.",
+  "related": []
 }
