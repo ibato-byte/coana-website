@@ -1,0 +1,58 @@
+# 予約投稿の自動公開
+# 毎朝6時（日本時間）に content/topics を確認し、今日が公開日の記事があれば
+# 公開用のコミットを main に入れて Cloudflare Pages のビルドを起動する。
+# 公開日の記事がない日は何もしない（コミットも作らない）。
+name: 予約投稿の公開
+
+on:
+  schedule:
+    - cron: "0 21 * * *" # UTC 21:00 = 日本時間 6:00
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scheduled-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: 今日が公開日の記事を探す
+        id: find
+        run: |
+          today=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          echo "today=$today" >> "$GITHUB_OUTPUT"
+          titles=""
+          for f in content/topics/*.md; do
+            [ -f "$f" ] || continue
+            head -n 20 "$f" | grep -Eq "^date:[[:space:]]*['\"]?${today}" || continue
+            head -n 20 "$f" | grep -Eq "^draft:[[:space:]]*true" && continue
+            t=$(head -n 20 "$f" | sed -n 's/^title:[[:space:]]*//p' | head -n 1)
+            titles="${titles}${t} / "
+          done
+          echo "titles=${titles% / }" >> "$GITHUB_OUTPUT"
+          if [ -n "$titles" ]; then echo "found=true" >> "$GITHUB_OUTPUT"; else echo "found=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: 公開用のコミットを入れてビルドを起動
+        if: steps.find.outputs.found == 'true'
+        env:
+          TODAY: ${{ steps.find.outputs.today }}
+          TITLES: ${{ steps.find.outputs.titles }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "予約投稿の公開（${TODAY}）: ${TITLES}"
+          git push origin main
+
+      - name: 公開日の記事なし
+        if: steps.find.outputs.found != 'true'
+        env:
+          TODAY: ${{ steps.find.outputs.today }}
+        run: echo "${TODAY} が公開日の記事はありません。"
