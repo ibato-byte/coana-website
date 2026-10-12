@@ -34,6 +34,7 @@ const files = import.meta.glob("../content/topics/*.md", {
 }) as Record<string, string>;
 
 const p = (n: number) => String(n).padStart(2, "0");
+const todayJst = () => new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
 // 日付は閲覧者のタイムゾーンに左右されず、日本時間の表記で表示する
 function toDate(value: unknown) {
@@ -62,6 +63,8 @@ export const articles: Article[] = Object.entries(files)
     if (fm.draft) return null;
     const slug = path.split("/").pop()!.replace(/\.md$/, "");
     const d = toDate(fm.date);
+    // 予約投稿：公開日（日本時間）が今日より先の記事は表示しない（毎朝の自動ビルドで公開される）
+    if (/^\d{4}\.\d{2}\.\d{2}$/.test(d.label) && d.label.replace(/\./g, "-") > todayJst()) return null;
     return {
       slug,
       title: fm.title ?? slug,
