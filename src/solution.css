@@ -610,3 +610,5 @@
 /* トップページのサービス一覧：各項目からサービス別ページへ */
 .service-panel li a.service-item-link { color: inherit; text-decoration: underline; text-decoration-color: rgba(8, 127, 229, .35); text-underline-offset: 4px; transition: color .25s, text-decoration-color .25s; }
 .service-panel li a.service-item-link:hover { color: var(--sky-ink); text-decoration-color: var(--sky-ink); }
+/* ロゴを掲載しないツール（ブランド規約上、事前承認が必要なもの）は名称を文字で表示 */
+.tool-logo-text { display: inline-flex; align-items: center; height: 40px; font-family: var(--font-en); font-size: 22px; font-weight: 600; letter-spacing: .01em; color: var(--navy); }

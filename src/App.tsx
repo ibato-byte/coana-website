@@ -498,7 +498,8 @@ function ToolsSection() {
         <div className="tools-grid">
           {home.tools.map((t, i) => (
             <article className="tool-card" key={t.name} data-reveal style={{ transitionDelay: `${(i % 4) * 90}ms` }}>
-              <div className="tool-logo"><img src={t.logo} alt={t.name} loading="lazy" /></div>
+              {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
+              <div className="tool-logo">{t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span className="tool-logo-text">{t.name}</span>}</div>
               <p className="tool-category">{t.category}</p>
               <h3>{t.name}</h3>
               <p>{t.text}</p>
