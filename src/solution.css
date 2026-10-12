@@ -454,7 +454,7 @@
 .lp-scheme-flow li { position: relative; text-align: center; padding: 26px 16px 24px; border-radius: 18px; background: var(--paper); border: 1px solid var(--line); }
 .lp-scheme-flow-icon { width: 54px; height: 54px; margin: 0 auto 14px; border-radius: 50%; background: var(--navy); color: var(--yellow); display: grid; place-items: center; }
 .lp-scheme-flow strong { display: block; font-size: 15.5px; font-weight: 800; line-height: 1.6; }
-.lp-scheme-flow span { display: block; margin-top: 6px; font-size: 13px; color: var(--navy-soft); line-height: 1.8; }
+.lp-scheme-flow span:not(.lp-scheme-flow-icon) { display: block; margin-top: 6px; font-size: 13px; color: var(--navy-soft); line-height: 1.8; }
 .lp-scheme-flow-arrow { position: absolute; right: -12px; top: calc(50% - 5px); width: 10px; height: 10px; border-top: 2px solid var(--sky-deep); border-right: 2px solid var(--sky-deep); transform: rotate(45deg); z-index: 2; }
 
 /* ── 依頼できる業務一覧 ── */
