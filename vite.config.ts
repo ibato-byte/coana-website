@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => {
 react(),
       tailwindcss(),
       figmaSiteConfiguration(siteConfiguration),
+      coanaRemoteImages(),
       coanaPageMeta(),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
@@ -364,6 +365,91 @@ function figmaMakeKitPlugin(options: { storiesGlob: string | string[] }): Plugin
 }
 
 /**
+ * 外部の写真（Unsplash）をビルド時に取り込み、自社ドメイン（/images/remote/）から配信する。
+ * - CMS に Unsplash の画像URLを貼るだけで、公開時に自動で WebP に最適化して自社ホストに切り替わる
+ * - 取り込みに失敗した画像は、元のURLのまま表示される（サイトが壊れない）
+ * - 対応表は virtual:remote-images として src/content.ts から参照する
+ */
+const remoteImageMap: Record<string, string> = {}
+function coanaRemoteImages(): Plugin {
+  const VIRTUAL_ID = 'virtual:remote-images'
+  const RESOLVED_ID = '\0' + VIRTUAL_ID
+  const files: { fileName: string; source: Uint8Array }[] = []
+  let isBuild = false
+
+  const collect = (value: unknown, out: Set<string>) => {
+    if (typeof value === 'string') {
+      if (/^https:\/\/images\.unsplash\.com\/photo-[\w-]+/.test(value)) out.add(value)
+    } else if (Array.isArray(value)) {
+      value.forEach((v) => collect(v, out))
+    } else if (value && typeof value === 'object') {
+      Object.values(value).forEach((v) => collect(v, out))
+    }
+  }
+
+  return {
+    name: 'coana-remote-images',
+    configResolved(config) {
+      isBuild = config.command === 'build'
+    },
+    resolveId(id) {
+      return id === VIRTUAL_ID ? RESOLVED_ID : null
+    },
+    load(id) {
+      return id === RESOLVED_ID ? 'export default ' + JSON.stringify(remoteImageMap) : null
+    },
+    async buildStart() {
+      if (!isBuild) return
+      const urls = new Set<string>()
+      const contentDir = path.resolve(__dirname, 'content')
+      const jsonFiles = [
+        ...fs.readdirSync(contentDir).filter((n) => n.endsWith('.json')).map((n) => path.join(contentDir, n)),
+        ...(fs.existsSync(path.join(contentDir, 'solutions'))
+          ? fs.readdirSync(path.join(contentDir, 'solutions')).filter((n) => n.endsWith('.json')).map((n) => path.join(contentDir, 'solutions', n))
+          : []),
+      ]
+      for (const file of jsonFiles) {
+        try { collect(JSON.parse(fs.readFileSync(file, 'utf8')), urls) } catch { /* 壊れたJSONは他のビルド処理でエラーになる */ }
+      }
+      const list = [...urls]
+      let done = 0
+      const worker = async () => {
+        while (list.length) {
+          const url = list.shift()!
+          const id = (url.match(/photo-([\w-]+)/) || [])[1]
+          const width = Math.min(2000, Number((url.match(/[?&]w=(\d+)/) || [])[1] || 1600))
+          const fileName = 'images/remote/unsplash-' + id + '-w' + width + '.webp'
+          const controller = new AbortController()
+          const timer = setTimeout(() => controller.abort(), 20000)
+          try {
+            const res = await fetch('https://images.unsplash.com/photo-' + id + '?fm=webp&q=72&fit=crop&w=' + width, { signal: controller.signal })
+            const type = res.headers.get('content-type') || ''
+            if (!res.ok || !type.startsWith('image/')) throw new Error(res.status + ' ' + type)
+            files.push({ fileName, source: new Uint8Array(await res.arrayBuffer()) })
+            remoteImageMap[url] = '/' + fileName
+            done++
+          } catch (error) {
+            this.warn('外部画像を取り込めなかったため元のURLのまま使います: ' + url + ' (' + String(error) + ')')
+          } finally {
+            clearTimeout(timer)
+          }
+        }
+      }
+      await Promise.all(Array.from({ length: 6 }, worker))
+      this.info?.('外部画像を自社ドメインに取り込みました: ' + done + '/' + urls.size)
+    },
+    generateBundle() {
+      const seen = new Set<string>()
+      for (const file of files) {
+        if (seen.has(file.fileName)) continue
+        seen.add(file.fileName)
+        this.emitFile({ type: 'asset', fileName: file.fileName, source: file.source })
+      }
+    },
+  }
+}
+
+/**
  * SEO：各ページ・各トピックス記事ごとに、タイトル・説明文・OGP・構造化データ（JSON-LD）を埋め込んだ HTML を書き出す。
  * あわせて sitemap.xml、RSS（feed.xml）、llms.txt、404.html を生成する。
  * 会社情報・サービス名・FAQ は content/ の JSON（CMSで編集する内容）から読み込む。
@@ -576,7 +662,7 @@ function coanaPageMeta(): Plugin {
           alternates,
           title: (sol.seo_title || sol.title) + T.suffix,
           description,
-          preload: sol.hero_image || services.hero_image,
+          preload: remoteImageMap[sol.hero_image || ''] || sol.hero_image || services.hero_image,
           jsonld: graph(
             crumbs([{ name: T.home, url: SITE + '/' }, { name: T.services, url: SITE + '/services' }, { name: label, url }]),
             {
