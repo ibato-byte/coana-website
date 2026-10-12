@@ -330,7 +330,7 @@ collections:
             summary: "{{fields.name}}"
             fields:
               - { label: ツール名, name: name, widget: string }
-              - { label: ロゴ画像, name: logo, widget: image }
+              - { label: ロゴ画像, name: logo, widget: image, required: false, hint: "各社のブランド規約で第三者の掲載が認められているロゴのみ設定してください（freee・マネーフォワード・Odoo は規約に沿って掲載可。Google・Microsoft・Slack・kintone などは事前承認が必要なため空欄＝文字表示）。" }
               - { label: カテゴリー, name: category, widget: string }
               - { label: 説明, name: text, widget: text }
           - { label: 対応ツール｜一覧の下の補足, name: tools_note, widget: string, required: false }
