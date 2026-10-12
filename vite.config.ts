@@ -373,7 +373,7 @@ function coanaPageMeta(): Plugin {
   const SUFFIX = ' | COANA TOKYO合同会社'
   let outDir = 'dist'
 
-  type PageMeta = { path: string; title: string; description: string; image?: string; type?: string; lastmod?: string; crumb?: string; jsonld?: object[]; preload?: string }
+  type PageMeta = { path: string; title: string; description: string; image?: string; type?: string; lastmod?: string; crumb?: string; jsonld?: object[]; preload?: string; lang?: 'ja' | 'en'; alternates?: { hreflang: string; href: string }[] }
 
   const readJson = (rel: string) => JSON.parse(fs.readFileSync(path.resolve(__dirname, rel), 'utf8'))
   const escapeAttr = (value: string) =>
@@ -394,7 +394,13 @@ function coanaPageMeta(): Plugin {
     const description = page.description || defaultDescription
     const image = page.image || defaultImage
     let html = shell.replace(/<title>[\s\S]*?<\/title>/, () => '<title>' + escapeAttr(page.title) + '</title>')
+    // 英語ページは <html lang> と og:locale を切り替える
+    if (page.lang === 'en') {
+      html = html.replace(/<html\s+lang="[^"]*"/, '<html lang="en"')
+      html = setMeta(html, 'property', 'og:locale', 'en_US')
+    }
     html = setMeta(html, 'name', 'description', description)
+    html = setMeta(html, 'name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')
     html = setMeta(html, 'property', 'og:type', page.type || 'website')
     html = setMeta(html, 'property', 'og:url', url)
     html = setMeta(html, 'property', 'og:title', page.title)
@@ -415,6 +421,9 @@ function coanaPageMeta(): Plugin {
     html = /<link\s+rel="canonical"[^>]*>/.test(html)
       ? html.replace(/<link\s+rel="canonical"[^>]*>/, () => canonical)
       : appendHead(html, canonical)
+    for (const alt of page.alternates ?? []) {
+      html = appendHead(html, '<link rel="alternate" hreflang="' + escapeAttr(alt.hreflang) + '" href="' + escapeAttr(alt.href) + '" />')
+    }
     html = appendHead(html, '<link rel="alternate" type="application/rss+xml" title="COANA TOKYO トピックス" href="' + SITE + '/feed.xml" />')
     if (page.preload) html = appendHead(html, '<link rel="preload" as="image" href="' + escapeAttr(page.preload) + '" fetchpriority="high" />')
     for (const data of page.jsonld ?? []) {
@@ -475,14 +484,16 @@ function coanaPageMeta(): Plugin {
         areaServed: { '@type': 'Country', name: '日本' },
         founder: { '@type': 'Person', name: about.profile_name, jobTitle: about.profile_role },
         foundingDate: '2025-10',
-        knowsAbout: ['経理業務の改善', 'バックオフィス業務のDX', 'クラウド会計ソフトの導入', 'ERPの導入', 'グループウェアの導入', '営業・販路開拓支援', 'SNS運用支援', 'Webサイト制作'],
+        knowsAbout: ['経理代行・経理業務の改善', 'クラウド会計・ITツール導入支援', 'バックオフィス代行・DX支援', '創業支援', 'ERPの導入', 'グループウェアの導入', '営業・販路開拓支援', 'セミナー・イベント開催支援', 'SNS運用支援・運用代行', 'Webサイト制作'],
+        knowsLanguage: ['ja', 'en'],
+        contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: settings.email, url: SITE + '/contact', availableLanguage: ['Japanese', 'English'], areaServed: 'JP' }],
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: 'サービス',
           itemListElement: ['backoffice', 'marketing'].flatMap((key) => ((services[key]?.items ?? []) as { name: string; text: string }[]).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item.name, description: item.text, provider: { '@id': orgId }, areaServed: 'JP' } }))),
         },
       }
-      const website = { '@type': 'WebSite', '@id': SITE + '/#website', url: SITE, name: 'COANA TOKYO', publisher: { '@id': orgId }, inLanguage: 'ja' }
+      const website = { '@type': 'WebSite', '@id': SITE + '/#website', url: SITE, name: 'COANA TOKYO', publisher: { '@id': orgId }, inLanguage: ['ja', 'en'] }
       const graph = (...items: object[]) => [{ '@context': 'https://schema.org', '@graph': [organization, website, ...items] }]
       const crumbs = (items: { name: string; url: string }[]) => ({ '@type': 'BreadcrumbList', itemListElement: items.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: item.url })) })
       const homeCrumb = { name: 'ホーム', url: SITE + '/' }
@@ -500,7 +511,31 @@ function coanaPageMeta(): Plugin {
       ]
 
       // サービス別の専用ページ（content/solutions/*.json）
-      type Solution = { slug: string; order?: number; nav_label?: string; title: string; seo_title?: string; description?: string; lead?: string; hero_image?: string; problems?: string[]; features?: { name: string; text: string }[]; tools?: string[]; steps?: string[]; faqs?: { q: string; a: string }[] }
+      type Named = { name: string; text?: string }
+      type Solution = {
+        slug: string; order?: number; nav_label?: string; title: string; seo_title?: string; description?: string; lead?: string; catch?: string; hero_image?: string
+        lang?: 'ja' | 'en'; hidden?: boolean; english?: { slug?: string }
+        hero_facts?: { value: string; label: string }[]
+        target_title?: string; target?: Named[]
+        problems_title?: string; problems?: string[]
+        scheme?: { title?: string; lead?: string; center?: { label?: string; sub?: string }; nodes?: { label: string; sub?: string; sub2?: string }[]; points?: Named[]; note?: string }
+        outcome_title?: string; outcome_lead?: string; outcomes?: { label: string; before: string; after: string }[]
+        features_title?: string; features_lead?: string; features?: Named[]; tools?: string[]; tools_note?: string
+        scope?: { title?: string; lead?: string; groups?: { name: string; items?: string[] }[]; note?: string }
+        compare?: { title?: string; lead?: string; ours_label?: string; others_label?: string; rows?: { label: string; ours: string; others: string }[]; note?: string }
+        plans?: { title?: string; lead?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string }[]; note?: string }
+        reasons_title?: string; reasons?: Named[]
+        scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text?: string }[]; note?: string }
+        flow_title?: string; flow?: Named[]; flow_note?: string; steps?: string[]
+        message_title?: string; message?: string
+        faq_title?: string; faqs?: { q: string; a: string }[]
+      }
+      // 日本語／英語ページで共通の見出し（src/SolutionPage.tsx の LABELS と対応）
+      const SOL_LABELS = {
+        ja: { home: 'ホーム', services: 'サービス', forYou: 'こんな方におすすめです', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', outcomes: '支援後に、こう変わります', before: 'Before', after: 'After', support: '支援内容', tools: '対応ツールの例', scope: 'ご依頼いただける業務の例', compare: '一般的なサービスとの違い', ours: 'COANA TOKYO', others: '一般的なサービス', plans: 'ご利用プランの例', bestFor: 'こんな方に', reasons: 'COANA TOKYOが選ばれる理由', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', message: '代表からのメッセージ', rep: '代表', faq: 'よくあるご質問', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
+        en: { home: 'Home', services: 'Services', forYou: 'Who this is for', problems: 'Sound familiar?', scheme: 'How it works', outcomes: 'What changes', before: 'Before', after: 'After', support: 'What we do', tools: 'Tools we work with', scope: 'Examples of what you can ask us', compare: 'How we are different', ours: 'COANA TOKYO', others: 'Typical services', plans: 'Example plans', bestFor: 'Best for', reasons: 'Why COANA TOKYO', scenarios: 'Example situations', flow: 'How to get started', message: 'A message from our founder', rep: 'Founder', faq: 'FAQ', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
+      }
+      const solLang = (sol: Solution): 'ja' | 'en' => (sol.lang === 'en' ? 'en' : 'ja')
       const solutionsDir = path.resolve(__dirname, 'content/solutions')
       const solutionList: Solution[] = fs.existsSync(solutionsDir)
         ? fs.readdirSync(solutionsDir)
@@ -509,21 +544,58 @@ function coanaPageMeta(): Plugin {
             .filter((sol) => sol && sol.slug)
             .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
         : []
+      // 日本語ページ ⇔ 英語ページの対応（english.slug で指定）
+      const pairOf = (sol: Solution): Solution | undefined => {
+        if (sol.english?.slug) return solutionList.find((item) => item.slug === sol.english?.slug)
+        return solutionList.find((item) => item.english?.slug === sol.slug)
+      }
       for (const sol of solutionList) {
+        const lang = solLang(sol)
+        const T = SOL_LABELS[lang]
         const url = SITE + '/services/' + sol.slug
         const label = sol.nav_label || sol.title
         const description = String(sol.description || sol.lead || '')
         const faqList = sol.faqs || []
+        const pair = pairOf(sol)
+        const alternates = pair
+          ? [
+              { hreflang: lang, href: url },
+              { hreflang: solLang(pair), href: SITE + '/services/' + pair.slug },
+              { hreflang: 'x-default', href: lang === 'ja' ? url : SITE + '/services/' + pair.slug },
+            ]
+          : undefined
+        const catalog = (sol.scope?.groups ?? []).map((group) => ({
+          '@type': 'OfferCatalog',
+          name: group.name,
+          itemListElement: (group.items ?? []).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item, provider: { '@id': orgId } } })),
+        }))
         pages.push({
           path: '/services/' + sol.slug,
           crumb: label,
-          title: (sol.seo_title || sol.title) + SUFFIX,
+          lang,
+          alternates,
+          title: (sol.seo_title || sol.title) + T.suffix,
           description,
           preload: sol.hero_image || services.hero_image,
           jsonld: graph(
-            crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }, { name: label, url }]),
-            { '@type': 'Service', name: sol.title, serviceType: label, description, url, provider: { '@id': orgId }, areaServed: { '@type': 'Country', name: '日本' } },
-            ...(faqList.length ? [{ '@type': 'FAQPage', mainEntity: faqList.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
+            crumbs([{ name: T.home, url: SITE + '/' }, { name: T.services, url: SITE + '/services' }, { name: label, url }]),
+            {
+              '@type': 'Service',
+              '@id': url + '#service',
+              name: label,
+              alternateName: sol.title !== label ? sol.title : undefined,
+              serviceType: label,
+              description,
+              url,
+              inLanguage: lang,
+              provider: { '@id': orgId },
+              areaServed: { '@type': 'Country', name: lang === 'en' ? 'Japan' : '日本' },
+              availableLanguage: lang === 'en' ? ['English', 'Japanese'] : undefined,
+              audience: { '@type': 'BusinessAudience', name: lang === 'en' ? 'Founders and small businesses in Japan' : '中小企業・小規模事業者・個人事業主' },
+              offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', description: lang === 'en' ? 'Quoted individually. Consultation is free.' : '支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。' }, availability: 'https://schema.org/InStock', url: SITE + '/contact' },
+              hasOfferCatalog: catalog.length ? { '@type': 'OfferCatalog', name: sol.scope?.title || T.scope, itemListElement: catalog } : undefined,
+            },
+            ...(faqList.length ? [{ '@type': 'FAQPage', inLanguage: lang, mainEntity: faqList.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
           ),
         })
       }
@@ -625,13 +697,7 @@ function coanaPageMeta(): Plugin {
         if (pagePath.startsWith('/services/')) {
           const sol = solutionList.find((item) => '/services/' + item.slug === pagePath)
           if (!sol) return ''
-          return '<h1>' + esc(sol.title) + '</h1>' + paras(sol.lead) +
-            '<section><h2>こんなお悩みはありませんか</h2><ul>' + (sol.problems || []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul></section>' +
-            '<section><h2>支援内容</h2>' + (sol.features || []).map((f) => '<h3>' + esc(f.name) + '</h3>' + paras(f.text)).join('') +
-            ((sol.tools || []).length ? '<p>対応ツールの例：' + esc((sol.tools || []).join('、')) + '</p>' : '') + '</section>' +
-            '<section><h2>支援の進め方</h2><ol>' + (sol.steps || []).map((step) => '<li>' + esc(step) + '</li>').join('') + '</ol></section>' +
-            ((sol.faqs || []).length ? '<section><h2>よくあるご質問</h2><dl>' + (sol.faqs || []).map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' : '') +
-            '<p>' + anchor('/services', 'サービス一覧') + ' ' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
+          return solutionHtml(sol)
         }
         if (pagePath.startsWith('/topics/')) {
           const slug = pagePath.slice('/topics/'.length)
@@ -645,10 +711,60 @@ function coanaPageMeta(): Plugin {
         }
         return ''
       }
+      // ── サービス別ページ：画面（src/SolutionPage.tsx）と同じ構成の本文を HTML / Markdown で組み立てる（検索エンジン・AI 検索向け）
+      const named = (items: Named[] | undefined, tag: 'h3' | 'strong') => (items ?? []).map((item) =>
+        (tag === 'h3' ? '<h3>' + esc(item.name) + '</h3>' : '<p><strong>' + esc(item.name) + '</strong></p>') + paras(item.text)).join('')
+      const section = (title: string | undefined, body: string, id?: string) => (body ? '<section' + (id ? ' id="' + id + '"' : '') + '><h2>' + esc(title) + '</h2>' + body + '</section>' : '')
+      const solutionHtml = (sol: Solution): string => {
+        const T = SOL_LABELS[solLang(sol)]
+        const pair = pairOf(sol)
+        const flowItems: Named[] = (sol.flow ?? []).length ? (sol.flow ?? []) : (sol.steps ?? []).map((step) => ({ name: step }))
+        return '<h1>' + esc(sol.title) + '</h1>' + (sol.catch ? '<p><strong>' + esc(sol.catch.replace(/\n/g, ' ')) + '</strong></p>' : '') + paras(sol.lead) +
+          ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
+          section(sol.target_title || T.forYou, named(sol.target, 'strong')) +
+          section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
+          section(sol.scheme?.title || T.scheme, (sol.scheme ? paras(sol.scheme.lead) +
+            ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + (n.sub2 ? ' ' + esc(n.sub2) : '') + '</li>').join('') + '</ul>' : '') +
+            named(sol.scheme.points, 'strong') + paras(sol.scheme.note) : '')) +
+          section(sol.outcome_title || T.outcomes, (sol.outcomes ?? []).length ? paras(sol.outcome_lead) + '<ul>' + (sol.outcomes ?? []).map((o) => '<li><strong>' + esc(o.label) + '</strong> ' + T.before + '：' + esc(o.before) + ' → ' + T.after + '：' + esc(o.after) + '</li>').join('') + '</ul>' : '') +
+          section(sol.features_title || T.support, paras(sol.features_lead) + named(sol.features, 'h3') +
+            ((sol.tools ?? []).length ? '<p>' + esc(T.tools) + '：' + esc((sol.tools ?? []).join('、')) + '</p>' + paras(sol.tools_note) : '')) +
+          section(sol.scope?.title || T.scope, (sol.scope ? paras(sol.scope.lead) + (sol.scope.groups ?? []).map((g) => '<h3>' + esc(g.name) + '</h3><ul>' + (g.items ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>').join('') + paras(sol.scope.note) : '')) +
+          section(sol.compare?.title || T.compare, (sol.compare && (sol.compare.rows ?? []).length ? paras(sol.compare.lead) + '<table><thead><tr><th></th><th>' + esc(sol.compare.ours_label || T.ours) + '</th><th>' + esc(sol.compare.others_label || T.others) + '</th></tr></thead><tbody>' +
+            (sol.compare.rows ?? []).map((r) => '<tr><th>' + esc(r.label) + '</th><td>' + esc(r.ours) + '</td><td>' + esc(r.others) + '</td></tr>').join('') + '</tbody></table>' + paras(sol.compare.note) : '')) +
+          section(sol.plans?.title || T.plans, (sol.plans && (sol.plans.items ?? []).length ? paras(sol.plans.lead) + (sol.plans.items ?? []).map((pl) => '<h3>' + esc(pl.name) + (pl.tag ? '（' + esc(pl.tag) + '）' : '') + '</h3>' + paras(pl.text) +
+            ((pl.includes ?? []).length ? '<ul>' + (pl.includes ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' : '') + (pl.best_for ? '<p>' + esc(T.bestFor) + '：' + esc(pl.best_for) + '</p>' : '')).join('') + paras(sol.plans.note) : '')) +
+          section(sol.reasons_title || T.reasons, named(sol.reasons, 'h3')) +
+          section(sol.scenarios?.title || T.scenarios, (sol.scenarios && (sol.scenarios.items ?? []).length ? paras(sol.scenarios.lead) + (sol.scenarios.items ?? []).map((sc) => '<h3>' + esc(sc.name) + (sc.tag ? '（' + esc(sc.tag) + '）' : '') + '</h3>' + (sc.before ? '<p>' + T.before + '：' + esc(sc.before) + '</p>' : '') + paras(sc.text)).join('') + paras(sol.scenarios.note) : '')) +
+          section(sol.flow_title || T.flow, (flowItems.length ? '<ol>' + flowItems.map((st) => '<li><strong>' + esc(st.name) + '</strong>' + (st.text ? ' ' + esc(st.text) : '') + '</li>').join('') + '</ol>' + paras(sol.flow_note) : '')) +
+          section(sol.message_title || T.message, (sol.message ? paras(sol.message) + '<p>' + esc(settings.company_name) + ' ' + T.rep + ' ' + esc(solLang(sol) === 'en' ? about.profile_name_en || about.profile_name : about.profile_name) + '</p>' : '')) +
+          ((sol.faqs ?? []).length ? '<section><h2>' + esc(sol.faq_title || T.faq) + '</h2><dl>' + (sol.faqs ?? []).map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' : '') +
+          '<p>' + anchor('/contact', T.contact) + ' ' + anchor('/services', T.list) + (pair ? ' ' + anchor('/services/' + pair.slug, T.english) : '') + '</p>'
+      }
+      const mdList = (items: string[] | undefined) => (items ?? []).map((i) => '- ' + i).join('\n')
+      const solutionMarkdown = (sol: Solution): string => {
+        const T = SOL_LABELS[solLang(sol)]
+        const url = SITE + '/services/' + sol.slug
+        const flowItems: Named[] = (sol.flow ?? []).length ? (sol.flow ?? []) : (sol.steps ?? []).map((step) => ({ name: step }))
+        const block = (title: string | undefined, body: string) => (body.trim() ? '### ' + title + '\n\n' + body.trim() + '\n\n' : '')
+        return '## ' + (sol.nav_label || sol.title) + '\n\n' + 'URL: ' + url + '\n\n' + (sol.title !== sol.nav_label ? sol.title + '\n\n' : '') + String(sol.description || sol.lead || '') + '\n\n' +
+          block(sol.target_title || T.forYou, (sol.target ?? []).map((t) => '- ' + t.name + (t.text ? '：' + t.text : '')).join('\n')) +
+          block(sol.problems_title || T.problems, mdList(sol.problems)) +
+          block(sol.scheme?.title || T.scheme, (sol.scheme?.lead ? sol.scheme.lead + '\n\n' : '') + (sol.scheme?.nodes ?? []).map((n) => '- ' + n.label + (n.sub ? '：' + n.sub : '') + (n.sub2 ? ' ' + n.sub2 : '')).join('\n') + '\n' + (sol.scheme?.points ?? []).map((pt) => '- ' + pt.name + (pt.text ? '：' + pt.text : '')).join('\n') + (sol.scheme?.note ? '\n\n' + sol.scheme.note : '')) +
+          block(sol.outcome_title || T.outcomes, (sol.outcomes ?? []).map((o) => '- ' + o.label + '：' + T.before + ' ' + o.before + ' → ' + T.after + ' ' + o.after).join('\n')) +
+          block(sol.features_title || T.support, (sol.features ?? []).map((f) => '- ' + f.name + (f.text ? '：' + f.text : '')).join('\n') + ((sol.tools ?? []).length ? '\n\n' + T.tools + '：' + (sol.tools ?? []).join('、') : '')) +
+          block(sol.scope?.title || T.scope, (sol.scope?.groups ?? []).map((g) => '- ' + g.name + '：' + (g.items ?? []).join('、')).join('\n') + (sol.scope?.note ? '\n\n' + sol.scope.note : '')) +
+          block(sol.compare?.title || T.compare, (sol.compare?.rows ?? []).map((r) => '- ' + r.label + '：' + (sol.compare?.ours_label || T.ours) + '＝' + r.ours + '／' + (sol.compare?.others_label || T.others) + '＝' + r.others).join('\n')) +
+          block(sol.plans?.title || T.plans, (sol.plans?.items ?? []).map((pl) => '- ' + pl.name + (pl.tag ? '（' + pl.tag + '）' : '') + (pl.text ? '：' + pl.text : '') + ((pl.includes ?? []).length ? '（' + (pl.includes ?? []).join('、') + '）' : '')).join('\n') + (sol.plans?.lead ? '\n\n' + sol.plans.lead : '')) +
+          block(sol.reasons_title || T.reasons, (sol.reasons ?? []).map((r) => '- ' + r.name + (r.text ? '：' + r.text : '')).join('\n')) +
+          block(sol.scenarios?.title || T.scenarios, (sol.scenarios?.lead ? sol.scenarios.lead + '\n\n' : '') + (sol.scenarios?.items ?? []).map((sc) => '- ' + sc.name + (sc.tag ? '（' + sc.tag + '）' : '') + (sc.before ? ' ' + T.before + '：' + sc.before : '') + (sc.text ? ' → ' + sc.text : '')).join('\n')) +
+          block(sol.flow_title || T.flow, flowItems.map((st, i) => (i + 1) + '. ' + st.name + (st.text ? '：' + st.text : '')).join('\n') + (sol.flow_note ? '\n\n' + sol.flow_note : '')) +
+          block(sol.faq_title || T.faq, (sol.faqs ?? []).map((f) => '- Q. ' + f.q + '\n  A. ' + f.a).join('\n'))
+      }
       const fallbackHeader = '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +
         [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
       const fallbackFooter = '<footer><p>' + esc(settings.company_name) + '</p><address>' + esc(settings.postal_code) + ' ' + esc(settings.address) + '</address><nav aria-label="フッター">' +
-        anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + solutionList.map((sol) => anchor('/services/' + sol.slug, sol.nav_label || sol.title)).join(' ') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
+        anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + solutionList.filter((sol) => !sol.hidden).map((sol) => anchor('/services/' + sol.slug, sol.nav_label || sol.title)).join(' ') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
       const withFallback = (html: string, pagePath: string) => html.replace('<div id="root"></div>', () =>
         '<div id="root"><div class="seo-fallback" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);border:0">' +
         fallbackHeader + '<main>' + fallbackMain(pagePath) + '</main>' + fallbackFooter + '</div></div>')
@@ -662,13 +778,15 @@ function coanaPageMeta(): Plugin {
       // 存在しないURLは 404 を返す（画像の取り違えキャッシュ対策を兼ねる）
       const notFound = render(shell, { path: '/404', title: 'ページが見つかりません' + SUFFIX, description: '' }, defaultDescription, defaultImage)
         .replace(/\s*<link\s+rel="canonical"[^>]*>/, '')
-        .replace('</head>', () => '    <meta name="robots" content="noindex" />\n  </head>')
+        .replace(/<meta\s+name="robots"[^>]*>/, '<meta name="robots" content="noindex" />')
       fs.writeFileSync(path.join(outDir, '404.html'), notFound)
 
       const sitemap = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
-        ...pages.map((page) => '  <url><loc>' + SITE + page.path + '</loc>' + (page.lastmod ? '<lastmod>' + page.lastmod + '</lastmod>' : '') + (page.image ? '<image:image><image:loc>' + escapeXml(page.image) + '</image:loc></image:image>' : '') + '</url>'),
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+        ...pages.map((page) => '  <url><loc>' + SITE + page.path + '</loc>' + (page.lastmod ? '<lastmod>' + page.lastmod + '</lastmod>' : '') +
+          (page.alternates ?? []).map((alt) => '<xhtml:link rel="alternate" hreflang="' + escapeXml(alt.hreflang) + '" href="' + escapeXml(alt.href) + '" />').join('') +
+          (page.image ? '<image:image><image:loc>' + escapeXml(page.image) + '</image:loc></image:image>' : '') + '</url>'),
         '</urlset>',
         '',
       ].join('\n')
@@ -698,17 +816,52 @@ function coanaPageMeta(): Plugin {
         '',
         '所在地: ' + address + ' / メール: ' + settings.email,
         '',
-        '## ページ',
-        ...pages.filter((p) => p.type !== 'article').map((p) => '- [' + stripHtml(p.title.replace(SUFFIX, '')) + '](' + SITE + p.path + '): ' + (p.description || defaultDescription)),
+        '対象: 中小企業・小規模事業者・個人事業主・これから起業する方（日本全国、オンライン対応）。外国人の方の日本での創業支援は英語で対応。',
+        '料金: 支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。',
+        '注意: 税務申告・税務相談、社会保険・労働保険の手続き、登記、許認可申請、法律相談など、法令で士業の独占業務と定められた業務は行わず、提携する専門家を紹介する。',
         '',
-        '## サービス',
+        '## ページ',
+        ...pages.filter((p) => p.type !== 'article' && !p.path.startsWith('/services/')).map((p) => '- [' + stripHtml(p.title.replace(SUFFIX, '')) + '](' + SITE + p.path + '): ' + (p.description || defaultDescription)),
+        '',
+        '## サービス（詳細ページ）',
+        ...solutionList.map((sol) => '- [' + (sol.nav_label || sol.title) + '](' + SITE + '/services/' + sol.slug + '): ' + String(sol.description || sol.lead || '') + (sol.lang === 'en' ? ' (English page)' : '')),
+        '',
+        '## サービス一覧',
         ...['backoffice', 'marketing'].flatMap((key) => ((services[key]?.items ?? []) as { name: string; text: string }[]).map((item) => '- ' + item.name + ': ' + item.text)),
         '',
         '## トピックス',
         ...feedItems.map((item) => '- [' + item.title + '](' + item.url + ') (' + item.date + ')'),
         '',
+        '## 詳細版',
+        '- [llms-full.txt](' + SITE + '/llms-full.txt): 各サービスの支援内容・業務一覧・プラン例・FAQ を含む全文',
+        '',
       ].join('\n')
       fs.writeFileSync(path.join(outDir, 'llms.txt'), llms)
+
+      const companyRows = ((about.company ?? []) as { label: string; value: string }[]).map((row) => '- ' + row.label + ': ' + String(row.value).replace(/\n/g, ' / '))
+      const llmsFull = [
+        '# ' + (settings.company_name || 'COANA TOKYO合同会社') + ' — サービス詳細（llms-full.txt）',
+        '',
+        '> ' + defaultDescription,
+        '',
+        '## 会社情報',
+        ...companyRows,
+        '- お問い合わせ: ' + SITE + '/contact（メール: ' + settings.email + '）',
+        '',
+        '## 代表メッセージ',
+        ...((about.message ?? []) as string[]).map((t) => String(t).replace(/\n/g, ' ')),
+        '',
+        '## 提供できないこと（法令上の制限）',
+        '税理士法・社会保険労務士法・行政書士法・司法書士法・弁護士法などにより、税務申告・税務相談、社会保険・労働保険の手続き代行、登記、許認可申請、在留資格の申請、法律相談・契約書の作成などの士業の独占業務は行わず、必要に応じて提携する専門家を紹介する。',
+        '',
+        '# サービス詳細',
+        '',
+        ...solutionList.map(solutionMarkdown),
+        '## よくあるご質問（全体）',
+        ...faqs.map((f) => '- Q. ' + f.q + '\n  A. ' + f.a),
+        '',
+      ].join('\n')
+      fs.writeFileSync(path.join(outDir, 'llms-full.txt'), llmsFull)
     },
   }
 }
