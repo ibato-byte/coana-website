@@ -40,7 +40,7 @@ collections:
     fields:
       - { label: タイトル, name: title, widget: string }
       - { label: URL用の英字名（例：new-service）, name: slug, widget: string, pattern: ["^[a-z0-9-]+$", "半角英小文字・数字・ハイフンのみ"] }
-      - { label: 公開日, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY.MM.DD", time_format: false }
+      - { label: 公開日, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY.MM.DD", time_format: false, hint: "未来の日付にすると予約投稿になります。その日の朝の自動更新（毎朝6時ごろ）で公開されます。" }
       - { label: カテゴリー, name: category, widget: select, options: [お知らせ, サービス, イベント, 実績・事例], default: お知らせ }
       - { label: 概要（SNS共有・検索結果の説明文に使用）, name: summary, widget: text, required: false }
       - { label: アイキャッチ画像, name: thumbnail, widget: image, required: false, hint: "記事一覧・記事ページ・SNS共有時に表示されます。横長（16:9）がおすすめです。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
