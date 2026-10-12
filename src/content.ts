@@ -5,6 +5,8 @@ import homeJson from "../content/home.json";
 import aboutJson from "../content/about.json";
 import servicesJson from "../content/services.json";
 import privacyJson from "../content/privacy.json";
+// ビルド時に外部の写真（Unsplash など）を自社ドメインに取り込んだ対応表（vite.config.ts の coanaRemoteImages）
+import remoteImages from "virtual:remote-images";
 
 export const settings = settingsJson;
 export const home = homeJson;
@@ -32,6 +34,7 @@ const files = import.meta.glob("../content/topics/*.md", {
 }) as Record<string, string>;
 
 const p = (n: number) => String(n).padStart(2, "0");
+const todayJst = () => new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
 // 日付は閲覧者のタイムゾーンに左右されず、日本時間の表記で表示する
 function toDate(value: unknown) {
@@ -60,6 +63,8 @@ export const articles: Article[] = Object.entries(files)
     if (fm.draft) return null;
     const slug = path.split("/").pop()!.replace(/\.md$/, "");
     const d = toDate(fm.date);
+    // 予約投稿：公開日（日本時間）が今日より先の記事は表示しない（毎朝の自動ビルドで公開される）
+    if (/^\d{4}\.\d{2}\.\d{2}$/.test(d.label) && d.label.replace(/\./g, "-") > todayJst()) return null;
     return {
       slug,
       title: fm.title ?? slug,
@@ -146,6 +151,21 @@ const solutionFiles = import.meta.glob("../content/solutions/*.json", {
   eager: true,
 }) as Record<string, Solution>;
 
+/** 外部画像のURLを、ビルド時に取り込んだ自社ドメインの画像パスに置き換える（取り込めなかった画像は元のURLのまま） */
+export function localImage(url?: string) {
+  if (!url) return url;
+  return (remoteImages as Record<string, string>)[url] ?? url;
+}
+function localizeImages<T>(value: T): T {
+  if (typeof value === "string") return localImage(value) as unknown as T;
+  if (Array.isArray(value)) return value.map(localizeImages) as unknown as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, localizeImages(v)])) as T;
+  }
+  return value;
+}
+
 export const solutions: Solution[] = Object.values(solutionFiles)
   .filter((s) => s && s.slug)
+  .map((s) => localizeImages(s))
   .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));

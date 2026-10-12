@@ -1,3 +1,7 @@
 # Cloudflare Pages 用のヘッダー設定（netlify.toml の [[headers]] と同じ内容）
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# ビルド時に取り込んだ外部写真（ファイル名に写真IDと幅を含むため内容は変わらない）
+/images/remote/*
+  Cache-Control: public, max-age=31536000, immutable
