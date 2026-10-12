@@ -120,6 +120,26 @@ export type Solution = {
   message?: string;
   cta_title?: string;
   cta_text?: string;
+  /* 第2版で追加 */
+  lang?: "ja" | "en";
+  hidden?: boolean;
+  hero_note?: string;
+  hero_facts?: { value: string; label: string }[];
+  tools_note?: string;
+  scheme?: {
+    type?: "hub" | "flow";
+    title?: string;
+    lead?: string;
+    center?: { label: string; sub?: string };
+    nodes?: { label: string; sub?: string; sub2?: string; icon?: string }[];
+    points?: { name: string; text: string; icon?: string }[];
+    note?: string;
+  };
+  scope?: { title?: string; lead?: string; groups?: { name: string; icon?: string; items?: string[] }[]; note?: string };
+  compare?: { title?: string; lead?: string; ours_label?: string; others_label?: string; rows?: { label: string; ours: string; others: string }[]; note?: string };
+  plans?: { title?: string; lead?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string; featured?: boolean }[]; note?: string };
+  scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text: string; image?: string }[]; note?: string };
+  english?: { title: string; text: string; button?: string; slug: string };
 };
 
 const solutionFiles = import.meta.glob("../content/solutions/*.json", {
