@@ -103,7 +103,6 @@ export type Solution = {
   /* ── 以下はランディングページ用の追加項目（すべて任意。空欄の場合はそのセクションを表示しない） ── */
   catch?: string;
   hero_points?: string[];
-  show_certifications?: boolean;
   target_title?: string;
   target?: { name: string; text: string; icon?: string }[];
   problems_image?: string;

@@ -198,7 +198,7 @@
 .lp-outcome-before { background: #f3f6f9; color: var(--navy-soft); }
 .lp-outcome-after { background: linear-gradient(135deg, rgba(85, 184, 243, .18), rgba(255, 216, 90, .22)); border: 1px solid rgba(8, 127, 229, .25); color: var(--navy-ink); font-weight: 700; }
 .lp-outcome-before > span, .lp-outcome-after > span { display: block; margin-bottom: 6px; font-family: var(--font-en); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; font-weight: 700; }
-.lp-outcome-before > span { color: #8aa2b5; }
+.lp-outcome-before > span { color: #5f7890; }
 .lp-outcome-after > span { color: var(--sky-deep); }
 .lp-outcome-before p, .lp-outcome-after p { margin: 0; font-size: 14.5px; line-height: 1.85; }
 .lp-outcome-arrow { align-self: center; width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--yellow); display: grid; place-items: center; }
@@ -226,7 +226,7 @@
 .lp-feature:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: transparent; }
 .lp-feature:hover::after { transform: scaleX(1); }
 .lp-feature-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.lp-feature-num { font-family: var(--font-en); font-size: 15px; font-weight: 700; letter-spacing: .08em; color: var(--sky-deep); }
+.lp-feature-num { font-family: var(--font-en); font-size: 15px; font-weight: 700; letter-spacing: .08em; color: var(--sky-ink); }
 .lp-feature-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--navy); color: var(--yellow); display: grid; place-items: center; }
 .lp-feature h3 { margin: 0 0 10px; font-size: 18px; font-weight: 800; line-height: 1.6; }
 .lp-feature p { margin: 0; color: var(--navy-soft); font-size: 14.5px; line-height: 1.95; }
@@ -386,7 +386,9 @@
   .lp-sticky.show { transform: none; opacity: 1; pointer-events: auto; }
   .lp-sticky-main { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 18px; border-radius: 12px; background: var(--sky-deep); color: var(--white); font-weight: 800; font-size: 15px; }
   .lp-sticky a.line-button { min-height: 50px; padding: 0 18px; border-radius: 12px; font-size: 14px; }
-  .lp .back-to-top { bottom: 86px; }
+  /* 固定CTA表示中は「ページ先頭へ」ボタンとフッター下部を押し上げる（body に has-sticky-cta を付与） */
+  body.has-sticky-cta .back-to-top { bottom: 90px; }
+  body.has-sticky-cta .site-footer { padding-bottom: 84px; }
 }
 
 /* ═══════════════════════ 第2版で追加したセクション ═══════════════════════ */
@@ -429,7 +431,9 @@
 .lp-scheme-node rect { fill: var(--white); stroke: var(--line); stroke-width: 1.5; filter: drop-shadow(0 8px 18px rgba(22, 51, 77, .1)); }
 .lp-scheme-node-label { fill: var(--navy); font-size: 20px; font-weight: 800; }
 .lp-scheme-node-sub { fill: var(--navy-soft); font-size: 14px; font-weight: 500; }
-.lp-scheme-list { display: none; }
+/* 図解の代替テキスト：PCでは視覚的に隠し、支援技術には読み上げる */
+.lp-scheme-list { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); border: 0; }
+.lp-scheme-diagram { position: relative; }
 .lp-scheme-points { list-style: none; margin: 44px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .lp-scheme-points li {
   display: grid;
@@ -477,7 +481,7 @@
 .lp-compare-head, .lp-compare-row { display: grid; grid-template-columns: 1.1fr 1.6fr 1.3fr; }
 .lp-compare-head { background: var(--navy-ink); color: var(--white); }
 .lp-compare-head span { padding: 16px 20px; font-size: 13.5px; font-weight: 800; letter-spacing: .04em; text-align: center; }
-.lp-compare-head .is-ours { background: var(--sky-deep); color: var(--white); position: relative; }
+.lp-compare-head .is-ours { background: var(--sky-ink); color: var(--white); position: relative; }
 .lp-compare-row { border-top: 1px solid var(--line-soft); }
 .lp-compare-row > span { padding: 18px 20px; font-size: 14px; line-height: 1.8; }
 .lp-compare-label { font-weight: 800; background: var(--paper); display: flex; align-items: center; }
@@ -508,7 +512,7 @@
 .lp-plan li { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; line-height: 1.75; font-weight: 600; }
 .lp-plan li svg { flex: none; margin-top: 5px; color: var(--sky-deep); }
 .lp-plan-for { margin: auto 0 0; padding-top: 18px; font-size: 13px; line-height: 1.8; color: var(--navy-soft); }
-.lp-plan-for span { display: block; font-size: 11.5px; font-weight: 800; color: var(--sky-deep); letter-spacing: .06em; }
+.lp-plan-for span { display: block; font-size: 11.5px; font-weight: 800; color: var(--sky-ink); letter-spacing: .06em; }
 .lp-plan-note { max-width: 760px; }
 
 /* ── ご利用イメージ ── */
@@ -524,7 +528,7 @@
 .lp-scenario-before { color: var(--navy-soft); }
 .lp-scenario-after { color: var(--navy-ink); font-weight: 600; }
 .lp-scenario-before span, .lp-scenario-after span { display: inline-block; margin-right: 8px; padding: 1px 8px; border-radius: 6px; font-family: var(--font-en); font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; vertical-align: 2px; }
-.lp-scenario-before span { background: #e9eef3; color: #6c8398; }
+.lp-scenario-before span { background: #e9eef3; color: #4a667d; }
 .lp-scenario-after span { background: var(--yellow); color: var(--navy-ink); }
 
 /* ── 5ステップのフロー ── */
@@ -573,7 +577,7 @@
   .lp-hero-facts { grid-template-columns: 1fr; }
   .lp-hero-facts li { padding: 10px 14px; }
   .lp-scheme-diagram svg { display: none; }
-  .lp-scheme-list { display: grid; gap: 10px; margin: 32px 0 0; padding: 0; list-style: none; }
+  .lp-scheme-list { position: static; width: auto; height: auto; overflow: visible; clip: auto; display: grid; gap: 10px; margin: 32px 0 0; padding: 0; list-style: none; }
   .lp-scheme-list li { display: grid; gap: 2px; padding: 14px 16px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); }
   .lp-scheme-list strong { font-size: 15px; font-weight: 800; }
   .lp-scheme-list span { font-size: 13px; color: var(--navy-soft); }
@@ -581,9 +585,9 @@
   .lp-compare-head { display: none; }
   .lp-compare-row { grid-template-columns: 1fr; }
   .lp-compare-row > span { padding: 14px 16px; }
-  .lp-compare-ours::before { content: "COANA TOKYO"; display: block; font-family: var(--font-en); font-size: 11px; letter-spacing: .12em; color: var(--sky-deep); margin-right: 6px; }
-  .lp-compare-others::before { content: "一般的なサービス："; font-size: 12px; font-weight: 700; margin-right: 6px; white-space: nowrap; }
-  .lp-lang-en .lp-compare-others::before { content: "Typical: "; }
+  .lp-compare-ours::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 800; letter-spacing: .06em; color: var(--sky-ink); margin-bottom: 4px; }
+  .lp-compare-others::before { content: attr(data-label) "："; font-size: 12px; font-weight: 700; margin-right: 6px; white-space: nowrap; }
+  .lp-lang-en .lp-compare-others::before { content: attr(data-label) ": "; }
   .lp-flow-list.is-five { grid-template-columns: 1fr; }
   .lp-flow-list.is-five li:nth-child(2n)::after { display: block; }
   .lp-scheme-flow { grid-template-columns: 1fr; }
@@ -597,3 +601,12 @@
 .lp-lang-en .lp-hero-line::before { display: none; }
 .lp-lang-en .lp-hero-line::after { content: "\A"; white-space: pre; }
 .lp-lang-en .lp-hero-line:nth-child(2) { margin-top: 0; }
+
+/* ═══════════════════════ お問い合わせフォーム補助 ═══════════════════════ */
+.form-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form-lang-note { margin: 14px 0 0; font-size: 13px; line-height: 1.8; color: var(--navy-soft); font-family: var(--font-en); }
+.footer-bottom { flex-wrap: wrap; }
+.footer-bottom small.footer-trademark { font-family: var(--font-jp); letter-spacing: .02em; font-size: 11px; line-height: 1.7; flex: 1 1 100%; order: 3; }
+/* トップページのサービス一覧：各項目からサービス別ページへ */
+.service-panel li a.service-item-link { color: inherit; text-decoration: underline; text-decoration-color: rgba(8, 127, 229, .35); text-underline-offset: 4px; transition: color .25s, text-decoration-color .25s; }
+.service-panel li a.service-item-link:hover { color: var(--sky-ink); text-decoration-color: var(--sky-ink); }

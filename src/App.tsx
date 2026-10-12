@@ -1,6 +1,6 @@
 import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 
 declare global {
@@ -9,6 +9,10 @@ declare global {
   }
 }
 
+
+function safeDecode(value: string) {
+  try { return decodeURIComponent(value); } catch { return value; }
+}
 
 function pageFromPath(): Page {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -24,7 +28,7 @@ function pageFromPath(): Page {
 }
 
 function slugFromPath() {
-  return decodeURIComponent(window.location.pathname.replace(/^\/topics\//, "").replace(/\/+$/, ""));
+  return safeDecode(window.location.pathname.replace(/^\/topics\//, "").replace(/\/+$/, ""));
 }
 
 
@@ -150,6 +154,7 @@ function Footer({ navigate }: { navigate: Nav }) {
         </nav>
       </div>
       <div className="container footer-bottom">
+        <small className="footer-trademark">記載されている会社名・製品名・サービス名は、各社の商標または登録商標です。</small>
         <small>{settings.copyright}</small>
         <GoLink className="footer-privacy" go={navigate} args={["privacy"]}>プライバシーポリシー</GoLink>
       </div>
@@ -275,7 +280,6 @@ function AboutIntro({ navigate }: { navigate: Nav }) {
           </div>
           <figure className="about-image" data-reveal>
             <img src={home.about_image} alt="中小企業のバックオフィス業務を改善する打ち合わせの様子" />
-            <figcaption aria-hidden="true">COANA TOKYO</figcaption>
           </figure>
         </div>
       </div>
@@ -305,9 +309,11 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
               </header>
               <p className="service-tagline">{data.lead}</p>
               <ul>
-                {(data.items as { name: string; tags?: string[] }[]).map((i) => (
+                {(data.items as { name: string; tags?: string[]; page?: string }[]).map((i) => (
                   <li key={i.name}>
-                    {i.name}
+                    {i.page && solutions.some((sol) => sol.slug === i.page)
+                      ? <GoLink className="service-item-link" go={navigate} args={["solution", undefined, i.page]}>{i.name}</GoLink>
+                      : i.name}
                     {i.tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}
                   </li>
                 ))}
@@ -848,18 +854,34 @@ const CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbyg8vAr_zinCs4
 type FormData = { company: string; name: string; email: string; type: string; message: string; consent: boolean };
 const emptyForm: FormData = { company: "", name: "", email: "", type: "", message: "", consent: false };
 
+// ご相談内容の種別：サービス別ページ（content/solutions）の名称を自動で選択肢にする
+const INQUIRY_TYPES = [
+  ...solutions.filter((sol) => sol.lang !== "en").map((sol) => sol.nav_label || sol.title),
+  "Startup support (English)",
+  "セミナー・研修の講師依頼",
+  "その他",
+];
+function takePresetInquiryType() {
+  const value = takeInquiryPreset();
+  return INQUIRY_TYPES.includes(value) ? value : "";
+}
+
 function Contact() {
-  const [data, setData] = useState<FormData>(emptyForm);
+  const [data, setData] = useState<FormData>(() => ({ ...emptyForm, type: takePresetInquiryType() }));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState<"input" | "confirm" | "complete">("input");
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
+  // スパム対策：人には見えない入力欄（website）に値が入っていたら送信せず完了扱いにする
+  const [honeypot, setHoneypot] = useState("");
   const send = async () => {
     setSending(true);
     setSendError("");
     try {
+      if (honeypot) { setStep("complete"); return; }
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 20000);
       const body = new URLSearchParams({
-        "form-name": "contact",
         company: data.company,
         name: data.name,
         email: data.email,
@@ -867,7 +889,7 @@ function Contact() {
         message: data.message,
         consent: data.consent ? "同意する" : "",
       });
-      const res = await fetch(CONTACT_ENDPOINT, { method: "POST", body });
+      const res = await fetch(CONTACT_ENDPOINT, { method: "POST", body, signal: controller.signal }).finally(() => window.clearTimeout(timer));
       const result = await res.json().catch(() => null);
       if (!res.ok || !result || !result.ok) throw new Error(String(res.status));
       setStep("complete");
@@ -956,11 +978,12 @@ function Contact() {
           <Field label="ご相談内容の種別" error={errors.type}>
             <select value={data.type} onChange={(e) => update("type", e.target.value)} aria-invalid={!!errors.type}>
               <option value="">選択してください</option>
-              <option>バックオフィス支援</option>
-              <option>マーケティング支援</option>
-              <option>その他</option>
+              {INQUIRY_TYPES.map((type) => <option key={type}>{type}</option>)}
             </select>
           </Field>
+          <div className="form-honeypot" aria-hidden="true">
+            <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} /></label>
+          </div>
           <Field label="お問い合わせ内容" error={errors.message}>
             <textarea value={data.message} onChange={(e) => update("message", e.target.value)} rows={7} placeholder="ご相談内容をご入力ください" aria-invalid={!!errors.message} />
           </Field>
@@ -968,6 +991,7 @@ function Contact() {
             <input type="checkbox" checked={data.consent} onChange={(e) => update("consent", e.target.checked)} />
             <span><a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する <b>必須</b></span>
           </label>
+          <p className="form-lang-note">English inquiries are welcome. Please write your message in English and we will reply in English.</p>
           {errors.consent && <p className="field-error consent-error">{errors.consent}</p>}
           <div className="center-button"><button className="button button-large" type="submit">入力内容を確認する <Icon name="arrow" size={19} /></button></div>
         </form>
@@ -1046,7 +1070,7 @@ export default function App() {
   }, [page, routeKey]);
   // URLに #message などの指定があれば、ページが描画されたあとにその位置までスクロールする（初回表示とサイト内移動の両方）
   useEffect(() => {
-    const hash = decodeURIComponent(window.location.hash.slice(1));
+    const hash = safeDecode(window.location.hash.slice(1));
     if (!hash) return;
     const timer = window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 150);
     return () => window.clearTimeout(timer);

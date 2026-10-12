@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { articles, home, services, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, type Nav } from "./shared";
+import { about, articles, home, services, settings, solutions, type Article, type Solution } from "./content";
+import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import "./solution.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
@@ -135,13 +135,26 @@ const LABELS = {
     ctaTitle: "Tell us where you are. We will take it from there.",
     ctaText: "Consultation and quotes are free.\nIf you are not sure where to start, that is exactly where we begin.",
     ctaButton: "Contact us (free consultation)",
-    others: "Other services",
+    others: "Other services (Japanese pages)",
     allServices: "See all services",
     sticky: "Free consultation",
   },
 };
 type Lang = keyof typeof LABELS;
 const langOf = (sol: Solution): Lang => (sol.lang === "en" ? "en" : "ja");
+/** お問い合わせフォームの「ご相談内容の種別」に引き継ぐ名称（App.tsx の INQUIRY_TYPES と対応） */
+const inquiryTypeOf = (sol: Solution) => (sol.lang === "en" ? "Startup support (English)" : sol.nav_label || sol.title);
+/** お問い合わせへ遷移する前に相談種別を記録する navigate */
+const withInquiry = (sol: Solution, navigate: Nav): Nav => (...args) => {
+  if (args[0] === "contact") setInquiryPreset(inquiryTypeOf(sol));
+  navigate(...args);
+};
+/** SVG 図解のラベルが枠からはみ出さないよう、長い文字列は幅を指定して詰める */
+function fitText(text: string, fontSize: number, max: number) {
+  let width = 0;
+  for (const ch of text) width += (ch.charCodeAt(0) > 0xff ? 1 : 0.56) * fontSize;
+  return width > max ? { textLength: max, lengthAdjust: "spacingAndGlyphs" as const } : {};
+}
 
 /* ───────────────────────── Hero ───────────────────────── */
 
@@ -179,14 +192,14 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           <p className="lp-hero-note">{sol.hero_note || L.heroNote}</p>
         </div>
         {(sol.hero_facts ?? []).length > 0 && (
-          <ul className="lp-hero-facts" aria-label="サービスの特徴">
+          <ul className="lp-hero-facts" aria-label={langOf(sol) === "en" ? "Key points" : "サービスの特徴"}>
             {(sol.hero_facts ?? []).map((f) => (
               <li key={f.label}><strong>{f.value}</strong><span>{f.label}</span></li>
             ))}
           </ul>
         )}
       </div>
-      <a className="lp-hero-scroll" href="#lp-target" aria-label="scroll"><LpIcon name="arrow-down" size={18} /></a>
+      <a className="lp-hero-scroll" href="#lp-target" aria-label={langOf(sol) === "en" ? "Scroll to content" : "本文へスクロール"}><LpIcon name="arrow-down" size={18} /></a>
     </section>
   );
 }
@@ -260,7 +273,7 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
   });
   return (
     <div className="lp-scheme-diagram" data-reveal>
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={scheme.title || ""}>
+      <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="lp-sg" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#087fe5" />
@@ -284,14 +297,14 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
           return (
             <g key={node.label} className="lp-scheme-node">
               <rect x={p.x - 122} y={p.y - 50} width="244" height="100" rx="18" />
-              <text x={p.x} y={p.y - 10} textAnchor="middle" className="lp-scheme-node-label">{node.label}</text>
-              {node.sub && <text x={p.x} y={p.y + 16} textAnchor="middle" className="lp-scheme-node-sub">{node.sub}</text>}
-              {node.sub2 && <text x={p.x} y={p.y + 34} textAnchor="middle" className="lp-scheme-node-sub">{node.sub2}</text>}
+              <text x={p.x} y={p.y - 10} textAnchor="middle" className="lp-scheme-node-label" {...fitText(node.label, 20, 226)}>{node.label}</text>
+              {node.sub && <text x={p.x} y={p.y + 16} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub, 14, 226)}>{node.sub}</text>}
+              {node.sub2 && <text x={p.x} y={p.y + 34} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub2, 14, 226)}>{node.sub2}</text>}
             </g>
           );
         })}
       </svg>
-      <ul className="lp-scheme-list">
+      <ul className="lp-scheme-list" aria-label={scheme.title || ""}>
         {nodes.map((node) => (
           <li key={node.label}><strong>{node.label}</strong>{node.sub && <span>{node.sub}{node.sub2 ? ` ${node.sub2}` : ""}</span>}</li>
         ))}
@@ -463,8 +476,8 @@ function Compare({ sol }: { sol: Solution }) {
           {(cmp.rows ?? []).map((r) => (
             <div key={r.label} className="lp-compare-row" role="row">
               <span className="lp-compare-label" role="rowheader">{r.label}</span>
-              <span className="lp-compare-ours" role="cell"><Icon name="check" size={18} />{r.ours}</span>
-              <span className="lp-compare-others" role="cell">{r.others}</span>
+              <span className="lp-compare-ours" role="cell" data-label={cmp.ours_label || L.compareOurs}><Icon name="check" size={18} />{r.ours}</span>
+              <span className="lp-compare-others" role="cell" data-label={cmp.others_label || L.compareOthers}>{r.others}</span>
             </div>
           ))}
         </div>
@@ -604,13 +617,13 @@ function Message({ sol }: { sol: Solution }) {
     <section className="section lp-message">
       <div className="container lp-message-inner">
         <figure className="lp-message-photo" data-reveal>
-          <img src="/images/representative-shota-ibato.jpg" alt="COANA TOKYO 代表 衣鳩 翔太" loading="lazy" />
+          <img src={about.profile_photo || "/images/representative-shota-ibato.jpg"} alt={langOf(sol) === "en" ? `${about.profile_name_en || "Shota Ibato"}, Founder of COANA TOKYO` : `${settings.company_name} ${about.profile_role || "代表"} ${about.profile_name}`} loading="lazy" />
         </figure>
         <div className="lp-message-copy" data-reveal>
           <span className="eyebrow">Message</span>
           <h2>{sol.message_title || L.message}</h2>
           <div className="lp-message-text"><Lines text={sol.message} /></div>
-          <p className="lp-message-name"><small>{settings.company_name} {L.rep}</small>{langOf(sol) === "en" ? "Shota Ibato" : "衣鳩 翔太"}</p>
+          <p className="lp-message-name"><small>{settings.company_name} {L.rep}</small>{langOf(sol) === "en" ? about.profile_name_en || about.profile_name : about.profile_name}</p>
         </div>
       </div>
     </section>
@@ -670,12 +683,17 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  // 固定CTAが「ページ先頭へ」ボタンやフッターと重ならないよう、表示中は body にクラスを付ける
+  useEffect(() => {
+    document.body.classList.toggle("has-sticky-cta", show);
+    return () => document.body.classList.remove("has-sticky-cta");
+  }, [show]);
   return (
     <div className={show ? "lp-sticky show" : "lp-sticky"} aria-hidden={!show}>
       <GoLink className="lp-sticky-main" go={navigate} args={["contact"]} tabIndex={show ? 0 : -1}>
         {L.sticky}<Icon name="arrow" size={17} />
       </GoLink>
-      <LineButton place="solution_sticky" label="LINE" />
+      <LineButton place="solution_sticky" label="LINE" tabIndex={show ? 0 : -1} />
     </div>
   );
 }
@@ -683,10 +701,14 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
 /* ───────────────────────── ページ本体 ───────────────────────── */
 
 export function SolutionPage({ navigate }: { navigate: Nav }) {
-  const slug = decodeURIComponent(window.location.pathname.replace(/^\/services\//, "").replace(/\/+$/, ""));
+  const rawSlug = window.location.pathname.replace(/^\/services\//, "").replace(/\/+$/, "");
+  let slug = rawSlug;
+  try { slug = decodeURIComponent(rawSlug); } catch { /* 不正なURLエンコードはそのまま扱う */ }
   const sol = solutions.find((s) => s.slug === slug);
   useEffect(() => {
-    if (sol) document.title = `${sol.seo_title || sol.title} | COANA TOKYO合同会社`;
+    document.title = sol
+      ? `${sol.seo_title || sol.title} | ${sol.lang === "en" ? "COANA TOKYO LLC" : "COANA TOKYO合同会社"}`
+      : `ページが見つかりません | COANA TOKYO合同会社`;
   }, [sol]);
   useEffect(() => {
     const lang = sol?.lang === "en" ? "en" : "ja";
@@ -695,6 +717,7 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
     return () => { document.documentElement.lang = prev || "ja"; };
   }, [sol]);
   if (!sol) return <NotFound navigate={navigate} />;
+  navigate = withInquiry(sol, navigate);
   const L = LABELS[langOf(sol)];
   const related = (sol.related ?? [])
     .map((r) => articles.find((a) => a.slug === r))

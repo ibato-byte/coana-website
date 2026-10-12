@@ -16,6 +16,19 @@ export type Page =
   | "privacy"
   | "notfound";
 
+// サービス別ページの「無料で相談する」→ お問い合わせフォームへ、相談種別を引き継ぐ
+const INQUIRY_PRESET_KEY = "coana_inquiry_type";
+export function setInquiryPreset(type: string) {
+  try { sessionStorage.setItem(INQUIRY_PRESET_KEY, type); } catch { /* storage unavailable */ }
+}
+export function takeInquiryPreset() {
+  try {
+    const value = sessionStorage.getItem(INQUIRY_PRESET_KEY) || "";
+    sessionStorage.removeItem(INQUIRY_PRESET_KEY);
+    return value;
+  } catch { return ""; }
+}
+
 export const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, string> = {
   home: "/",
   about: "/about",
@@ -187,12 +200,13 @@ export function LinkButton({
 export const lineUrl = (settings as { line_url?: string }).line_url || "";
 
 /** LINE公式アカウントへの相談ボタン（URLはCMSの「会社情報・共通設定」で変更） */
-export function LineButton({ place, label = "LINEで気軽に相談する" }: { place: string; label?: string }) {
+export function LineButton({ place, label = "LINEで気軽に相談する", tabIndex }: { place: string; label?: string; tabIndex?: number }) {
   if (!lineUrl) return null;
   return (
     <a
       className="line-button"
       href={lineUrl}
+      tabIndex={tabIndex}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => window.gtag?.("event", "line_click", { link_location: place })}
