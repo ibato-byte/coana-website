@@ -70,7 +70,6 @@ collections:
       - { label: リード文, name: lead, widget: text }
       - { label: ページ上部｜3つのポイント（短い言葉で）, name: hero_points, widget: list, required: false, field: { label: ポイント, name: point, widget: string } }
       - { label: 上部の背景画像, name: hero_image, widget: image, required: false, hint: "空欄の場合はサービスページと同じ画像を使います。横長の写真がおすすめです。外部の画像URL（https://〜）も指定できます。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、公開後は正しく表示されます。" }
-      - { label: 認定資格（freee認定アドバイザー等）のバッジを表示する, name: show_certifications, widget: boolean, default: false, required: false }
       - { label: 「こんな方におすすめ」の見出し, name: target_title, widget: string, required: false, default: こんな方におすすめです }
       - label: こんな方におすすめ（3つ程度）
         name: target
