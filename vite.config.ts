@@ -688,6 +688,8 @@ function coanaPageMeta(): Plugin {
 
       type Feed = { title: string; url: string; date: string; description: string }
       const feedItems: Feed[] = []
+      // 予約投稿：公開日（日本時間）が今日より先の記事は、その日のビルドまで公開しない
+      const todayJst = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
       const topicsDir = path.resolve(__dirname, 'content/topics')
       if (fs.existsSync(topicsDir)) {
         for (const file of fs.readdirSync(topicsDir).filter((name) => name.endsWith('.md'))) {
@@ -698,6 +700,7 @@ function coanaPageMeta(): Plugin {
           const slug = file.replace(/\.md$/, '')
           const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : String(fm.date ?? '').slice(0, 10)
           const isDate = /^\d{4}-\d{2}-\d{2}$/.test(date)
+          if (isDate && date > todayJst) continue
           const title = String(fm.title ?? slug)
           const url = SITE + '/topics/' + slug
           const image = fm.thumbnail ? absoluteUrl(String(fm.thumbnail)) : defaultImage
