@@ -5,6 +5,8 @@ import homeJson from "../content/home.json";
 import aboutJson from "../content/about.json";
 import servicesJson from "../content/services.json";
 import privacyJson from "../content/privacy.json";
+// ビルド時に外部の写真（Unsplash など）を自社ドメインに取り込んだ対応表（vite.config.ts の coanaRemoteImages）
+import remoteImages from "virtual:remote-images";
 
 export const settings = settingsJson;
 export const home = homeJson;
@@ -146,6 +148,21 @@ const solutionFiles = import.meta.glob("../content/solutions/*.json", {
   eager: true,
 }) as Record<string, Solution>;
 
+/** 外部画像のURLを、ビルド時に取り込んだ自社ドメインの画像パスに置き換える（取り込めなかった画像は元のURLのまま） */
+export function localImage(url?: string) {
+  if (!url) return url;
+  return (remoteImages as Record<string, string>)[url] ?? url;
+}
+function localizeImages<T>(value: T): T {
+  if (typeof value === "string") return localImage(value) as unknown as T;
+  if (Array.isArray(value)) return value.map(localizeImages) as unknown as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, localizeImages(v)])) as T;
+  }
+  return value;
+}
+
 export const solutions: Solution[] = Object.values(solutionFiles)
   .filter((s) => s && s.slug)
+  .map((s) => localizeImages(s))
   .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
