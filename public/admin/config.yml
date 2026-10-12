@@ -133,6 +133,143 @@ collections:
       - { label: 代表メッセージ本文（改行可。空欄の場合は非表示）, name: message, widget: text, required: false }
       - { label: 「お問い合わせ」帯の見出し, name: cta_title, widget: string, required: false, default: まずは、現状をお聞かせください。 }
       - { label: 「お問い合わせ」帯の本文（改行可）, name: cta_text, widget: text, required: false }
+      - { label: ページの言語（英語ページの場合は en）, name: lang, widget: select, options: [ja, en], default: ja, required: false }
+      - { label: 一覧・フッターに表示しない（英語ページなど）, name: hidden, widget: boolean, default: false, required: false }
+      - { label: ページ上部｜ボタン下の一言, name: hero_note, widget: string, required: false }
+      - label: ページ上部｜右側の特徴タグ（3つ程度・数値ではなく事実を）
+        name: hero_facts
+        widget: list
+        required: false
+        summary: "{{fields.value}}"
+        fields:
+          - { label: 大きく表示する語, name: value, widget: string }
+          - { label: 説明, name: label, widget: string }
+      - { label: 対応ツールの補足, name: tools_note, widget: string, required: false }
+      - label: 支援の仕組み（図解）
+        name: scheme
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 図の種類, name: type, widget: select, options: [{ label: 中心と周囲（ハブ型）, value: hub }, { label: 左から右の流れ（フロー型）, value: flow }], default: hub, required: false }
+          - { label: 見出し, name: title, widget: string, required: false }
+          - { label: リード文, name: lead, widget: text, required: false }
+          - label: 中心（ハブ型のみ）
+            name: center
+            widget: object
+            required: false
+            fields:
+              - { label: ラベル, name: label, widget: string, required: false, default: COANA TOKYO }
+              - { label: 補足, name: sub, widget: string, required: false }
+          - label: 周囲の要素／流れのステップ
+            name: nodes
+            widget: list
+            required: false
+            summary: "{{fields.label}}"
+            fields:
+              - { label: ラベル, name: label, widget: string }
+              - { label: 補足1行目, name: sub, widget: string, required: false }
+              - { label: 補足2行目, name: sub2, widget: string, required: false }
+              - { label: アイコン（フロー型のみ）, name: icon, widget: string, required: false }
+          - label: 図の下のポイント（3つ程度）
+            name: points
+            widget: list
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: 見出し, name: name, widget: string }
+              - { label: 説明, name: text, widget: text }
+              - { label: アイコン, name: icon, widget: string, required: false }
+          - { label: 注記, name: note, widget: string, required: false }
+      - label: ご依頼いただける業務の例
+        name: scope
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 見出し, name: title, widget: string, required: false }
+          - { label: リード文, name: lead, widget: text, required: false }
+          - label: 業務のグループ
+            name: groups
+            widget: list
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: グループ名（例：経理）, name: name, widget: string }
+              - { label: アイコン, name: icon, widget: string, required: false }
+              - { label: 業務の例, name: items, widget: list, field: { label: 業務, name: item, widget: string } }
+          - { label: 注記（法令上お受けできない業務など）, name: note, widget: text, required: false }
+      - label: 一般的なサービスとの違い（比較表）
+        name: compare
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 見出し, name: title, widget: string, required: false }
+          - { label: リード文, name: lead, widget: text, required: false }
+          - { label: 自社側の列名, name: ours_label, widget: string, required: false }
+          - { label: 比較対象の列名, name: others_label, widget: string, required: false }
+          - label: 行
+            name: rows
+            widget: list
+            required: false
+            summary: "{{fields.label}}"
+            fields:
+              - { label: 項目, name: label, widget: string }
+              - { label: COANA TOKYO, name: ours, widget: text }
+              - { label: 一般的なサービス, name: others, widget: text }
+          - { label: 注記, name: note, widget: string, required: false }
+      - label: ご利用プランの例
+        name: plans
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 見出し, name: title, widget: string, required: false }
+          - { label: リード文, name: lead, widget: text, required: false }
+          - label: プラン
+            name: items
+            widget: list
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: プラン名, name: name, widget: string }
+              - { label: タグ（例：人気）, name: tag, widget: string, required: false }
+              - { label: 説明, name: text, widget: text, required: false }
+              - { label: 含まれる内容, name: includes, widget: list, required: false, field: { label: 内容, name: item, widget: string } }
+              - { label: こんな方に, name: best_for, widget: string, required: false }
+              - { label: おすすめとして強調する, name: featured, widget: boolean, default: false, required: false }
+          - { label: 料金の注記, name: note, widget: text, required: false }
+      - label: ご利用イメージ
+        name: scenarios
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 見出し, name: title, widget: string, required: false }
+          - { label: リード文, name: lead, widget: text, required: false }
+          - label: 例
+            name: items
+            widget: list
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: タグ（業種・規模など）, name: tag, widget: string, required: false }
+              - { label: 見出し, name: name, widget: string }
+              - { label: Before（支援前）, name: before, widget: text, required: false }
+              - { label: After（支援後）, name: text, widget: text }
+              - { label: 写真, name: image, widget: image, required: false }
+          - { label: 注記, name: note, widget: string, required: false }
+      - label: 英語ページへの案内（創業支援など）
+        name: english
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 見出し, name: title, widget: string, required: false }
+          - { label: 本文, name: text, widget: text, required: false }
+          - { label: ボタンの文言, name: button, widget: string, required: false }
+          - { label: リンク先ページのURL（例：startup-support-en）, name: slug, widget: string, required: false }
       - { label: よくある質問の見出し, name: faq_title, widget: string, required: false, default: よくあるご質問 }
       - label: よくある質問
         name: faqs
