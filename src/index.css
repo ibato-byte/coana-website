@@ -251,7 +251,11 @@ p, li, dd, figcaption { text-wrap: pretty; }
   letter-spacing: .1em;
   font-weight: 700;
 }
-.logo-img { display: block; height: 34px; width: auto; }
+.logo-img { position: relative; display: block; height: 34px; aspect-ratio: 593 / 102; }
+.logo-img img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.logo-feather { transform-origin: 9% 80%; transition: transform .5s var(--ease-out); }
+.wordmark:hover .logo-feather { transform: translate(1px, -2px) rotate(-6deg); }
+@media (prefers-reduced-motion: reduce) { .wordmark:hover .logo-feather { transform: none; } }
 .logo-img-white { display: none; }
 .site-footer .logo-img-color { display: none; }
 .site-footer .logo-img-white { display: block; }

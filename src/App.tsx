@@ -35,8 +35,14 @@ function slugFromPath() {
 function Logo({ navigate }: { navigate: Nav }) {
   return (
     <GoLink className="wordmark" go={navigate} args={["home"]} aria-label="ホームへ">
-      <img className="logo-img logo-img-color" src="/images/logo-color.png" alt="COANA TOKYO LLC." width={198} height={34} />
-      <img className="logo-img logo-img-white" src="/images/logo-white.png" alt="COANA TOKYO LLC." width={198} height={34} />
+      <span className="logo-img logo-img-color">
+        <img src="/images/logo-color-base.png" alt="COANA TOKYO LLC." width={198} height={34} />
+        <img className="logo-feather" src="/images/logo-color-feather.png" alt="" aria-hidden="true" width={198} height={34} />
+      </span>
+      <span className="logo-img logo-img-white">
+        <img src="/images/logo-white-base.png" alt="COANA TOKYO LLC." width={198} height={34} />
+        <img className="logo-feather" src="/images/logo-white-feather.png" alt="" aria-hidden="true" width={198} height={34} />
+      </span>
     </GoLink>
   );
 }
