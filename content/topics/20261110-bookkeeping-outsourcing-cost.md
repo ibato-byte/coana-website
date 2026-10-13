@@ -24,7 +24,7 @@ draft: false
 ## 経理代行の費用を左右する4つの要素
 
 <figure class="article-figure">
-  <img src="/images/topics/bookkeeping-outsourcing-cost/cost-factors.svg" alt="経理代行の費用を決める4つの要素の図。取引の量と頻度・期限は事業の規模や希望で決まり、業務の範囲と資料の状態は会社側の工夫で変えやすい。この4つの組み合わせで見積もりが決まる。" width="800" height="660" loading="lazy">
+  <img src="/images/topics/bookkeeping-outsourcing-cost/cost-factors.svg" alt="経理代行の費用を決める4つの要素の図。取引の量と頻度・期限は事業の規模や希望で決まり、業務の範囲と資料の状態は会社側の工夫で変えやすい。この4つの組み合わせで見積もりが決まる。" width="600" height="680" loading="lazy">
   <figcaption>図1：経理代行の費用を決める4つの要素</figcaption>
 </figure>
 
@@ -40,7 +40,7 @@ draft: false
 ## 1. 経理代行に「任せる作業」と「自社に残す判断」を分ける
 
 <figure class="article-figure">
-  <img src="/images/topics/bookkeeping-outsourcing-cost/scope-split.svg" alt="外部に任せやすい作業と自社に残す判断の比較表。任せやすい作業は仕訳の入力、請求書の作成・送付、入金の消し込み、支払いデータの作成。自社に残す判断は支払いの承認、取引条件の変更、値引きの可否、取引先の選定。" width="800" height="540" loading="lazy">
+  <img src="/images/topics/bookkeeping-outsourcing-cost/scope-split.svg" alt="外部に任せやすい作業と自社に残す判断の比較表。任せやすい作業は仕訳の入力、請求書の作成・送付、入金の消し込み、支払いデータの作成。自社に残す判断は支払いの承認、取引条件の変更、値引きの可否、取引先の選定。" width="600" height="520" loading="lazy">
   <figcaption>図2：外部に任せやすい作業と、自社に残す判断</figcaption>
 </figure>
 
@@ -56,7 +56,7 @@ draft: false
 ## 2. 資料の渡し方をデータにそろえると、費用が安定しやすい
 
 <figure class="article-figure">
-  <img src="/images/topics/bookkeeping-outsourcing-cost/handoff-before-after.svg" alt="資料の渡し方のBefore/After。Beforeは紙の領収書や請求書を月末に封筒でまとめて渡し、仕分けと入力から始まるため時間がかかる。Afterは口座・カードを会計ソフトと連携し、領収書はスマホで撮ってすぐ保存、請求書PDFは決まった場所へ集めるため、確認と仕上げに集中できる。" width="800" height="700" loading="lazy">
+  <img src="/images/topics/bookkeeping-outsourcing-cost/handoff-before-after.svg" alt="資料の渡し方のBefore/After。Beforeは紙の領収書がたまり、月末に封筒で渡すため、仕分けと入力から始まり時間がかかる。Afterは口座やカードの明細を会計ソフトと自動で連携し、領収書はスマホで撮影、請求書PDFは1か所に集めるため、確認と仕上げに集中でき、費用が安定する。" width="600" height="690" loading="lazy">
   <figcaption>図3：資料の渡し方のBefore／After</figcaption>
 </figure>
 

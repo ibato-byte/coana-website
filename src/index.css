@@ -1141,7 +1141,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .article-body h3 { font-size: 19px; margin: 36px 0 14px; font-weight: 800; }
 .article-body img { max-width: 100%; height: auto; border-radius: 12px; }
 /* コラムの図解（docs/column-guide.md）：<figure class="article-figure"> に SVG とキャプション */
-.article-body .article-figure { margin: 8px 0 34px; }
+.article-body .article-figure { max-width: 640px; margin: 8px auto 34px; }
 .article-body .article-figure img { display: block; width: 100%; border: 1px solid var(--line); background: var(--paper); }
 .article-body .article-figure figcaption { margin-top: 10px; font-size: 14px; line-height: 1.7; color: var(--navy-soft); text-align: center; }
 .article-body ul:has(> li > input[type="checkbox"]) { list-style: none; padding-left: .2em; }

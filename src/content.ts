@@ -36,6 +36,26 @@ const files = import.meta.glob("../content/topics/*.md", {
 const p = (n: number) => String(n).padStart(2, "0");
 const todayJst = () => new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
+// 予約投稿の確認用：Cloudflare Pages のプレビュー（<ブランチ等>.<プロジェクト>.pages.dev）とローカルに限り、
+// URLに ?preview=YYYY-MM-DD を付けるとその日付時点の公開状態で表示する（タブを閉じるまで有効、?preview=off で解除）。
+// 本番（coana.co.jp）では無効。sitemap.xml・feed.xml・llms.txt はビルド時に別途生成しており、この設定の影響を受けない。
+function previewDate(): string | null {
+  if (typeof window === "undefined") return null;
+  const host = window.location.hostname;
+  if (!/^[^.]+\.[^.]+\.pages\.dev$/.test(host) && host !== "localhost" && host !== "127.0.0.1") return null;
+  const KEY = "coana-preview-date";
+  const param = new URLSearchParams(window.location.search).get("preview");
+  const valid = param && /^\d{4}-\d{2}-\d{2}$/.test(param) ? param : null;
+  try {
+    if (valid) sessionStorage.setItem(KEY, valid);
+    else if (param === "off") sessionStorage.removeItem(KEY);
+    return sessionStorage.getItem(KEY);
+  } catch {
+    return valid;
+  }
+}
+const publishCutoff = previewDate() ?? todayJst();
+
 // 日付は閲覧者のタイムゾーンに左右されず、日本時間の表記で表示する
 function toDate(value: unknown) {
   const raw = value instanceof Date ? value.toISOString() : String(value ?? "").trim();
@@ -64,7 +84,7 @@ export const articles: Article[] = Object.entries(files)
     const slug = path.split("/").pop()!.replace(/\.md$/, "");
     const d = toDate(fm.date);
     // 予約投稿：公開日（日本時間）が今日より先の記事は表示しない（毎朝の自動ビルドで公開される）
-    if (/^\d{4}\.\d{2}\.\d{2}$/.test(d.label) && d.label.replace(/\./g, "-") > todayJst()) return null;
+    if (/^\d{4}\.\d{2}\.\d{2}$/.test(d.label) && d.label.replace(/\./g, "-") > publishCutoff) return null;
     return {
       slug,
       title: fm.title ?? slug,
