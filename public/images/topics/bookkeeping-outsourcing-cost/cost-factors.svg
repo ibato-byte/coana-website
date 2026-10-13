@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 660" role="img" aria-labelledby="t">
+  <title id="t">経理代行の費用を決める4つの要素</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 28px; font-weight: 700; }
+    .lb { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 22px; fill: #4a667d; }
+    .gl { font-size: 22px; font-weight: 700; }
+  </style>
+  <rect width="800" height="660" fill="#fbfdff"/>
+  <text class="h" x="400" y="54" text-anchor="middle">経理代行の費用を決める4つの要素</text>
+
+  <text class="gl" x="30" y="108" style="fill:#4a667d">事業の規模や希望で決まるもの</text>
+  <rect x="30" y="122" width="360" height="148" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="lb" x="54" y="172">取引の量</text>
+  <text class="tx" x="54" y="212">月の仕訳数</text>
+  <text class="tx" x="54" y="244">請求書・領収書の枚数</text>
+  <rect x="410" y="122" width="360" height="148" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="lb" x="434" y="172">頻度と期限</text>
+  <text class="tx" x="434" y="212">毎週か、月1回か</text>
+  <text class="tx" x="434" y="244">数字を何日までに見たいか</text>
+
+  <rect x="14" y="294" width="772" height="246" rx="18" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <rect x="30" y="312" width="296" height="42" rx="21" fill="#ffd85a"/>
+  <text class="gl" x="178" y="341" text-anchor="middle">会社側の工夫で変えやすい</text>
+  <rect x="30" y="370" width="360" height="148" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="54" y="420">業務の範囲</text>
+  <text class="tx" x="54" y="460">記帳だけか、請求・支払い</text>
+  <text class="tx" x="54" y="492">月次の締めまで任せるか</text>
+  <rect x="410" y="370" width="360" height="148" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="434" y="420">資料の状態</text>
+  <text class="tx" x="434" y="460">データで届くか</text>
+  <text class="tx" x="434" y="492">紙の整理から始まるか</text>
+
+  <polygon points="380,552 420,552 400,574" fill="#087fe5"/>
+  <rect x="30" y="584" width="740" height="64" rx="14" fill="#16334d"/>
+  <text x="400" y="626" text-anchor="middle" style="fill:#ffffff;font-size:24px;font-weight:700">この4つの組み合わせで見積もりが決まる</text>
+</svg>

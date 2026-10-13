@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 700" role="img" aria-labelledby="t">
+  <title id="t">資料の渡し方のBefore/After</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 28px; font-weight: 700; }
+    .tag { font-size: 22px; font-weight: 700; fill: #ffffff; }
+    .pt { font-size: 24px; font-weight: 700; }
+    .bx { font-size: 22px; }
+    .rs { font-size: 22px; font-weight: 700; }
+  </style>
+  <rect width="800" height="700" fill="#fbfdff"/>
+  <text class="h" x="400" y="54" text-anchor="middle">資料の渡し方で、毎月の作業が変わる</text>
+
+  <!-- Before -->
+  <rect x="20" y="82" width="760" height="270" rx="18" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="40" y="102" width="110" height="38" rx="19" fill="#4a667d"/>
+  <text class="tag" x="95" y="129" text-anchor="middle">Before</text>
+  <text class="pt" x="166" y="130">紙を月末にまとめて渡す</text>
+  <g fill="#eef6fc" stroke="#d8e7f2" stroke-width="2">
+    <rect x="40" y="160" width="208" height="100" rx="12"/>
+    <rect x="296" y="160" width="208" height="100" rx="12"/>
+    <rect x="552" y="160" width="208" height="100" rx="12"/>
+  </g>
+  <g fill="#4a667d">
+    <polygon points="258,198 284,210 258,222"/>
+    <polygon points="514,198 540,210 514,222"/>
+  </g>
+  <text class="bx" x="144" y="204" text-anchor="middle">紙の領収書や</text>
+  <text class="bx" x="144" y="236" text-anchor="middle">請求書がたまる</text>
+  <text class="bx" x="400" y="204" text-anchor="middle">月末に封筒で</text>
+  <text class="bx" x="400" y="236" text-anchor="middle">まとめて渡す</text>
+  <text class="bx" x="656" y="204" text-anchor="middle">仕分けと入力</text>
+  <text class="bx" x="656" y="236" text-anchor="middle">から始まる</text>
+  <text class="rs" x="400" y="314" text-anchor="middle" style="fill:#4a667d">整理と入力に時間がかかり、費用も増えやすい</text>
+
+  <polygon points="370,364 430,364 400,392" fill="#087fe5"/>
+
+  <!-- After -->
+  <rect x="20" y="404" width="760" height="274" rx="18" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <rect x="40" y="424" width="110" height="38" rx="19" fill="#087fe5"/>
+  <text class="tag" x="95" y="451" text-anchor="middle">After</text>
+  <text class="pt" x="166" y="452">データで自然に集まる</text>
+  <g fill="#ffffff" stroke="#55b8f3" stroke-width="2">
+    <rect x="40" y="482" width="208" height="100" rx="12"/>
+    <rect x="296" y="482" width="208" height="100" rx="12"/>
+    <rect x="552" y="482" width="208" height="100" rx="12"/>
+  </g>
+  <text class="bx" x="144" y="526" text-anchor="middle">口座・カードを</text>
+  <text class="bx" x="144" y="558" text-anchor="middle">会計ソフトと連携</text>
+  <text class="bx" x="400" y="526" text-anchor="middle">領収書はスマホで</text>
+  <text class="bx" x="400" y="558" text-anchor="middle">撮ってすぐ保存</text>
+  <text class="bx" x="656" y="526" text-anchor="middle">請求書PDFは</text>
+  <text class="bx" x="656" y="558" text-anchor="middle">決まった場所へ</text>
+  <rect x="60" y="604" width="680" height="54" rx="12" fill="#ffd85a"/>
+  <text class="rs" x="400" y="639" text-anchor="middle">確認と仕上げに集中でき、費用が安定しやすい</text>
+</svg>

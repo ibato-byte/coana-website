@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" role="img" aria-labelledby="t">
+  <title id="t">外部に任せやすい作業と、自社に残す判断</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 24px; }
+    .n { font-size: 22px; font-weight: 700; }
+  </style>
+  <rect width="800" height="540" fill="#fbfdff"/>
+  <text class="h" x="400" y="54" text-anchor="middle">任せる作業と、社長が決める判断</text>
+
+  <rect x="30" y="86" width="364" height="60" rx="12" fill="#087fe5"/>
+  <text class="hd" x="212" y="125" text-anchor="middle">外部に任せやすい作業</text>
+  <rect x="406" y="86" width="364" height="60" rx="12" fill="#16334d"/>
+  <text class="hd" x="588" y="125" text-anchor="middle">自社に残す判断</text>
+
+  <g>
+    <rect x="30" y="154" width="364" height="60" rx="8" fill="#eef6fc"/>
+    <rect x="406" y="154" width="364" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <rect x="30" y="220" width="364" height="60" rx="8" fill="#eef6fc"/>
+    <rect x="406" y="220" width="364" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <rect x="30" y="286" width="364" height="60" rx="8" fill="#eef6fc"/>
+    <rect x="406" y="286" width="364" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <rect x="30" y="352" width="364" height="60" rx="8" fill="#eef6fc"/>
+    <rect x="406" y="352" width="364" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="58" cy="184" r="7"/><circle cx="58" cy="250" r="7"/><circle cx="58" cy="316" r="7"/><circle cx="58" cy="382" r="7"/>
+  </g>
+  <g fill="#16334d">
+    <circle cx="434" cy="184" r="7"/><circle cx="434" cy="250" r="7"/><circle cx="434" cy="316" r="7"/><circle cx="434" cy="382" r="7"/>
+  </g>
+  <text class="c" x="78" y="193">仕訳の入力</text>
+  <text class="c" x="78" y="259">請求書の作成・送付</text>
+  <text class="c" x="78" y="325">入金の消し込み</text>
+  <text class="c" x="78" y="391">支払いデータの作成</text>
+  <text class="c" x="454" y="193">支払いの承認</text>
+  <text class="c" x="454" y="259">取引条件の変更</text>
+  <text class="c" x="454" y="325">値引きの可否</text>
+  <text class="c" x="454" y="391">取引先の選定</text>
+
+  <rect x="30" y="440" width="740" height="72" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="400" y="484" text-anchor="middle">線引きを書き出してから依頼すると、確認のやりとりが減る</text>
+</svg>
