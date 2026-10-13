@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 610" role="img" aria-labelledby="t">
+  <title id="t">A typical B2B invoice and payment timeline in Japan</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="610" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">A typical invoice timeline</text>
+
+  <line x1="64" y1="135" x2="64" y2="415" stroke="#55b8f3" stroke-width="4"/>
+  <g fill="#087fe5">
+    <circle cx="64" cy="135" r="24"/><circle cx="64" cy="275" r="24"/><circle cx="64" cy="415" r="24"/>
+  </g>
+  <g style="fill:#ffffff;font-size:26px;font-weight:700" text-anchor="middle">
+    <text x="64" y="144" style="fill:#ffffff">1</text><text x="64" y="284" style="fill:#ffffff">2</text><text x="64" y="424" style="fill:#ffffff">3</text>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="106" y="80" width="474" height="110" rx="14"/>
+    <rect x="106" y="220" width="474" height="110" rx="14"/>
+  </g>
+  <rect x="106" y="360" width="474" height="110" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="128" y="126">This month</text>
+  <text class="tx" x="128" y="168">You deliver the work</text>
+  <text class="lb" x="128" y="266">Month-end closing</text>
+  <text class="tx" x="128" y="308">You issue the invoice</text>
+  <text class="lb" x="128" y="406">End of next month</text>
+  <text class="tx" x="128" y="448">Paid by bank transfer</text>
+
+  <rect x="20" y="494" width="560" height="100" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="bb" x="300" y="534" text-anchor="middle">Agree before the first deal:</text>
+  <text class="bx" x="300" y="574" text-anchor="middle">payment terms, transfer fee</text>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 650" role="img" aria-labelledby="t">
+  <title id="t">A simple bookkeeping routine you can run in English</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="650" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">A routine you can repeat</text>
+
+  <g fill="#16334d">
+    <rect x="20" y="78" width="180" height="110" rx="14"/>
+    <rect x="20" y="202" width="180" height="110" rx="14"/>
+    <rect x="20" y="326" width="180" height="110" rx="14"/>
+    <rect x="20" y="450" width="180" height="110" rx="14"/>
+  </g>
+  <text class="hd" x="110" y="142" text-anchor="middle">Weekly</text>
+  <text class="hd" x="110" y="266" text-anchor="middle">1st week</text>
+  <text class="hd" x="110" y="390" text-anchor="middle">By the 10th</text>
+  <text class="hd" x="110" y="514" text-anchor="middle">Quarterly</text>
+  <g fill="#087fe5">
+    <polygon points="204,119 218,133 204,147"/>
+    <polygon points="204,243 218,257 204,271"/>
+    <polygon points="204,367 218,381 204,395"/>
+    <polygon points="204,491 218,505 204,519"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="222" y="78" width="358" height="110" rx="14"/>
+    <rect x="222" y="202" width="358" height="110" rx="14"/>
+    <rect x="222" y="326" width="358" height="110" rx="14"/>
+    <rect x="222" y="450" width="358" height="110" rx="14"/>
+  </g>
+  <text class="bb" x="242" y="124">Upload receipts</text>
+  <text class="tx" x="242" y="164">Check bank feeds</text>
+  <text class="bb" x="242" y="248">Review and invoice</text>
+  <text class="tx" x="242" y="288">Check unpaid invoices</text>
+  <text class="bb" x="242" y="372">Check the numbers</text>
+  <text class="tx" x="242" y="412">Sales, profit, cash</text>
+  <text class="bb" x="242" y="496">Share with your</text>
+  <text class="bb" x="242" y="536">tax accountant</text>
+
+  <rect x="20" y="578" width="560" height="56" rx="14" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <text class="bb" x="300" y="615" text-anchor="middle">Write it down in English</text>
+</svg>

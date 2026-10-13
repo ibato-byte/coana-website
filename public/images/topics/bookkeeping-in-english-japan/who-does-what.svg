@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 660" role="img" aria-labelledby="t">
+  <title id="t">What you handle, and what licensed professionals handle</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="660" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">Who does what</text>
+
+  <rect x="8" y="78" width="584" height="236" rx="18" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <rect x="20" y="96" width="290" height="42" rx="21" fill="#087fe5"/>
+  <text class="tag" x="165" y="126" text-anchor="middle">You or your support</text>
+  <text class="bb" x="330" y="127">In English</text>
+  <g fill="#ffffff" stroke="#55b8f3" stroke-width="2">
+    <rect x="20" y="154" width="272" height="62" rx="10"/>
+    <rect x="308" y="154" width="272" height="62" rx="10"/>
+    <rect x="20" y="230" width="272" height="62" rx="10"/>
+    <rect x="308" y="230" width="272" height="62" rx="10"/>
+  </g>
+  <text class="bx" x="40" y="194">Daily records</text>
+  <text class="bx" x="328" y="194">Invoicing</text>
+  <text class="bx" x="40" y="270">Receipts</text>
+  <text class="bx" x="328" y="270">Monthly reports</text>
+
+  <polygon points="288,330 312,330 300,318" fill="#087fe5"/>
+  <rect x="210" y="334" width="180" height="44" rx="22" fill="#16334d"/>
+  <text class="tag" x="300" y="364" text-anchor="middle">Same data</text>
+  <polygon points="288,382 312,382 300,394" fill="#087fe5"/>
+
+  <rect x="8" y="400" width="584" height="244" rx="18" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="20" y="418" width="330" height="42" rx="21" fill="#16334d"/>
+  <text class="tag" x="185" y="448" text-anchor="middle">Licensed professionals</text>
+  <g fill="#eef6fc">
+    <rect x="20" y="476" width="560" height="48" rx="8"/>
+    <rect x="20" y="532" width="560" height="48" rx="8"/>
+    <rect x="20" y="588" width="560" height="48" rx="8"/>
+  </g>
+  <text class="bx" x="40" y="509">Tax filings &amp; advice</text>
+  <text class="sm" x="560" y="508" text-anchor="end">zeirishi</text>
+  <text class="bx" x="40" y="565">Social &amp; labor insurance</text>
+  <text class="sm" x="560" y="564" text-anchor="end">sharoushi</text>
+  <text class="bx" x="40" y="621">Company registration</text>
+  <text class="sm" x="560" y="620" text-anchor="end">shiho-shoshi</text>
+</svg>

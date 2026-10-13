@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" role="img" aria-labelledby="t">
+  <title id="t">会計ソフトとクラウドストレージの使い分け</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+    .big { font-size: 60px; font-weight: 700; }
+  </style>
+  <rect width="600" height="500" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">証憑の置き場所を分ける</text>
+
+  <rect x="14" y="80" width="280" height="56" rx="12" fill="#087fe5"/>
+  <text class="hd" x="154" y="117" text-anchor="middle">会計ソフト</text>
+  <rect x="306" y="80" width="280" height="56" rx="12" fill="#16334d"/>
+  <text class="hd" x="446" y="117" text-anchor="middle">クラウドストレージ</text>
+  <text class="sm" x="154" y="172" text-anchor="middle">仕訳に直結する証憑</text>
+  <text class="sm" x="446" y="172" text-anchor="middle">それ以外の書類</text>
+
+  <g fill="#eef6fc">
+    <rect x="14" y="190" width="280" height="60" rx="8"/>
+    <rect x="14" y="256" width="280" height="60" rx="8"/>
+    <rect x="14" y="322" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="306" y="190" width="280" height="60" rx="8"/>
+    <rect x="306" y="256" width="280" height="60" rx="8"/>
+    <rect x="306" y="322" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#087fe5"><circle cx="30" cy="220" r="5"/><circle cx="30" cy="286" r="5"/><circle cx="30" cy="352" r="5"/></g>
+  <g fill="#16334d"><circle cx="322" cy="220" r="5"/><circle cx="322" cy="286" r="5"/><circle cx="322" cy="352" r="5"/></g>
+  <text class="bx" x="44" y="230">領収書・レシート</text>
+  <text class="bx" x="44" y="296">受け取った請求書</text>
+  <text class="bx" x="44" y="362">発行した請求書</text>
+  <text class="bx" x="336" y="230">契約書・見積書</text>
+  <text class="bx" x="336" y="296">役所からの通知</text>
+  <text class="bx" x="336" y="362">保険・税金の書類</text>
+
+  <rect x="14" y="408" width="572" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="bb" x="300" y="452" text-anchor="middle">仕訳に直結するかで分ける</text>
+</svg>
