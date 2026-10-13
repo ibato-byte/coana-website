@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" role="img" aria-labelledby="t">
+  <title id="t">書類ごとに置き場所を決める</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .fn { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="500" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">書類ごとに置き場所を決める</text>
+
+  <g fill="#16334d">
+    <rect x="14" y="80" width="244" height="80" rx="12"/>
+    <rect x="14" y="180" width="244" height="80" rx="12"/>
+    <rect x="14" y="280" width="244" height="80" rx="12"/>
+  </g>
+  <g fill="#eef6fc" stroke="#d8e7f2" stroke-width="2">
+    <rect x="302" y="80" width="284" height="80" rx="12"/>
+    <rect x="302" y="180" width="284" height="80" rx="12"/>
+    <rect x="302" y="280" width="284" height="80" rx="12"/>
+  </g>
+  <g fill="#087fe5">
+    <polygon points="266,108 290,120 266,132"/>
+    <polygon points="266,208 290,220 266,232"/>
+    <polygon points="266,308 290,320 266,332"/>
+  </g>
+  <text class="hd" x="136" y="129" text-anchor="middle">領収書</text>
+  <text class="hd" x="136" y="229" text-anchor="middle">届いた請求書</text>
+  <text class="hd" x="136" y="329" text-anchor="middle">契約書・通知</text>
+  <text class="c" x="444" y="129" text-anchor="middle">撮影してソフトへ</text>
+  <text class="c" x="444" y="229" text-anchor="middle">決まったフォルダへ</text>
+  <text class="c" x="444" y="329" text-anchor="middle">会計とは別の場所へ</text>
+
+  <rect x="14" y="396" width="572" height="80" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="445" text-anchor="middle">探す時間がなくなり、共有も早い</text>
+</svg>

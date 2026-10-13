@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">自動登録ルールのしくみ（例）</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">自動登録ルールのしくみ（例）</text>
+
+  <rect x="14" y="78" width="572" height="112" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="30" y="92" width="200" height="40" rx="20" fill="#4a667d"/>
+  <text class="tag" x="130" y="120" text-anchor="middle">取り込んだ明細</text>
+  <text class="c" x="34" y="170">振込　ABCフドウサン</text>
+
+  <polygon points="286,198 314,198 300,216" fill="#087fe5"/>
+
+  <rect x="14" y="224" width="572" height="112" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <rect x="30" y="238" width="200" height="40" rx="20" fill="#087fe5"/>
+  <text class="tag" x="130" y="266" text-anchor="middle">条件</text>
+  <text class="c" x="34" y="316">摘要に「ABCフドウサン」を含む</text>
+
+  <polygon points="286,344 314,344 300,362" fill="#087fe5"/>
+
+  <rect x="14" y="370" width="572" height="150" rx="14" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <rect x="30" y="384" width="200" height="40" rx="20" fill="#16334d"/>
+  <text class="tag" x="130" y="412" text-anchor="middle">登録する内容</text>
+  <text class="c" x="34" y="462">勘定科目：地代家賃</text>
+  <text class="c" x="34" y="500">取引先：ABC不動産</text>
+
+  <polygon points="276,530 324,530 300,552" fill="#087fe5"/>
+  <rect x="14" y="560" width="572" height="64" rx="14" fill="#ffd85a"/>
+  <text class="n" x="300" y="601" text-anchor="middle">翌月からは自動で処理される</text>
+</svg>

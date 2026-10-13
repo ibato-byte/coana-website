@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 590" role="img" aria-labelledby="t">
+  <title id="t">使う人によって変わる、会計ソフトで重視するポイント</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .n { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="590" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">使う人で変わる、見るポイント</text>
+
+  <g fill="#16334d">
+    <rect x="14" y="80" width="200" height="120" rx="12"/>
+    <rect x="14" y="214" width="200" height="120" rx="12"/>
+    <rect x="14" y="348" width="200" height="120" rx="12"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="226" y="80" width="360" height="120" rx="12"/>
+    <rect x="226" y="214" width="360" height="120" rx="12"/>
+    <rect x="226" y="348" width="360" height="120" rx="12"/>
+  </g>
+
+  <text class="hd" x="114" y="132" text-anchor="middle">経営者が</text>
+  <text class="hd" x="114" y="168" text-anchor="middle">自分で入力</text>
+  <text class="c" x="246" y="132">質問に答える形で</text>
+  <text class="c" x="246" y="168">スマホでも入力できるか</text>
+
+  <text class="hd" x="114" y="266" text-anchor="middle">経理担当者</text>
+  <text class="hd" x="114" y="302" text-anchor="middle">が入力</text>
+  <text class="c" x="246" y="266">仕訳の形で入力でき</text>
+  <text class="c" x="246" y="302">一覧で直しやすいか</text>
+
+  <text class="hd" x="114" y="400" text-anchor="middle">税理士と</text>
+  <text class="hd" x="114" y="436" text-anchor="middle">共有する</text>
+  <text class="c" x="246" y="400">税理士事務所が</text>
+  <text class="c" x="246" y="436">慣れているか</text>
+
+  <rect x="14" y="494" width="572" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="538" text-anchor="middle">実際に使う人が試して決める</text>
+</svg>

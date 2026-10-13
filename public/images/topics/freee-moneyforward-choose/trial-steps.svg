@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="t">
+  <title id="t">無料期間で会計ソフトを試す4つの手順</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .c { font-size: 26px; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="600" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">無料期間での試し方</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="80" width="572" height="72" rx="12"/>
+    <rect x="14" y="184" width="572" height="72" rx="12"/>
+    <rect x="14" y="288" width="572" height="72" rx="12"/>
+    <rect x="14" y="392" width="572" height="72" rx="12"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="56" cy="116" r="22"/><circle cx="56" cy="220" r="22"/>
+    <circle cx="56" cy="324" r="22"/><circle cx="56" cy="428" r="22"/>
+    <polygon points="286,158 314,158 300,176"/>
+    <polygon points="286,262 314,262 300,280"/>
+    <polygon points="286,366 314,366 300,384"/>
+  </g>
+  <text class="num" x="56" y="125" text-anchor="middle">1</text>
+  <text class="num" x="56" y="229" text-anchor="middle">2</text>
+  <text class="num" x="56" y="333" text-anchor="middle">3</text>
+  <text class="num" x="56" y="437" text-anchor="middle">4</text>
+  <text class="c" x="96" y="125">いつもの取引を数件選ぶ</text>
+  <text class="c" x="96" y="229">入力する人が両方で試す</text>
+  <text class="c" x="96" y="333">口座連携と帳票を確かめる</text>
+  <text class="c" x="96" y="437">税理士にも意見を聞く</text>
+
+  <polygon points="276,474 324,474 300,498" fill="#087fe5"/>
+  <rect x="20" y="510" width="560" height="68" rx="14" fill="#ffd85a"/>
+  <text x="300" y="554" text-anchor="middle" style="font-size:26px;font-weight:700">業務の流れに合う方に決める</text>
+</svg>

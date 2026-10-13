@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 540" role="img" aria-labelledby="t">
+  <title id="t">手入力が減らない3つの原因と対策</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="540" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">手入力が減らない原因と対策</text>
+
+  <rect x="14" y="78" width="244" height="46" rx="12" fill="#4a667d"/>
+  <text class="hd" x="136" y="110" text-anchor="middle">原因</text>
+  <rect x="302" y="78" width="284" height="46" rx="12" fill="#087fe5"/>
+  <text class="hd" x="444" y="110" text-anchor="middle">対策</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="138" width="244" height="112" rx="12"/>
+    <rect x="14" y="266" width="244" height="112" rx="12"/>
+    <rect x="14" y="394" width="244" height="112" rx="12"/>
+  </g>
+  <g fill="#eef6fc" stroke="#087fe5" stroke-width="3">
+    <rect x="302" y="138" width="284" height="112" rx="12"/>
+    <rect x="302" y="266" width="284" height="112" rx="12"/>
+    <rect x="302" y="394" width="284" height="112" rx="12"/>
+  </g>
+  <g fill="#087fe5">
+    <polygon points="266,182 290,194 266,206"/>
+    <polygon points="266,310 290,322 266,334"/>
+    <polygon points="266,438 290,450 266,462"/>
+  </g>
+  <text class="c" x="136" y="186" text-anchor="middle">事業と私用の</text>
+  <text class="c" x="136" y="222" text-anchor="middle">支出が混ざる</text>
+  <text class="c" x="136" y="314" text-anchor="middle">連携が</text>
+  <text class="c" x="136" y="350" text-anchor="middle">止まっている</text>
+  <text class="c" x="136" y="442" text-anchor="middle">ルールを</text>
+  <text class="c" x="136" y="478" text-anchor="middle">作っていない</text>
+
+  <text class="n" x="444" y="186" text-anchor="middle">事業用の口座・</text>
+  <text class="n" x="444" y="222" text-anchor="middle">カードだけ連携</text>
+  <text class="n" x="444" y="314" text-anchor="middle">月1回、連携の</text>
+  <text class="n" x="444" y="350" text-anchor="middle">状態を確認</text>
+  <text class="n" x="444" y="442" text-anchor="middle">くり返す取引</text>
+  <text class="n" x="444" y="478" text-anchor="middle">からルール化</text>
+</svg>

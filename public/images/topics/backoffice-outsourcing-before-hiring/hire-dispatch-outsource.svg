@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">採用・派遣・外注の違い</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .chip { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">採用・派遣・外注の違い</text>
+
+  <rect x="14" y="78" width="572" height="164" rx="16" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="14" y="258" width="572" height="164" rx="16" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="14" y="438" width="572" height="180" rx="16" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+
+  <rect x="30" y="92" width="120" height="42" rx="21" fill="#16334d"/>
+  <text class="hd" x="90" y="122" text-anchor="middle">採用</text>
+  <rect x="30" y="272" width="120" height="42" rx="21" fill="#16334d"/>
+  <text class="hd" x="90" y="302" text-anchor="middle">派遣</text>
+  <rect x="30" y="452" width="120" height="42" rx="21" fill="#087fe5"/>
+  <text class="hd" x="90" y="482" text-anchor="middle">外注</text>
+
+  <g fill="#087fe5">
+    <rect x="30" y="148" width="76" height="36" rx="8"/>
+    <rect x="30" y="328" width="76" height="36" rx="8"/>
+    <rect x="30" y="510" width="76" height="36" rx="8"/>
+  </g>
+  <g fill="#4a667d">
+    <rect x="30" y="192" width="76" height="36" rx="8"/>
+    <rect x="30" y="372" width="76" height="36" rx="8"/>
+    <rect x="30" y="560" width="76" height="36" rx="8"/>
+  </g>
+  <text class="chip" x="68" y="175" text-anchor="middle">向く</text>
+  <text class="chip" x="68" y="219" text-anchor="middle">注意</text>
+  <text class="chip" x="68" y="355" text-anchor="middle">向く</text>
+  <text class="chip" x="68" y="399" text-anchor="middle">注意</text>
+  <text class="chip" x="68" y="537" text-anchor="middle">向く</text>
+  <text class="chip" x="68" y="587" text-anchor="middle">注意</text>
+
+  <text class="c" x="122" y="176">1人分以上の仕事が続く</text>
+  <text class="s" x="122" y="220">採用・教育に時間がかかる</text>
+  <text class="c" x="122" y="356">決まった時間に人手がほしい</text>
+  <text class="s" x="122" y="400">手順と指示は自社で用意</text>
+  <text class="n" x="122" y="538">仕事量に波・業務が細かい</text>
+  <text class="s" x="122" y="588">範囲と連絡方法を先に決める</text>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 590" role="img" aria-labelledby="t">
+  <title id="t">会計ソフトを選ぶ前に書き出す4つの問い</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="590" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">選ぶ前に書き出す4つの問い</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="84" width="270" height="170" rx="14"/>
+    <rect x="310" y="84" width="270" height="170" rx="14"/>
+    <rect x="20" y="274" width="270" height="170" rx="14"/>
+    <rect x="310" y="274" width="270" height="170" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="56" cy="128" r="20"/><circle cx="346" cy="128" r="20"/>
+    <circle cx="56" cy="318" r="20"/><circle cx="346" cy="318" r="20"/>
+  </g>
+  <text class="num" x="56" y="137" text-anchor="middle">1</text>
+  <text class="num" x="346" y="137" text-anchor="middle">2</text>
+  <text class="num" x="56" y="327" text-anchor="middle">3</text>
+  <text class="num" x="346" y="327" text-anchor="middle">4</text>
+
+  <text class="lb" x="88" y="138">入力する人</text>
+  <text class="tx" x="40" y="190">誰が・いつ</text>
+  <text class="tx" x="40" y="226">入力する？</text>
+
+  <text class="lb" x="378" y="138">周りのツール</text>
+  <text class="tx" x="330" y="190">請求・経費・</text>
+  <text class="tx" x="330" y="226">給与とつなぐ？</text>
+
+  <text class="lb" x="88" y="328">税理士</text>
+  <text class="tx" x="40" y="380">どのソフトで</text>
+  <text class="tx" x="40" y="416">共有する？</text>
+
+  <text class="lb" x="378" y="328">見たい数字</text>
+  <text class="tx" x="330" y="380">いつ・何を</text>
+  <text class="tx" x="330" y="416">確認したい？</text>
+
+  <polygon points="276,460 324,460 300,484" fill="#087fe5"/>
+  <rect x="20" y="498" width="560" height="68" rx="14" fill="#16334d"/>
+  <text x="300" y="542" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">答えに合う方を選ぶ</text>
+</svg>

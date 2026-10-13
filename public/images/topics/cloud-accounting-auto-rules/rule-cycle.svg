@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 560" role="img" aria-labelledby="t">
+  <title id="t">自動登録ルールを育てる4ステップ</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="560" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">ルールを育てる4ステップ</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="80" width="254" height="170" rx="14"/>
+    <rect x="332" y="80" width="254" height="170" rx="14"/>
+    <rect x="332" y="300" width="254" height="170" rx="14"/>
+    <rect x="14" y="300" width="254" height="170" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="52" cy="120" r="22"/><circle cx="370" cy="120" r="22"/>
+    <circle cx="370" cy="340" r="22"/><circle cx="52" cy="340" r="22"/>
+    <polygon points="280,153 316,165 280,177"/>
+    <polygon points="447,258 471,258 459,290"/>
+    <polygon points="320,373 284,385 320,397"/>
+    <polygon points="129,292 153,292 141,260"/>
+  </g>
+  <text class="num" x="52" y="129" text-anchor="middle">1</text>
+  <text class="num" x="370" y="129" text-anchor="middle">2</text>
+  <text class="num" x="370" y="349" text-anchor="middle">3</text>
+  <text class="num" x="52" y="349" text-anchor="middle">4</text>
+
+  <text class="c" x="34" y="190">くり返す取引</text>
+  <text class="c" x="34" y="226">から作る</text>
+  <text class="c" x="352" y="190">キーワードで</text>
+  <text class="c" x="352" y="226">判定する</text>
+  <text class="c" x="352" y="410">迷う取引は</text>
+  <text class="c" x="352" y="446">人が判断</text>
+  <text class="c" x="34" y="410">月次で誤りを</text>
+  <text class="c" x="34" y="446">見直す</text>
+
+  <rect x="14" y="488" width="572" height="56" rx="14" fill="#16334d"/>
+  <text x="300" y="525" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">一度で完成させず、少しずつ育てる</text>
+</svg>

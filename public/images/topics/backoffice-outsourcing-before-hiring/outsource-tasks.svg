@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">外に任せやすい業務の例</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .chip { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">外に任せやすい業務の例</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="78" width="280" height="200" rx="14"/>
+    <rect x="306" y="78" width="280" height="200" rx="14"/>
+    <rect x="14" y="292" width="280" height="200" rx="14"/>
+    <rect x="306" y="292" width="280" height="200" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <rect x="14" y="78" width="280" height="52" rx="14"/>
+    <rect x="306" y="78" width="280" height="52" rx="14"/>
+    <rect x="14" y="292" width="280" height="52" rx="14"/>
+    <rect x="306" y="292" width="280" height="52" rx="14"/>
+  </g>
+  <text class="hd" x="154" y="113" text-anchor="middle">経理</text>
+  <text class="hd" x="446" y="113" text-anchor="middle">労務</text>
+  <text class="hd" x="154" y="327" text-anchor="middle">総務・秘書</text>
+  <text class="hd" x="446" y="327" text-anchor="middle">営業事務</text>
+
+  <text class="c" x="32" y="172">記帳・請求書発行</text>
+  <text class="c" x="32" y="212">入金の確認</text>
+  <text class="c" x="32" y="252">支払いの準備</text>
+  <text class="c" x="324" y="172">勤怠の集計</text>
+  <text class="c" x="324" y="212">入退社の書類準備</text>
+  <text class="c" x="32" y="386">備品の発注</text>
+  <text class="c" x="32" y="426">日程調整</text>
+  <text class="c" x="32" y="466">問い合わせ対応</text>
+  <text class="c" x="324" y="386">見積書の作成</text>
+  <text class="c" x="324" y="426">顧客リストの整備</text>
+
+  <rect x="14" y="512" width="572" height="108" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="556" text-anchor="middle">承認や取引条件の判断は自社に</text>
+  <text class="n" x="300" y="594" text-anchor="middle">社会保険の手続き等は専門家と</text>
+</svg>
