@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 556" role="img" aria-labelledby="t">
+  <title id="t">月に一度の手入れ4項目</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .b { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .c { font-size: 26px; }
+    .ac { font-size: 26px; font-weight: 700; fill: #087fe5; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .num { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="556" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">月に一度の手入れ4項目</text>
+  <rect x="20" y="84" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="58" cy="124" r="20" fill="#087fe5"/>
+  <text class="tag" x="58" y="132" text-anchor="middle">1</text>
+  <text class="lb" x="90" y="134">基本情報</text>
+  <text class="tx" x="40" y="184">営業時間と</text>
+  <text class="tx" x="40" y="224">休業日を確認</text>
+  <rect x="310" y="84" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="348" cy="124" r="20" fill="#087fe5"/>
+  <text class="tag" x="348" y="132" text-anchor="middle">2</text>
+  <text class="lb" x="380" y="134">写真</text>
+  <text class="tx" x="330" y="184">新しい写真を</text>
+  <text class="tx" x="330" y="224">追加する</text>
+  <rect x="20" y="274" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="58" cy="314" r="20" fill="#087fe5"/>
+  <text class="tag" x="58" y="322" text-anchor="middle">3</text>
+  <text class="lb" x="90" y="324">口コミ</text>
+  <text class="tx" x="40" y="374">未返信の口コミ</text>
+  <text class="tx" x="40" y="414">に返信する</text>
+  <rect x="310" y="274" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="348" cy="314" r="20" fill="#087fe5"/>
+  <text class="tag" x="348" y="322" text-anchor="middle">4</text>
+  <text class="lb" x="380" y="324">投稿</text>
+  <text class="tx" x="330" y="374">お知らせや</text>
+  <text class="tx" x="330" y="414">イベントを投稿</text>
+  <rect x="20" y="472" width="560" height="64" rx="14" fill="#16334d"/>
+  <text x="300" y="514" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">情報をいつも最新に保つ</text>
+</svg>

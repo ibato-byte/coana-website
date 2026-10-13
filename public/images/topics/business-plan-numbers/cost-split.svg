@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 620" role="img" aria-labelledby="t">
+  <title id="t">固定費と変動費、損益分岐点の求め方</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .hd { font-size: 28px; font-weight: 700; fill: #ffffff; }
+    .hs { font-size: 24px; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .n { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="620" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">経費は2つに分けて考える</text>
+
+  <rect x="14" y="80" width="280" height="96" rx="12" fill="#16334d"/>
+  <text class="hd" x="154" y="120" text-anchor="middle">固定費</text>
+  <text class="hs" x="154" y="157" text-anchor="middle">売上に関係なくかかる</text>
+  <rect x="306" y="80" width="280" height="96" rx="12" fill="#087fe5"/>
+  <text class="hd" x="446" y="120" text-anchor="middle">変動費</text>
+  <text class="hs" x="446" y="157" text-anchor="middle">売上に比例して増える</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="184" width="280" height="60" rx="8"/>
+    <rect x="14" y="250" width="280" height="60" rx="8"/>
+    <rect x="14" y="316" width="280" height="60" rx="8"/>
+    <rect x="14" y="382" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#eef6fc">
+    <rect x="306" y="184" width="280" height="60" rx="8"/>
+    <rect x="306" y="250" width="280" height="60" rx="8"/>
+    <rect x="306" y="316" width="280" height="60" rx="8"/>
+    <rect x="306" y="382" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#16334d">
+    <circle cx="32" cy="214" r="5"/><circle cx="32" cy="280" r="5"/><circle cx="32" cy="346" r="5"/><circle cx="32" cy="412" r="5"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="324" cy="214" r="5"/><circle cx="324" cy="280" r="5"/><circle cx="324" cy="346" r="5"/><circle cx="324" cy="412" r="5"/>
+  </g>
+  <text class="c" x="46" y="224">家賃</text>
+  <text class="c" x="46" y="290">人件費</text>
+  <text class="c" x="46" y="356">通信費・ソフト代</text>
+  <text class="c" x="46" y="422">借入の利息</text>
+  <text class="c" x="340" y="224">仕入れ</text>
+  <text class="c" x="340" y="290">材料費</text>
+  <text class="c" x="340" y="356">外注費</text>
+  <text class="c" x="340" y="422">販売手数料</text>
+
+  <rect x="14" y="466" width="572" height="134" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="514" text-anchor="middle">赤字にならない売上の目安</text>
+  <text class="c" x="300" y="564" text-anchor="middle">固定費 ÷（1 − 変動費率）</text>
+</svg>

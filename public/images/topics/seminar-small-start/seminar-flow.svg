@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 610" role="img" aria-labelledby="t">
+  <title id="t">勉強会は4つのステップで設計する</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .b { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .num { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="610" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">勉強会は4ステップで設計</text>
+  <rect x="20" y="80" width="560" height="110" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="64" cy="135" r="24" fill="#087fe5"/>
+  <text class="num" x="64" y="144" text-anchor="middle">1</text>
+  <text class="lb" x="106" y="126">テーマ</text>
+  <text class="tx" x="106" y="168">お客様の悩みから逆算</text>
+  <polygon points="52,194 76,194 64,206" fill="#087fe5"/>
+  <rect x="20" y="210" width="560" height="110" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="64" cy="265" r="24" fill="#087fe5"/>
+  <text class="num" x="64" y="274" text-anchor="middle">2</text>
+  <text class="lb" x="106" y="256">集客</text>
+  <text class="tx" x="106" y="298">身近な入口を組み合わせる</text>
+  <polygon points="52,324 76,324 64,336" fill="#087fe5"/>
+  <rect x="20" y="340" width="560" height="110" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="64" cy="395" r="24" fill="#087fe5"/>
+  <text class="num" x="64" y="404" text-anchor="middle">3</text>
+  <text class="lb" x="106" y="386">当日</text>
+  <text class="tx" x="106" y="428">聞く時間を多めにとる</text>
+  <polygon points="52,454 76,454 64,466" fill="#087fe5"/>
+  <rect x="20" y="470" width="560" height="110" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <circle cx="64" cy="525" r="24" fill="#16334d"/>
+  <text class="num" x="64" y="534" text-anchor="middle">4</text>
+  <text class="lb" x="106" y="516">フォロー</text>
+  <text class="tx" x="106" y="558" style="fill:#16334d">翌日までにお礼と資料</text>
+</svg>

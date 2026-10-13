@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 740" role="img" aria-labelledby="t">
+  <title id="t">売上は「客数×単価×頻度」で組み立てる</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .gl { font-size: 26px; font-weight: 700; }
+    .op { font-size: 30px; font-weight: 700; fill: #087fe5; }
+  </style>
+  <rect width="600" height="740" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">売上は3つの数字の掛け算</text>
+
+  <g fill="#ffffff" stroke="#087fe5" stroke-width="3">
+    <rect x="20" y="84" width="160" height="140" rx="14"/>
+    <rect x="220" y="84" width="160" height="140" rx="14"/>
+    <rect x="420" y="84" width="160" height="140" rx="14"/>
+  </g>
+  <text class="lb" x="100" y="142" text-anchor="middle">客数</text>
+  <text class="tx" x="100" y="188" text-anchor="middle">月に何人</text>
+  <text class="lb" x="300" y="142" text-anchor="middle">単価</text>
+  <text class="tx" x="300" y="188" text-anchor="middle">1回いくら</text>
+  <text class="lb" x="500" y="142" text-anchor="middle">頻度</text>
+  <text class="tx" x="500" y="188" text-anchor="middle">月に何回</text>
+  <text class="op" x="200" y="165" text-anchor="middle">×</text>
+  <text class="op" x="400" y="165" text-anchor="middle">×</text>
+
+  <polygon points="276,240 324,240 300,264" fill="#087fe5"/>
+  <rect x="20" y="276" width="560" height="64" rx="14" fill="#16334d"/>
+  <text x="300" y="318" text-anchor="middle" style="fill:#ffffff;font-size:28px;font-weight:700">＝ 1か月の売上</text>
+
+  <text class="gl" x="20" y="396" style="fill:#4a667d">業種に合わせて式をつくる</text>
+  <rect x="20" y="414" width="560" height="108" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="gl" x="40" y="456">飲食店の例</text>
+  <text class="tx" x="40" y="498" style="fill:#16334d">席数×回転数×客単価×営業日数</text>
+  <rect x="20" y="536" width="560" height="108" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="gl" x="40" y="578">月額制サービスの例</text>
+  <text class="tx" x="40" y="620" style="fill:#16334d">契約社数×月額料金</text>
+
+  <rect x="20" y="660" width="560" height="64" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="gl" x="300" y="702" text-anchor="middle">上げるべき数字が見える</text>
+</svg>

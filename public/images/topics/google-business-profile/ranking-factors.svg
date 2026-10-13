@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 680" role="img" aria-labelledby="t">
+  <title id="t">表示を左右する3つの要素</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .b { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .c { font-size: 26px; }
+    .ac { font-size: 26px; font-weight: 700; fill: #087fe5; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .num { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="680" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">表示を左右する3つの要素</text>
+  <rect x="20" y="80" width="560" height="150" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="40" y="128">関連性</text>
+  <rect x="420" y="98" width="144" height="42" rx="21" fill="#087fe5"/>
+  <text class="tag" x="492" y="127" text-anchor="middle">工夫できる</text>
+  <text class="tx" x="40" y="172">検索語句と情報が合うか</text>
+  <text class="ac" x="40" y="210">→ 情報を正確に詳しく</text>
+  <rect x="20" y="246" width="560" height="150" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="lb" x="40" y="294">距離</text>
+  <rect x="420" y="264" width="144" height="42" rx="21" fill="#4a667d"/>
+  <text class="tag" x="492" y="293" text-anchor="middle">変えにくい</text>
+  <text class="tx" x="40" y="338">検索した場所からの近さ</text>
+  <text class="b" x="40" y="376" style="fill:#4a667d">→ 住所は変えられない</text>
+  <rect x="20" y="412" width="560" height="150" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="40" y="460">知名度</text>
+  <rect x="420" y="430" width="144" height="42" rx="21" fill="#087fe5"/>
+  <text class="tag" x="492" y="459" text-anchor="middle">工夫できる</text>
+  <text class="tx" x="40" y="504">口コミやWebでの評判</text>
+  <text class="ac" x="40" y="542">→ 利用者に口コミを依頼</text>
+  <rect x="20" y="590" width="560" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="b" x="300" y="634" text-anchor="middle">情報と口コミは自社で整えられる</text>
+</svg>

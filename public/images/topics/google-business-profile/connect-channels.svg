@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">SNS・プロフィール・Webサイトをつなぐ</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .b { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .c { font-size: 26px; }
+    .ac { font-size: 26px; font-weight: 700; fill: #087fe5; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .num { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">お客様が問い合わせるまで</text>
+  <rect x="20" y="80" width="560" height="76" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="2"/>
+  <text class="b" x="300" y="127" text-anchor="middle">SNSで知る・地図で探す</text>
+  <polygon points="282,162 318,162 300,180" fill="#087fe5"/>
+  <rect x="20" y="184" width="560" height="76" rx="14" fill="#16334d"/>
+  <text x="300" y="231" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">Google ビジネス プロフィール</text>
+  <polygon points="282,266 318,266 300,284" fill="#087fe5"/>
+  <rect x="20" y="288" width="560" height="76" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="2"/>
+  <text class="b" x="300" y="335" text-anchor="middle">Webサイト・予約ページ</text>
+  <polygon points="282,370 318,370 300,388" fill="#087fe5"/>
+  <rect x="20" y="392" width="560" height="76" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="2"/>
+  <text class="b" x="300" y="439" text-anchor="middle">問い合わせ・来店</text>
+  <rect x="20" y="508" width="560" height="114" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="b" x="300" y="552" text-anchor="middle">どこでも同じ情報にそろえる</text>
+  <text class="tx" x="300" y="596" text-anchor="middle">名称・住所・電話・営業時間</text>
+</svg>

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 556" role="img" aria-labelledby="t">
+  <title id="t">少人数の勉強会の4つの集客の入口</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .b { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .num { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="556" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">集客の入口は4つ</text>
+  <rect x="20" y="84" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="lb" x="40" y="134">既存客・知人</text>
+  <text class="tx" x="40" y="184">紹介を頼む</text>
+  <text class="tx" x="40" y="224">案内を送る</text>
+  <rect x="310" y="84" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="lb" x="330" y="134">SNS・Web</text>
+  <text class="tx" x="330" y="184">告知ページ</text>
+  <text class="tx" x="330" y="224">投稿で案内</text>
+  <rect x="20" y="274" width="270" height="170" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="40" y="324">共催</text>
+  <text class="tx" x="40" y="374">お客様が重なる</text>
+  <text class="tx" x="40" y="414">会社と開く</text>
+  <rect x="128" y="292" width="146" height="42" rx="21" fill="#ffd85a"/>
+  <text x="201" y="321" text-anchor="middle" style="font-size:24px;font-weight:700">幅が広がる</text>
+  <rect x="310" y="274" width="270" height="170" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="lb" x="330" y="324">告知サイト</text>
+  <text class="tx" x="330" y="374">イベント告知</text>
+  <text class="tx" x="330" y="414">サービスに掲載</text>
+  <rect x="20" y="472" width="560" height="64" rx="14" fill="#16334d"/>
+  <text x="300" y="514" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">身近な入口から組み合わせる</text>
+</svg>

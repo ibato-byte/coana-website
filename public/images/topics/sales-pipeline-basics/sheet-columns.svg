@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 650" role="img" aria-labelledby="t">
+  <title id="t">見込み客管理表の6つの列と記入の例</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; }
+    .gl { font-size: 26px; font-weight: 700; fill: #4a667d; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="650" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">管理表は6つの列から始める</text>
+  <rect x="14" y="80" width="230" height="56" rx="12" fill="#16334d"/>
+  <text x="129" y="117" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">列</text>
+  <rect x="256" y="80" width="330" height="56" rx="12" fill="#087fe5"/>
+  <text x="421" y="117" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">記入の例</text>
+  <rect x="14" y="144" width="230" height="60" rx="8" fill="#eef6fc"/>
+  <text class="lb" x="32" y="184">会社名</text>
+  <rect x="256" y="144" width="330" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="276" y="184">○○商店</text>
+  <rect x="14" y="210" width="230" height="60" rx="8" fill="#eef6fc"/>
+  <text class="lb" x="32" y="250">担当者</text>
+  <rect x="256" y="210" width="330" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="276" y="250">店長</text>
+  <rect x="14" y="276" width="230" height="60" rx="8" fill="#eef6fc"/>
+  <text class="lb" x="32" y="316">段階</text>
+  <rect x="256" y="276" width="330" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="276" y="316">検討中</text>
+  <rect x="14" y="342" width="230" height="60" rx="8" fill="#eef6fc"/>
+  <text class="lb" x="32" y="382">最後の接点</text>
+  <rect x="256" y="342" width="330" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="276" y="382">2/3 面談</text>
+  <rect x="14" y="408" width="230" height="60" rx="8" fill="#eef6fc"/>
+  <text class="lb" x="32" y="448">次の一手</text>
+  <rect x="256" y="408" width="330" height="60" rx="8" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="tx" x="276" y="448">提案書を送る</text>
+  <rect x="14" y="474" width="230" height="60" rx="8" fill="#eef6fc"/>
+  <text class="lb" x="32" y="514">予定日</text>
+  <rect x="256" y="474" width="330" height="60" rx="8" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="276" y="514">2/10</text>
+  <rect x="14" y="558" width="572" height="74" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="lb" x="300" y="604" text-anchor="middle">1行に1社、段階は選択式に</text>
+</svg>
