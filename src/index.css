@@ -251,12 +251,14 @@ p, li, dd, figcaption { text-wrap: pretty; }
   letter-spacing: .1em;
   font-weight: 700;
 }
-.logo-mark { position: relative; width: 29px; height: 29px; display: inline-block; }
-.logo-mark span { position: absolute; width: 19px; height: 19px; border-radius: 50%; transition: transform .5s var(--ease-out); }
-.logo-mark span:first-child { top: 0; left: 0; background: var(--sky); }
-.logo-mark span:last-child { right: 0; bottom: 0; background: var(--yellow); mix-blend-mode: multiply; }
-.wordmark:hover .logo-mark span:first-child { transform: translate(3px, 3px); }
-.wordmark:hover .logo-mark span:last-child { transform: translate(-3px, -3px); }
+.logo-img { position: relative; display: block; height: 34px; aspect-ratio: 593 / 102; }
+.logo-img img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.logo-feather { transform-origin: 9% 80%; transition: transform .5s var(--ease-out); }
+.wordmark:hover .logo-feather { transform: translate(1px, -2px) rotate(-6deg); }
+@media (prefers-reduced-motion: reduce) { .wordmark:hover .logo-feather { transform: none; } }
+.logo-img-white { display: none; }
+.site-footer .logo-img-color { display: none; }
+.site-footer .logo-img-white { display: block; }
 
 .desktop-nav { display: flex; align-items: center; gap: 34px; }
 .nav-link { position: relative; border: 0; background: transparent; padding: 10px 0; font-size: 14px; font-weight: 700; }
@@ -291,7 +293,6 @@ p, li, dd, figcaption { text-wrap: pretty; }
   pointer-events: none;
 }
 .site-footer .wordmark { color: var(--white); }
-.site-footer .logo-mark span:last-child { mix-blend-mode: normal; }
 .footer-grid { position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 70px; padding-bottom: 64px; }
 .footer-tagline { margin: 22px 0 14px; font-weight: 700; color: var(--white); }
 .footer-address { margin: 0; color: #9db4c6; font-size: 14px; line-height: 2; }
@@ -1321,6 +1322,7 @@ p, li, dd, figcaption { text-wrap: pretty; }
   .section { padding: 76px 0; }
   .header-inner { width: calc(100% - 36px); height: 70px; }
   .site-header .wordmark { font-size: 14px; }
+  .site-header .logo-img { height: 28px; }
   .section-title h2 { font-size: 26px; }
 
   .hero { min-height: 0; padding: 118px 0 150px; align-items: flex-start; }
