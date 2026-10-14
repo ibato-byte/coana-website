@@ -1,24 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 470" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
-  <rect width="600" height="470" rx="16" fill="#fbfdff"/>
-  <text x="300" y="52" text-anchor="middle" font-size="28" font-weight="700" fill="#16334d">2026年度の協賛企業</text>
-  <!-- Gold -->
-  <rect x="24" y="80" width="552" height="170" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
-  <rect x="44" y="100" width="128" height="130" rx="10" fill="#16334d"/>
-  <circle cx="108" cy="140" r="20" fill="#ffd85a"/>
-  <text x="108" y="148" text-anchor="middle" font-size="22" font-weight="700" fill="#16334d">G</text>
-  <text x="108" y="200" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">ゴールド</text>
-  <text x="196" y="152" font-size="26" font-weight="700" fill="#16334d">COANA TOKYO合同会社</text>
-  <rect x="196" y="164" width="72" height="30" rx="15" fill="#087fe5"/>
-  <text x="232" y="186" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">当社</text>
-  <text x="196" y="226" font-size="26" fill="#16334d">株式会社FLOTO</text>
-  <!-- Silver -->
-  <rect x="24" y="268" width="552" height="86" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-  <rect x="44" y="283" width="128" height="56" rx="10" fill="#eef6fc"/>
-  <text x="108" y="320" text-anchor="middle" font-size="24" font-weight="700" fill="#4a667d">シルバー</text>
-  <text x="196" y="321" font-size="26" fill="#16334d">株式会社サインタ</text>
-  <!-- Bronze -->
-  <rect x="24" y="368" width="552" height="86" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-  <rect x="44" y="383" width="128" height="56" rx="10" fill="#eef6fc"/>
-  <text x="108" y="420" text-anchor="middle" font-size="24" font-weight="700" fill="#4a667d">ブロンズ</text>
-  <text x="196" y="421" font-size="26" fill="#16334d">有限会社LCA太宰府</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="420" rx="16" fill="#fbfdff"/>
+  <text x="300" y="52" text-anchor="middle" font-size="28" font-weight="700" fill="#16334d">協賛の概要</text>
+  <rect x="24" y="80" width="552" height="160" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <circle cx="112" cy="160" r="56" fill="#ffffff" stroke="#ffd85a" stroke-width="8"/>
+  <text x="112" y="169" text-anchor="middle" font-size="26" font-weight="700" fill="#16334d">GOLD</text>
+  <text x="196" y="142" font-size="24" fill="#4a667d">2026年度</text>
+  <text x="196" y="190" font-size="30" font-weight="700" fill="#16334d">ゴールドスポンサー</text>
+  <rect x="24" y="258" width="552" height="64" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="40" y="270" width="132" height="40" rx="8" fill="#eef6fc"/>
+  <text x="106" y="298" text-anchor="middle" font-size="24" font-weight="700" fill="#4a667d">協賛先</text>
+  <text x="196" y="299" font-size="26" fill="#16334d">福岡幼児発達教育研究会</text>
+  <rect x="24" y="338" width="552" height="64" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="40" y="350" width="132" height="40" rx="8" fill="#eef6fc"/>
+  <text x="106" y="378" text-anchor="middle" font-size="24" font-weight="700" fill="#4a667d">活動地域</text>
+  <text x="196" y="379" font-size="26" fill="#16334d">福岡市</text>
 </svg>
