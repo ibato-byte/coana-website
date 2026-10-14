@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 560" role="img" aria-labelledby="t">
+  <title id="t">遠回りしないDXの順番</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .num { font-size: 26px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="560" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">遠回りしないDXの順番</text>
+
+  <rect x="20" y="80" width="560" height="72" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="44" y="126">×</text>
+  <text class="tx" x="80" y="126">導入そのものが目的になる</text>
+
+  <text class="lb" x="20" y="204">この順番で考える</text>
+
+  <rect x="20" y="222" width="560" height="78" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <circle cx="68" cy="261" r="24" fill="#16334d"/>
+  <text class="num" x="68" y="270" text-anchor="middle">1</text>
+  <text class="lb" x="110" y="271">業務の整理</text>
+  <rect x="434" y="242" width="126" height="40" rx="20" fill="#ffd85a"/>
+  <text x="497" y="270" text-anchor="middle" style="font-size:24px;font-weight:700">まずここ</text>
+
+  <polygon points="276,308 324,308 300,330" fill="#087fe5"/>
+
+  <rect x="20" y="338" width="560" height="78" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <circle cx="68" cy="377" r="24" fill="#16334d"/>
+  <text class="num" x="68" y="386" text-anchor="middle">2</text>
+  <text class="lb" x="110" y="387">ツールの選定</text>
+
+  <polygon points="276,424 324,424 300,446" fill="#087fe5"/>
+
+  <rect x="20" y="454" width="560" height="78" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <circle cx="68" cy="493" r="24" fill="#16334d"/>
+  <text class="num" x="68" y="502" text-anchor="middle">3</text>
+  <text class="lb" x="110" y="503">AIの活用</text>
+</svg>

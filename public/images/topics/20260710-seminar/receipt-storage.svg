@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 444" role="img" aria-labelledby="t">
+  <title id="t">証憑の置き場所の分け方</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="444" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">証憑の置き場所の分け方</text>
+
+  <rect x="20" y="78" width="560" height="68" rx="14" fill="#16334d"/>
+  <text x="300" y="122" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">すべての証憑を電子で保存</text>
+
+  <polygon points="131,158 179,158 155,182" fill="#087fe5"/>
+  <polygon points="421,158 469,158 445,182" fill="#087fe5"/>
+
+  <rect x="20" y="194" width="270" height="230" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="155" y="244" text-anchor="middle">freee</text>
+  <line x1="40" y1="266" x2="270" y2="266" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="155" y="314" text-anchor="middle">会計に直結する</text>
+  <text class="tx" x="155" y="352" text-anchor="middle">書類</text>
+
+  <rect x="310" y="194" width="270" height="230" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="445" y="244" text-anchor="middle">Googleドライブ</text>
+  <line x1="330" y1="266" x2="560" y2="266" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="445" y="314" text-anchor="middle">契約書</text>
+  <text class="tx" x="445" y="352" text-anchor="middle">税金・社会保険</text>
+  <text class="tx" x="445" y="390" text-anchor="middle">の通知</text>
+</svg>
