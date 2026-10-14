@@ -17,11 +17,6 @@ COANA TOKYOは、**NPO法人福岡幼児発達教育研究会（発教研）の2
 - **区分**：ゴールドスポンサー（2026年度）
 - **掲載**：[同会ウェブサイト「寄付する」ページ](https://fukuoka-cde.com/donate)の「2026年度 協賛企業のご紹介」
 
-<figure class="article-figure">
-  <img src="/images/topics/sponsor-fukuoka-cde/sponsor-tiers.svg" alt="協賛の概要。COANA TOKYOは2026年度のゴールドスポンサーとして、福岡市で活動するNPO法人福岡幼児発達教育研究会を協賛しています。" width="600" height="420" loading="lazy">
-  <figcaption>図1：協賛の概要</figcaption>
-</figure>
-
 ## 福岡幼児発達教育研究会について
 
 発教研は、子どもの居場所が家庭や園・学校だけに限られず、地域の中に自然にある社会をめざしています。保護者や支援者が孤立せず、子どもの育ちを地域で支え合えるインクルーシブな社会づくりに取り組んでいます。
@@ -29,8 +24,8 @@ COANA TOKYOは、**NPO法人福岡幼児発達教育研究会（発教研）の2
 活動は大きく3つの事業に分かれています。
 
 <figure class="article-figure">
-  <img src="/images/topics/sponsor-fukuoka-cde/activities.svg" alt="発教研の3つの事業。1つ目は親子教室・フリースクールや野外教室などの子育て支援・地域交流、2つ目は園や施設への訪問・相談や研修などの地域連携・啓発、3つ目はアンケートや論文発表などの幼児発達の調査・研究。" width="600" height="572" loading="lazy">
-  <figcaption>図2：発教研の3つの事業</figcaption>
+  <img src="/images/topics/sponsor-fukuoka-cde/activities.svg" alt="発教研の3つの事業。親子教室・野外教室や地域イベントなどの子育て支援・地域交流、園や施設への訪問・相談や研修などの地域連携・啓発、アンケートや研究発表などの幼児発達の調査・研究を通じて、子どもと家族の居場所を地域につくっています。" width="600" height="688" loading="lazy">
+  <figcaption>図1：発教研の3つの事業</figcaption>
 </figure>
 
 - **子育て支援・地域交流**：親子教室・フリースクール「ぐれいぷ」、野外教室「あそびコモンズ」、地域イベントの開催
@@ -39,7 +34,7 @@ COANA TOKYOは、**NPO法人福岡幼児発達教育研究会（発教研）の2
 
 ## 協賛にあたって
 
-COANA TOKYOは、福岡・天神でもセミナーを開催するなど、福岡の地域とのつながりを大切にしてきました。子どもと家族が安心して過ごせる場を地域に増やしていく発教研の取り組みに共感し、ゴールドスポンサーとして協賛しています。
+COANA TOKYOは、[福岡・天神でもセミナーを開催する](/topics/20260710-seminar)など、福岡の地域とのつながりを大切にしてきました。子どもと家族が安心して過ごせる場を地域に増やしていく発教研の取り組みに共感し、ゴールドスポンサーとして協賛しています。
 
 私たちは日ごろ、中小企業や個人事業主の方のバックオフィスを支える仕事をしています。地域の子育てを支える方々の活動も、これからも応援していきます。
 
@@ -48,8 +43,8 @@ COANA TOKYOは、福岡・天神でもセミナーを開催するなど、福岡
 発教研では、個人からの寄付や賛助会員、法人・団体からの協賛を受け付けています。
 
 <figure class="article-figure">
-  <img src="/images/topics/sponsor-fukuoka-cde/ways-to-support.svg" alt="発教研の活動を応援する3つの方法。金額を選んで単発または継続で寄付する、毎月1,000円以上の寄付で賛助会員になる、法人・団体として申し込みフォームから協賛する。" width="600" height="420" loading="lazy">
-  <figcaption>図3：発教研の活動を応援する方法</figcaption>
+  <img src="/images/topics/sponsor-fukuoka-cde/ways-to-support.svg" alt="発教研の活動を応援する3つの方法。金額を選んで単発または継続で寄付する、毎月1,000円以上の寄付で賛助会員になる、法人・団体として申し込みフォームから協賛する。" width="600" height="580" loading="lazy">
+  <figcaption>図2：発教研の活動を応援する3つの方法</figcaption>
 </figure>
 
 - **寄付する**：支援内容と金額を選び、支払い時に単発か継続かを選べます
@@ -58,4 +53,4 @@ COANA TOKYOは、福岡・天神でもセミナーを開催するなど、福岡
 
 詳しくは、[福岡幼児発達教育研究会の「寄付する」ページ](https://fukuoka-cde.com/donate)をご覧ください。
 
-[発教研の公式サイトを見る](https://fukuoka-cde.com/)
+団体の活動内容は、[福岡幼児発達教育研究会の公式サイト](https://fukuoka-cde.com/)でもご覧いただけます。
