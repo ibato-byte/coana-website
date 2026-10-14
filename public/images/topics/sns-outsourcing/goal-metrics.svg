@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="t">
+  <title id="t">SNSの目的別に見る数字（例）</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .sh { font-size: 24px; font-weight: 700; fill: #4a667d; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; }
+  </style>
+  <rect width="600" height="600" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">目的別に見る数字（例）</text>
+
+  <text class="sh" x="115" y="96" text-anchor="middle">届けたい相手</text>
+  <text class="sh" x="406" y="96" text-anchor="middle">見る数字</text>
+
+  <g fill="#16334d">
+    <rect x="20" y="112" width="190" height="120" rx="14"/>
+    <rect x="20" y="252" width="190" height="120" rx="14"/>
+    <rect x="20" y="392" width="190" height="120" rx="14"/>
+  </g>
+  <text class="hd" x="115" y="166" text-anchor="middle">新規の</text>
+  <text class="hd" x="115" y="200" text-anchor="middle">お客様</text>
+  <text class="hd" x="115" y="306" text-anchor="middle">既存の</text>
+  <text class="hd" x="115" y="340" text-anchor="middle">お客様</text>
+  <text class="hd" x="115" y="446" text-anchor="middle">採用したい</text>
+  <text class="hd" x="115" y="480" text-anchor="middle">人材</text>
+  <g fill="#087fe5">
+    <polygon points="214,158 228,172 214,186"/>
+    <polygon points="214,298 228,312 214,326"/>
+    <polygon points="214,438 228,452 214,466"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="232" y="112" width="348" height="120" rx="14"/>
+    <rect x="232" y="252" width="348" height="120" rx="14"/>
+    <rect x="232" y="392" width="348" height="120" rx="14"/>
+  </g>
+  <text class="tx" x="252" y="162">サイトへのアクセス</text>
+  <text class="tx" x="252" y="204">問い合わせの件数</text>
+  <text class="tx" x="252" y="302">保存・コメントの数</text>
+  <text class="tx" x="252" y="344">再来店・再購入</text>
+  <text class="tx" x="252" y="442">採用ページの閲覧</text>
+  <text class="tx" x="252" y="484">応募の件数</text>
+
+  <rect x="20" y="530" width="560" height="56" rx="12" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <text class="bb" x="300" y="568" text-anchor="middle">フォロワー数だけで判断しない</text>
+</svg>

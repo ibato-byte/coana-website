@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 580" role="img" aria-labelledby="t">
+  <title id="t">経理を外部に任せる前の3つの整理</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .num { font-size: 30px; font-weight: 700; fill: #ffffff; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bb { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="580" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">任せる前の3つの整理</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="80" width="176" height="360" rx="14"/>
+    <rect x="212" y="80" width="176" height="360" rx="14"/>
+    <rect x="404" y="80" width="176" height="360" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="108" cy="132" r="28"/>
+    <circle cx="300" cy="132" r="28"/>
+    <circle cx="492" cy="132" r="28"/>
+  </g>
+  <text class="num" x="108" y="143" text-anchor="middle">1</text>
+  <text class="num" x="300" y="143" text-anchor="middle">2</text>
+  <text class="num" x="492" y="143" text-anchor="middle">3</text>
+
+  <text class="lb" x="108" y="204" text-anchor="middle">任せる</text>
+  <text class="lb" x="108" y="242" text-anchor="middle">範囲</text>
+  <text class="lb" x="300" y="204" text-anchor="middle">資料の</text>
+  <text class="lb" x="300" y="242" text-anchor="middle">渡し方</text>
+  <text class="lb" x="492" y="204" text-anchor="middle">見たい</text>
+  <text class="lb" x="492" y="242" text-anchor="middle">数字</text>
+
+  <g stroke="#d8e7f2" stroke-width="2">
+    <line x1="40" y1="270" x2="176" y2="270"/>
+    <line x1="232" y1="270" x2="368" y2="270"/>
+    <line x1="424" y1="270" x2="560" y2="270"/>
+  </g>
+
+  <text class="tx" x="108" y="318" text-anchor="middle">作業と</text>
+  <text class="tx" x="108" y="356" text-anchor="middle">判断を</text>
+  <text class="tx" x="108" y="394" text-anchor="middle">分ける</text>
+  <text class="tx" x="300" y="318" text-anchor="middle">データで</text>
+  <text class="tx" x="300" y="356" text-anchor="middle">集まる</text>
+  <text class="tx" x="300" y="394" text-anchor="middle">形にする</text>
+  <text class="tx" x="492" y="318" text-anchor="middle">何の数字を</text>
+  <text class="tx" x="492" y="356" text-anchor="middle">いつまでに</text>
+  <text class="tx" x="492" y="394" text-anchor="middle">見るか</text>
+
+  <polygon points="276,454 324,454 300,478" fill="#087fe5"/>
+  <rect x="20" y="490" width="560" height="68" rx="14" fill="#ffd85a"/>
+  <text class="bb" x="300" y="534" text-anchor="middle">流れを整えてから任せる</text>
+</svg>

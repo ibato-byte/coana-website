@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">経理の属人化をほどく4つのステップ</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .st { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .vb { font-size: 28px; font-weight: 700; fill: #ffffff; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">属人化をほどく4ステップ</text>
+
+  <g fill="#16334d">
+    <rect x="20" y="80" width="170" height="100" rx="14"/>
+    <rect x="20" y="200" width="170" height="100" rx="14"/>
+    <rect x="20" y="320" width="170" height="100" rx="14"/>
+  </g>
+  <rect x="20" y="440" width="170" height="100" rx="14" fill="#087fe5"/>
+  <text class="st" x="105" y="118" text-anchor="middle" style="fill:#d8e7f2">STEP 1</text>
+  <text class="vb" x="105" y="158" text-anchor="middle">書き出す</text>
+  <text class="st" x="105" y="238" text-anchor="middle" style="fill:#d8e7f2">STEP 2</text>
+  <text class="vb" x="105" y="278" text-anchor="middle">分ける</text>
+  <text class="st" x="105" y="358" text-anchor="middle" style="fill:#d8e7f2">STEP 3</text>
+  <text class="vb" x="105" y="398" text-anchor="middle">まとめる</text>
+  <text class="st" x="105" y="478" text-anchor="middle" style="fill:#d8e7f2">STEP 4</text>
+  <text class="vb" x="105" y="518" text-anchor="middle">やってみる</text>
+
+  <g fill="#087fe5">
+    <polygon points="95,184 115,184 105,196"/>
+    <polygon points="95,304 115,304 105,316"/>
+    <polygon points="95,424 115,424 105,436"/>
+  </g>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="204" y="80" width="376" height="100" rx="14"/>
+    <rect x="204" y="200" width="376" height="100" rx="14"/>
+    <rect x="204" y="320" width="376" height="100" rx="14"/>
+  </g>
+  <rect x="204" y="440" width="376" height="100" rx="14" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <text class="bb" x="224" y="122">今の業務を一覧に</text>
+  <text class="tx" x="224" y="160">メモ書きで十分</text>
+  <text class="bb" x="224" y="242">判断と手順を分ける</text>
+  <text class="tx" x="224" y="280">手順は任せられる</text>
+  <text class="bb" x="224" y="362">資料を1か所に集める</text>
+  <text class="tx" x="224" y="400">誰でも見られる場所へ</text>
+  <text class="bb" x="224" y="482">ほかの人が実施</text>
+  <text class="tx" x="224" y="520">暗黙のルールを発見</text>
+
+  <rect x="20" y="560" width="560" height="64" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="bb" x="300" y="601" text-anchor="middle">気づきを手順に足して育てる</text>
+</svg>

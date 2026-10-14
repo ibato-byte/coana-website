@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">経理を任せたあとの1か月の流れ（例）</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .dt { font-size: 26px; font-weight: 700; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .sm { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">任せたあとの1か月（例）</text>
+
+  <line x1="146" y1="100" x2="146" y2="548" stroke="#d8e7f2" stroke-width="4"/>
+  <g fill="#ffffff" stroke="#087fe5" stroke-width="4">
+    <circle cx="146" cy="110" r="10"/>
+    <circle cx="146" cy="210" r="10"/>
+    <circle cx="146" cy="310" r="10"/>
+    <circle cx="146" cy="410" r="10"/>
+  </g>
+  <circle cx="146" cy="510" r="12" fill="#087fe5"/>
+
+  <text class="dt" x="126" y="119" text-anchor="end">日々</text>
+  <text class="dt" x="126" y="219" text-anchor="end">月末</text>
+  <text class="dt" x="126" y="319" text-anchor="end">翌月初</text>
+  <text class="dt" x="126" y="419" text-anchor="end">10日まで</text>
+  <text class="dt" x="126" y="519" text-anchor="end">報告後</text>
+
+  <g fill="#16334d">
+    <rect x="172" y="90" width="72" height="38" rx="19"/>
+    <rect x="172" y="190" width="72" height="38" rx="19"/>
+    <rect x="172" y="490" width="72" height="38" rx="19"/>
+  </g>
+  <g fill="#087fe5">
+    <rect x="172" y="290" width="72" height="38" rx="19"/>
+    <rect x="172" y="390" width="72" height="38" rx="19"/>
+  </g>
+  <text class="tag" x="208" y="117" text-anchor="middle">自社</text>
+  <text class="tag" x="208" y="217" text-anchor="middle">自社</text>
+  <text class="tag" x="208" y="317" text-anchor="middle">外部</text>
+  <text class="tag" x="208" y="417" text-anchor="middle">外部</text>
+  <text class="tag" x="208" y="517" text-anchor="middle">自社</text>
+
+  <text class="bb" x="258" y="119">領収書を撮影・共有</text>
+  <text class="tx" x="258" y="157">明細は自動で連携</text>
+  <text class="bb" x="258" y="219">請求書PDFを共有</text>
+  <text class="tx" x="258" y="257">不明な取引にメモ</text>
+  <text class="bb" x="258" y="319">入力・確認・締め</text>
+  <text class="tx" x="258" y="357">質問はまとめて</text>
+  <text class="bb" x="258" y="419">数字をまとめて報告</text>
+  <text class="tx" x="258" y="457">売上・利益・残高</text>
+  <text class="bb" x="258" y="519">数字を見て判断</text>
+  <text class="tx" x="258" y="557">支払いの承認など</text>
+
+  <rect x="20" y="580" width="560" height="44" rx="10" fill="#eef6fc"/>
+  <text class="sm" x="300" y="611" text-anchor="middle">日付は一例。期限は依頼先と相談</text>
+</svg>

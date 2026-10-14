@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 528" role="img" aria-labelledby="t">
+  <title id="t">自社・経理代行・税理士の役割分担</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .n { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="528" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">誰が何を担うか</text>
+
+  <rect x="20" y="80" width="180" height="56" rx="12" fill="#16334d"/>
+  <text class="hd" x="110" y="117" text-anchor="middle">自社</text>
+  <rect x="210" y="80" width="180" height="56" rx="12" fill="#087fe5"/>
+  <text class="hd" x="300" y="117" text-anchor="middle">経理代行</text>
+  <rect x="400" y="80" width="180" height="56" rx="12" fill="#4a667d"/>
+  <text class="hd" x="490" y="117" text-anchor="middle">税理士</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="144" width="180" height="62" rx="8"/>
+    <rect x="20" y="212" width="180" height="62" rx="8"/>
+    <rect x="20" y="280" width="180" height="62" rx="8"/>
+    <rect x="20" y="348" width="180" height="62" rx="8"/>
+    <rect x="400" y="144" width="180" height="62" rx="8"/>
+    <rect x="400" y="212" width="180" height="62" rx="8"/>
+    <rect x="400" y="280" width="180" height="62" rx="8"/>
+  </g>
+  <g fill="#eef6fc">
+    <rect x="210" y="144" width="180" height="62" rx="8"/>
+    <rect x="210" y="212" width="180" height="62" rx="8"/>
+    <rect x="210" y="280" width="180" height="62" rx="8"/>
+    <rect x="210" y="348" width="180" height="62" rx="8"/>
+  </g>
+
+  <text class="c" x="110" y="185" text-anchor="middle">取引の判断</text>
+  <text class="c" x="110" y="253" text-anchor="middle">支払い承認</text>
+  <text class="c" x="110" y="321" text-anchor="middle">資料の共有</text>
+  <text class="c" x="110" y="389" text-anchor="middle">数字を見る</text>
+  <text class="c" x="300" y="185" text-anchor="middle">記帳・入力</text>
+  <text class="c" x="300" y="253" text-anchor="middle">請求書発行</text>
+  <text class="c" x="300" y="321" text-anchor="middle">入金の確認</text>
+  <text class="c" x="300" y="389" text-anchor="middle">月次の締め</text>
+  <text class="c" x="490" y="185" text-anchor="middle">決算・申告</text>
+  <text class="c" x="490" y="253" text-anchor="middle">税務相談</text>
+  <text class="c" x="490" y="321" text-anchor="middle">税金の判断</text>
+
+  <rect x="20" y="436" width="560" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="480" text-anchor="middle">税務の判断は税理士に確認</text>
+</svg>
