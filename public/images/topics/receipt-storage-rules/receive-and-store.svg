@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 540" role="img" aria-labelledby="t">
+  <title id="t">受け取り方で変わる保存のしかた</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+    .big { font-size: 60px; font-weight: 700; }
+  </style>
+  <rect width="600" height="540" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">受け取り方で保存が変わる</text>
+
+  <rect x="14" y="80" width="280" height="56" rx="12" fill="#4a667d"/>
+  <text class="hd" x="154" y="117" text-anchor="middle">紙で受け取る</text>
+  <rect x="306" y="80" width="280" height="56" rx="12" fill="#087fe5"/>
+  <text class="hd" x="446" y="117" text-anchor="middle">電子で受け取る</text>
+
+  <rect x="14" y="152" width="280" height="110" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="bb" x="154" y="196" text-anchor="middle">紙のまま保存</text>
+  <text class="tx" x="154" y="236" text-anchor="middle">基本の方法</text>
+  <text class="tx" x="154" y="298" text-anchor="middle">または</text>
+  <rect x="14" y="316" width="280" height="110" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="bb" x="154" y="360" text-anchor="middle">スキャナ保存</text>
+  <text class="tx" x="154" y="400" text-anchor="middle">任意・要件あり</text>
+
+  <rect x="306" y="152" width="280" height="110" rx="12" fill="#eef6fc"/>
+  <text class="bx" x="446" y="196" text-anchor="middle">メール添付のPDF</text>
+  <text class="bx" x="446" y="236" text-anchor="middle">Webでダウンロード</text>
+  <polygon points="422,276 470,276 446,302" fill="#087fe5"/>
+  <rect x="306" y="316" width="280" height="110" rx="12" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="bb" x="446" y="360" text-anchor="middle">データのまま保存</text>
+  <text class="tx" x="446" y="400" text-anchor="middle">印刷で代えない</text>
+
+  <rect x="14" y="452" width="572" height="64" rx="14" fill="#16334d"/>
+  <text class="hd" x="300" y="493" text-anchor="middle">受け取った形に合わせて保存</text>
+</svg>

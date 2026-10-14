@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" role="img" aria-labelledby="t">
+  <title id="t">トップ画面の文言のBefore/After</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .pt { font-size: 26px; font-weight: 700; }
+    .mk { font-size: 26px; }
+    .mb { font-size: 26px; font-weight: 700; }
+    .rs { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="700" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">トップ画面の最初の一文</text>
+
+  <!-- Before -->
+  <rect x="8" y="78" width="584" height="252" rx="18" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="20" y="96" width="112" height="42" rx="21" fill="#4a667d"/>
+  <text class="tag" x="76" y="126" text-anchor="middle">Before</text>
+  <text class="pt" x="146" y="127">抽象的な言葉だけ</text>
+  <rect x="40" y="154" width="520" height="114" rx="12" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="mk" x="300" y="200" text-anchor="middle">お客様に寄り添います</text>
+  <text class="mk" x="300" y="240" text-anchor="middle">高品質なサービス</text>
+  <text class="rs" x="300" y="308" text-anchor="middle" style="fill:#4a667d">誰向けか分からず離れてしまう</text>
+
+  <polygon points="276,342 324,342 300,368" fill="#087fe5"/>
+
+  <!-- After -->
+  <rect x="8" y="380" width="584" height="302" rx="18" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <rect x="20" y="398" width="112" height="42" rx="21" fill="#087fe5"/>
+  <text class="tag" x="76" y="428" text-anchor="middle">After</text>
+  <text class="pt" x="146" y="429">対象・悩み・行動が見える</text>
+  <rect x="40" y="456" width="520" height="152" rx="12" fill="#ffffff" stroke="#55b8f3" stroke-width="2"/>
+  <text class="mb" x="300" y="498" text-anchor="middle">従業員10名以下の会社の</text>
+  <text class="mb" x="300" y="536" text-anchor="middle">経理の手間を減らします</text>
+  <rect x="200" y="552" width="200" height="44" rx="22" fill="#087fe5"/>
+  <text x="300" y="582" text-anchor="middle" style="fill:#ffffff;font-size:24px;font-weight:700">無料で相談する</text>
+  <rect x="20" y="620" width="560" height="50" rx="12" fill="#ffd85a"/>
+  <text class="rs" x="300" y="654" text-anchor="middle">自分向けと分かり、先を読む</text>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" role="img" aria-labelledby="t">
+  <title id="t">外部に任せやすい作業と、自社に残す判断</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .n { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="520" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">任せる作業と、社長の判断</text>
+
+  <rect x="14" y="80" width="280" height="56" rx="12" fill="#087fe5"/>
+  <text class="hd" x="154" y="117" text-anchor="middle">任せやすい作業</text>
+  <rect x="306" y="80" width="280" height="56" rx="12" fill="#16334d"/>
+  <text class="hd" x="446" y="117" text-anchor="middle">自社に残す判断</text>
+
+  <g fill="#eef6fc">
+    <rect x="14" y="144" width="280" height="60" rx="8"/>
+    <rect x="14" y="210" width="280" height="60" rx="8"/>
+    <rect x="14" y="276" width="280" height="60" rx="8"/>
+    <rect x="14" y="342" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="306" y="144" width="280" height="60" rx="8"/>
+    <rect x="306" y="210" width="280" height="60" rx="8"/>
+    <rect x="306" y="276" width="280" height="60" rx="8"/>
+    <rect x="306" y="342" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="28" cy="174" r="5"/><circle cx="28" cy="240" r="5"/><circle cx="28" cy="306" r="5"/><circle cx="28" cy="372" r="5"/>
+  </g>
+  <g fill="#16334d">
+    <circle cx="324" cy="174" r="5"/><circle cx="324" cy="240" r="5"/><circle cx="324" cy="306" r="5"/><circle cx="324" cy="372" r="5"/>
+  </g>
+  <text class="c" x="42" y="184">仕訳の入力</text>
+  <text class="c" x="42" y="250">請求書の作成・送付</text>
+  <text class="c" x="42" y="316">入金の消し込み</text>
+  <text class="c" x="42" y="382">支払いデータの作成</text>
+  <text class="c" x="340" y="184">支払いの承認</text>
+  <text class="c" x="340" y="250">取引条件の変更</text>
+  <text class="c" x="340" y="316">値引きの可否</text>
+  <text class="c" x="340" y="382">取引先の選定</text>
+
+  <rect x="14" y="428" width="572" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="472" text-anchor="middle">線引きを書き出すと、確認が減る</text>
+</svg>

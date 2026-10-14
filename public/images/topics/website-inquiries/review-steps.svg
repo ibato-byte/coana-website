@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 690" role="img" aria-labelledby="t">
+  <title id="t">公開後に確認したい3つの段階</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .st { font-size: 28px; font-weight: 700; }
+    .sb { font-size: 26px; }
+    .tl { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="690" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">公開後に見る3つの段階</text>
+
+  <rect x="20" y="78" width="560" height="140" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="st" x="300" y="122" text-anchor="middle">見つけられているか</text>
+  <text class="sb" x="300" y="162" text-anchor="middle">表示される検索語句</text>
+  <text class="tl" x="300" y="198" text-anchor="middle">Search Console</text>
+
+  <polygon points="282,226 318,226 300,244" fill="#087fe5"/>
+
+  <rect x="50" y="252" width="500" height="140" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="st" x="300" y="296" text-anchor="middle">読まれているか</text>
+  <text class="sb" x="300" y="336" text-anchor="middle">よく見られる・離脱するページ</text>
+  <text class="tl" x="300" y="372" text-anchor="middle">アナリティクス</text>
+
+  <polygon points="282,400 318,400 300,418" fill="#087fe5"/>
+
+  <rect x="80" y="426" width="440" height="140" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="st" x="300" y="470" text-anchor="middle">問い合わせに進んでいるか</text>
+  <text class="sb" x="300" y="510" text-anchor="middle">問い合わせページに着く割合</text>
+  <text class="tl" x="300" y="546" text-anchor="middle">アナリティクス</text>
+
+  <polygon points="276,578 324,578 300,602" fill="#087fe5"/>
+  <rect x="20" y="612" width="560" height="60" rx="14" fill="#16334d"/>
+  <text x="300" y="652" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">数字が落ちた段階から直す</text>
+</svg>

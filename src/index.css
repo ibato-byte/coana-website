@@ -1140,6 +1140,12 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .article-body h2 { font-size: 25px; margin: 52px 0 20px; padding: 2px 0 2px 18px; border-left: 4px solid var(--sky-deep); line-height: 1.7; font-weight: 800; }
 .article-body h3 { font-size: 19px; margin: 36px 0 14px; font-weight: 800; }
 .article-body img { max-width: 100%; height: auto; border-radius: 12px; }
+/* コラムの図解（docs/column-guide.md）：<figure class="article-figure"> に SVG とキャプション */
+.article-body .article-figure { max-width: 640px; margin: 8px auto 34px; }
+.article-body .article-figure img { display: block; width: 100%; border: 1px solid var(--line); background: var(--paper); }
+.article-body .article-figure figcaption { margin-top: 10px; font-size: 14px; line-height: 1.7; color: var(--navy-soft); text-align: center; }
+.article-body ul:has(> li > input[type="checkbox"]) { list-style: none; padding-left: .2em; }
+.article-body li > input[type="checkbox"] { width: 1.05em; height: 1.05em; margin: 0 .6em 0 0; vertical-align: -.15em; accent-color: var(--sky-deep); }
 .article-body ul, .article-body ol { line-height: 2.05; padding-left: 1.5em; margin: 0 0 26px; }
 .article-body ul { list-style: disc; }
 .article-body ol { list-style: decimal; }

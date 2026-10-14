@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t">
+  <title id="t">受け取りから保存までの流れ</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+    .big { font-size: 60px; font-weight: 700; }
+  </style>
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">受け取りから保存まで</text>
+
+  <g fill="#16334d">
+    <rect x="20" y="80" width="190" height="130" rx="14"/>
+    <rect x="20" y="230" width="190" height="130" rx="14"/>
+    <rect x="20" y="380" width="190" height="130" rx="14"/>
+  </g>
+  <text class="hd" x="115" y="154" text-anchor="middle">紙で受領</text>
+  <text class="hd" x="115" y="304" text-anchor="middle">メール・PDF</text>
+  <text class="hd" x="115" y="454" text-anchor="middle">発行する</text>
+  <g fill="#087fe5">
+    <polygon points="214,131 228,145 214,159"/>
+    <polygon points="214,281 228,295 214,309"/>
+    <polygon points="214,431 228,445 214,459"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="232" y="80" width="348" height="130" rx="14"/>
+    <rect x="232" y="230" width="348" height="130" rx="14"/>
+    <rect x="232" y="380" width="348" height="130" rx="14"/>
+  </g>
+  <text class="bb" x="252" y="134">その日に撮影し取込</text>
+  <text class="tx" x="252" y="176">紙の原本も保管する</text>
+  <text class="bb" x="252" y="284">専用の場所に集める</text>
+  <text class="tx" x="252" y="326">データのまま保存</text>
+  <text class="bb" x="252" y="434">会計ソフトから発行</text>
+  <text class="tx" x="252" y="476">控えが自動で残る</text>
+
+  <polygon points="276,524 324,524 300,548" fill="#087fe5"/>
+  <rect x="20" y="560" width="560" height="64" rx="14" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <text class="bb" x="300" y="601" text-anchor="middle">月1回、明細と証憑を突き合わせ</text>
+</svg>

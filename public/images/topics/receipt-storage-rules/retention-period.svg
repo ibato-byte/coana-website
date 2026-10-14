@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 620" role="img" aria-labelledby="t">
+  <title id="t">帳簿・証憑の保存期間の目安</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .bx { font-size: 26px; }
+    .bb { font-size: 26px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .sm { font-size: 24px; fill: #4a667d; }
+    .big { font-size: 60px; font-weight: 700; }
+  </style>
+  <rect width="600" height="620" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">帳簿・証憑の保存期間</text>
+
+  <text class="bb" x="20" y="106" style="fill:#4a667d">法人の場合</text>
+  <rect x="20" y="122" width="270" height="190" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="155" y="168" text-anchor="middle">原則</text>
+  <text class="big" x="155" y="248" text-anchor="middle" style="fill:#087fe5">7年</text>
+  <text class="tx" x="155" y="290" text-anchor="middle">帳簿と証憑</text>
+  <rect x="310" y="122" width="270" height="190" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="lb" x="445" y="168" text-anchor="middle">欠損金の年度</text>
+  <text class="big" x="445" y="248" text-anchor="middle">10年</text>
+  <text class="tx" x="445" y="290" text-anchor="middle">青色申告など</text>
+
+  <rect x="20" y="332" width="560" height="110" rx="14" fill="#eef6fc"/>
+  <text class="bb" x="44" y="376">数え始め</text>
+  <text class="bx" x="44" y="418">確定申告書の提出期限の翌日</text>
+
+  <rect x="20" y="462" width="560" height="134" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="bb" x="44" y="506">個人事業主は</text>
+  <text class="bx" x="44" y="548">書類や申告方法で5年か7年</text>
+  <text class="sm" x="44" y="582">国税庁の一覧で確認</text>
+</svg>
