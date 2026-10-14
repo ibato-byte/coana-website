@@ -18,8 +18,8 @@ COANA TOKYOは、**NPO法人福岡幼児発達教育研究会（発教研）の2
 - **掲載**：[同会ウェブサイト「寄付する」ページ](https://fukuoka-cde.com/donate)の「2026年度 協賛企業のご紹介」
 
 <figure class="article-figure">
-  <img src="/images/topics/sponsor-fukuoka-cde/sponsor-tiers.svg" alt="2026年度の協賛企業。ゴールドスポンサーはCOANA TOKYO合同会社と株式会社FLOTO、シルバースポンサーは株式会社サインタ、ブロンズスポンサーは有限会社LCA太宰府。" width="600" height="470" loading="lazy">
-  <figcaption>図1：発教研の2026年度協賛企業</figcaption>
+  <img src="/images/topics/sponsor-fukuoka-cde/sponsor-tiers.svg" alt="協賛の概要。COANA TOKYOは2026年度のゴールドスポンサーとして、福岡市で活動するNPO法人福岡幼児発達教育研究会を協賛しています。" width="600" height="420" loading="lazy">
+  <figcaption>図1：協賛の概要</figcaption>
 </figure>
 
 ## 福岡幼児発達教育研究会について
