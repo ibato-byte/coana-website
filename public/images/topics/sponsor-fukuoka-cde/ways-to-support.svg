@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="420" rx="16" fill="#fbfdff"/>
+  <text x="300" y="52" text-anchor="middle" font-size="28" font-weight="700" fill="#16334d">活動を応援する方法</text>
+  <g>
+    <rect x="24" y="80" width="552" height="96" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="48" y="122" font-size="26" font-weight="700" fill="#087fe5">寄付する</text>
+    <text x="48" y="158" font-size="24" fill="#4a667d">金額を選び、単発か継続かも選べる</text>
+  </g>
+  <g>
+    <rect x="24" y="192" width="552" height="96" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="48" y="234" font-size="26" font-weight="700" fill="#087fe5">賛助会員になる</text>
+    <text x="48" y="270" font-size="24" fill="#4a667d">毎月1,000円以上の寄付で登録</text>
+  </g>
+  <g>
+    <rect x="24" y="304" width="552" height="96" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+    <text x="48" y="346" font-size="26" font-weight="700" fill="#16334d">法人・団体として協賛する</text>
+    <text x="48" y="382" font-size="24" fill="#4a667d">申し込みフォームから受付</text>
+  </g>
+</svg>
