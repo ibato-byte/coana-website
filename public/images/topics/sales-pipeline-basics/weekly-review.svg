@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 556" role="img" aria-labelledby="t">
+  <title id="t">週1回の振り返りで見る3つの数字</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 26px; font-weight: 700; }
+    .tx { font-size: 26px; }
+    .gl { font-size: 26px; font-weight: 700; fill: #4a667d; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="556" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">週1回15分、3つの数字を見る</text>
+  <text class="gl" x="20" y="102">見る数字</text>
+  <text class="gl" x="310" y="102">分かること</text>
+  <rect x="20" y="116" width="270" height="96" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="155" y="173" text-anchor="middle">新しい接点の数</text>
+  <polygon points="292,152 306,164 292,176" fill="#087fe5"/>
+  <rect x="310" y="116" width="270" height="96" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="445" y="173" text-anchor="middle">入口は十分か</text>
+  <rect x="20" y="232" width="270" height="96" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="155" y="289" text-anchor="middle">段階が進んだ数</text>
+  <polygon points="292,268 306,280 292,292" fill="#087fe5"/>
+  <rect x="310" y="232" width="270" height="96" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="445" y="289" text-anchor="middle">提案は進んだか</text>
+  <rect x="20" y="348" width="270" height="96" rx="14" fill="#ffffff" stroke="#087fe5" stroke-width="3"/>
+  <text class="lb" x="155" y="405" text-anchor="middle">予定日を過ぎた数</text>
+  <polygon points="292,384 306,396 292,408" fill="#087fe5"/>
+  <rect x="310" y="348" width="270" height="96" rx="14" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+  <text class="tx" x="445" y="405" text-anchor="middle">連絡漏れはないか</text>
+  <rect x="20" y="470" width="560" height="64" rx="14" fill="#16334d"/>
+  <text x="300" y="512" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">止まっている所が分かる</text>
+</svg>
