@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" role="img" aria-labelledby="t">
+  <title id="t">事業のお金の出入りを事業用の口座とカードに集める</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .fn { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="520" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">お金の出入りを1か所に集める</text>
+
+  <g fill="#eef6fc" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="80" width="244" height="80" rx="12"/>
+    <rect x="14" y="180" width="244" height="80" rx="12"/>
+    <rect x="14" y="280" width="244" height="80" rx="12"/>
+  </g>
+  <g fill="#ffffff" stroke="#087fe5" stroke-width="3">
+    <rect x="302" y="80" width="284" height="80" rx="12"/>
+    <rect x="302" y="180" width="284" height="80" rx="12"/>
+    <rect x="302" y="280" width="284" height="80" rx="12"/>
+  </g>
+  <g fill="#087fe5">
+    <polygon points="266,108 290,120 266,132"/>
+    <polygon points="266,208 290,220 266,232"/>
+    <polygon points="266,308 290,320 266,332"/>
+  </g>
+  <text class="c" x="136" y="129" text-anchor="middle">売上の入金</text>
+  <text class="c" x="136" y="229" text-anchor="middle">経費の支払い</text>
+  <text class="c" x="136" y="329" text-anchor="middle">個人の立て替え</text>
+  <text class="n" x="444" y="129" text-anchor="middle">事業用の口座</text>
+  <text class="n" x="444" y="229" text-anchor="middle">事業用のカード</text>
+  <text class="n" x="444" y="329" text-anchor="middle">精算ルールで戻す</text>
+
+  <polygon points="276,378 324,378 300,402" fill="#087fe5"/>
+  <rect x="14" y="414" width="572" height="88" rx="14" fill="#16334d"/>
+  <text x="300" y="451" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">会計ソフトに明細を</text>
+  <text x="300" y="485" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">自動で取り込む</text>
+</svg>

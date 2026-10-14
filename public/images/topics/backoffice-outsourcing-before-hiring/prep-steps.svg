@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 596" role="img" aria-labelledby="t">
+  <title id="t">外に任せる前に決める3つのこと</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .chip { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="596" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">任せる前に決める3つのこと</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="78" width="572" height="108" rx="14"/>
+    <rect x="14" y="214" width="572" height="108" rx="14"/>
+    <rect x="14" y="350" width="572" height="108" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="58" cy="132" r="24"/><circle cx="58" cy="268" r="24"/><circle cx="58" cy="404" r="24"/>
+    <polygon points="286,192 314,192 300,208"/>
+    <polygon points="286,328 314,328 300,344"/>
+  </g>
+  <text class="num" x="58" y="141" text-anchor="middle">1</text>
+  <text class="num" x="58" y="277" text-anchor="middle">2</text>
+  <text class="num" x="58" y="413" text-anchor="middle">3</text>
+  <text class="lb" x="100" y="122">業務を書き出す</text>
+  <text class="s" x="100" y="162">誰が・いつ・何をしているか</text>
+  <text class="lb" x="100" y="258">やりとりの方法</text>
+  <text class="s" x="100" y="298">依頼の窓口と資料の置き場</text>
+  <text class="lb" x="100" y="394">手順を残す</text>
+  <text class="s" x="100" y="434">マニュアルにして共有する</text>
+
+  <polygon points="276,470 324,470 300,494" fill="#087fe5"/>
+  <rect x="14" y="506" width="572" height="68" rx="14" fill="#16334d"/>
+  <text x="300" y="550" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">担当が変わっても止まらない</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 720" role="img" aria-labelledby="t">
+  <title id="t">会社設立後の主な届出と相談先</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .fn { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="720" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">設立後の主な届出の例</text>
+
+  <rect x="14" y="76" width="160" height="44" rx="22" fill="#087fe5"/>
+  <text class="hd" x="94" y="107" text-anchor="middle">税務署へ</text>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="132" width="572" height="88" rx="12"/>
+    <rect x="14" y="230" width="572" height="88" rx="12"/>
+    <rect x="14" y="328" width="572" height="88" rx="12"/>
+    <rect x="14" y="488" width="572" height="88" rx="12"/>
+  </g>
+  <text class="n" x="34" y="167">法人設立届出書</text>
+  <text class="s" x="34" y="203">設立から2か月以内</text>
+  <text class="n" x="34" y="265">青色申告の承認申請書</text>
+  <text class="s" x="34" y="301">原則、設立から3か月以内※</text>
+  <text class="n" x="34" y="363">給与支払事務所等の開設届出書</text>
+  <text class="s" x="34" y="399">開設から1か月以内</text>
+
+  <rect x="14" y="432" width="200" height="44" rx="22" fill="#16334d"/>
+  <text class="hd" x="114" y="463" text-anchor="middle">年金事務所へ</text>
+  <text class="n" x="34" y="523">健康保険・厚生年金保険の新規適用届</text>
+  <text class="s" x="34" y="559">加入の要件を満たしてから5日以内</text>
+
+  <text class="fn" x="20" y="608">※最初の事業年度が短いと早まります</text>
+  <rect x="14" y="630" width="572" height="68" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="674" text-anchor="middle">手続きは税理士・社労士と分担</text>
+</svg>

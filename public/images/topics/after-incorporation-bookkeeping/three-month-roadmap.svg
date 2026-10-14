@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="t">
+  <title id="t">会社設立後、最初の3か月でやること</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .s { font-size: 26px; fill: #4a667d; }
+    .n { font-size: 26px; font-weight: 700; }
+    .fn { font-size: 24px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="600" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">最初の3か月でやること</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="14" y="80" width="572" height="120" rx="14"/>
+    <rect x="14" y="214" width="572" height="120" rx="14"/>
+    <rect x="14" y="348" width="572" height="120" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <rect x="28" y="96" width="124" height="88" rx="12"/>
+    <rect x="28" y="230" width="124" height="88" rx="12"/>
+    <rect x="28" y="364" width="124" height="88" rx="12"/>
+  </g>
+  <text class="hd" x="90" y="149" text-anchor="middle">1か月目</text>
+  <text class="hd" x="90" y="283" text-anchor="middle">2か月目</text>
+  <text class="hd" x="90" y="417" text-anchor="middle">3か月目</text>
+
+  <text class="c" x="172" y="132">口座・カードを分ける</text>
+  <text class="c" x="172" y="170">請求書のルールを決める</text>
+  <text class="c" x="172" y="266">証憑の置き場所を決める</text>
+  <text class="c" x="172" y="304">立て替えの精算を決める</text>
+  <text class="c" x="172" y="400">月初に前月の数字を見る</text>
+  <text class="c" x="172" y="438">税理士とデータを共有</text>
+
+  <polygon points="276,480 324,480 300,504" fill="#087fe5"/>
+  <rect x="14" y="516" width="572" height="64" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="557" text-anchor="middle">人が増えてもそのまま引き継げる</text>
+</svg>
