@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 580" role="img" aria-labelledby="t">
+  <title id="t">SNS運用を任せる前に決める4つのこと</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+  </style>
+  <rect width="600" height="580" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">任せる前に決める4つのこと</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="80" width="270" height="170" rx="14"/>
+    <rect x="310" y="80" width="270" height="170" rx="14"/>
+    <rect x="20" y="270" width="270" height="170" rx="14"/>
+    <rect x="310" y="270" width="270" height="170" rx="14"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="58" cy="122" r="20"/>
+    <circle cx="348" cy="122" r="20"/>
+    <circle cx="58" cy="312" r="20"/>
+    <circle cx="348" cy="312" r="20"/>
+  </g>
+  <text class="num" x="58" y="131" text-anchor="middle">1</text>
+  <text class="num" x="348" y="131" text-anchor="middle">2</text>
+  <text class="num" x="58" y="321" text-anchor="middle">3</text>
+  <text class="num" x="348" y="321" text-anchor="middle">4</text>
+
+  <text class="lb" x="90" y="132">誰に・何を</text>
+  <text class="tx" x="40" y="184">見てほしい相手</text>
+  <text class="tx" x="40" y="222">知ってほしい強み</text>
+  <text class="lb" x="380" y="132">成果の目安</text>
+  <text class="tx" x="330" y="184">見る数字を決める</text>
+  <text class="tx" x="330" y="222">3か月で振り返る</text>
+  <text class="lb" x="90" y="322">任せる範囲</text>
+  <text class="tx" x="40" y="374">任せる作業と</text>
+  <text class="tx" x="40" y="412">自社で出す素材</text>
+  <text class="lb" x="380" y="322">確認の流れ</text>
+  <text class="tx" x="330" y="374">誰がいつ確認</text>
+  <text class="tx" x="330" y="412">無理のない頻度</text>
+
+  <polygon points="276,454 324,454 300,478" fill="#087fe5"/>
+  <rect x="20" y="490" width="560" height="68" rx="14" fill="#16334d"/>
+  <text x="300" y="534" text-anchor="middle" style="fill:#ffffff;font-size:26px;font-weight:700">決めてから任せると迷わない</text>
+</svg>

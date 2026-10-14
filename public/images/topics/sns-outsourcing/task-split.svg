@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 590" role="img" aria-labelledby="t">
+  <title id="t">任せやすい作業と、自社で用意するもの</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .n { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="590" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">任せる作業と、自社の役割</text>
+
+  <rect x="14" y="80" width="280" height="56" rx="12" fill="#087fe5"/>
+  <text class="hd" x="154" y="117" text-anchor="middle">任せやすい作業</text>
+  <rect x="306" y="80" width="280" height="56" rx="12" fill="#16334d"/>
+  <text class="hd" x="446" y="117" text-anchor="middle">自社で用意する</text>
+
+  <g fill="#eef6fc">
+    <rect x="14" y="144" width="280" height="60" rx="8"/>
+    <rect x="14" y="210" width="280" height="60" rx="8"/>
+    <rect x="14" y="276" width="280" height="60" rx="8"/>
+    <rect x="14" y="342" width="280" height="60" rx="8"/>
+    <rect x="14" y="408" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="306" y="144" width="280" height="60" rx="8"/>
+    <rect x="306" y="210" width="280" height="60" rx="8"/>
+    <rect x="306" y="276" width="280" height="60" rx="8"/>
+    <rect x="306" y="342" width="280" height="60" rx="8"/>
+  </g>
+  <g fill="#087fe5">
+    <circle cx="28" cy="174" r="5"/><circle cx="28" cy="240" r="5"/><circle cx="28" cy="306" r="5"/><circle cx="28" cy="372" r="5"/><circle cx="28" cy="438" r="5"/>
+  </g>
+  <g fill="#16334d">
+    <circle cx="324" cy="174" r="5"/><circle cx="324" cy="240" r="5"/><circle cx="324" cy="306" r="5"/><circle cx="324" cy="372" r="5"/>
+  </g>
+  <text class="c" x="42" y="184">投稿の企画</text>
+  <text class="c" x="42" y="250">文章の作成</text>
+  <text class="c" x="42" y="316">画像の作成</text>
+  <text class="c" x="42" y="382">投稿の予約</text>
+  <text class="c" x="42" y="448">数字のまとめ</text>
+  <text class="c" x="340" y="184">現場の写真</text>
+  <text class="c" x="340" y="250">掲載許可を得た声</text>
+  <text class="c" x="340" y="316">投稿の最終確認</text>
+  <text class="c" x="340" y="382">判断が要る返信</text>
+
+  <rect x="14" y="496" width="572" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="540" text-anchor="middle">素材と確認は自社、作業は外部に</text>
+</svg>

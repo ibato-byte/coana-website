@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 690" role="img" aria-labelledby="t">
+  <title id="t">口座とカードの連携のBefore/After</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .tag { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .pt { font-size: 26px; font-weight: 700; }
+    .bx { font-size: 26px; }
+    .rs { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="690" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">連携する口座で手間が変わる</text>
+
+  <!-- Before -->
+  <rect x="8" y="78" width="584" height="262" rx="18" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <rect x="20" y="96" width="112" height="42" rx="21" fill="#4a667d"/>
+  <text class="tag" x="76" y="126" text-anchor="middle">Before</text>
+  <text class="pt" x="146" y="127">事業用と私用が混在</text>
+  <g fill="#eef6fc" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="158" width="172" height="110" rx="12"/>
+    <rect x="214" y="158" width="172" height="110" rx="12"/>
+    <rect x="408" y="158" width="172" height="110" rx="12"/>
+  </g>
+  <g fill="#4a667d">
+    <polygon points="196,202 210,213 196,224"/>
+    <polygon points="390,202 404,213 390,224"/>
+  </g>
+  <text class="bx" x="106" y="204" text-anchor="middle">私用の支出</text>
+  <text class="bx" x="106" y="240" text-anchor="middle">も混ざる</text>
+  <text class="bx" x="300" y="204" text-anchor="middle">1件ずつ</text>
+  <text class="bx" x="300" y="240" text-anchor="middle">仕分ける</text>
+  <text class="bx" x="494" y="204" text-anchor="middle">科目選びに</text>
+  <text class="bx" x="494" y="240" text-anchor="middle">毎回迷う</text>
+  <text class="rs" x="300" y="312" text-anchor="middle" style="fill:#4a667d">取り込むほど手間が増える</text>
+
+  <polygon points="276,352 324,352 300,378" fill="#087fe5"/>
+
+  <!-- After -->
+  <rect x="8" y="390" width="584" height="282" rx="18" fill="#eef6fc" stroke="#087fe5" stroke-width="3"/>
+  <rect x="20" y="408" width="112" height="42" rx="21" fill="#087fe5"/>
+  <text class="tag" x="76" y="438" text-anchor="middle">After</text>
+  <text class="pt" x="146" y="439">事業用だけを連携</text>
+  <g fill="#ffffff" stroke="#55b8f3" stroke-width="2">
+    <rect x="20" y="470" width="172" height="110" rx="12"/>
+    <rect x="214" y="470" width="172" height="110" rx="12"/>
+    <rect x="408" y="470" width="172" height="110" rx="12"/>
+  </g>
+  <g fill="#087fe5">
+    <polygon points="196,514 210,525 196,536"/>
+    <polygon points="390,514 404,525 390,536"/>
+  </g>
+  <text class="bx" x="106" y="516" text-anchor="middle">連携先を</text>
+  <text class="bx" x="106" y="552" text-anchor="middle">事業用に</text>
+  <text class="bx" x="300" y="516" text-anchor="middle">明細が</text>
+  <text class="bx" x="300" y="552" text-anchor="middle">自動で届く</text>
+  <text class="bx" x="494" y="516" text-anchor="middle">ルールで</text>
+  <text class="bx" x="494" y="552" text-anchor="middle">仕訳候補に</text>
+  <rect x="20" y="598" width="560" height="56" rx="12" fill="#ffd85a"/>
+  <text class="rs" x="300" y="636" text-anchor="middle">確認と登録が中心になる</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 560" role="img" aria-labelledby="t">
+  <title id="t">業務の書き出し表（例）</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .hd { font-size: 26px; font-weight: 700; fill: #ffffff; }
+    .c { font-size: 26px; }
+    .cb { font-size: 26px; font-weight: 700; }
+    .n { font-size: 26px; font-weight: 700; }
+  </style>
+  <rect width="600" height="560" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">業務の書き出し表（例）</text>
+
+  <rect x="20" y="80" width="560" height="56" rx="10" fill="#16334d"/>
+  <text class="hd" x="115" y="117" text-anchor="middle">業務</text>
+  <text class="hd" x="305" y="117" text-anchor="middle">誰が・いつ</text>
+  <text class="hd" x="490" y="117" text-anchor="middle">見るもの</text>
+
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="144" width="560" height="64" rx="8"/>
+    <rect x="20" y="214" width="560" height="64" rx="8"/>
+    <rect x="20" y="284" width="560" height="64" rx="8"/>
+    <rect x="20" y="354" width="560" height="64" rx="8"/>
+  </g>
+  <g fill="#eef6fc">
+    <rect x="212" y="148" width="186" height="56" rx="6"/>
+    <rect x="212" y="218" width="186" height="56" rx="6"/>
+    <rect x="212" y="358" width="186" height="56" rx="6"/>
+  </g>
+  <g stroke="#d8e7f2" stroke-width="2">
+    <line x1="210" y1="144" x2="210" y2="418"/>
+    <line x1="400" y1="144" x2="400" y2="418"/>
+  </g>
+
+  <text class="c" x="36" y="186">請求書の発行</text>
+  <text class="cb" x="305" y="186" text-anchor="middle" style="fill:#087fe5">担当A・月末</text>
+  <text class="c" x="416" y="186">売上の一覧</text>
+
+  <text class="c" x="36" y="256">入金の確認</text>
+  <text class="cb" x="305" y="256" text-anchor="middle" style="fill:#087fe5">担当A・毎週</text>
+  <text class="c" x="416" y="256">通帳の明細</text>
+
+  <text class="c" x="36" y="326">経費の精算</text>
+  <text class="c" x="305" y="326" text-anchor="middle">社長・月末</text>
+  <text class="c" x="416" y="326">領収書</text>
+
+  <text class="c" x="36" y="396">支払いの準備</text>
+  <text class="cb" x="305" y="396" text-anchor="middle" style="fill:#087fe5">担当A・25日</text>
+  <text class="c" x="416" y="396">請求書</text>
+
+  <polygon points="276,432 324,432 300,456" fill="#087fe5"/>
+  <rect x="20" y="468" width="560" height="70" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="n" x="300" y="512" text-anchor="middle">書き出すと偏りと無駄が見える</text>
+</svg>
