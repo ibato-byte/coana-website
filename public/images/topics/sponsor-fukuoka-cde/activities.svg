@@ -1,31 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 572" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
-  <rect width="600" height="572" rx="16" fill="#fbfdff"/>
-  <text x="300" y="52" text-anchor="middle" font-size="28" font-weight="700" fill="#16334d">発教研の3つの事業</text>
-  <g>
-    <rect x="24" y="80" width="552" height="146" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <rect x="24" y="80" width="10" height="146" rx="5" fill="#087fe5"/>
-    <circle cx="80" cy="126" r="24" fill="#087fe5"/>
-    <text x="80" y="135" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
-    <text x="120" y="135" font-size="26" font-weight="700" fill="#16334d">子育て支援・地域交流</text>
-    <text x="120" y="178" font-size="24" fill="#4a667d">親子教室・フリースクール</text>
-    <text x="120" y="210" font-size="24" fill="#4a667d">野外教室・地域イベント</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 688" role="img" aria-labelledby="t">
+  <title id="t">発教研の3つの事業</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .band { font-size: 28px; font-weight: 700; fill: #ffffff; }
+  </style>
+  <rect width="600" height="688" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">発教研の3つの事業</text>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="80" width="560" height="150" rx="14"/>
+    <rect x="20" y="246" width="560" height="150" rx="14"/>
+    <rect x="20" y="412" width="560" height="150" rx="14"/>
   </g>
-  <g>
-    <rect x="24" y="244" width="552" height="146" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <rect x="24" y="244" width="10" height="146" rx="5" fill="#087fe5"/>
-    <circle cx="80" cy="290" r="24" fill="#087fe5"/>
-    <text x="80" y="299" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">2</text>
-    <text x="120" y="299" font-size="26" font-weight="700" fill="#16334d">地域連携・啓発</text>
-    <text x="120" y="342" font-size="24" fill="#4a667d">園や施設への訪問・相談</text>
-    <text x="120" y="374" font-size="24" fill="#4a667d">研修・講演・保護者の学習会</text>
+  <g fill="#087fe5">
+    <circle cx="58" cy="120" r="20"/><circle cx="58" cy="286" r="20"/><circle cx="58" cy="452" r="20"/>
   </g>
-  <g>
-    <rect x="24" y="408" width="552" height="146" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <rect x="24" y="408" width="10" height="146" rx="5" fill="#087fe5"/>
-    <circle cx="80" cy="454" r="24" fill="#087fe5"/>
-    <text x="80" y="463" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">3</text>
-    <text x="120" y="463" font-size="26" font-weight="700" fill="#16334d">幼児発達の調査・研究</text>
-    <text x="120" y="506" font-size="24" fill="#4a667d">アンケート・データ分析</text>
-    <text x="120" y="538" font-size="24" fill="#4a667d">論文・研究発表</text>
-  </g>
+  <text class="num" x="58" y="128" text-anchor="middle">1</text>
+  <text class="num" x="58" y="294" text-anchor="middle">2</text>
+  <text class="num" x="58" y="460" text-anchor="middle">3</text>
+  <text class="lb" x="92" y="130">子育て支援・地域交流</text>
+  <text class="tx" x="92" y="176">親子教室・野外教室</text>
+  <text class="tx" x="92" y="212">地域イベントの開催</text>
+  <text class="lb" x="92" y="296">地域連携・啓発</text>
+  <text class="tx" x="92" y="342">園や施設への訪問・相談</text>
+  <text class="tx" x="92" y="378">研修・講演・学習会</text>
+  <text class="lb" x="92" y="462">幼児発達の調査・研究</text>
+  <text class="tx" x="92" y="508">アンケート・データ分析</text>
+  <text class="tx" x="92" y="544">論文・研究発表</text>
+  <path d="M286 576 L314 576 L300 592 Z" fill="#087fe5"/>
+  <rect x="20" y="604" width="560" height="64" rx="12" fill="#16334d"/>
+  <text class="band" x="300" y="646" text-anchor="middle">子どもと家族の居場所を地域に</text>
 </svg>

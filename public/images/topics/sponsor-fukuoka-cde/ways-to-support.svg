@@ -1,19 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
-  <rect width="600" height="420" rx="16" fill="#fbfdff"/>
-  <text x="300" y="52" text-anchor="middle" font-size="28" font-weight="700" fill="#16334d">活動を応援する方法</text>
-  <g>
-    <rect x="24" y="80" width="552" height="96" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="48" y="122" font-size="26" font-weight="700" fill="#087fe5">寄付する</text>
-    <text x="48" y="158" font-size="24" fill="#4a667d">金額を選び、単発か継続かも選べる</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 580" role="img" aria-labelledby="t">
+  <title id="t">発教研の活動を応援する3つの方法</title>
+  <style>
+    text { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif; fill: #16334d; }
+    .h { font-size: 30px; font-weight: 700; }
+    .num { font-size: 24px; font-weight: 700; fill: #ffffff; }
+    .lb { font-size: 28px; font-weight: 700; }
+    .tx { font-size: 26px; fill: #4a667d; }
+    .band { font-size: 26px; font-weight: 700; fill: #16334d; }
+  </style>
+  <rect width="600" height="580" fill="#fbfdff"/>
+  <text class="h" x="300" y="50" text-anchor="middle">活動を応援する3つの方法</text>
+  <g fill="#ffffff" stroke="#d8e7f2" stroke-width="2">
+    <rect x="20" y="80" width="560" height="120" rx="14"/>
+    <rect x="20" y="216" width="560" height="120" rx="14"/>
+    <rect x="20" y="352" width="560" height="120" rx="14"/>
   </g>
-  <g>
-    <rect x="24" y="192" width="552" height="96" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="48" y="234" font-size="26" font-weight="700" fill="#087fe5">賛助会員になる</text>
-    <text x="48" y="270" font-size="24" fill="#4a667d">毎月1,000円以上の寄付で登録</text>
+  <g fill="#087fe5">
+    <circle cx="58" cy="120" r="20"/><circle cx="58" cy="256" r="20"/><circle cx="58" cy="392" r="20"/>
   </g>
-  <g>
-    <rect x="24" y="304" width="552" height="96" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
-    <text x="48" y="346" font-size="26" font-weight="700" fill="#16334d">法人・団体として協賛する</text>
-    <text x="48" y="382" font-size="24" fill="#4a667d">申し込みフォームから受付</text>
-  </g>
+  <text class="num" x="58" y="128" text-anchor="middle">1</text>
+  <text class="num" x="58" y="264" text-anchor="middle">2</text>
+  <text class="num" x="58" y="400" text-anchor="middle">3</text>
+  <text class="lb" x="92" y="130">寄付する</text>
+  <text class="tx" x="92" y="176">金額と単発・継続を選べる</text>
+  <text class="lb" x="92" y="266">賛助会員になる</text>
+  <text class="tx" x="92" y="312">毎月1,000円以上の寄付で登録</text>
+  <text class="lb" x="92" y="402">法人・団体として協賛</text>
+  <text class="tx" x="92" y="448">申し込みフォームから</text>
+  <rect x="20" y="492" width="560" height="68" rx="12" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text class="band" x="300" y="535" text-anchor="middle">詳しくは発教研の「寄付する」ページへ</text>
 </svg>
