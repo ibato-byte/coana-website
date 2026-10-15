@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 import fs from 'node:fs'
+import { execSync } from 'node:child_process'
 import { parse as parseYaml } from 'yaml'
 
 import siteConfiguration from './.figma/make/site.json'
@@ -536,6 +537,29 @@ function coanaPageMeta(): Plugin {
       const about = readJson('content/about.json')
       const home = readJson('content/home.json')
       const services = readJson('content/services.json')
+    const privacy = readJson('content/privacy.json')
+
+    // sitemap.xml の lastmod 用：内容ファイルの最終更新日を git の履歴から取得する（取得できない環境では付けない）
+    const gitRun = (cmd: string) => execSync(cmd, { cwd: __dirname, stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 }).toString().trim()
+    let gitHistory = false
+    try {
+      if (gitRun('git rev-parse --is-shallow-repository') === 'true') {
+        try { gitRun('git fetch --unshallow --quiet') } catch { /* 履歴を取得できなければ lastmod は付けない */ }
+      }
+      gitHistory = gitRun('git rev-parse --is-shallow-repository') === 'false'
+    } catch { gitHistory = false }
+    const isYmd = (value: string | undefined): value is string => !!value && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    const maxDate = (...dates: (string | undefined)[]) => dates.filter(isYmd).sort().pop()
+    const lastModified = (...files: string[]): string | undefined => {
+      if (!gitHistory) return undefined
+      return maxDate(...files.map((file) => {
+        try { return gitRun('git log -1 --format=%cs -- "' + file + '"') } catch { return undefined }
+      }))
+    }
+    // プライバシーポリシーの改定日（なければ制定日）
+    const privacyBody = String(privacy.body || '')
+    const privacyDateMatch = privacyBody.match(/改定日[：:]\s*(\d{4})年(\d{1,2})月(\d{1,2})日/) || privacyBody.match(/制定日[：:]\s*(\d{4})年(\d{1,2})月(\d{1,2})日/)
+    const privacyDate = privacyDateMatch ? privacyDateMatch[1] + '-' + privacyDateMatch[2].padStart(2, '0') + '-' + privacyDateMatch[3].padStart(2, '0') : undefined
 
       // ファビコン・スマホ用アイコン・SNS共有画像は CMS（content/settings.json）の設定を優先する
       const defaultImage = settings.og_image ? absoluteUrl(String(settings.og_image)) : builtImage
@@ -593,7 +617,7 @@ function coanaPageMeta(): Plugin {
         { path: '/services', crumb: 'サービス', title: 'サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援' + SUFFIX, description: '中小企業・小規模事業者に向けた、経理・業務フローの改善と実務代行、創業支援、会計・勤怠・販売管理などITツール・クラウドツールの導入支援、営業・セミナー・SNS・Webサイト制作のマーケティング支援。料金は個別お見積もり。', jsonld: graph(crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }])) },
         { path: '/topics', crumb: 'トピックス', title: 'トピックス｜セミナー登壇・メディア掲載・お知らせ' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。経理DXやクラウド会計に関する講座・記事もご紹介。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
         { path: '/contact', crumb: 'お問い合わせ', title: 'お問い合わせ｜バックオフィス・マーケティングのご相談' + SUFFIX, description: '経理やバックオフィスの見直し、ITツール導入、集客・営業のご相談はこちらから。中小企業・小規模事業者の小さな困りごとでもお気軽に。内容を確認のうえ担当者よりご連絡いたします。', jsonld: graph(crumbs([homeCrumb, { name: 'お問い合わせ', url: SITE + '/contact' }])) },
-        { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシーです。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
+        { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシー。お問い合わせフォーム・メール・LINEで取得する個人情報の利用目的、第三者提供、業務委託、安全管理措置、Google アナリティクスの利用、開示等のご請求窓口について定めています。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
       ]
 
       // サービス別の専用ページ（content/solutions/*.json）
@@ -721,6 +745,26 @@ function coanaPageMeta(): Plugin {
         }
       }
 
+      // sitemap.xml の lastmod：固定ページ・サービス別ページにも最終更新日を付ける（記事は公開日）
+      const latestTopic = maxDate(...feedItems.map((item) => item.date))
+      const pageSources: Record<string, { files: string[]; extra?: string }> = {
+        '/': { files: ['content/home.json', 'content/services.json', 'content/settings.json'], extra: latestTopic },
+        '/about': { files: ['content/about.json', 'content/settings.json'] },
+        '/services': { files: ['content/services.json', 'content/solutions'] },
+        '/topics': { files: ['content/topics'], extra: latestTopic },
+        '/contact': { files: ['content/settings.json'] },
+        '/privacy': { files: ['content/privacy.json'], extra: privacyDate },
+      }
+      for (const page of pages) {
+        if (page.lastmod) continue
+        if (page.path.startsWith('/services/')) {
+          page.lastmod = lastModified('content/solutions/' + page.path.slice('/services/'.length) + '.json')
+          continue
+        }
+        const source = pageSources[page.path]
+        if (source) page.lastmod = maxDate(lastModified(...source.files), source.extra)
+      }
+
       // ── JavaScript を実行しないクローラー（AI 検索や一部の検索エンジン）にも内容とサイト内リンクが伝わるよう、
       //    各ページの本文を HTML に埋め込む。画面には表示せず、React の起動時に #root の中身ごと置き換わる。
       const esc = (value: unknown) => escapeAttr(String(value ?? ''))
@@ -782,7 +826,7 @@ function coanaPageMeta(): Plugin {
         }
         if (pagePath === '/topics') return '<h1>トピックス</h1>' + topicList(sortedTopics)
         if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro) + '<p>メール：' + esc(settings.email) + '</p>'
-        if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>'
+        if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>' + mdToHtml(privacyBody)
         if (pagePath.startsWith('/services/')) {
           const sol = solutionList.find((item) => '/services/' + item.slug === pagePath)
           if (!sol) return ''
