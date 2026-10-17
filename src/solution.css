@@ -158,6 +158,97 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .lp-scheme-node-sub { fill: var(--navy-soft); font-size: 14px; font-weight: 500; }
 .lp-scheme-list { display: none; }
 
+/* レーン型（SchemeLanes）：上の段＝御社がやること、下の段＝COANA TOKYO がやること。スマホは縦に1本 */
+.lanes { position: relative; margin: 44px auto 0; max-width: 1080px; display: grid; grid-template-columns: 150px repeat(var(--cols, 4), minmax(0, 1fr)); grid-auto-rows: auto; column-gap: 16px; row-gap: 44px; }
+.lanes-list { display: contents; list-style: none; }
+.lanes-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.lanes-line { fill: none; stroke: rgba(6, 112, 203, .3); stroke-width: 2; stroke-linejoin: round; }
+.lanes-line.is-side { stroke-dasharray: 4 6; }
+.lanes-label { margin: 0; display: flex; align-items: center; }
+.lanes-label.is-client { grid-row: 1; grid-column: 1; }
+.lanes-label.is-team { grid-row: 2; grid-column: 1; }
+.lanes-label span { display: inline-block; padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 800; line-height: 1.4; }
+.lanes-label.is-client span { background: var(--yellow-soft); color: var(--navy-ink); box-shadow: inset 0 0 0 1px rgba(242, 165, 22, .35); }
+.lanes-label.is-team span { background: var(--navy); color: var(--white); }
+/* 御社の段の空き：「あとはお任せください」 */
+.lanes-rest { grid-row: 1; margin: 0; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+.lanes-rest span { padding: 6px 16px; border-radius: 999px; border: 1px dashed rgba(6, 112, 203, .35); background: #f7fbfe; color: var(--sky-ink); font-size: 13px; font-weight: 700; }
+.lanes-item { position: relative; z-index: 1; display: grid; }
+.lanes-tag { display: none; }
+.lanes-card { position: relative; display: grid; align-content: start; justify-items: start; gap: 10px; width: 100%; height: 100%; padding: 18px 16px 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--white); color: var(--navy); font: inherit; text-align: left; cursor: default; box-shadow: var(--shadow-sm); transition: border-color var(--m-color), box-shadow var(--m-color), transform .3s var(--m-ease); }
+.lanes-card[aria-controls] { cursor: pointer; }
+.lanes-item.is-client .lanes-card { background: #fffdf6; border-color: rgba(242, 165, 22, .35); }
+.lanes-icon { position: relative; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-soft); color: var(--sky-deep); transition: background var(--m-color), color var(--m-color), box-shadow var(--m-color); }
+.lanes-item.is-client .lanes-icon { background: var(--yellow-soft); color: var(--navy-ink); }
+/* 書類が通った工程は点灯（「動きを減らす」設定や再生後は、全工程が点灯した状態） */
+.lanes-item.is-team.is-on .lanes-icon { background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
+.lanes-item.is-client.is-on .lanes-icon { background: var(--yellow); }
+.lanes-item.is-on .lanes-icon { box-shadow: 0 0 0 5px rgba(6, 112, 203, .08); }
+.lanes-text { display: grid; gap: 4px; }
+.lanes-text strong { font-size: 15.5px; font-weight: 800; line-height: 1.45; }
+.lanes-text span { font-size: 12.5px; line-height: 1.7; color: var(--navy-soft); }
+/* 詳しい説明があることの印（＋） */
+.lanes-more { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); }
+.lanes-more::before, .lanes-more::after { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 1.5px; margin: -.75px 0 0 -4px; background: var(--sky-deep); transition: transform .3s var(--m-ease); }
+.lanes-more::after { transform: rotate(90deg); }
+.lanes-item.is-open .lanes-more::after { transform: rotate(0deg); }
+.lanes-detail { margin: 0; font-size: 13px; line-height: 1.8; }
+/* 動く書類 */
+.lanes-token { position: absolute; left: 0; top: 0; z-index: 3; width: 32px; height: 32px; margin: -16px 0 0 -16px; display: grid; place-items: center; border-radius: 10px; background: var(--white); box-shadow: 0 6px 16px rgba(13, 35, 56, .18), 0 0 0 1px rgba(6, 112, 203, .25); opacity: 0; pointer-events: none; will-change: transform, opacity; }
+.lanes-token svg { position: absolute; width: 20px; height: 20px; fill: none; stroke: var(--navy); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: opacity .25s, transform .3s var(--m-ease); }
+.lanes-token-report { opacity: 0; transform: scale(.6); }
+.lanes-token-report .bar { stroke: #f2a516; stroke-width: 2.2; }
+.lanes-token.is-report .lanes-token-doc { opacity: 0; transform: scale(.6); }
+.lanes-token.is-report .lanes-token-report { opacity: 1; transform: none; }
+/* 1か月の流れ */
+.lanes-cycle { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 18px; padding: 14px 18px; border-radius: 16px; background: var(--white); border: 1px solid var(--line); }
+.lanes-cycle-label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--sky-ink); }
+.lanes-cycle ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.lanes-cycle li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; }
+.lanes-cycle li + li::before { content: ""; width: 18px; height: 1px; background: rgba(6, 112, 203, .45); margin-right: 2px; }
+.lanes-cycle b { padding: 2px 9px; border-radius: 999px; background: var(--sky-soft); color: var(--sky-ink); font-size: 12px; font-weight: 800; }
+.lanes-replay { position: absolute; right: 0; top: -36px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--sky-ink); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, border-color .25s; }
+.lanes-replay.is-ready { opacity: 1; pointer-events: auto; }
+.lanes-replay:hover { border-color: var(--sky); }
+/* セクションの最後：この仕組みを自社に → 無料相談 */
+.lanes-cta { margin: 36px auto 0; max-width: 760px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 16px; text-align: center; font-size: 15px; font-weight: 700; color: var(--navy); }
+a.lanes-cta-link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 999px; border: 1.5px solid var(--sky-deep); background: var(--white); color: var(--sky-ink); font-size: 14.5px; font-weight: 800; transition: background .25s, color .25s; }
+a.lanes-cta-link:hover { background: var(--sky-deep); color: var(--white); }
+a.lanes-cta-link svg { transition: transform .3s var(--ease-out); }
+a.lanes-cta-link:hover svg { transform: translateX(3px); }
+/* PC：カーソルを当てる（キーボードでフォーカスする）と、その工程でやることを少し詳しく（カードの下に重ねて出す。レイアウトは動かさない） */
+@media (hover: hover) and (pointer: fine) and (min-width: 761px) {
+  .lanes-detail { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 4; padding: 12px 14px; border-radius: 12px; background: var(--navy-ink); color: var(--white); box-shadow: var(--shadow-md); opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .25s, transform .3s var(--m-ease); }
+  .lanes-item:hover .lanes-detail, .lanes-item:focus-within .lanes-detail, .lanes-item.is-open .lanes-detail { opacity: 1; transform: none; }
+  .lanes-item:hover .lanes-card { border-color: var(--sky); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .lanes-item:hover { z-index: 5; }
+}
+@media (min-width: 761px) and (not ((hover: hover) and (pointer: fine))) {
+  .lanes-detail { display: none; margin-top: 8px; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); }
+  .lanes-item.is-open .lanes-detail { display: block; }
+}
+@media (max-width: 760px) {
+  .lanes { display: block; max-width: 520px; margin-top: 52px; }
+  .lanes-list { display: grid; gap: 14px; padding: 0; margin: 0; }
+  .lanes-label, .lanes-rest { display: none; }
+  /* PC 用の配置（行・列の指定）を外して、縦に1本に並べる */
+  .lanes-item { grid-template-columns: 1fr; grid-row: auto !important; grid-column: auto !important; }
+  .lanes-tag { display: block; justify-self: start; margin: 0 0 6px 62px; padding: 1px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+  .lanes-item.is-client .lanes-tag { background: var(--yellow-soft); color: var(--navy-ink); box-shadow: inset 0 0 0 1px rgba(242, 165, 22, .35); }
+  .lanes-item.is-team .lanes-tag { background: var(--navy); color: var(--white); }
+  .lanes-card { grid-template-columns: 46px 1fr 20px; align-items: center; column-gap: 14px; padding: 14px; }
+  .lanes-more { position: relative; top: auto; right: auto; }
+  .lanes-detail { display: none; margin: 8px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); }
+  .lanes-item.is-open .lanes-detail { display: block; }
+  .lanes-cycle { margin-top: 20px; justify-content: flex-start; }
+  .lanes-cycle ol { gap: 6px; }
+  .lanes-replay { top: -38px; }
+  .lanes-cta { margin-top: 48px; flex-direction: column; font-size: 14.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lanes-token, .lanes-replay { display: none; }
+}
+
 .lp-scheme-points { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .lp-scheme-points li { padding: 24px 22px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); }
 .lp-scheme-point-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: var(--yellow-soft); color: var(--navy); }

@@ -113,7 +113,7 @@ collections:
         required: false
         collapsed: true
         fields:
-          - { label: 図の種類, name: type, widget: select, options: [{ label: 中心と周囲（ハブ型）, value: hub }, { label: 左から右の流れ（フロー型）, value: flow }], default: hub, required: false }
+          - { label: 図の種類, name: type, widget: select, options: [{ label: 中心と周囲（ハブ型）, value: hub }, { label: 左から右の流れ（フロー型）, value: flow }, { label: 御社とCOANAの役割を分けた流れ（レーン型）, value: lanes }], default: hub, required: false }
           - { label: 見出し, name: title, widget: string, required: false }
           - { label: リード文, name: lead, widget: text, required: false }
           - label: 中心（ハブ型のみ）
@@ -131,7 +131,21 @@ collections:
             fields:
               - { label: ラベル, name: label, widget: string }
               - { label: 補足1行目, name: sub, widget: string, required: false }
-              - { label: アイコン（フロー型のみ）, name: icon, widget: string, required: false }
+              - { label: アイコン（フロー型・レーン型）, name: icon, widget: string, required: false }
+              - { label: 担当（レーン型のみ）, name: who, widget: select, options: [{ label: 御社, value: client }, { label: COANA TOKYO, value: team }], required: false }
+              - { label: 詳しい説明（レーン型：カーソルを当てる／タップで表示）, name: detail, widget: text, required: false }
+          - { label: レーン型｜御社の段の見出し, name: client_label, widget: string, required: false }
+          - { label: レーン型｜COANA TOKYOの段の見出し, name: team_label, widget: string, required: false }
+          - { label: レーン型｜御社の段の空き部分の一言, name: rest, widget: string, required: false }
+          - label: レーン型｜1か月の流れ
+            name: cycle
+            widget: list
+            required: false
+            summary: "{{fields.when}}：{{fields.text}}"
+            fields:
+              - { label: いつ, name: when, widget: string }
+              - { label: 何をするか, name: text, widget: string }
+          - { label: レーン型｜最後の一言（無料相談への案内）, name: cta, widget: text, required: false }
           - label: 図の下のポイント（3つ程度）
             name: points
             widget: list

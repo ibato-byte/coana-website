@@ -124,11 +124,19 @@ export type Solution = {
   problems_title?: string;
   problems: string[];
   scheme?: {
-    type?: "hub" | "flow";
+    /** hub：中心と周囲／flow：左から右の流れ／lanes：「御社がやること」と「COANA TOKYO がやること」を分けた流れ */
+    type?: "hub" | "flow" | "lanes";
     title?: string;
     lead?: string;
     center?: { label: string; sub?: string };
-    nodes?: { label: string; sub?: string; icon?: string }[];
+    /** who：lanes 型で、御社（client）か COANA TOKYO（team）か。detail：カーソルを当てる／タップで開く詳しい説明 */
+    nodes?: { label: string; sub?: string; icon?: string; who?: "client" | "team"; detail?: string }[];
+    /** lanes 型：見出しラベル・御社の段の「あとはお任せ」・1か月の流れ・最後の一言（無料相談へ） */
+    client_label?: string;
+    team_label?: string;
+    rest?: string;
+    cycle?: { when: string; text: string }[];
+    cta?: string;
     points?: { name: string; text: string; icon?: string }[];
     note?: string;
   };

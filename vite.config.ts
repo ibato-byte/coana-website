@@ -635,7 +635,7 @@ function coanaPageMeta(): Plugin {
         lang?: 'ja' | 'en'; hidden?: boolean; english?: { slug?: string }
         hero_facts?: { value: string; label: string }[]
         problems_title?: string; problems?: string[]
-        scheme?: { title?: string; lead?: string; center?: { label?: string; sub?: string }; nodes?: { label: string; sub?: string }[]; points?: Named[]; note?: string }
+        scheme?: { title?: string; lead?: string; center?: { label?: string; sub?: string }; nodes?: { label: string; sub?: string; who?: string; detail?: string }[]; points?: Named[]; note?: string }
         features_title?: string; features_lead?: string; features?: Named[]; tools?: string[]; tools_note?: string
         scope?: { title?: string; groups?: { name: string; items?: string[] }[]; note?: string }
         plans?: { title?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string }[]; note?: string }
@@ -862,7 +862,7 @@ function coanaPageMeta(): Plugin {
           ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
           section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
           section(sol.scheme?.title || T.scheme, (sol.scheme ? paras(sol.scheme.lead) +
-            ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + '</li>').join('') + '</ul>' : '') +
+            ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + (n.who === 'client' ? '【御社】' : n.who === 'team' ? '【COANA TOKYO】' : '') + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + '</li>').join('') + '</ul>' : '') +
             named(sol.scheme.points, 'h3') + paras(sol.scheme.note) : '')) +
           section(supportTitle, paras(sol.features_lead) + named(sol.features, 'h3') +
             (sol.scope && (sol.scope.groups ?? []).length ? '<h3>' + esc(sol.scope.title || T.scope) + '</h3>' + (sol.scope.groups ?? []).map((g) => '<h4>' + esc(g.name) + '</h4><ul>' + (g.items ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>').join('') : '') + paras(sol.scope?.note) +
@@ -881,7 +881,7 @@ function coanaPageMeta(): Plugin {
         const block = (title: string | undefined, body: string) => (body.trim() ? '### ' + title + '\n\n' + body.trim() + '\n\n' : '')
         return '## ' + (sol.nav_label || sol.title) + '\n\n' + 'URL: ' + url + '\n\n' + (sol.title !== sol.nav_label ? sol.title + '\n\n' : '') + String(sol.description || sol.lead || '') + '\n\n' +
           block(sol.problems_title || T.problems, mdList(sol.problems)) +
-          block(sol.scheme?.title || T.scheme, (sol.scheme?.lead ? sol.scheme.lead + '\n\n' : '') + (sol.scheme?.nodes ?? []).map((n) => '- ' + n.label + (n.sub ? '：' + n.sub : '')).join('\n') + '\n' + (sol.scheme?.points ?? []).map((pt) => '- ' + pt.name + (pt.text ? '：' + pt.text : '')).join('\n') + (sol.scheme?.note ? '\n\n' + sol.scheme.note : '')) +
+          block(sol.scheme?.title || T.scheme, (sol.scheme?.lead ? sol.scheme.lead + '\n\n' : '') + (sol.scheme?.nodes ?? []).map((n) => '- ' + (n.who === 'client' ? '（御社）' : n.who === 'team' ? '（COANA TOKYO）' : '') + n.label + (n.sub ? '：' + n.sub : '')).join('\n') + '\n' + (sol.scheme?.points ?? []).map((pt) => '- ' + pt.name + (pt.text ? '：' + pt.text : '')).join('\n') + (sol.scheme?.note ? '\n\n' + sol.scheme.note : '')) +
           block(sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support, (sol.features ?? []).map((f) => '- ' + f.name + (f.text ? '：' + f.text : '')).join('\n') +
             ((sol.scope?.groups ?? []).length ? '\n\n' + (sol.scope?.title || T.scope) + '：\n' + (sol.scope?.groups ?? []).map((g) => '- ' + g.name + '：' + (g.items ?? []).join('、')).join('\n') : '') + (sol.scope?.note ? '\n\n' + sol.scope.note : '') +
             ((sol.plans?.items ?? []).length ? '\n\n' + (sol.plans?.title || T.plans) + '：\n' + (sol.plans?.items ?? []).map((pl) => '- ' + pl.name + (pl.tag ? '（' + pl.tag + '）' : '') + (pl.text ? '：' + pl.text : '') + ((pl.includes ?? []).length ? '（' + (pl.includes ?? []).join('、') + '）' : '')).join('\n') : '') +
@@ -1062,7 +1062,7 @@ function coanaPageMeta(): Plugin {
         const name = sol.nav_label || sol.title
         addChunk('lp', name + '：概要', u, [sol.title, String(sol.catch ?? '').replace(/\*\*/g, '').replace(/\n/g, ''), sol.lead, sol.description].filter(Boolean).join('\n'))
         if (sol.problems?.length) addChunk('lp', name + '：こんなお悩みに', u, list(sol.problems, '\n'))
-        if (sol.scheme) addChunk('lp', name + '：支援の仕組み', u, [sol.scheme.title, sol.scheme.lead, ...(sol.scheme.points ?? []).map((pt) => pt.name + '：' + (pt.text ?? '')), sol.scheme.note].filter(Boolean).join('\n'))
+        if (sol.scheme) addChunk('lp', name + '：支援の仕組み', u, [sol.scheme.title, sol.scheme.lead, ...(sol.scheme.nodes ?? []).filter((n) => n.who).map((n) => (n.who === 'client' ? '御社：' : 'COANA TOKYO：') + n.label + '（' + (n.detail || n.sub || '') + '）'), ...(sol.scheme.points ?? []).map((pt) => pt.name + '：' + (pt.text ?? '')), sol.scheme.note].filter(Boolean).join('\n'))
         if (sol.features?.length) addChunk('lp', name + '：支援内容', u, [sol.features_lead, ...sol.features.map((ft) => ft.name + '：' + (ft.text ?? ''))].filter(Boolean).join('\n'))
         if (sol.tools?.length) addChunk('lp', name + '：対応ツール', u, list(sol.tools) + '。' + (sol.tools_note ?? ''))
         if (sol.scope?.groups?.length) addChunk('lp', name + '：ご依頼いただける業務', u, sol.scope.groups.map((g) => g.name + '：' + list(g.items)).join('\n') + '\n' + (sol.scope.note ?? ''))
