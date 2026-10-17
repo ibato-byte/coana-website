@@ -1,6 +1,6 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, DiagnoseLink, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, openChat, paths, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, openChat, paths, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 import { ChatLauncher } from "./chat/ChatLauncher";
@@ -301,7 +301,6 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
     <section className="section services-home" id="services">
       <div className="container">
         <SectionTitle en="Services" center lead={home.services_lead}>{home.services_title}</SectionTitle>
-        <DiagnoseLink className="is-top" />
         {serviceGroups.map(({ key, n, data }) => (
           <div className="service-group" key={key}>
             <ServiceGroupHead n={n} data={data} />
@@ -310,6 +309,8 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
             </div>
           </div>
         ))}
+        {/* 01・02 を一通り見たあとに「迷ったら診断」 */}
+        <DiagnoseBanner navigate={navigate} className="is-home" />
       </div>
     </section>
   );
@@ -318,33 +319,52 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
 /* ───────────────────────── Home: 支援スタイル（選ばれる理由・ツール・ミッションを統合） ───────────────────────── */
 
 function StyleSection() {
+  // 見出しは行ごとに現れる。背景にロゴの羽の線（一度だけ描く）と、画面内のときだけゆっくり動く光。
+  // カードは順に立ち上がり、アイコンが線で描かれる。PC ではカーソルに合わせてわずかに傾き、光が追従する（motion.ts）
+  const mission = (about.message_heading || "").split("\n");
+  const delay = (i: number) => ({ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` });
   return (
-    <section className="section style-section">
+    <section className="section style-section" data-live>
+      <div className="style-bg" aria-hidden="true">
+        <span className="style-glow" />
+        <svg className="style-wing" viewBox="0 0 240 340" data-draw data-reveal>
+          <path d="M52 322C18 250 34 170 104 116c44-34 82-64 108-106 18 66 4 134-44 186-38 42-80 72-116 126Z" />
+          <path d="M70 296c30-62 76-110 132-156" />
+        </svg>
+      </div>
       <div className="container">
-        <div className="style-head" data-reveal>
-          <span className="eyebrow">Our style</span>
-          <p className="style-mission"><Lines text={about.message_heading} /></p>
-          <h2 className="style-title">{home.strengths_title}</h2>
+        <div className="style-head">
+          <span className="eyebrow" data-reveal>Our style</span>
+          <p className="style-mission">
+            {mission.map((line, i) => <span key={i} className="style-mission-line" data-reveal style={delay(i + 1)}>{line}</span>)}
+          </p>
+          <h2 className="style-title" data-reveal style={delay(mission.length + 1)}>{home.strengths_title}</h2>
         </div>
         <ul className="style-grid">
-          {home.strengths.map((s) => (
-            <li key={s.title}>
-              <span className="style-icon"><MiniIcon name={s.icon} size={30} /></span>
-              <h3>{s.title}</h3>
-              <p>{s.text}</p>
+          {home.strengths.map((s, i) => (
+            <li key={s.title} data-reveal style={delay(i)}>
+              <div className="style-card" data-tilt>
+                <span className="style-icon" data-draw style={{ ["--draw-d" as string]: `${(0.2 + i * 0.06).toFixed(2)}s` }}><MiniIcon name={s.icon} size={30} /></span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
             </li>
           ))}
         </ul>
-        <div className="style-tools">
+        <div className="style-tools" data-reveal>
           <p className="style-tools-title">{home.tools_title}</p>
-          <ul>
-            {home.tools.map((t) => (
-              <li key={t.name} title={t.category}>
-                {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
-                {t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span>{t.name}</span>}
-              </li>
-            ))}
-          </ul>
+          {/* ツールどうしを1本の線でつなぐ（線は飾り。ロゴは最初から表示） */}
+          <div className="style-tools-row">
+            <span className="style-tools-line" aria-hidden="true" />
+            <ul>
+              {home.tools.map((t) => (
+                <li key={t.name} title={t.category}>
+                  {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
+                  {t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span>{t.name}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
           {home.tools_note && <small>{home.tools_note}</small>}
         </div>
       </div>
@@ -475,8 +495,6 @@ function Services({ navigate }: { navigate: Nav }) {
   return (
     <main className="services-page">
       <PageHero en="Services" title="サービス" intro={services.intro} image={services.hero_image} />
-      {/* サービスを全部見比べる前に、診断もできることを伝える */}
-      <div className="container diagnose-banner-wrap"><DiagnoseBanner /></div>
       {serviceGroups.map(({ key, n, data }) => (
         <section key={key} id={key} className="section service-detail">
           <div className="container">
@@ -487,28 +505,24 @@ function Services({ navigate }: { navigate: Nav }) {
           </div>
         </section>
       ))}
-      <div className="container"><DiagnoseLink className="is-services" /></div>
+      {/* 01・02 を一通り見たあとに「迷ったら診断」。料金・流れの前に、はっきり気づける帯で置く */}
+      <div className="container diagnose-banner-wrap"><DiagnoseBanner navigate={navigate} /></div>
       <section className="section flow-section">
         <div className="container">
           <SectionTitle en="Flow" center>{services.flow_title}</SectionTitle>
-          <ol className="flow-list">
-            {services.flow.map((item, index) => (
-              <li key={item}>
-                <span className="flow-icon"><MiniIcon name={FLOW_ICONS[index] || "doc"} size={28} /></span>
-                <small>STEP {index + 1}</small>
-                <strong>{item}</strong>
-              </li>
-            ))}
-          </ol>
+          <FlowLine
+            steps={services.flow.map((item, index) => ({ name: item, icon: <MiniIcon name={FLOW_ICONS[index] || "doc"} size={26} /> }))}
+            stepLabel="STEP"
+            lead="まずは無料相談から"
+          >
+            <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
+          </FlowLine>
           <div className="pricing-box">
             <span className="pricing-icon" aria-hidden="true">¥</span>
             <div>
               <h2>{services.pricing_title}</h2>
               <p>{services.pricing}</p>
             </div>
-          </div>
-          <div className="center-button">
-            <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
           </div>
         </div>
       </section>
@@ -890,38 +904,6 @@ export default function App() {
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
   }, []);
-  useEffect(() => {
-    const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      targets.forEach((target) => target.classList.add("in"));
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      // 画面に入る少し手前で表示を始め、読みかけの部分が薄いまま残らないようにする
-      { threshold: 0, rootMargin: "0px 0px 12% 0px" },
-    );
-    targets.forEach((target) => observer.observe(target));
-    // 絞り込みなどで後から表示された要素も、スクロール表示の対象にする
-    const mutation = new MutationObserver((records) => {
-      records.forEach((record) => record.addedNodes.forEach((node) => {
-        if (!(node instanceof HTMLElement)) return;
-        const added: HTMLElement[] = node.matches("[data-reveal]") ? [node] : [];
-        added.concat(Array.from(node.querySelectorAll<HTMLElement>("[data-reveal]")))
-          .filter((el) => !el.classList.contains("in"))
-          .forEach((el) => observer.observe(el));
-      }));
-    });
-    mutation.observe(document.body, { childList: true, subtree: true });
-    return () => { observer.disconnect(); mutation.disconnect(); };
-  }, [page, routeKey]);
   // ページ切り替え直後（描画前）に、アニメーションなしで先頭へ戻す。
   // なめらかスクロールを描画前に開始すると、スマホでは新しいページの描画で途中停止し、
   // 前のページの位置（フッター付近）に取り残されるため、描画後に即時スクロールする。

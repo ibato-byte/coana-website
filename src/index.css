@@ -80,14 +80,36 @@ p, li, dd { text-wrap: pretty; }
 .page-fade { animation: page-fade .5s var(--ease-out) both; }
 @keyframes page-fade { from { opacity: 0; } to { opacity: 1; } }
 
-/* reveal on scroll */
-/* 見出しなどのブロック単位で控えめに。画面に入る少し手前で表示し、半透明のまま残らないようにする */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .45s var(--ease-out), transform .45s var(--ease-out);
+/* ───────────────────────── スクロールに合わせた表示（src/motion.ts・docs/motion-rules.md） ─────────────────────────
+ * 隠した状態は html.motion-ready のときだけ（「動きを減らす」設定や読み込み前は、最初から全部表示）。
+ * 文字は画面に入ったら 0.4 秒で読める状態に。--d で順番の遅れ（0.06 秒刻み）を付ける。 */
+:root {
+  --m-ease: cubic-bezier(.22, 1, .36, 1);
+  --m-ease-line: cubic-bezier(.65, 0, .35, 1);
+  --m-text: .4s;
+  --m-stagger: .06s;
+  --m-draw: .8s;
+  --m-icon: .6s;
+  --m-color: .3s;
+  --m-line: 2px;
 }
-[data-reveal].in { opacity: 1; transform: none; }
+.motion-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--m-text) var(--m-ease) var(--d, 0s), transform var(--m-text) var(--m-ease) var(--d, 0s);
+}
+.motion-ready [data-reveal].in { opacity: 1; transform: none; }
+/* 線で描く：[data-draw] の中の線（pathLength=1）を、表示（.in）または線の到達（.is-reached）で描く */
+.motion-ready [data-draw] :is(path, circle, rect, line, polyline, polygon, ellipse) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--m-icon) var(--m-ease-line) var(--draw-d, .12s);
+}
+.motion-ready .in [data-draw]:not([data-draw="reach"]) :is(path, circle, rect, line, polyline, polygon, ellipse),
+.motion-ready [data-draw].in :is(path, circle, rect, line, polyline, polygon, ellipse),
+.motion-ready .is-reached [data-draw="reach"] :is(path, circle, rect, line, polyline, polygon, ellipse) { stroke-dashoffset: 0; }
+/* 画面より上にあった要素は、動きなしで表示済みにする */
+.motion-instant, .motion-instant * { transition: none !important; }
 
 /* ───────────────────────────── Typography parts ───────────────────────────── */
 
@@ -512,20 +534,46 @@ a.service-card:hover .art * { animation-play-state: running; }
 
 /* ───────────────────────────── 支援スタイル（選ばれる理由・ツール・ミッション） ───────────────────────────── */
 
-.style-section { position: relative; overflow: hidden; color: var(--white); background: radial-gradient(600px 340px at 90% 0%, rgba(85, 184, 243, .25), transparent 60%), var(--navy-ink); }
+.style-section { position: relative; overflow: hidden; isolation: isolate; color: var(--white); background: radial-gradient(600px 340px at 90% 0%, rgba(85, 184, 243, .25), transparent 60%), var(--navy-ink); }
+/* 背景：ロゴの羽の線（一度だけ描く）と、画面内のときだけゆっくり漂う光 */
+.style-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.style-glow { position: absolute; left: -10%; top: 30%; width: 70%; height: 80%; border-radius: 50%; background: radial-gradient(closest-side, rgba(8, 127, 229, .32), rgba(8, 127, 229, 0)); }
+.style-section.is-live .style-glow { animation: style-drift 18s ease-in-out infinite alternate; }
+@keyframes style-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(28%, -12%, 0); } }
+.style-wing { position: absolute; right: -70px; top: -30px; width: 280px; height: auto; fill: none; stroke: rgba(255, 216, 90, .26); stroke-width: 1.2; stroke-linecap: round; }
+.motion-ready .style-wing :is(path) { transition-duration: 2s; transition-delay: .5s; }
 .style-head { text-align: center; }
 .style-section .eyebrow { color: var(--yellow); }
 .style-section .eyebrow::before { display: none; }
 .style-mission { margin: 14px 0 0; font-size: clamp(23px, 3vw, 38px); font-weight: 900; line-height: 1.6; letter-spacing: -.02em; }
+.style-mission-line { display: block; }
 .style-title { margin: 10px 0 0; font-size: 15px; font-weight: 700; color: var(--sky); letter-spacing: .04em; }
 .style-grid { list-style: none; margin: 44px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-.style-grid li { padding: 24px 20px; border-radius: 18px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); }
+.style-grid li { display: grid; }
+.style-card {
+  position: relative;
+  padding: 24px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .14);
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .5s var(--m-ease), border-color var(--m-color);
+}
+/* カーソルの位置に追従する光（PC のみ。motion.ts が --lx / --ly を設定） */
+.style-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(240px circle at var(--lx, 50%) var(--ly, 0%), rgba(255, 255, 255, .10), transparent 60%); opacity: 0; transition: opacity var(--m-color); pointer-events: none; }
+.style-card.is-tilting { transition: transform .12s linear, border-color var(--m-color); border-color: rgba(255, 216, 90, .45); }
+.style-card.is-tilting::before { opacity: 1; }
 .style-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px; background: var(--yellow); color: var(--navy-ink); }
 .style-grid h3 { margin: 14px 0 4px; font-size: 17px; font-weight: 800; line-height: 1.5; }
 .style-grid p { margin: 0; font-size: 13.5px; line-height: 1.8; opacity: .85; }
 .style-tools { margin: 44px auto 0; text-align: center; }
 .style-tools-title { margin: 0 0 14px; font-size: 14px; font-weight: 700; opacity: .9; }
-.style-tools ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+/* ツールどうしをつなぐ線：左から右へ一度だけ引く */
+.style-tools-row { position: relative; display: inline-block; max-width: 100%; }
+.style-tools-line { position: absolute; left: 26px; right: 26px; top: 50%; height: var(--m-line); margin-top: -1px; background: linear-gradient(90deg, var(--sky), var(--yellow)); border-radius: 2px; transform-origin: left; }
+.motion-ready .style-tools-line { transform: scaleX(0); transition: transform var(--m-draw) var(--m-ease-line) .15s; }
+.motion-ready .style-tools.in .style-tools-line { transform: none; }
+.style-tools ul { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
 .style-tools li { height: 52px; padding: 0 20px; border-radius: 14px; background: var(--white); display: flex; align-items: center; }
 .style-tools img { display: block; height: 24px; width: auto; }
 .style-tools li span { color: var(--navy); font-weight: 700; font-size: 14px; }
@@ -751,13 +799,38 @@ a.service-card:hover .art * { animation-play-state: running; }
 .service-detail + .service-detail { padding-top: 0; }
 .service-detail .service-group-head { margin-bottom: 26px; }
 
-.flow-section { background: var(--sky-soft); }
-.flow-list { list-style: none; padding: 0; margin: 44px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-.flow-list li { position: relative; display: grid; justify-items: center; gap: 4px; text-align: center; padding: 26px 14px 22px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); }
-.flow-list li:not(:last-child)::after { content: ""; position: absolute; right: -14px; top: 48px; width: 10px; height: 10px; border-top: 2.5px solid var(--sky-deep); border-right: 2.5px solid var(--sky-deep); transform: rotate(45deg); z-index: 2; }
-.flow-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-soft); color: var(--sky-deep); margin-bottom: 6px; }
-.flow-list small { color: var(--sky-deep); font-family: var(--font-en); font-size: 11.5px; letter-spacing: .18em; font-weight: 600; }
-.flow-list strong { font-size: 16px; font-weight: 800; line-height: 1.5; }
+.flow-section { --flow-bg: var(--sky-soft); background: var(--sky-soft); }
+
+/* ご利用までの流れ（shared.tsx の FlowLine。サービス一覧と各サービスLPで共通）
+ * ステップの点を1本の線でつなぐ。線（.flowx-fill）はスクロールに合わせて --p まで進み、届いた点（.is-reached）が黄色に変わる。 */
+.flowx { --node: 52px; --gap: 14px; margin: 30px 0 0; }
+.flowx.has-icons { --node: 58px; }
+.flowx-area { position: relative; }
+.flowx-list { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: var(--gap); }
+.flowx-step { display: grid; justify-items: center; align-content: start; gap: 12px; text-align: center; }
+.flowx-track { position: absolute; top: calc(var(--node) / 2 - 1px); left: calc((100% - (var(--n, 4) - 1) * var(--gap)) / var(--n, 4) / 2); right: calc((100% - (var(--n, 4) - 1) * var(--gap)) / var(--n, 4) / 2); height: var(--m-line); border-radius: 2px; background: var(--line); overflow: hidden; }
+.flowx-fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--sky), var(--sky-deep)); transform-origin: left; }
+.motion-ready .flowx-fill { transform: scaleX(var(--p, 0)); transition: transform .3s linear; }
+.flowx-node { position: relative; z-index: 1; width: var(--node); height: var(--node); display: grid; place-items: center; border-radius: 50%; background: var(--white); color: var(--navy); border: 1.5px solid var(--line); box-shadow: 0 0 0 6px var(--flow-bg, var(--white)); transition: background var(--m-color), border-color var(--m-color), color var(--m-color); }
+.flowx-ring { position: absolute; inset: -1.5px; width: calc(100% + 3px); height: calc(100% + 3px); transform: rotate(-90deg); fill: none; stroke: var(--sky-deep); stroke-width: 2; }
+.motion-ready .flowx-ring circle { transition-duration: var(--m-icon); transition-delay: 0s; }
+.flowx-num { font-family: var(--font-en); font-size: 19px; font-weight: 700; line-height: 1; }
+.flowx-icon { display: grid; place-items: center; color: var(--sky-deep); transition: color var(--m-color); }
+.flowx-step.is-reached .flowx-node { background: var(--yellow); border-color: var(--yellow); color: var(--navy-ink); }
+.flowx-step.is-reached .flowx-icon { color: var(--navy-ink); }
+.flowx-body small { display: block; margin-bottom: 2px; color: var(--sky-deep); font-family: var(--font-en); font-size: 11.5px; letter-spacing: .18em; font-weight: 600; }
+.flowx-body h3 { margin: 0; font-size: 15.5px; font-weight: 800; line-height: 1.5; }
+.flowx-body p { margin: 4px 0 0; font-size: 13px; line-height: 1.7; color: var(--navy-soft); }
+/* 線の先：目安の期間 → 「まずは無料相談から」 → ボタン */
+.flowx-end { margin-top: 8px; display: grid; justify-items: center; gap: 10px; text-align: center; }
+.flowx-rail { position: relative; display: grid; justify-items: center; gap: 6px; }
+.flowx-drop { width: var(--m-line); height: 14px; border-radius: 2px; background: linear-gradient(var(--sky-deep), var(--yellow)); transform-origin: top; }
+.motion-ready .flowx-drop { transform: scaleY(0); transition: transform .45s var(--m-ease-line); }
+.motion-ready .flowx.is-done .flowx-drop { transform: none; }
+.flowx-note { margin: 0; display: inline-flex; align-items: center; gap: 8px; padding: 3px 14px; border-radius: 999px; background: var(--white); border: 1px solid var(--line); color: var(--sky-ink); font-size: 13.5px; font-weight: 700; line-height: 1.6; }
+.flowx-note svg { flex: none; }
+.flowx-lead { margin: 0; font-size: 15px; line-height: 1.6; font-weight: 800; letter-spacing: .02em; }
+.flowx-cta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
 .pricing-box { margin: 32px auto 36px; max-width: 860px; display: flex; align-items: center; gap: 20px; padding: 24px 30px; border-radius: 20px; background: var(--white); border: 1px solid var(--line); }
 .pricing-icon { flex: none; width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); font-family: var(--font-en); font-size: 26px; font-weight: 800; }
 .pricing-box h2 { margin: 0 0 4px; font-size: 19px; font-weight: 900; }
@@ -954,17 +1027,20 @@ a.service-card:hover .art * { animation-play-state: running; }
 .back-to-top:hover { background: var(--navy); color: var(--white); }
 
 /* 「どのサービスが合うか迷ったら」のバナー（サービス一覧ページの冒頭）。目に留まるが、うるさくない白いカード */
-.diagnose-banner-wrap { position: relative; z-index: 2; margin-top: -36px; }
-.diagnose-banner { display: flex; align-items: center; gap: 16px; max-width: 760px; margin: 0 auto; padding: 16px 18px 16px 20px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); box-shadow: 0 14px 34px rgba(13, 35, 56, .08); }
+.diagnose-banner-wrap { margin-top: -48px; padding-bottom: 96px; }
+.diagnose-banner.is-home { margin-top: 40px; }
+.diagnose-banner { display: flex; align-items: center; gap: 16px; max-width: 860px; margin: 0 auto; padding: 16px 18px 16px 20px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); box-shadow: 0 14px 34px rgba(13, 35, 56, .08); }
 .diagnose-banner img { flex: none; width: 36px; height: 36px; }
 .diagnose-banner p { flex: 1; min-width: 0; margin: 0; display: grid; gap: 2px; line-height: 1.6; }
 .diagnose-banner b { font-size: 15px; font-weight: 800; color: var(--navy-ink); }
 .diagnose-banner span { font-size: 13px; color: var(--navy-soft); }
+.diagnose-banner-actions { flex: none; display: flex; align-items: center; gap: 14px; }
+.diagnose-banner-consult { font-size: 14px; font-weight: 700; color: var(--sky-ink); text-decoration: underline; text-decoration-color: rgba(6, 104, 189, .3); text-underline-offset: 5px; transition: text-decoration-color .25s; }
+.diagnose-banner-consult:hover { text-decoration-color: currentColor; }
 .diagnose-banner button { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border: 1.5px solid var(--sky-deep); border-radius: 999px; background: var(--white); color: var(--sky-ink); font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; transition: background .25s, color .25s; }
 .diagnose-banner button:hover { background: var(--sky-deep); color: var(--white); }
 .diagnose-banner button svg { transition: transform .3s var(--ease-out); }
 .diagnose-banner button:hover svg { transform: translateX(3px); }
-.diagnose-link.is-top { margin: 0 0 40px; }
 
 /* 「どれが合うか分からない方は診断できます」の導線（控えめなテキストボタン） */
 .diagnose-link { margin: 40px 0 0; text-align: center; }
@@ -972,7 +1048,6 @@ a.service-card:hover .art * { animation-play-state: running; }
 .diagnose-link button:hover { color: var(--sky-deep); text-decoration-color: currentColor; }
 .diagnose-link button svg { flex: none; transition: transform .3s var(--ease-out); }
 .diagnose-link button:hover svg { transform: translateX(3px); }
-.diagnose-link.is-services { margin: 0; padding: 8px 0 24px; }
 .diagnose-link.is-lp { margin: 18px 0 0; text-align: left; }
 .diagnose-link.is-lp button { font-size: 13.5px; }
 
@@ -1012,6 +1087,23 @@ a.service-card:hover .art * { animation-play-state: running; }
 /* ───────────────────────────── Responsive ───────────────────────────── */
 
 @media (max-width: 980px) {
+  /* 流れ：縦並び。左の縦線はボタンの手前まで続く */
+  .flowx { --gap: 0px; }
+  .flowx-area, .flowx-end { max-width: 520px; margin-inline: auto; }
+  .flowx-list { grid-template-columns: 1fr; }
+  .flowx-step { grid-template-columns: var(--node) minmax(0, 1fr); justify-items: start; align-items: start; column-gap: 16px; padding-bottom: 18px; text-align: left; }
+  .flowx-body { padding-top: calc(var(--node) / 2 - 12px); }
+  .flowx.has-icons .flowx-body { padding-top: calc(var(--node) / 2 - 20px); }
+  .flowx-track { top: calc(var(--node) / 2); bottom: 0; left: calc(var(--node) / 2 - 1px); right: auto; width: var(--m-line); height: auto; }
+  .flowx-fill { background: linear-gradient(180deg, var(--sky), var(--sky-deep)); transform-origin: top; }
+  .motion-ready .flowx-fill { transform: scaleY(var(--p, 0)); }
+  .flowx-end { margin-top: 0; justify-items: stretch; text-align: left; }
+  .flowx-rail { justify-items: start; padding: 6px 0 0 calc(var(--node) + 16px); }
+  .flowx-drop { position: absolute; left: calc(var(--node) / 2 - 1px); top: 0; bottom: 12px; height: auto; }
+  .flowx-note { border-radius: 14px; }
+  .flowx-lead { position: relative; }
+  .flowx-lead::before { content: ""; position: absolute; left: calc(-1 * (var(--node) / 2 + 16px) - 5px); top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 4px var(--flow-bg, var(--white)); }
+  .flowx-cta { justify-content: flex-start; margin-top: 4px; }
   .section { padding: 96px 0; }
   .desktop-nav { display: none; }
   .menu-button {
@@ -1069,11 +1161,18 @@ a.service-card:hover .art * { animation-play-state: running; }
   .service-card-grid.is-detail { grid-template-columns: 1fr; }
   .style-grid { grid-template-columns: 1fr 1fr; }
   .about-values { grid-template-columns: 1fr 1fr; }
-  .flow-list { grid-template-columns: 1fr 1fr; }
-  .flow-list li:nth-child(2n)::after { display: none; }
-}
+    }
 
 @media (max-width: 640px) {
+  .flowx { --node: 44px; margin-top: 30px; }
+  .flowx.has-icons { --node: 46px; }
+  .flowx-step { padding-bottom: 14px; }
+  .flowx-body h3 { font-size: 15px; }
+  .flowx.has-icons .flowx-body small { display: inline; margin-right: 8px; }
+  .flowx.has-icons .flowx-body h3 { display: inline; }
+  .flowx.has-icons .flowx-body { padding-top: 11px; }
+  .flowx-cta { flex-direction: column; align-items: stretch; }
+  .flowx-cta .button, .flowx-cta a.line-button { width: 100%; }
   .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
   .container { width: calc(100% - 40px); }
   .section { padding: 76px 0; }
@@ -1111,7 +1210,12 @@ a.service-card:hover .art * { animation-play-state: running; }
   .service-card.is-detail .service-card-text { font-size: 13px; line-height: 1.75; }
   .service-card.is-detail .service-card-more { padding: 4px 14px 14px; }
   .style-grid { gap: 8px; margin-top: 30px; }
-  .style-grid li { padding: 16px 14px; }
+  .style-card { padding: 16px 14px; }
+  /* スマホ：光は止め、ツールは線でつながずに並べる */
+  .style-section.is-live .style-glow { animation: none; }
+  .style-wing { width: 200px; right: -60px; top: 12px; }
+  .style-tools-line { display: none; }
+  .style-tools ul { gap: 10px; }
   .style-icon { width: 44px; height: 44px; border-radius: 13px; }
   .style-grid h3 { margin-top: 10px; font-size: 14.5px; }
   .style-grid p { font-size: 12px; line-height: 1.7; }
@@ -1159,11 +1263,7 @@ a.service-card:hover .art * { animation-play-state: running; }
   .pricing-icon { width: 44px; height: 44px; font-size: 20px; }
   .pricing-box h2 { font-size: 17px; }
   .pricing-box p { font-size: 13.5px; }
-  .flow-list { gap: 10px; margin-top: 30px; }
-  .flow-list li { padding: 18px 10px 16px; }
-  .flow-icon { width: 46px; height: 46px; }
-  .flow-list strong { font-size: 14px; }
-
+        
   .filter-row { overflow-x: auto; flex-wrap: nowrap; margin-right: -20px; padding: 2px 20px 8px 2px; }
   .filter-row button { white-space: nowrap; }
   .filter-row { scrollbar-width: none; }
@@ -1191,13 +1291,15 @@ a.service-card:hover .art * { animation-play-state: running; }
   .privacy-placeholder h2 { font-size: 23px; }
   .back-to-top { right: 16px; bottom: 84px; width: 46px; height: 46px; }
   .chat-launcher { right: 14px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 56px; height: 56px; }
-  .diagnose-banner-wrap { margin-top: -24px; }
+  .diagnose-banner-wrap { margin-top: -36px; padding-bottom: 60px; }
+  .diagnose-banner.is-home { margin-top: 28px; }
   .diagnose-banner { flex-wrap: wrap; gap: 10px 12px; padding: 14px 16px; }
   .diagnose-banner img { width: 30px; height: 30px; }
   .diagnose-banner p { flex-basis: calc(100% - 42px); }
   .diagnose-banner b { font-size: 14px; }
+  .diagnose-banner-actions { width: 100%; flex-direction: column; gap: 6px; }
   .diagnose-banner button { width: 100%; justify-content: center; }
-  .diagnose-link.is-top { margin: 0 0 28px; }
+  .diagnose-banner-consult { padding: 6px 0; }
   .chat-launcher img { width: 32px; height: 32px; }
   /* スマホでチャットを開いている間は、ボタンを隠す（パネルの閉じるボタンで閉じる） */
   .chat-open .chat-launcher { display: none; }
