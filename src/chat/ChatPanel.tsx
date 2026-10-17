@@ -1,18 +1,20 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import chat from "../../content/chat.json";
 import { settings, solutions } from "../content";
 import { lineUrl, setInquiryMessage, setInquiryPreset, type Nav, type NavArgs } from "../shared";
 import { diagnose, type DiagConfig, type DiagResult } from "./diagnosis";
 import { NO_INFO, OFF_TOPIC, isConfident, search, type Knowledge } from "./search";
+import { CHAT_MARK, SHEET_QUERY } from "./ChatLauncher";
 import "./chat.css";
 
-/* ───────────────────────── 鳩博士チャット：本体（開いたときに読み込む） ─────────────────────────
+/* ───────────────────────── サポートチャット（COANA TOKYO サポートチーム）：本体（開いたときに読み込む） ─────────────────────────
  * 1. 選択式のメニュー（content/chat.json の menu）：サービスの要点と関連ページを短く案内
  * 2. 「あなたに合うサービス診断」（diagnosis.ts）：5問の選択式。AI は使わない
  * 3. 自由入力：/api/chat（functions/api/chat.ts）が Workers AI でサイトの内容だけを根拠に回答。
  *    AI が使えない・上限に達したときは、ここでサイト内の知識（/chat-knowledge.json）をキーワード検索して案内する
  * どの流れでも、購買のサイン（料金・始め方・依頼したい など）や診断の完了、数回のやりとりのあとに、
  * 押し付けない形で無料相談（お問い合わせフォーム・LINE）を提案する。会話の内容は保存しない。
+ * スマホでは全画面のシート。高さは実際の表示領域（visualViewport）に合わせ、キーボードが出ても入力欄がそのすぐ上に来る。
  */
 
 export type ChatPanelProps = { navigate: Nav; mode: "menu" | "diagnosis"; request: number; onClose: () => void };
@@ -29,6 +31,7 @@ type Msg = {
   handoff?: string; // 担当者へ引き継ぐ質問
   diagStep?: number; // 診断の質問（何問目か）
   diagResult?: DiagResult;
+  engine?: string; // 回答の出どころ（"ai" / "fallback:理由"）。画面には出さず、要素の data-engine で確認できる
 };
 
 const DIAG = chat.diagnosis as unknown as DiagConfig;
@@ -37,7 +40,7 @@ const BOOKING_URL = String((settings as { booking_url?: string }).booking_url ||
 /** 購買意欲のサイン：料金・期間・始め方・依頼したい など */
 const BUYING = /料金|費用|いくら|値段|価格|見積|予算|月額|目安|相場|期間|どのくらい|いつから|始め|開始|導入したい|依頼|任せ|頼み|頼め|お願い|申し込|契約|相談したい|検討/;
 /** 「あなたは AI／人間？」という質問 */
-const IDENTITY = /(?:あなた|鳩博士|きみ|君)(?:は|って)\s*(?:ai|ＡＩ|人間|ロボット|自動|bot|ボット|誰|何者)/i;
+const IDENTITY = /(?:あなた|きみ|君|サポートチーム)(?:は|って)\s*(?:ai|ＡＩ|人間|ロボット|自動|bot|ボット|誰|何者)/i;
 /** 個人情報らしき入力（メールアドレス・電話番号）は送らない */
 const PERSONAL = /[\w.+-]+@[\w-]+\.[\w.]+|0\d{1,4}[-ー−\s]?\d{1,4}[-ー−\s]?\d{3,4}/;
 
@@ -85,12 +88,57 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
     if (mode === "diagnosis") startDiagnosis(msgs.length === 0);
     else if (msgs.length === 0) push({ from: "bot", text: chat.greeting, note: chat.note, menu: true });
     void loadKnowledge();
-    window.setTimeout(() => (mode === "diagnosis" ? panelRef.current?.querySelector<HTMLButtonElement>(".chat-option")?.focus() : inputRef.current?.focus()), 60);
+    // スマホ（タッチ操作）では入力欄に自動でフォーカスしない（いきなりキーボードが開かないように）。パネル自体にフォーカスを移す
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    window.setTimeout(() => {
+      if (mode === "diagnosis") panelRef.current?.querySelector<HTMLButtonElement>(".chat-option")?.focus({ preventScroll: true });
+      else if (touch) panelRef.current?.focus({ preventScroll: true });
+      else inputRef.current?.focus();
+    }, 60);
   }, [request]);
-  useEffect(() => {
+  const scrollToEnd = (smooth = true) => {
     const el = logRef.current;
-    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [msgs, busy]);
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+  };
+  useEffect(() => scrollToEnd(), [msgs, busy]);
+  // スマホ：パネルを実際の表示領域（キーボードを除いた部分）にぴったり合わせる。iOS Safari ではキーボードが出ると
+  // 表示領域がずれる（offsetTop）ので、その位置と高さを CSS 変数で渡す。表示領域が変わったら最新のメッセージへ
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    const vv = window.visualViewport;
+    if (!panel) return;
+    const sheet = window.matchMedia(SHEET_QUERY);
+    const update = () => {
+      if (!sheet.matches || !vv) {
+        panel.style.removeProperty("--chat-vh");
+        panel.style.removeProperty("--chat-vtop");
+        return;
+      }
+      panel.style.setProperty("--chat-vh", Math.round(vv.height) + "px");
+      panel.style.setProperty("--chat-vtop", Math.round(vv.offsetTop) + "px");
+      scrollToEnd(false);
+    };
+    update();
+    vv?.addEventListener("resize", update);
+    vv?.addEventListener("scroll", update);
+    sheet.addEventListener("change", update);
+    return () => {
+      vv?.removeEventListener("resize", update);
+      vv?.removeEventListener("scroll", update);
+      sheet.removeEventListener("change", update);
+    };
+  }, []);
+  // 入力欄：内容に合わせて高さを伸ばす（5行ほどで止め、その先はスクロール）
+  useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    const log = logRef.current;
+    const atEnd = !log || log.scrollHeight - log.clientHeight - log.scrollTop < 24;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 132) + "px";
+    // 入力欄が伸びて会話の表示が狭くなっても、最新のメッセージが見えたままにする
+    if (atEnd) scrollToEnd(false);
+  }, [input]);
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -174,13 +222,14 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
     turnsRef.current++;
     // 「あなたはAI？」には、自動応答であることを正直に答える
     if (IDENTITY.test(message)) {
-      push({ from: "user", text: message }, { from: "bot", text: "鳩博士は、COANA TOKYOのWebサイトの内容をもとにご案内する自動応答です。詳しいご相談は、担当者がお受けします。", menu: true });
+      push({ from: "user", text: message }, { from: "bot", text: "こちらは、COANA TOKYOのWebサイトの内容をもとに自動でご案内しているチャットです（AIを利用しています）。詳しいご相談やご依頼は、担当者がお受けします。", menu: true });
       return;
     }
     questionsRef.current = [...questionsRef.current, message].slice(-3);
     push({ from: "user", text: message });
     setBusy(true);
-    const history = msgs.filter((m) => m.text && !m.menu && m.diagStep === undefined && !m.diagResult).slice(-4).map((m) => ({ role: m.from === "user" ? "user" : "assistant", text: m.text! }));
+    // 会話の流れを踏まえて答えられるよう、直前の3往復ほどを一緒に送る（あいさつ・メニュー・診断の画面は除く）
+    const history = msgs.filter((m) => m.text && !m.menu && m.diagStep === undefined && !m.diagResult).slice(-6).map((m) => ({ role: m.from === "user" ? "user" : "assistant", text: m.text! }));
     const signal = BUYING.test(message);
     try {
       const controller = new AbortController();
@@ -196,28 +245,29 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
         const sources = (data.sources ?? []) as Link[];
         const slug = sources.map((s) => s.u.match(/^\/services\/([^/#]+)/)?.[1]).find(Boolean);
         if (slug) setTopic(slug);
-        if (data.offtopic) push({ from: "bot", text: data.answer, menu: true });
-        else if (data.handoff) push({ from: "bot", text: data.answer, links: sources.slice(0, 2), handoff: message });
-        else push({ from: "bot", text: data.answer, links: sources, consult: shouldConsult(signal) });
+        const engine = "ai:" + (data.engine || "workers-ai");
+        if (data.offtopic) push({ from: "bot", text: data.answer, menu: true, engine });
+        else if (data.handoff) push({ from: "bot", text: data.answer, links: sources.slice(0, 2), handoff: message, engine });
+        else push({ from: "bot", text: data.answer, links: sources, consult: shouldConsult(signal), engine });
         return;
       }
-      await answerLocally(message, signal);
+      await answerLocally(message, signal, "fallback:" + (data?.reason || "http_" + res.status));
     } catch {
-      await answerLocally(message, signal);
+      await answerLocally(message, signal, "fallback:network");
     } finally {
       setBusy(false);
     }
   };
   /** AI が使えないとき：サイト内の知識をキーワード検索して案内する */
-  const answerLocally = async (message: string, signal: boolean) => {
+  const answerLocally = async (message: string, signal: boolean, engine: string) => {
     const knowledge = await loadKnowledge();
     const hits = knowledge && !OFF_TOPIC.test(message) ? search(knowledge, message, 3) : [];
     if (!hits.length || hits[0].score < 2) {
-      push({ from: "bot", text: chat.offtopic_text + "下のメニューからもお選びいただけます。", menu: true });
+      push({ from: "bot", text: chat.offtopic_text + "下のメニューからもお選びいただけます。", menu: true, engine });
       return;
     }
     if (NO_INFO.test(message) || !isConfident(hits, message)) {
-      push({ from: "bot", text: chat.handoff_text, handoff: message });
+      push({ from: "bot", text: chat.handoff_text, handoff: message, engine });
       return;
     }
     const top = hits[0].chunk;
@@ -226,7 +276,7 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
     const links = dedupeLinks(hits.slice(0, 2).map((h) => ({ t: h.chunk.t.replace(/[：:].*$/, "").replace(/（\d+）$/, "").replace(/^Q\. .*/, "よくあるご質問"), u: h.chunk.u })));
     const slug = top.u.match(/^\/services\/([^/#]+)/)?.[1];
     if (slug) setTopic(slug);
-    push({ from: "bot", text, note: chat.fallback_note, links, consult: shouldConsult(signal) });
+    push({ from: "bot", text, links, consult: shouldConsult(signal), engine });
   };
 
   /* ── お問い合わせへ ── */
@@ -240,17 +290,22 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
   };
   const consultMessage = () => {
     const lines: string[] = [];
-    if (diagDone) lines.push("【鳩博士の診断】", "おすすめ：" + diagDone.picks.map((p) => serviceName(p.slug)).join("、"), ...diagDone.summary.map((s) => "・" + s));
-    if (questionsRef.current.length) lines.push("【鳩博士チャットでのご質問】", ...questionsRef.current.map((q) => "・" + q));
+    if (diagDone) lines.push("【チャットでのサービス診断】", "おすすめ：" + diagDone.picks.map((p) => serviceName(p.slug)).join("、"), ...diagDone.summary.map((s) => "・" + s));
+    if (questionsRef.current.length) lines.push("【チャットでのご質問】", ...questionsRef.current.map((q) => "・" + q));
     return lines.length ? lines.join("\n") + "\n\n" : "";
   };
   const goLink = (u: string) => {
-    if (window.matchMedia("(max-width: 640px)").matches) onClose();
+    if (window.matchMedia(SHEET_QUERY).matches) onClose();
     navigate(...navArgs(u));
   };
 
+  // Enter で送信（Shift+Enter は改行）。日本語の変換を確定する Enter では送らない（isComposing・Safari の keyCode 229）。
+  // スマホ（タッチ操作）では Enter は改行のままにし、送信ボタンで送る（変換の確定と取り違えないように）
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send(); }
+    if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing || e.keyCode === 229) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    e.preventDefault();
+    void send();
   };
 
   const ConsultActions = ({ label = "無料で相談する", message, slug }: { label?: string; message: string; slug?: string }) => (
@@ -288,8 +343,8 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
       return (
         <div className="chat-result">
           <div className="chat-result-head">
-            <img src="/images/chatbot/hato-hakase-320.webp" alt="" width={88} height={88} loading="lazy" />
-            <div><p className="chat-result-en">Result</p><p className="chat-result-title">診断結果：こちらが合いそうです</p></div>
+            <span className="chat-result-mark"><img src={CHAT_MARK} alt="" width={30} height={30} /></span>
+            <div><p className="chat-result-en">Your result</p><p className="chat-result-title">診断結果：こちらが合いそうです</p></div>
           </div>
           <ol className="chat-picks">
             {r.picks.map((p) => (
@@ -316,7 +371,7 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
           </ul>
         )}
         {m.note && <p className="chat-small">{m.note}</p>}
-        {m.handoff && <ConsultActions label="この質問を担当者に送る" message={"【鳩博士チャットでのご質問】\n" + m.handoff + "\n\n"} />}
+        {m.handoff && <ConsultActions label="この質問を担当者に送る" message={"【チャットでのご質問】\n" + m.handoff + "\n\n"} />}
         {m.consult && (
           <div className="chat-consult">
             <p className="chat-consult-text">{chat.consult_text}</p>
@@ -337,12 +392,12 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
   };
 
   return (
-    <div className="chat-panel" id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-title" ref={panelRef}>
+    <div className="chat-panel" id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-title" ref={panelRef} tabIndex={-1}>
       <div className="chat-head">
-        <img src="/images/chatbot/hato-hakase-avatar-128.webp" alt="" width={40} height={40} />
+        <span className="chat-head-mark"><img src={CHAT_MARK} alt="" width={26} height={26} /></span>
         <div className="chat-head-text">
           <p id="chat-title" className="chat-title">{chat.name}</p>
-          <p className="chat-sub">COANA TOKYOのご案内</p>
+          <p className="chat-sub">{chat.subtitle}</p>
         </div>
         <button type="button" className="chat-restart" onClick={restart} aria-label="最初からやり直す" title="最初からやり直す">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" /></svg>
@@ -353,8 +408,8 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
       </div>
       <div className="chat-log" ref={logRef} role="log" aria-live="polite" aria-relevant="additions">
         {msgs.map((m) => (
-          <div key={m.id} className={m.from === "user" ? "chat-row chat-row-user" : "chat-row"}>
-            {m.from === "bot" && <img className="chat-avatar" src="/images/chatbot/hato-hakase-avatar-128.webp" alt="" width={28} height={28} />}
+          <div key={m.id} className={m.from === "user" ? "chat-row chat-row-user" : "chat-row"} data-engine={m.engine}>
+            {m.from === "bot" && <span className="chat-avatar"><img src={CHAT_MARK} alt="" width={18} height={18} /></span>}
             {m.from === "bot" && <span className="visually-hidden">{chat.name}：</span>}
             {m.from === "user" && <span className="visually-hidden">あなた：</span>}
             {renderMsg(m)}
@@ -362,14 +417,14 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
         ))}
         {busy && (
           <div className="chat-row">
-            <img className="chat-avatar" src="/images/chatbot/hato-hakase-avatar-128.webp" alt="" width={28} height={28} />
+            <span className="chat-avatar"><img src={CHAT_MARK} alt="" width={18} height={18} /></span>
             <div className="chat-bubble chat-typing" aria-label="回答を準備しています"><span /><span /><span /></div>
           </div>
         )}
       </div>
       <form className="chat-form" onSubmit={send}>
         {warn && <p className="chat-warn" role="alert">{warn}</p>}
-        <label className="visually-hidden" htmlFor="chat-input">鳩博士への質問（{MAX_CHARS}文字まで）</label>
+        <label className="visually-hidden" htmlFor="chat-input">ご質問（{MAX_CHARS}文字まで）</label>
         <textarea
           id="chat-input"
           ref={inputRef}
@@ -377,6 +432,7 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
           value={input}
           maxLength={MAX_CHARS}
           placeholder="ご質問をどうぞ（個人情報は入力しないでください）"
+          enterKeyHint="enter"
           onChange={(e) => { setInput(e.target.value); if (warn) setWarn(""); }}
           onKeyDown={onKeyDown}
         />

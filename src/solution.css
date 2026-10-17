@@ -336,7 +336,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-sticky-main { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 18px; border-radius: 12px; background: var(--sky-deep); color: var(--white); font-weight: 800; font-size: 15px; }
   .lp-sticky a.line-button { min-height: 50px; padding: 0 18px; border-radius: 12px; font-size: 14px; }
   /* 固定CTA表示中は「ページ先頭へ」ボタンとフッター下部を押し上げる（body に has-sticky-cta を付与） */
-  /* 固定バー表示中は、鳩博士のボタンと「ページ先頭へ」ボタンを固定バーの上に並べる */
+  /* 固定バー表示中は、チャットのボタンと「ページ先頭へ」ボタンを固定バーの上に並べる */
   body.has-sticky-cta .chat-launcher { bottom: 92px; }
   body.has-sticky-cta .back-to-top { bottom: 160px; }
   body.has-sticky-cta .site-footer { padding-bottom: 84px; }

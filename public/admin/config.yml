@@ -338,16 +338,16 @@ collections:
           - { label: 本文（空欄の場合は「掲載予定」と表示）, name: body, widget: markdown, required: false }
 
       - name: chat
-        label: 鳩博士チャット（メニュー・診断）
+        label: サポートチャット（メニュー・診断）
         file: content/chat.json
         fields:
-          - { label: 名前, name: name, widget: string }
+          - { label: 名前（チャットの見出し）, name: name, widget: string }
+          - { label: 名前の下の説明, name: subtitle, widget: string }
           - { label: 最初のあいさつ, name: greeting, widget: text }
           - { label: 注意書き（保存しない・個人情報）, name: note, widget: text }
           - { label: 無料相談の提案文（サイトにない条件は書かない）, name: consult_text, widget: text }
           - { label: 担当者へ引き継ぐときの文, name: handoff_text, widget: text }
           - { label: 関係のない質問への返答, name: offtopic_text, widget: text }
-          - { label: AIが使えないときの注記, name: fallback_note, widget: string }
           - label: メニュー
             name: menu
             widget: list
@@ -392,7 +392,7 @@ collections:
         fields:
           - { label: 会社名, name: company_name, widget: string }
           - { label: 公式LINEの友だち追加URL（空欄にするとLINEボタンを非表示）, name: line_url, widget: string, required: false, hint: "例：https://line.me/R/ti/p/@229ymxxk" }
-          - { label: 日程予約ツールのURL（任意）, name: booking_url, widget: string, required: false, hint: "Googleカレンダーの予約スケジュールなどのURLを入れると、お問い合わせページと鳩博士チャットに「日程を予約する」ボタンが表示されます。空欄なら表示しません。" }
+          - { label: 日程予約ツールのURL（任意）, name: booking_url, widget: string, required: false, hint: "Googleカレンダーの予約スケジュールなどのURLを入れると、お問い合わせページとサポートチャットに「日程を予約する」ボタンが表示されます。空欄なら表示しません。" }
           - { label: ファビコン（ブラウザのタブに出るアイコン）, name: favicon, widget: image, hint: "正方形のSVGまたはPNG（32×32以上）をおすすめします。公開すると約1〜2分で反映されますが、ブラウザによっては古いアイコンがしばらく残ります。" }
           - { label: スマホホーム画面用アイコン, name: apple_touch_icon, widget: image, hint: "180×180のPNG。iPhoneでホーム画面に追加したときに表示されます。" }
           - { label: SNS共有時の画像（共通）, name: og_image, widget: image, hint: "XやFacebook、LINEでURLを共有したときに表示される画像です。1200×630のJPGまたはPNG。記事ページは各記事のアイキャッチが優先されます。" }

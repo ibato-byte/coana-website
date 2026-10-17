@@ -1001,7 +1001,7 @@ function coanaPageMeta(): Plugin {
       ].join('\n')
       fs.writeFileSync(path.join(outDir, 'llms-full.txt'), llmsFull)
 
-      // ── 鳩博士チャットの知識データ（/chat-knowledge.json）。サイトの全コンテンツから自動で作るので、
+      // ── サポートチャットの知識データ（/chat-knowledge.json）。サイトの全コンテンツから自動で作るので、
       //    サイトを更新すればチャットの知識も自動で最新になる。AI の回答（functions/api/chat.ts）と、
       //    AI が使えないときのキーワード検索（src/chat）の両方がこのデータだけを根拠にする。
       type Chunk = { id: string; t: string; u: string; k: string; x: string }

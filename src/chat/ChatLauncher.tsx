@@ -3,12 +3,15 @@ import type { Nav } from "../shared";
 import type { ChatPanelProps } from "./ChatPanel";
 
 // ボタンの文言はここに直接書く（content/chat.json を読み込むと、チャットの全データが最初の読み込みに含まれてしまうため）
-const BOT_NAME = "鳩博士";
-const LAUNCHER_LABEL = "鳩博士に質問する";
+const LAUNCHER_LABEL = "COANA TOKYO サポートチームに質問・相談する";
+export const CHAT_MARK = "/images/chat/coana-mark.webp";
+/** スマホではチャットを全画面のシートにする（chat.css と同じ幅） */
+export const SHEET_QUERY = "(max-width: 640px)";
 
-/* ───────────────────────── 鳩博士チャット：画面右下の丸いボタン ─────────────────────────
+/* ───────────────────────── サポートチャット：画面右下の丸いボタン ─────────────────────────
  * ページの読み込みを遅くしないよう、ここ（ボタンだけ）を最初に読み込み、チャット本体（ChatPanel・知識データ）は開いたときに読み込む。
  * 勝手に話しかけたり動き回ったりはしない。openChat()（shared.tsx）で、診断から始めた状態で開くこともできる。
+ * スマホで開いている間は、背景のページをスクロールさせない（iOS Safari でも効くよう body を固定し、閉じたら元の位置へ戻す）。
  */
 export function ChatLauncher({ navigate }: { navigate: Nav }) {
   const [open, setOpen] = useState(false);
@@ -31,11 +34,30 @@ export function ChatLauncher({ navigate }: { navigate: Nav }) {
     return () => window.removeEventListener("coana:chat", onOpen);
   }, []);
   useEffect(() => {
-    document.documentElement.classList.toggle("chat-open", open);
+    const root = document.documentElement;
+    root.classList.toggle("chat-open", open);
+    if (!open || !window.matchMedia(SHEET_QUERY).matches) return;
+    // 背景のスクロールを止める。overflow: hidden だけでは iOS Safari で止まらないため、body ごと固定する
+    const body = document.body;
+    const y = window.scrollY;
+    const href = window.location.href;
+    const prev = { position: body.style.position, top: body.style.top, left: body.style.left, right: body.style.right };
+    Object.assign(body.style, { position: "fixed", top: `-${y}px`, left: "0", right: "0" });
+    root.classList.add("chat-scroll-lock");
+    return () => {
+      Object.assign(body.style, prev);
+      root.classList.remove("chat-scroll-lock");
+      // 同じページで閉じたときだけ元の位置へ戻す（リンクで別のページへ移ったときは、そのページの先頭のまま）
+      if (window.location.href !== href) return;
+      const behavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, y);
+      root.style.scrollBehavior = behavior;
+    };
   }, [open]);
   const close = () => {
     setOpen(false);
-    window.setTimeout(() => buttonRef.current?.focus(), 0);
+    window.setTimeout(() => buttonRef.current?.focus({ preventScroll: true }), 0);
   };
 
   return (
@@ -46,13 +68,17 @@ export function ChatLauncher({ navigate }: { navigate: Nav }) {
         className={open ? "chat-launcher is-open" : "chat-launcher"}
         aria-expanded={open}
         aria-controls="chat-panel"
-        aria-label={open ? "鳩博士のチャットを閉じる" : LAUNCHER_LABEL + "（チャットを開く）"}
+        aria-label={open ? "チャットを閉じる" : LAUNCHER_LABEL + "（チャットを開く）"}
         onClick={() => (open ? close() : show("menu"))}
         onPointerEnter={() => void load()}
         onFocus={() => void load()}
       >
-        <img src="/images/chatbot/hato-hakase-avatar-128.webp" alt="" width={64} height={64} decoding="async" />
-        <span className="chat-launcher-label" aria-hidden="true">{BOT_NAME}</span>
+        <img src={CHAT_MARK} alt="" width={34} height={34} decoding="async" />
+        {/* チャットだと分かるよう、小さな吹き出しを添える */}
+        <span className="chat-launcher-badge" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.6 3.7a.6.6 0 0 1-1-.47V16A2.5 2.5 0 0 1 4 13.5Z" /></svg>
+        </span>
+        <span className="chat-launcher-label" aria-hidden="true">ご相談</span>
       </button>
       {open && Panel && <Panel navigate={navigate} mode={mode} request={request} onClose={close} />}
     </>
