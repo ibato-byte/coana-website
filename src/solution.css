@@ -51,7 +51,8 @@
 /* 最後の行にはトップと同じアンダーライン（index.css の .title-underline）を引く */
 .lp-hero-line { display: block; animation: fade-up .8s var(--ease-out) both; }
 .lp-hero-line:nth-child(2) { animation-delay: .12s; margin-top: 2px; }
-.lp-hero-sub { margin: 16px 0 0; font-size: 15px; font-weight: 700; color: var(--navy-soft); }
+.lp-lang-en .lp-hero-title { font-size: clamp(28px, 3.1vw, 42px); letter-spacing: -.02em; }
+.lp-hero-sub { margin: 20px 0 0; font-size: 15px; font-weight: 700; color: var(--navy-soft); }
 .lp-hero-lead { margin: 22px 0 0; max-width: 560px; font-size: 15.5px; line-height: 1.95; }
 .lp-hero-facts { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 600px; }
 .lp-hero-facts li { display: grid; gap: 2px; padding: 12px 12px 12px 14px; border-radius: 14px; background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
@@ -252,7 +253,9 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 @media (max-width: 640px) {
   .lp .section { padding: 64px 0; }
   .lp-hero { padding: 104px 0 48px; }
-  .lp-hero-title { font-size: clamp(27px, 7.6vw, 34px); line-height: 1.48; }
+  /* 1行13文字前後まで（「経理も労務も総務も事務も、」）が 375px で1行に収まる大きさ */
+  .lp-hero-title { font-size: clamp(25px, 7.2vw, 32px); line-height: 1.5; }
+  .lp-lang-en .lp-hero-title { font-size: clamp(22px, 6.4vw, 28px); }
   .lp-hero-art { max-width: 300px; }
   .lp-hero-lead { margin-top: 16px; font-size: 14.5px; line-height: 1.9; }
   .lp-hero-facts { gap: 6px; }

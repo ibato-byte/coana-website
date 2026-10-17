@@ -379,6 +379,7 @@ p, li, dd { text-wrap: pretty; }
     radial-gradient(closest-side, var(--ul-c) 96%, transparent) 0 100% / var(--ul-cap) var(--ul-t) no-repeat,
     linear-gradient(var(--ul-c), var(--ul-c)) calc(var(--ul-t) / 2) 100% / calc((100% - var(--ul-t)) * var(--ul)) var(--ul-t) no-repeat,
     radial-gradient(closest-side, var(--ul-c) 96%, transparent) calc(var(--ul) * 100%) 100% / var(--ul-cap) var(--ul-t) no-repeat;
+  white-space: nowrap; /* 下線のフレーズは途中で改行しない（入りきらなければフレーズごと次の行へ） */
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   animation: underline-draw .65s cubic-bezier(.65, 0, .35, 1) both .95s;

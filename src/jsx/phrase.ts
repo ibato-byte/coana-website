@@ -15,6 +15,8 @@ const parser = new Parser(jaModel);
 const JA = /[぀-ヿ㐀-鿿]/;
 /** 文節分割しない要素：SVG の文字（自動では折り返さない）、フォーム部品、コードなど */
 const SKIP = new Set(["title", "option", "optgroup", "textarea", "script", "style", "code", "pre", "kbd", "svg", "text", "tspan", "textPath", "desc"]);
+/** 途中で改行させないフレーズ（見出しの下線）。<wbr> は white-space: nowrap の中でも改行位置になるため入れない */
+const SKIP_CLASS = /\btitle-underline\b/;
 
 /** BudouX の文節が長いとき（8文字以上）、語の切れ目でさらに分ける：カタカナ→漢字（「バックオフィス｜実務の」）、
  *  「問い合わせ」の直後（「問い合わせ｜導線の」）。狭いカードで最後の1〜2文字だけが次の行に残るのを防ぐ */
@@ -62,6 +64,8 @@ function split(text: string, key?: string): ReactNode {
 /** HTML 要素の props.children に含まれる日本語の文字列を、<wbr> 入りの断片に置き換える */
 export function withPhrases<P>(type: unknown, props: P): P {
   if (typeof type !== "string" || SKIP.has(type) || !props || typeof props !== "object") return props;
+  const className = (props as { className?: unknown }).className;
+  if (typeof className === "string" && SKIP_CLASS.test(className)) return props;
   const children = (props as { children?: unknown }).children;
   if (typeof children === "string") {
     const next = split(children);
