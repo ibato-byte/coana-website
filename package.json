@@ -10,6 +10,7 @@
     "format": "oxfmt"
   },
   "dependencies": {
+    "budoux": "^0.9.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "yaml": "^2.8.0",

@@ -21,7 +21,8 @@ export default defineConfig(({ mode }) => {
       minify: !emitSourcemaps,
     },
     plugins: [
-react(),
+      // JSX の変換先を src/jsx に（日本語の文節ごとに <wbr> を入れて、不自然な改行を防ぐ）
+      react({ jsxImportSource: '@/jsx' }),
       tailwindcss(),
       figmaSiteConfiguration(siteConfiguration),
       coanaRemoteImages(),
