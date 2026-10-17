@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import { home, settings, type Article } from "./content";
+import { ARROW_PATHS } from "./bird";
 
 /* ───────────────────────── 共通パーツ（App.tsx と SolutionPage.tsx から利用） ───────────────────────── */
 
@@ -167,24 +168,14 @@ export function SectionTitle({
   );
 }
 
-/** お問い合わせ系の主ボタン（.button-wing）の矢印。ホバー（キーボードのフォーカス）で、矢印の根元にロゴと同じ形・同じ黄色の翼が
- *  羽根1枚ずつ時差をつけて扇状に開き、矢印がわずかに前方・上方へ浮く（「相談を届ける」）。動きは index.css の .wing-arrow、
- *  カーソルへの引き寄せ・塗りの広がり・クリック時の羽ばたきは buttonFx.ts */
-const FEATHER_BIG = "M2.5 81C1 60 10 44 26 32 38 23 52 15 59 .5 61 15 56 26 46 33 33 42 15 53 5.5 78Z";
-const FEATHER_SMALL = "M9 84C17 64 33 50 50.5 40.5 49 57 37 73 13.5 85.5Z";
-export function WingArrow({ size = 19 }: { size?: number }) {
-  // 羽根の座標はロゴの翼（幅60×高さ86）のまま。0.17倍にして、根元を矢印の軸の左端に合わせる
-  const feather = (cls: string, d: string) => (
-    <g className={"wing-feather " + cls}><path transform="translate(1.6 -2.6) scale(.17)" d={d} /></g>
-  );
+/** お問い合わせ系の主ボタン（.button-fly）の矢印。ホバー（キーボードのフォーカス）で、矢印の線がつながったまま形を変え、
+ *  前へ飛ぶ鳥（鳩）になる（「相談を届ける」）。形は bird.ts、動きは buttonFx.ts。翼の先だけロゴの黄色（.bird-tip）。 */
+export function BirdArrow({ size = 19 }: { size?: number }) {
   return (
-    <svg className="wing-arrow" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <g className="wing" stroke="none">
-        {feather("wing-feather-3", FEATHER_BIG)}
-        {feather("wing-feather-1", FEATHER_SMALL)}
-        {feather("wing-feather-2", FEATHER_BIG)}
-      </g>
-      <path d="M3 12h16M14 7l5 5-5 5" />
+    <svg className="bird-arrow" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path className="bird-body" d={ARROW_PATHS.body} />
+      <path className="bird-wing" d={ARROW_PATHS.wing} />
+      <path className="bird-tip" d={ARROW_PATHS.wing} pathLength={1} />
     </svg>
   );
 }
@@ -204,13 +195,13 @@ export function LinkButton({
   secondary?: boolean;
   large?: boolean;
 }) {
-  // お問い合わせへの主ボタンだけ翼の演出にする（副ボタンは矢印が少し動くだけ）
-  const wing = !secondary && !!args && args[0] === "contact";
-  const cls = ["button", secondary ? "button-outline" : "", large ? "button-large" : "", wing ? "button-wing" : ""].filter(Boolean).join(" ");
+  // お問い合わせへの主ボタンだけ、矢印が鳥になる演出にする（副ボタンは矢印が少し動くだけ）
+  const fly = !secondary && !!args && args[0] === "contact";
+  const cls = ["button", secondary ? "button-outline" : "", large ? "button-large" : "", fly ? "button-fly" : ""].filter(Boolean).join(" ");
   if (go && args) {
     return (
       <GoLink className={cls} go={go} args={args}>
-        {children}{wing ? <WingArrow /> : <Icon name="arrow" size={19} />}
+        {children}{fly ? <BirdArrow /> : <Icon name="arrow" size={19} />}
       </GoLink>
     );
   }

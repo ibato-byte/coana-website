@@ -11,6 +11,8 @@ const NAVY = "#16334d";
 const SKY = "#55b8f3";
 const DEEP = "#087fe5";
 const YELLOW = "#ffd85a";
+/** 線に使う黄色。YELLOW のままでは淡い背景に溶けるため、少し濃いオレンジ寄りにする（「攻め」の色） */
+const AMBER = "#f2a516";
 const SOFT = "#eef6fc";
 const LINE = "#d8e7f2";
 
@@ -90,11 +92,12 @@ function CloudAccounting() {
       ))}
       <g className="art-float">
         <path d="M172 140a40 40 0 0 1-4-79.6A58 58 0 0 1 280 50a42 42 0 0 1 22 82 40 40 0 0 1-10 8Z" fill="#fff" stroke={LINE} strokeWidth="2" />
-        <g className="art-spin" style={{ transformOrigin: "236px 100px" }}>
-          <path d="M256 100a20 20 0 0 1-34 14" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" />
-          <path d="M216 100a20 20 0 0 1 34-14" stroke={SKY} strokeWidth="5" fill="none" strokeLinecap="round" />
-          <path d="m250 78 1 9-9 0" stroke={SKY} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="m222 122-1-9 9 0" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        {/* 回る矢印は、雲のふくらみの見た目の中心（下の平らな部分を除いた中心）に置く。回転の中心も同じ点 */}
+        <g className="art-spin" style={{ transformOrigin: "234px 82px" }}>
+          <path d="M254 82a20 20 0 0 1-34 14" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" />
+          <path d="M214 82a20 20 0 0 1 34-14" stroke={SKY} strokeWidth="5" fill="none" strokeLinecap="round" />
+          <path d="m248 60 1 9-9 0" stroke={SKY} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="m220 104-1-9 9 0" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </g>
       </g>
       {/* 3枚とも同じ動きで浮かせ、並びがずれて見えないようにする */}
@@ -147,7 +150,7 @@ function Startup() {
         <path d="M88 180h94M88 198h94M88 216h62" stroke={LINE} strokeWidth="6" strokeLinecap="round" />
         <path d="m92 270 22-20 18 10 30-30" stroke={DEEP} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" className="art-draw" />
       </Card>
-      <path d="M210 250 C 250 240 270 200 290 160" className="art-dash" stroke={YELLOW} strokeWidth="6" />
+      <path d="M210 250 C 250 240 270 200 290 160" className="art-dash art-dash-warm" stroke={AMBER} />
       <g className="art-bob">
         <g transform="rotate(35 330 120)">
           <path d="M330 40c26 18 38 50 34 92h-68c-4-42 8-74 34-92Z" fill="#fff" stroke={LINE} strokeWidth="2" />
@@ -307,8 +310,8 @@ export function HeroScene() {
       {/* 流れ */}
       <path d="M128 140 C 170 150 180 190 205 200" className="art-dash" stroke={DEEP} />
       <path d="M128 330 C 170 320 180 290 205 280" className="art-dash" stroke={DEEP} style={d(.5)} />
-      <path d="M375 200 C 400 190 410 150 438 136" className="art-dash" stroke={YELLOW} strokeWidth="5" style={d(.3)} />
-      <path d="M375 280 C 400 290 410 320 438 334" className="art-dash" stroke={YELLOW} strokeWidth="5" style={d(.8)} />
+      <path d="M375 200 C 400 190 410 150 438 136" className="art-dash art-dash-warm" stroke={AMBER} style={d(.3)} />
+      <path d="M375 280 C 400 290 410 320 438 334" className="art-dash art-dash-warm" stroke={AMBER} style={d(.8)} />
 
       {/* 中央：ノートPCとダッシュボード */}
       <g>
@@ -317,11 +320,14 @@ export function HeroScene() {
         <rect x="212" y="176" width="70" height="9" rx="4.5" fill={NAVY} opacity=".85" />
         <rect x="212" y="192" width="44" height="7" rx="3.5" fill={LINE} />
         {[0, 1, 2, 3, 4].map((i) => (
-          <rect key={i} x={214 + i * 22} y={272 - (18 + i * 11)} width="14" height={18 + i * 11} rx="3" fill={i === 4 ? DEEP : SKY} className="art-grow" style={d(.2 + i * .2)} />
+          // 表示したときに一度だけ、左から順に伸びて止まる（右肩上がり＝成長）
+          <rect key={i} x={214 + i * 22} y={272 - (18 + i * 11)} width="14" height={18 + i * 11} rx="3" fill={i === 4 ? DEEP : SKY} className="art-grow-once" style={d(.55 + i * .12)} />
         ))}
-        <path d="M330 262 l12 -16 12 6 14 -22" stroke={YELLOW} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" className="art-draw" />
-        <circle cx="352" cy="190" r="12" fill={DEEP} className="art-pop" style={d(1.2)} />
-        <path d="m346 190 4 4 8-9" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="art-pop" style={d(1.2)} />
+        <path d="M330 262 l12 -16 12 6 14 -22" stroke={AMBER} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" className="art-draw-once" style={d(1.25)} />
+        <g className="art-pop-once" style={d(1.7)}>
+          <circle cx="352" cy="190" r="12" fill={DEEP} />
+          <path d="m346 190 4 4 8-9" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
         <path d="M166 298h248l-16 18H182Z" fill="#c9dbe9" />
         <rect x="262" y="298" width="56" height="6" rx="3" fill="#a9c2d6" />
       </g>
@@ -338,9 +344,10 @@ export function HeroScene() {
       {/* 左下：クラウド連携 */}
       <g className="art-float" style={d(.9)}>
         <path d="M70 360a24 24 0 0 1-2-47.8A34 34 0 0 1 134 306a25 25 0 0 1 4 52Z" fill="#fff" stroke={LINE} strokeWidth="2" />
-        <g className="art-spin" style={{ transformOrigin: "100px 334px" }}>
-          <path d="M112 334a12 12 0 0 1-20 8" stroke={DEEP} strokeWidth="4" fill="none" strokeLinecap="round" />
-          <path d="M88 334a12 12 0 0 1 20-8" stroke={SKY} strokeWidth="4" fill="none" strokeLinecap="round" />
+        {/* 回る矢印は、雲のふくらみの見た目の中心に置く（回転の中心も同じ点） */}
+        <g className="art-spin" style={{ transformOrigin: "104px 325px" }}>
+          <path d="M116 325a12 12 0 0 1-20 8" stroke={DEEP} strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M92 325a12 12 0 0 1 20-8" stroke={SKY} strokeWidth="4" fill="none" strokeLinecap="round" />
         </g>
       </g>
       <text x="102" y="392" textAnchor="middle" className="hero-scene-label">ツール導入</text>
