@@ -540,7 +540,7 @@ a.service-card:hover .art * { animation-play-state: running; }
 .style-glow { position: absolute; left: -10%; top: 30%; width: 70%; height: 80%; border-radius: 50%; background: radial-gradient(closest-side, rgba(8, 127, 229, .32), rgba(8, 127, 229, 0)); }
 .style-section.is-live .style-glow { animation: style-drift 18s ease-in-out infinite alternate; }
 @keyframes style-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(28%, -12%, 0); } }
-.style-wing { position: absolute; right: -40px; top: 28px; width: 300px; height: auto; fill: none; stroke: rgba(255, 216, 90, .30); stroke-width: 1.2; stroke-linecap: round; }
+.style-wing { position: absolute; right: -70px; top: -30px; width: 280px; height: auto; fill: none; stroke: rgba(255, 216, 90, .26); stroke-width: 1.2; stroke-linecap: round; }
 .motion-ready .style-wing :is(path) { transition-duration: 2s; transition-delay: .5s; }
 .style-head { text-align: center; }
 .style-section .eyebrow { color: var(--yellow); }

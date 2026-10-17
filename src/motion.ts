@@ -28,7 +28,7 @@ export function installMotion() {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduced || !("IntersectionObserver" in window)) {
     finishAll(document);
-    new MutationObserver(() => finishAll(document)).observe(document.body, { childList: true, subtree: true });
+    watchAdded(finishAll);
     return;
   }
   root.classList.add("motion-ready");
@@ -107,40 +107,43 @@ export function installMotion() {
   window.addEventListener("scroll", schedule, { passive: true });
   window.addEventListener("resize", schedule, { passive: true });
 
-  const prepared = new WeakSet<Element>();
+  // 種類ごとに「準備済み」を記録する（1つの要素が [data-reveal] と [data-live] などを兼ねることがある）
+  const done = { reveal: new WeakSet<Element>(), draw: new WeakSet<Element>(), live: new WeakSet<Element>(), progress: new WeakSet<Element>() };
+  const once = (set: WeakSet<Element>, el: Element) => (set.has(el) ? false : (set.add(el), true));
   const scan = (scope: ParentNode) => {
     each(scope, REVEAL, (el) => {
-      if (prepared.has(el) || el.classList.contains("in")) return;
-      prepared.add(el);
-      reveal.observe(el);
+      if (once(done.reveal, el) && !el.classList.contains("in")) reveal.observe(el);
     });
     each(scope, DRAW, (el) => {
-      if (prepared.has(el)) return;
-      prepared.add(el);
-      el.querySelectorAll(SHAPES).forEach((shape) => shape.setAttribute("pathLength", "1"));
+      if (once(done.draw, el)) el.querySelectorAll(SHAPES).forEach((shape) => shape.setAttribute("pathLength", "1"));
     });
     each(scope, LIVE, (el) => {
-      if (prepared.has(el)) return;
-      prepared.add(el);
+      if (!once(done.live, el)) return;
       el.querySelectorAll<SVGSVGElement>("svg[data-smil]").forEach((svg) => svg.pauseAnimations());
       live.observe(el);
     });
     each(scope, PROGRESS, (el) => {
-      if (prepared.has(el)) return;
-      prepared.add(el);
+      if (!once(done.progress, el)) return;
       progress.set(el as HTMLElement, 0);
       near.observe(el);
     });
   };
   scan(document);
   // ページの切り替えや絞り込みで後から加わった要素も対象にする
-  let pending: Node[] = [];
+  watchAdded(scan);
+}
+
+/** 後から加わった要素を、まとめて1回だけ処理する */
+function watchAdded(fn: (scope: Element) => void) {
+  let pending: Element[] = [];
   new MutationObserver((records) => {
+    const first = pending.length === 0;
     for (const record of records) record.addedNodes.forEach((node) => node instanceof Element && pending.push(node));
-    if (pending.length === 1) queueMicrotask(() => {
+    if (!first || pending.length === 0) return;
+    queueMicrotask(() => {
       const nodes = pending;
       pending = [];
-      nodes.forEach((node) => node.isConnected && scan(node as Element));
+      nodes.forEach((node) => node.isConnected && fn(node));
     });
   }).observe(document.body, { childList: true, subtree: true });
 }
