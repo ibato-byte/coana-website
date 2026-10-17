@@ -56,6 +56,26 @@
 .art-cursor { animation: art-cursor 5.5s ease-in-out infinite; }
 @keyframes art-cursor { 0%, 100% { transform: translate(0, 0); } 30% { transform: translate(-80px, -70px); } 55% { transform: translate(-60px, -90px); } 75% { transform: translate(30px, -20px); } }
 
+/* 「攻め」側の点線（オレンジ寄りの黄色）：青い点線と同じくらい見えるよう、少し太く・点を大きくする（間隔の周期は同じ12） */
+.art-dash-warm { stroke-width: 4; stroke-dasharray: 2.5 9.5; }
+
+/* 一度だけ動いて止まるもの（トップのヒーローの棒グラフ・折れ線・チェック） */
+.art-grow-once, .art-pop-once { transform-box: fill-box; }
+.art-grow-once { transform-origin: 50% 100%; animation: art-grow-once .9s cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d, 0s); }
+@keyframes art-grow-once { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.art-draw-once { stroke-dasharray: 200; animation: art-draw-once 1s var(--ease-out) both; animation-delay: var(--d, 0s); }
+@keyframes art-draw-once { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
+.art-pop-once { transform-origin: 50% 50%; animation: art-pop-once .55s cubic-bezier(.34, 1.4, .64, 1) both; animation-delay: var(--d, 0s); }
+@keyframes art-pop-once { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* トップのヒーロー：続けて動くものは、ごく穏やかに（ゆっくり・小さく） */
+.hero-scene .art-float { animation-name: art-float-soft; animation-duration: 8s; }
+@keyframes art-float-soft { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.hero-scene .art-spin { animation-duration: 16s; }
+.hero-scene .art-dash { animation-duration: 3.2s; }
+.hero-scene .art-beat { animation: art-beat-soft 4.5s ease-in-out infinite; }
+@keyframes art-beat-soft { 0%, 22%, 100% { transform: scale(1); } 10% { transform: scale(1.1); } }
+
 .hero-scene-label { font-size: 15px; font-weight: 800; fill: #16334d; letter-spacing: .02em; }
 .hero-scene-badge { font-family: var(--font-en); font-size: 15px; font-weight: 700; letter-spacing: .12em; fill: #0d2338; }
 
