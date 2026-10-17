@@ -3,7 +3,8 @@
  * AI に渡す根拠の選び出し（functions/api/chat.ts）と、AI が使えないときのキーワード検索（ブラウザ）の両方で使う。
  * 日本語は単語に区切らず、2文字ずつの並び（バイグラム）で一致を数える。よく出る並びほど重みを下げる。
  */
-export type Chunk = { id: string; t: string; u: string; k: string; x: string };
+/** a：【聞かれたときのみ】の知識の「きっかけの言葉」。質問にどれかが含まれるときだけ使う（自分から話題にしない情報） */
+export type Chunk = { id: string; t: string; u: string; k: string; x: string; a?: string[] };
 export type Knowledge = { generated: string; site: string; chunks: Chunk[] };
 
 /** 言い換え：お客さまの言葉 → サイトで使っている言葉（検索語に足す） */
@@ -21,7 +22,11 @@ const SYNONYMS: [RegExp, string][] = [
   [/社労士|社会保険|労務|給与|勤怠/, "労務 社会保険 給与"],
   [/英語|English|外国/i, "英語 English"],
   [/地域|エリア|地方|全国|遠方|オンライン|来社|訪問/, "対応エリア 全国 オンライン"],
-  [/代表|社長|経歴|プロフィール|どんな人/, "代表プロフィール 代表メッセージ"],
+  [/代表|社長|経歴|プロフィール|どんな人|略歴/, "代表プロフィール 代表メッセージ 代表 略歴"],
+  [/読み方|読み|なんて読|何て読|ふりがな|フリガナ|名前|氏名/, "氏名と読み方"],
+  [/インスタ|instagram|dm|公式アカウント|公式sns/i, "公式Instagram インスタ"],
+  [/マニュアル|手順書/, "マニュアル"],
+  [/セキュリティ|機密|nda|秘密|情報漏|安全|権限/i, "セキュリティ 機密保持 NDA アクセス権限"],
   [/所在地|住所|場所|どこに|オフィス|事務所|会社概要|設立/, "所在地 会社概要"],
   [/創業前|起業前|開業前|これから/, "創業支援 これから起業する方"],
   [/個人情報|プライバシー|情報の扱い/, "プライバシーポリシー 個人情報"],
@@ -78,8 +83,10 @@ export function search(knowledge: Knowledge, query: string, limit = 5): { chunk:
   const n = docs.length || 1;
   const q = [...new Set(grams(expandQuery(query)))];
   if (!q.length) return [];
+  const asked = normalize(query);
   const results = docs.map(({ chunk, title, body }) => {
     let score = 0;
+    if (chunk.a && !chunk.a.some((word) => asked.includes(normalize(word)))) return { chunk, score: 0 };
     for (const g of q) {
       const tf = body.get(g);
       if (!tf) continue;
@@ -88,7 +95,8 @@ export function search(knowledge: Knowledge, query: string, limit = 5): { chunk:
       score += idf * (1 + Math.log(tf)) * (title.has(g) ? 2 : 1) * (HIRAGANA_ONLY.test(g) ? 0.2 : 1);
     }
     // 本文が長いほど一致しやすいので、少しだけ割り引く。FAQ は質問への答えそのものなので少し優先する
-    score = score / Math.sqrt(1 + chunk.x.length / 400) * (chunk.k === "faq" ? 1.25 : 1);
+    // 【聞かれたときのみ】の知識は、きっかけの言葉で直接尋ねられているので優先する
+    score = score / Math.sqrt(1 + chunk.x.length / 400) * (chunk.k === "faq" ? 1.25 : 1) * (chunk.a ? 2 : 1);
     return { chunk, score };
   }).filter((r) => r.score > 0);
   results.sort((a, b) => b.score - a.score);
@@ -115,7 +123,19 @@ export const OFF_TOPIC = /天気|ラーメン|レシピ|占い|ニュース|株�
 
 /** 「十分に関係がある」と言える一致か（言葉が少し重なっただけの結果を出さない） */
 export function isConfident(results: { chunk: Chunk; score: number }[], query: string) {
-  return results.length > 0 && results[0].score >= 6 && coverage(query, results[0].chunk) >= 0.5;
+  if (!results.length || results[0].score < 6) return false;
+  // 【聞かれたときのみ】の知識は、きっかけの言葉そのもので尋ねられたときだけ見つかるので、それで十分
+  return !!results[0].chunk.a || coverage(query, results[0].chunk) >= 0.5;
 }
 
 export const hasJapanese = (text: string) => JA.test(text);
+
+/** 回答の下に出す関連ページの名前。公式の補足知識は見出しではなく、ページの名前にする */
+export function linkTitle(knowledge: Knowledge, chunk: Chunk) {
+  const short = (t: string) => t.replace(/[：:].*$/, "").replace(/（\d+）$/, "").replace(/^Q\. .*/, "よくあるご質問");
+  if (chunk.k !== "official") return short(chunk.t);
+  if (chunk.u === "/about") return "会社概要";
+  if (chunk.u === "/services") return "サービス";
+  const page = knowledge.chunks.find((c) => c.u === chunk.u && c.k === "lp");
+  return page ? short(page.t) : "サービス";
+}
