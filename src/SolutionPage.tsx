@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { about, articles, home, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
+import { articles, home, settings, solutions, type Article, type Solution } from "./content";
+import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, lineUrl, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
  * content/solutions/*.json（CMS「サービス別ページ」）の内容を、1画面1メッセージの8セクションで描画する。
- * ヒーロー → お悩み → 仕組み → 支援内容とプラン → 事例 → 流れ → FAQ → お問い合わせ（代表の一言）。
+ * ヒーロー → お悩み → 仕組み → 支援内容とプラン → 事例 → 流れ → FAQ → お問い合わせ。
  * 文章よりアイコン・図解を優先し、空欄のセクションは表示しない。
  */
 
@@ -74,7 +74,6 @@ const LABELS = {
   ja: {
     consult: "無料で相談する",
     consultLine: "LINEで気軽に相談",
-    heroNote: "相談・お見積もりは無料。全国オンライン対応。",
     problems: "こんなお悩みはありませんか",
     bridge: ["そのお悩み、", "COANA TOKYO", "が仕組みから解決します。"],
     scheme: "支援の仕組み",
@@ -94,17 +93,14 @@ const LABELS = {
     ctaTitle: "まずは、現状をお聞かせください。",
     ctaText: "ご相談・お見積もりは無料です。何から相談すればいいか分からない段階でも大丈夫です。",
     ctaButton: "無料相談・お問い合わせ",
-    founder: "代表より",
     others: "そのほかのサービス",
     allServices: "サービス一覧を見る",
     sticky: "無料で相談する",
-    scroll: "本文へスクロール",
     facts: "サービスの特徴",
   },
   en: {
     consult: "Book a free consultation",
     consultLine: "Chat on LINE",
-    heroNote: "Consultation and quotes are free. Available online nationwide, in English.",
     problems: "Sound familiar?",
     bridge: ["We help you solve these, ", "step by step", ", with a bilingual partner on your side."],
     scheme: "How it works",
@@ -124,11 +120,9 @@ const LABELS = {
     ctaTitle: "Tell us where you are. We will take it from there.",
     ctaText: "Consultation and quotes are free. If you are not sure where to start, that is exactly where we begin.",
     ctaButton: "Contact us (free consultation)",
-    founder: "From our founder",
     others: "Other services (Japanese pages)",
     allServices: "See all services",
     sticky: "Free consultation",
-    scroll: "Scroll to content",
     facts: "Key points",
   },
 };
@@ -156,44 +150,47 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   return (
     <section className="lp-hero">
       <div className="container lp-hero-inner">
-        <div className="lp-hero-head">
+        <div className="lp-hero-copy">
           <p className="lp-hero-kicker">
-            <span className="lp-hero-en">{sol.en || "Service"}</span>
+            <span>{sol.en || "Service"}</span>
             <span className="lp-hero-label">{sol.nav_label}</span>
+            {sol.english?.slug && (
+              <GoLink className="lp-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
+                {sol.english.button || "English page"}<Icon name="arrow" size={13} />
+              </GoLink>
+            )}
           </p>
-          <h1 className={sol.catch ? "lp-hero-title" : "lp-hero-title is-plain"}>
-            {sol.catch
-              ? sol.catch.split("\n").map((line, i) => <span key={i} className="lp-hero-line">{line}</span>)
-              : sol.title}
+          <h1 className="lp-hero-title">
+            {(sol.catch || sol.title).split("\n").map((line, i) => <span key={i} className="lp-hero-line"><span>{line}</span></span>)}
           </h1>
-          {sol.catch && <p className="lp-hero-sub">{sol.title}</p>}
-        </div>
-        <div className="lp-hero-art"><HeroVideo src={sol.hero_video} fallback={<ServiceArt slug={sol.slug} />} /></div>
-        <div className="lp-hero-body">
           <p className="lp-hero-lead"><Lines text={sol.lead} /></p>
-          {facts.length > 0 && (
-            <ul className="lp-hero-facts" aria-label={L.facts}>
-              {facts.map((f) => (
-                <li key={f.value}><span className="lp-hero-fact-icon"><Icon name="check" size={15} /></span><strong>{f.value}</strong><small>{f.label}</small></li>
-              ))}
-            </ul>
-          )}
           <div className="lp-hero-actions">
-            <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
-              {L.consult}<Icon name="arrow" size={19} />
+            <GoLink className="lp-hero-button" go={navigate} args={["contact"]}>
+              {L.consult}<Icon name="arrow" size={17} />
             </GoLink>
-            <LineButton place="solution_hero" label={L.consultLine} />
+            <LineTextLink place="solution_hero" label={L.consultLine} />
           </div>
-          <p className="lp-hero-note">{sol.hero_note || L.heroNote}</p>
-          {sol.english?.slug && (
-            <GoLink className="lp-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
-              <LpIcon name="globe" size={17} />{sol.english.button || "English page"}<Icon name="arrow" size={15} />
-            </GoLink>
-          )}
         </div>
+        <div className="lp-hero-art art-line"><HeroVideo src={sol.hero_video} fallback={<ServiceArt slug={sol.slug} />} /></div>
       </div>
-      <a className="lp-hero-scroll" href="#lp-problems" aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
+      {facts.length > 0 && (
+        <div className="container">
+          <ul className="lp-hero-facts" aria-label={L.facts}>
+            {facts.map((f) => <li key={f.value}><strong>{f.value}</strong><span>{f.label}</span></li>)}
+          </ul>
+        </div>
+      )}
     </section>
+  );
+}
+
+/** LINE相談をテキストリンクとして表示（ヒーロー用。ボタンは主CTAの1つだけにする） */
+function LineTextLink({ place, label }: { place: string; label: string }) {
+  if (!lineUrl) return null;
+  return (
+    <a className="lp-hero-textlink" href={lineUrl} target="_blank" rel="noopener noreferrer" onClick={() => window.gtag?.("event", "line_click", { link_location: place })}>
+      {label}<Icon name="arrow" size={15} />
+    </a>
   );
 }
 
@@ -451,12 +448,10 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   );
 }
 
-/* ───────────────────────── 8. お問い合わせ（代表の一言つき） ───────────────────────── */
+/* ───────────────────────── 8. お問い合わせ ───────────────────────── */
 
 function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
-  const en = langOf(sol) === "en";
-  const name = en ? about.profile_name_en || about.profile_name : about.profile_name;
   return (
     <section className="lp-cta-band">
       <div className="lp-cta-orbit" aria-hidden="true" />
@@ -473,16 +468,6 @@ function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           </div>
           <a className="lp-cta-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
-        {sol.message && (
-          <figure className="lp-founder">
-            <img src={about.profile_photo || "/images/representative-shota-ibato.jpg"} alt={en ? `${name}, Founder of COANA TOKYO` : `${settings.company_name} ${about.profile_role || "代表"} ${name}`} loading="lazy" width={88} height={88} />
-            <blockquote>
-              <p className="lp-founder-title">{sol.message_title || L.founder}</p>
-              <p>{sol.message}</p>
-            </blockquote>
-            <figcaption>{L.founder}<b>{name}</b></figcaption>
-          </figure>
-        )}
       </div>
     </section>
   );

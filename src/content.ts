@@ -117,7 +117,6 @@ export type Solution = {
   hidden?: boolean;
   /* ── ページの構成（上から順）：ヒーロー → お悩み → 仕組み → 支援内容とプラン → 事例 → 流れ → FAQ → お問い合わせ。空欄のセクションは表示しない ── */
   catch?: string;
-  hero_note?: string;
   hero_facts?: { value: string; label: string }[];
   /** 実写動画（設定時はイラストの代わりに表示） */
   hero_video?: string;
@@ -146,9 +145,6 @@ export type Solution = {
   flow_note?: string;
   faq_title?: string;
   faqs?: { q: string; a: string }[];
-  /** お問い合わせ欄に添える代表の一言 */
-  message_title?: string;
-  message?: string;
   cta_title?: string;
   cta_text?: string;
   related?: string[];

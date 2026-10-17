@@ -10,7 +10,6 @@
   "description": "Bilingual support for starting a business in Japan: business plan, funding, accounting and back-office setup, and introductions to licensed professionals.",
   "catch": "Start your business in Japan\nwith a bilingual partner.",
   "lead": "Planning, back office, local customs, and licensed professionals: one bilingual point of contact for starting a company in Japan.",
-  "hero_note": "Online nationwide, with an office in Minato-ku, Tokyo.",
   "hero_facts": [
     {
       "value": "English / 日本語",
@@ -279,8 +278,6 @@
       "a": "Yes. Planning, projections, and the roadmap can all be done online before you arrive. We also prepare the materials you will need once you are here."
     }
   ],
-  "message_title": "Building in Japan should not be lonely.",
-  "message": "Founders from overseas often lose months to paperwork, language, and not knowing who to ask. We handle the Japanese side so you can focus on customers and products.",
   "cta_title": "Tell us your plan. We will tell you what comes next.",
   "cta_text": "Free, no-obligation consultation in English, online.\nThe form is in Japanese; feel free to write in English.",
   "tools_title": "Tools we work with",

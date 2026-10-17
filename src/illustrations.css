@@ -62,6 +62,24 @@
 /* 実写動画の差し替え枠（HeroVideo） */
 .hero-video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 24px; box-shadow: var(--shadow-lg); background: var(--sky-soft); }
 
+/* ── 線画モード（ヒーロー用：.art-line の中だけ） ──
+ * 円形の背景・影・浮遊をやめ、白地に紺の細線＋アクセント1色（--sky-deep）に置き換える。
+ * 色は SVG の fill / stroke 属性を CSS で上書きする（属性値で元の色を判別）。 */
+.art-line .art-deco, .art-line .art rect[opacity=".08"] { display: none; }
+.art-line .art :is(rect, circle, ellipse, path, line) { fill: #fff; stroke: var(--navy-ink); stroke-width: 1.2px; }
+.art-line .art [fill="none"] { fill: none; }
+.art-line .art [fill="#16334d"] { fill: var(--navy-ink); }
+.art-line .art :is([fill="#087fe5"], [fill="#ff6b81"]) { fill: var(--sky-deep); stroke: none; }
+.art-line .art :is([fill="#55b8f3"], [fill="#9fd3f6"], [fill="#eef6fc"], [fill="#c9dbe9"], [fill="#a9c2d6"]) { fill: #e9eef3; }
+.art-line .art [stroke="#087fe5"] { stroke: var(--sky-deep); }
+.art-line .art [stroke="#fff"] { stroke: #fff; }
+.art-line .art .art-dash { stroke: var(--navy-ink); stroke-width: 1.2px; stroke-dasharray: 2 6; }
+.art-line .art text { fill: var(--navy-ink); stroke: none; font-weight: 500; }
+.art-line .hero-scene-label { font-size: 13px; letter-spacing: .04em; }
+.art-line .hero-scene-badge { font-size: 13px; font-weight: 500; }
+/* 浮遊・回転・跳ねる動きは止め、データの流れ（点線・棒・チェック）だけ残す */
+.art-line :is(.art-float, .art-bob, .art-spin, .art-beat, .art-rise, .art-drop, .art-flame, .art-cursor, .art-blink) { animation: none; }
+
 /* 画面外の挿絵は動かさない（.art-paused は IntersectionObserver で付け外し） */
 .art-paused .art *, .art-paused.art * { animation-play-state: paused !important; }
 

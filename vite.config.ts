@@ -633,13 +633,12 @@ function coanaPageMeta(): Plugin {
         plans?: { title?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string }[]; note?: string }
         scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text?: string }[]; note?: string }
         steps_title?: string; flow?: Named[]; flow_note?: string
-        message_title?: string; message?: string
         faq_title?: string; faqs?: { q: string; a: string }[]
       }
       // 日本語／英語ページで共通の見出し（src/SolutionPage.tsx の LABELS と対応）
       const SOL_LABELS = {
-        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', founder: '代表より', faq: 'よくあるご質問', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
-        en: { home: 'Home', services: 'Services', problems: 'Sound familiar?', scheme: 'How it works', before: 'Before', after: 'After', support: 'What we do & plans', tools: 'Tools we work with', scope: 'Examples of what you can ask us', plans: 'Example plans', bestFor: 'Best for', scenarios: 'Example situations', flow: 'How to get started', founder: 'From our founder', faq: 'FAQ', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
+        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', faq: 'よくあるご質問', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
+        en: { home: 'Home', services: 'Services', problems: 'Sound familiar?', scheme: 'How it works', before: 'Before', after: 'After', support: 'What we do & plans', tools: 'Tools we work with', scope: 'Examples of what you can ask us', plans: 'Example plans', bestFor: 'Best for', scenarios: 'Example situations', flow: 'How to get started', faq: 'FAQ', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
       }
       const solLang = (sol: Solution): 'ja' | 'en' => (sol.lang === 'en' ? 'en' : 'ja')
       const solutionsDir = path.resolve(__dirname, 'content/solutions')
@@ -849,7 +848,6 @@ function coanaPageMeta(): Plugin {
         const T = SOL_LABELS[solLang(sol)]
         const pair = pairOf(sol)
         const supportTitle = sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support
-        const founder = esc(settings.company_name) + ' ' + T.founder + ' ' + esc(solLang(sol) === 'en' ? about.profile_name_en || about.profile_name : about.profile_name)
         return '<h1>' + esc(sol.title) + '</h1>' + (sol.catch ? '<p><strong>' + esc(sol.catch.replace(/\n/g, ' ')) + '</strong></p>' : '') + paras(sol.lead) +
           ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
           section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
@@ -864,7 +862,6 @@ function coanaPageMeta(): Plugin {
           section(sol.scenarios?.title || T.scenarios, (sol.scenarios && (sol.scenarios.items ?? []).length ? paras(sol.scenarios.lead) + (sol.scenarios.items ?? []).map((sc) => '<h3>' + esc(sc.name) + (sc.tag ? '（' + esc(sc.tag) + '）' : '') + '</h3>' + (sc.before ? '<p>' + T.before + '：' + esc(sc.before) + '</p>' : '') + (sc.text ? '<p>' + T.after + '：' + esc(sc.text) + '</p>' : '')).join('') + paras(sol.scenarios.note) : '')) +
           section(sol.steps_title || T.flow, ((sol.flow ?? []).length ? '<ol>' + (sol.flow ?? []).map((st) => '<li><strong>' + esc(st.name) + '</strong>' + (st.text ? ' ' + esc(st.text) : '') + '</li>').join('') + '</ol>' + paras(sol.flow_note) : '')) +
           ((sol.faqs ?? []).length ? '<section><h2>' + esc(sol.faq_title || T.faq) + '</h2><dl>' + (sol.faqs ?? []).map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' : '') +
-          section(sol.message_title || T.founder, (sol.message ? paras(sol.message) + '<p>' + founder + '</p>' : '')) +
           '<p>' + anchor('/contact', T.contact) + ' ' + anchor('/services', T.list) + (pair ? ' ' + anchor('/services/' + pair.slug, T.english) : '') + '</p>'
       }
       const mdList = (items: string[] | undefined) => (items ?? []).map((i) => '- ' + i).join('\n')
