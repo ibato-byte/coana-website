@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, WingArrow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
@@ -196,8 +196,8 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
             </ul>
           )}
           <div className="lp-hero-actions">
-            <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
-              {L.consult}<Icon name="arrow" size={19} />
+            <GoLink className="button button-large button-wing lp-button-primary" go={navigate} args={["contact"]}>
+              {L.consult}<WingArrow />
             </GoLink>
             <LineButton place="solution_hero" label={L.consultLine} />
           </div>
@@ -458,8 +458,8 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
         </ol>
         {sol.flow_note && <p className="lp-flow-note"><LpIcon name="clock" size={16} />{sol.flow_note}</p>}
         <div className="lp-cta-row">
-          <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
-            {L.consult}<Icon name="arrow" size={19} />
+          <GoLink className="button button-large button-wing lp-button-primary" go={navigate} args={["contact"]}>
+            {L.consult}<WingArrow />
           </GoLink>
           <LineButton place="solution_flow" label={L.consultLine} />
         </div>
@@ -481,8 +481,8 @@ function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           <h2>{sol.cta_title || L.ctaTitle}</h2>
           <p><Lines text={sol.cta_text || L.ctaText} /></p>
           <div className="lp-cta-actions">
-            <GoLink className="button button-large" go={navigate} args={["contact"]}>
-              {L.ctaButton}<Icon name="arrow" size={19} />
+            <GoLink className="button button-large button-wing" go={navigate} args={["contact"]}>
+              {L.ctaButton}<WingArrow />
             </GoLink>
             <LineButton place="solution_cta" label={L.consultLine} />
           </div>

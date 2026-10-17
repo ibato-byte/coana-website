@@ -157,23 +157,88 @@ p, li, dd { text-wrap: pretty; }
   justify-content: center;
   gap: 14px;
   font-weight: 700;
-  overflow: hidden;
   isolation: isolate;
-  transition: transform .25s var(--ease-out), background .25s, border-color .25s, color .25s, box-shadow .25s;
+  transition: background .3s, border-color .3s, color .3s;
 }
-.button::after {
+.button:hover { background: var(--navy-ink); border-color: var(--navy-ink); }
+/* 副ボタン・ふつうのボタンは矢印が少し右へ動くだけ */
+.button > svg { flex: none; transition: transform .35s var(--ease-out); }
+.button:hover > svg { transform: translateX(4px); }
+
+/* ── お問い合わせ系の主ボタン（.button-wing ＋ WingArrow）────────────────────────────────
+ * カーソルを当てると：
+ *   1. カーソルが入ってきた位置から、わずかに深い色の塗りが広がる（::before。--fx / --fy は buttonFx.ts）
+ *   2. 矢印の根元に、ロゴと同じ形・同じ黄色の翼が、羽根1枚ずつ 35ms の時差で扇状に開く（少しためて開き、そっと落ち着く）
+ *   3. 矢印がわずかに前方・上方へ浮く。ボタン全体はカーソルへ数px引き寄せられる（--mx / --my）
+ * 押した瞬間は翼が一度だけ強く羽ばたく（.is-flap）。カーソルを外すと翼は逆の順にたたまれ、塗りは出ていく位置へ縮む。
+ * 動かすのは transform と opacity だけ。動きはボタンの中に収まる。タッチ端末では翼・引き寄せは出さない（hover: hover の中だけ）。
+ * キーボードのフォーカスでも翼が開き、塗りは中央から広がる。 */
+.button-wing {
+  --btn-bg: var(--navy);
+  --btn-fill: var(--navy-ink);
+  --spring: linear(0, 0.022, 0.08, 0.164, 0.265, 0.375, 0.488, 0.598, 0.702, 0.796, 0.879, 0.949, 1.006, 1.051, 1.084, 1.107, 1.12, 1.126, 1.125, 1.119, 1.11, 1.097, 1.084, 1.069, 1.055, 1.042, 1.03, 1.019, 1.009, 1.001, 0.995, 0.991, 0.987, 0.985, 0.984, 0.984, 0.985, 0.986, 0.987, 0.989, 1);
+  --wing-open: linear(0, -0.024, -0.041, -0.045, -0.035, -0.015, 0.006, 0.065, 0.168, 0.295, 0.431, 0.565, 0.688, 0.795, 0.885, 0.955, 1.008, 1.045, 1.068, 1.08, 1.084, 1.08, 1.073, 1.063, 1.051, 1.04, 1.029, 1.02, 1.012, 1.006, 1.001, 0.997, 0.995, 0.994, 0.993, 0.993, 0.994, 0.994, 0.995, 0.996, 1);
+  overflow: hidden;
+  background-color: var(--btn-bg) !important; /* 色は ::before の塗りで深くする（:hover の背景色の切り替えは使わない） */
+  transform: translate(var(--mx, 0px), var(--my, 0px));
+  transition: transform .6s cubic-bezier(.2, .8, .3, 1.1), border-color .35s, color .3s;
+  transition: transform .6s var(--spring), border-color .35s, color .3s;
+}
+.button-wing::before {
   content: "";
   position: absolute;
-  inset: 0;
   z-index: -1;
-  background: linear-gradient(110deg, transparent 32%, rgba(255, 255, 255, .28) 50%, transparent 68%);
-  transform: translateX(-130%);
-  transition: transform .7s var(--ease-out);
+  left: var(--fx, 50%);
+  top: var(--fy, 50%);
+  width: 240%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--btn-fill);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+  pointer-events: none;
 }
-.button:hover { background: var(--sky-deep); border-color: var(--sky-deep); transform: translateY(-2px); box-shadow: 0 12px 26px rgba(8, 127, 229, .3); }
-.button:hover::after { transform: translateX(130%); }
-.button svg { transition: transform .35s var(--ease-out); }
-.button:hover svg { transform: translateX(4px); }
+.button-wing:focus-visible::before { transform: translate(-50%, -50%) scale(1); }
+.button.button-wing:focus-visible { border-color: var(--btn-fill); }
+
+.wing-arrow { overflow: visible; }
+.button > .wing-arrow { transition: transform .5s cubic-bezier(.22, 1, .36, 1); transition: transform .55s var(--spring); }
+.wing { transform-box: view-box; transform-origin: 2.2px 11.4px; }
+.wing-feather {
+  fill: #fcba35;
+  transform-box: view-box;
+  transform-origin: 2.2px 11.4px;
+  transform: rotate(64deg) scale(.4);
+  opacity: 0;
+  /* たたむとき：先端側の羽根から順に（開くときの逆） */
+  transition: transform .3s cubic-bezier(.4, 0, .2, 1), opacity .18s .1s;
+}
+.wing-feather-2 { transition-delay: 35ms, 135ms; }
+.wing-feather-1 { transition-delay: 70ms, 170ms; }
+.wing-feather-3 { fill: #fdd47a; }
+/* 開いた状態：根元側の羽根（1）から順に 35ms ずつ遅れて開く。3枚目は少し外へ広げ、羽根の重なりを見せる */
+.button-wing:focus-visible .wing-arrow { transform: translate(1.5px, -1.5px); }
+.button-wing:focus-visible .wing-feather { transform: none; opacity: 1; transition: transform .72s cubic-bezier(.5, -.3, .3, 1.15), opacity .14s; transition: transform .72s var(--wing-open), opacity .14s; }
+.button-wing:focus-visible .wing-feather-1 { transition-delay: 0s; }
+.button-wing:focus-visible .wing-feather-2 { transition-delay: 35ms; }
+.button-wing:focus-visible .wing-feather-3 { transform: rotate(-17deg); opacity: .9; transition-delay: 70ms; }
+@media (hover: hover) {
+  .button-wing:hover::before { transform: translate(-50%, -50%) scale(1); }
+  .button.button-wing:hover { border-color: var(--btn-fill); }
+  .button-wing:hover .wing-arrow { transform: translate(1.5px, -1.5px); }
+  .button-wing:hover .wing-feather { transform: none; opacity: 1; transition: transform .72s cubic-bezier(.5, -.3, .3, 1.15), opacity .14s; transition: transform .72s var(--wing-open), opacity .14s; }
+  .button-wing:hover .wing-feather-1 { transition-delay: 0s; }
+  .button-wing:hover .wing-feather-2 { transition-delay: 35ms; }
+  .button-wing:hover .wing-feather-3 { transform: rotate(-17deg); opacity: .9; transition-delay: 70ms; }
+}
+/* 押した瞬間の羽ばたき（翼全体を一度だけ打ち下ろして戻す） */
+.button-wing.is-flap .wing { animation: wing-flap .48s cubic-bezier(.3, 0, .2, 1); }
+@keyframes wing-flap {
+  0% { transform: none; }
+  30% { transform: rotate(-22deg) scale(1.08); }
+  62% { transform: rotate(9deg); }
+  100% { transform: none; }
+}
 .button-small { min-height: 46px; padding: 9px 22px; font-size: 14px; gap: 10px; }
 .button-large { min-height: 62px; padding: 16px 42px; font-size: 17px; }
 .button-outline { background: transparent; color: var(--navy); }
@@ -424,6 +489,7 @@ p, li, dd { text-wrap: pretty; }
 .hero-body .button-row { margin-top: 26px; }
 .hero .button { border-color: var(--sky-deep); background: var(--sky-deep); box-shadow: 0 12px 26px rgba(8, 127, 229, .26); }
 .hero .button:hover { border-color: var(--sky-ink); background: var(--sky-ink); }
+.hero .button-wing { --btn-bg: var(--sky-deep); --btn-fill: var(--sky-ink); }
 .hero .button-outline { border-color: var(--line); background: var(--white); color: var(--navy); box-shadow: var(--shadow-sm); }
 .hero .button-outline:hover { border-color: var(--navy); background: var(--navy); color: var(--white); }
 .hero-badges { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -609,7 +675,8 @@ a.service-card:hover .art * { animation-play-state: running; }
 .contact-band p { margin: 0; line-height: 2.1; opacity: .96; }
 .contact-band-action { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .contact-band .button { background: var(--white); border-color: var(--white); color: var(--navy); min-width: 250px; box-shadow: 0 14px 34px rgba(4, 48, 86, .3); }
-.contact-band .button:hover { background: var(--navy-ink); border-color: var(--navy-ink); color: var(--white); }
+.contact-band .button:hover { background: #e8f3fc; border-color: #e8f3fc; color: var(--navy-ink); }
+.contact-band .button-wing { --btn-bg: var(--white); --btn-fill: #e8f3fc; }
 .contact-band-mail { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-en); font-size: 14px; font-weight: 600; letter-spacing: .04em; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, .55); padding-bottom: 2px; }
 .contact-band-mail:hover { color: var(--yellow); border-color: var(--yellow); }
 
@@ -1104,6 +1171,9 @@ a.service-card:hover .art * { animation-play-state: running; }
   /* アンダーラインは最初から引かれた状態で表示し、キーワードは切り替えない（App.tsx） */
   .title-underline { animation: none !important; --ul: 1; }
   .contact-band, .contact-orbit { animation: none !important; }
+  /* 翼は出さず、矢印のまま。ボタンも動かさない（色が深くなるだけ） */
+  .wing-arrow, .button-wing { transform: none !important; }
+  .wing { display: none; }
 }
 
 /* ───────────────────────────── サービス別の専用ページ ───────────────────────────── */
