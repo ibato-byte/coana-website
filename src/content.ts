@@ -93,7 +93,8 @@ export const articles: Article[] = Object.entries(files)
       category: fm.category ?? "お知らせ",
       summary: fm.summary ?? "",
       thumbnail: fm.thumbnail || undefined,
-      html: marked.parse(body, { async: false }) as string,
+      // チェックリスト（- [ ]）の四角は飾り（本文の文が内容）。読み上げでは「ラベルのない入力欄」にならないよう隠す
+      html: (marked.parse(body, { async: false }) as string).replace(/<input ([^>]*type="checkbox"[^>]*)>/g, '<input $1 aria-hidden="true" tabindex="-1">'),
     } as Article;
   })
   .filter((a): a is Article => a !== null)

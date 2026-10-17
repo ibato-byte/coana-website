@@ -37,7 +37,6 @@ const SYNONYMS: [RegExp, string][] = [
 ];
 
 const normalize = (text: string) => text.normalize("NFKC").toLowerCase().replace(/\s+/g, " ");
-const JA = /[ぁ-ゖァ-ヺー一-龠々]/;
 
 /** 検索に使う言葉のかけら：日本語は2文字ずつ、英数字は単語ごと */
 export function grams(text: string): string[] {
@@ -128,7 +127,6 @@ export function isConfident(results: { chunk: Chunk; score: number }[], query: s
   return !!results[0].chunk.a || coverage(query, results[0].chunk) >= 0.5;
 }
 
-export const hasJapanese = (text: string) => JA.test(text);
 
 /** 回答の下に出す関連ページの名前。公式の補足知識は見出しではなく、ページの名前にする */
 export function linkTitle(knowledge: Knowledge, chunk: Chunk) {

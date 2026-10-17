@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, openChat, setInquiryPreset, type Nav } from "./shared";
+import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
@@ -352,7 +353,7 @@ function SchemeFlow({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
  *  - 「動きを減らす」設定では動かさず、全工程を完了した状態で見せる。 */
 type LaneNode = NonNullable<NonNullable<Solution["scheme"]>["nodes"]>[number];
 /** 再生時間：PC 約2.6秒。スマホは順路が縦に長いので少しゆっくり */
-const lanesMs = () => (window.matchMedia("(max-width: 760px)").matches ? 3400 : 2600);
+const lanesMs = () => (window.matchMedia("(max-width: 980px)").matches ? 3400 : 2600);
 
 function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const nodes = (scheme.nodes ?? []) as LaneNode[];
@@ -683,10 +684,10 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           note={sol.flow_note && <><LpIcon name="clock" size={16} />{sol.flow_note}</>}
           lead={L.flowLead}
         >
+          {/* LINE はヒーロー・ページ下部のお問い合わせ帯・スマホの固定バーにあるので、ここは相談ボタン1つに絞る */}
           <GoLink className="button button-large button-fly lp-button-primary" go={navigate} args={["contact"]}>
             {L.consult}<BirdArrow />
           </GoLink>
-          <LineButton place="solution_flow" label={L.consultLine} />
         </FlowLine>
       </div>
     </section>
@@ -738,6 +739,10 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
         {L.sticky}<Icon name="arrow" size={17} />
       </GoLink>
       <LineButton place="solution_sticky" label="LINE" tabIndex={show ? 0 : -1} />
+      {/* チャットはこのバーにまとめる（固定バーの表示中は、画面右下のチャットのボタンは出さない） */}
+      <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label="COANA TOKYO サポートチームにチャットで相談・診断する">
+        <img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" />
+      </button>
     </div>
   );
 }
