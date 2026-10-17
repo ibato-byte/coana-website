@@ -438,6 +438,20 @@ p, li, dd { text-wrap: pretty; }
   animation: underline-draw .65s cubic-bezier(.65, 0, .35, 1) both .95s;
 }
 @keyframes underline-draw { from { --ul: 0; } to { --ul: 1; } }
+/* トップのヒーローだけ：下線は鳩（heroDove.tsx）が引く。--ul は鳩の位置に合わせて JS が進める。
+ * 引いている間は、線の先端（--tip）を少し細長くして、筆で引いたような質感に。引き終えたら他の下線と同じ丸い端に戻る */
+.title-underline.is-dove {
+  --tip: 1;
+  position: relative;
+  animation: none;
+  background:
+    radial-gradient(closest-side, var(--ul-c) 96%, transparent) 0 100% / var(--ul-cap) var(--ul-t) no-repeat,
+    linear-gradient(var(--ul-c), var(--ul-c)) calc(var(--ul-t) / 2) 100% / calc((100% - var(--ul-t)) * var(--ul)) var(--ul-t) no-repeat,
+    radial-gradient(closest-side, var(--ul-c) 96%, transparent) calc(var(--ul) * 100%) calc(100% - var(--ul-t) * .2 * var(--tip)) / calc(var(--ul-cap) * (1 + 1.4 * var(--tip))) calc(var(--ul-t) * (1 - .4 * var(--tip))) no-repeat;
+}
+.hero-dove { position: absolute; left: 0; top: 0; width: 25px; height: 25px; opacity: 0; pointer-events: none; transform-origin: 40% 60%; will-change: transform, opacity; }
+.hero-dove svg { display: block; width: 100%; height: 100%; overflow: visible; stroke: var(--navy-ink); }
+.hero-dove .dove-tip { stroke: #fcba35; stroke-dasharray: .22 1; stroke-dashoffset: -.78; }
 
 .hero-anim { animation: fade-up .8s var(--ease-out) both; }
 .hero-line { animation: fade-up .8s var(--ease-out) both; }

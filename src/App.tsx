@@ -4,6 +4,7 @@ import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLin
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 import { ChatLauncher } from "./chat/ChatLauncher";
+import { HeroDove, dovePlayed } from "./heroDove";
 
 declare global {
   interface Window {
@@ -180,6 +181,7 @@ function Footer({ navigate }: { navigate: Nav }) {
 
 /** ヒーローの回転ワード：最初の切り替えまでの時間（見出し→下線が引き終わってから）と、切り替えの間隔 */
 const SOLVE_FIRST_MS = 3000;
+const SOLVE_AFTER_DOVE_MS = 1000;
 const SOLVE_INTERVAL_MS = 2600;
 
 /** 「〇〇の悩みを、仕組みで解決。」のキーワード。古い語が上へ抜け、新しい語が下からマスク内に入る。
@@ -204,8 +206,18 @@ function SolveWords({ words, rest }: { words: string[]; rest: string }) {
     if (reduceMotion || words.length < 2) return;
     let id = 0;
     const next = () => setState((s) => ({ cur: (s.cur + 1) % words.length, prev: s.cur, tick: s.tick + 1 }));
-    const first = window.setTimeout(() => { next(); id = window.setInterval(next, SOLVE_INTERVAL_MS); }, SOLVE_FIRST_MS);
-    return () => { window.clearTimeout(first); window.clearInterval(id); };
+    // 下線の鳩が飛び去ってから切り替え始める（鳩がいないときや、合図が来ないときは SOLVE_FIRST_MS 後）
+    let first = 0;
+    const begin = (wait: number) => {
+      if (id) return; // もう切り替え始めている
+      window.clearTimeout(first);
+      first = window.setTimeout(() => { next(); id = window.setInterval(next, SOLVE_INTERVAL_MS); }, wait);
+    };
+    const onDove = () => begin(SOLVE_AFTER_DOVE_MS);
+    const flying = !!document.querySelector(".title-underline.is-dove:not(.is-done)");
+    begin(flying ? SOLVE_FIRST_MS + 2000 : SOLVE_FIRST_MS);
+    window.addEventListener("coana:dove-done", onDove, { once: true });
+    return () => { window.clearTimeout(first); window.clearInterval(id); window.removeEventListener("coana:dove-done", onDove); };
   }, [reduceMotion, words.length]);
   const { cur, prev, tick } = state;
   return (
@@ -228,6 +240,7 @@ function SolveWords({ words, rest }: { words: string[]; rest: string }) {
 
 function HeroSection({ navigate }: { navigate: Nav }) {
   const words: string[] = home.hero_words ?? ["経理", "業務フロー", "ツール導入", "営業・集客"];
+  const [dove] = useState(() => !dovePlayed() && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   return (
     <section className="hero">
       <div className="container hero-grid">
@@ -235,7 +248,10 @@ function HeroSection({ navigate }: { navigate: Nav }) {
           <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
           <h1>
             <span className="hero-line">{home.hero_line1}</span>
-            <span className="hero-line"><span className="title-underline">{home.hero_line2}</span></span>
+            <span className="hero-line">
+              {/* 下線は、ページを開いたときに1回だけ鳩が引いて飛び去る（heroDove.tsx）。動きを減らす設定・2回目以降は最初から引かれた状態 */}
+              <span className={dove ? "title-underline is-dove" : "title-underline"}>{home.hero_line2}{dove && <HeroDove />}</span>
+            </span>
           </h1>
           <SolveWords words={words} rest={home.hero_solve_text} />
         </div>
