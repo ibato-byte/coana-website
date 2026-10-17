@@ -30,6 +30,35 @@ export function takeInquiryPreset() {
   } catch { return ""; }
 }
 
+// 鳩博士チャットの「無料で相談する」→ お問い合わせフォームの本文に、診断・質問の要点を引き継ぐ（お客さまが確認・編集してから送信）
+const INQUIRY_MESSAGE_KEY = "coana_inquiry_message";
+export function setInquiryMessage(message: string) {
+  try { sessionStorage.setItem(INQUIRY_MESSAGE_KEY, message); } catch { /* storage unavailable */ }
+}
+export function takeInquiryMessage() {
+  try {
+    const value = sessionStorage.getItem(INQUIRY_MESSAGE_KEY) || "";
+    sessionStorage.removeItem(INQUIRY_MESSAGE_KEY);
+    return value;
+  } catch { return ""; }
+}
+
+/** 「どれが合うか分からない方は診断できます」の控えめな導線。押すと鳩博士チャットが診断から開く */
+export function DiagnoseLink({ className = "" }: { className?: string }) {
+  return (
+    <p className={className ? "diagnose-link " + className : "diagnose-link"}>
+      <button type="button" onClick={() => openChat("diagnosis")}>
+        どれが合うか分からない方は、約1分の診断で合うサービスをご案内します<Icon name="arrow" size={16} />
+      </button>
+    </p>
+  );
+}
+
+/** 鳩博士チャットを開く（mode: "diagnosis" で診断から始める）。ChatLauncher が受け取る */
+export function openChat(mode: "menu" | "diagnosis" = "menu") {
+  window.dispatchEvent(new CustomEvent("coana:chat", { detail: { mode } }));
+}
+
 export const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, string> = {
   home: "/",
   about: "/about",

@@ -885,6 +885,17 @@ a.service-card:hover .art * { animation-play-state: running; }
 .field input:focus, .field select:focus, .field textarea:focus { background: var(--white); border-color: var(--sky-deep); box-shadow: 0 0 0 4px rgba(8, 127, 229, .12); outline: none; }
 .field [aria-invalid="true"] { border-color: var(--error); background: #fffafa; }
 .field-error { display: block; color: var(--error); font-size: 13px; margin-top: 8px; font-weight: 600; }
+.field-hint { display: block; margin: -4px 0 10px; font-size: 13px; color: var(--navy-soft); }
+/* オンライン面談の希望と日時（任意） */
+.meeting-fieldset { margin: 0; padding: 28px 0; border: 0; border-top: 1px solid var(--line); }
+.meeting-fieldset legend { float: left; width: 100%; padding: 0; }
+.meeting-check { clear: both; justify-content: flex-start; margin: 0; }
+.meeting-dates { margin-top: 16px; display: grid; gap: 10px; }
+.meeting-dates .field-hint { margin: 0 0 2px; }
+.meeting-date { display: grid; grid-template-columns: 84px 1fr; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; }
+.meeting-date input { width: 100%; border: 1.5px solid #c3d5e1; border-radius: 10px; background: var(--paper); padding: 12px 14px; color: var(--navy); }
+.meeting-date input:focus { background: var(--white); border-color: var(--sky-deep); box-shadow: 0 0 0 4px rgba(8, 127, 229, .12); outline: none; }
+.booking-notice .button { flex: none; }
 .consent { display: flex; align-items: flex-start; justify-content: center; gap: 12px; margin: 40px 0 0; cursor: pointer; }
 .consent input { width: 20px; height: 20px; margin-top: 5px; accent-color: var(--navy); }
 .consent a { text-decoration: underline; text-underline-offset: 3px; }
@@ -939,6 +950,41 @@ a.service-card:hover .art * { animation-play-state: running; }
 }
 .back-to-top.show { opacity: 1; transform: none; pointer-events: auto; }
 .back-to-top:hover { background: var(--navy); color: var(--white); }
+
+/* 「どれが合うか分からない方は診断できます」の導線（控えめなテキストボタン） */
+.diagnose-link { margin: 40px 0 0; text-align: center; }
+.diagnose-link button { display: inline-flex; align-items: center; gap: 8px; padding: 6px 2px; border: 0; background: none; color: var(--sky-ink); font: inherit; font-size: 14.5px; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(6, 104, 189, .3); text-underline-offset: 5px; cursor: pointer; transition: text-decoration-color .25s, color .25s; }
+.diagnose-link button:hover { color: var(--sky-deep); text-decoration-color: currentColor; }
+.diagnose-link button svg { flex: none; transition: transform .3s var(--ease-out); }
+.diagnose-link button:hover svg { transform: translateX(3px); }
+.diagnose-link.is-services { margin: 0; padding: 8px 0 24px; }
+.diagnose-link.is-lp { margin: 18px 0 0; text-align: left; }
+.diagnose-link.is-lp button { font-size: 13.5px; }
+
+/* ───────────────────────────── 鳩博士チャットの丸いボタン ─────────────────────────────
+ * チャット本体の見た目は src/chat/chat.css（開いたときに読み込む）。「ページ先頭へ」ボタンはこのボタンの上に並べる。 */
+.chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 58;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  background: #f6f1e7;
+  box-shadow: 0 10px 26px rgba(13, 35, 56, .22), 0 0 0 1px var(--line);
+  cursor: pointer;
+  transition: transform .3s var(--ease-out), box-shadow .3s;
+}
+.chat-launcher img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.chat-launcher:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(13, 35, 56, .26), 0 0 0 1px var(--line); }
+.chat-launcher:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.chat-launcher-label { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); padding: 0 7px; border-radius: 999px; background: var(--navy); color: var(--white); font-size: 10px; font-weight: 800; line-height: 1.7; white-space: nowrap; }
+.chat-launcher.is-open { box-shadow: 0 0 0 3px var(--sky-deep), 0 10px 26px rgba(13, 35, 56, .22); }
+.back-to-top { bottom: 98px; }
+.menu-open .chat-launcher { display: none; }
 
 /* ───────────────────────────── Responsive ───────────────────────────── */
 
@@ -1114,12 +1160,16 @@ a.service-card:hover .art * { animation-play-state: running; }
   .form-actions { margin-top: 44px; }
   .direct-contact { margin-top: 64px; }
   .confirm-list > div { grid-template-columns: 1fr; gap: 6px; }
+  .meeting-date { grid-template-columns: 1fr; gap: 6px; }
   .confirm-list dt { font-size: 13px; color: var(--sky-deep); }
   .status-page { padding-left: 20px; padding-right: 20px; }
   .status-page h2 { font-size: 26px; }
   .privacy-placeholder { padding: 60px 20px; }
   .privacy-placeholder h2 { font-size: 23px; }
-  .back-to-top { right: 16px; bottom: 16px; width: 46px; height: 46px; }
+  .back-to-top { right: 16px; bottom: 84px; width: 46px; height: 46px; }
+  .chat-launcher { right: 14px; bottom: 16px; width: 56px; height: 56px; }
+  /* スマホでチャットを開いている間は、ボタンを隠す（パネルの閉じるボタンで閉じる） */
+  .chat-open .chat-launcher { display: none; }
 }
 
 /* ───────────────────────────── Reduced motion ───────────────────────────── */

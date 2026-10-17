@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, BirdArrow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
@@ -577,6 +577,7 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
                 <Icon name="arrow" size={18} />
               </GoLink>
             </div>
+            {langOf(sol) === "ja" && <DiagnoseLink className="is-lp" />}
           </div>
         </div>
       </section>
