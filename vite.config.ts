@@ -612,7 +612,7 @@ function coanaPageMeta(): Plugin {
       const faqPage = faqs.length ? [{ '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []
 
       const pages: PageMeta[] = [
-        { path: '/', title: homeTitle, description: '', preload: home.hero_image, jsonld: graph(...faqPage) },
+        { path: '/', title: homeTitle, description: '', jsonld: graph(...faqPage) },
         { path: '/about', crumb: '会社概要', title: '会社概要・代表メッセージ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者のバックオフィスとマーケティングを支える当社の考え方、代表メッセージ、代表プロフィール、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
         { path: '/services', crumb: 'サービス', title: 'サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援' + SUFFIX, description: '中小企業・小規模事業者に向けた、経理・業務フローの改善と実務代行、創業支援、会計・勤怠・販売管理などITツール・クラウドツールの導入支援、営業・セミナー・SNS・Webサイト制作のマーケティング支援。料金は個別お見積もり。', jsonld: graph(crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }])) },
         { path: '/topics', crumb: 'トピックス', title: 'トピックス｜セミナー登壇・メディア掲載・お知らせ' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。経理DXやクラウド会計に関する講座・記事もご紹介。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
@@ -623,27 +623,22 @@ function coanaPageMeta(): Plugin {
       // サービス別の専用ページ（content/solutions/*.json）
       type Named = { name: string; text?: string }
       type Solution = {
-        slug: string; order?: number; nav_label?: string; title: string; seo_title?: string; description?: string; lead?: string; catch?: string; hero_image?: string
+        slug: string; order?: number; nav_label?: string; title: string; seo_title?: string; description?: string; lead?: string; catch?: string
         lang?: 'ja' | 'en'; hidden?: boolean; english?: { slug?: string }
         hero_facts?: { value: string; label: string }[]
-        target_title?: string; target?: Named[]
         problems_title?: string; problems?: string[]
-        scheme?: { title?: string; lead?: string; center?: { label?: string; sub?: string }; nodes?: { label: string; sub?: string; sub2?: string }[]; points?: Named[]; note?: string }
-        outcome_title?: string; outcome_lead?: string; outcomes?: { label: string; before: string; after: string }[]
+        scheme?: { title?: string; lead?: string; center?: { label?: string; sub?: string }; nodes?: { label: string; sub?: string }[]; points?: Named[]; note?: string }
         features_title?: string; features_lead?: string; features?: Named[]; tools?: string[]; tools_note?: string
-        scope?: { title?: string; lead?: string; groups?: { name: string; items?: string[] }[]; note?: string }
-        compare?: { title?: string; lead?: string; ours_label?: string; others_label?: string; rows?: { label: string; ours: string; others: string }[]; note?: string }
-        plans?: { title?: string; lead?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string }[]; note?: string }
-        reasons_title?: string; reasons?: Named[]
+        scope?: { title?: string; groups?: { name: string; items?: string[] }[]; note?: string }
+        plans?: { title?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string }[]; note?: string }
         scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text?: string }[]; note?: string }
-        flow_title?: string; flow?: Named[]; flow_note?: string; steps?: string[]
-        message_title?: string; message?: string
+        steps_title?: string; flow?: Named[]; flow_note?: string
         faq_title?: string; faqs?: { q: string; a: string }[]
       }
       // 日本語／英語ページで共通の見出し（src/SolutionPage.tsx の LABELS と対応）
       const SOL_LABELS = {
-        ja: { home: 'ホーム', services: 'サービス', forYou: 'こんな方におすすめです', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', outcomes: '支援後に、こう変わります', before: 'Before', after: 'After', support: '支援内容', tools: '対応ツールの例', scope: 'ご依頼いただける業務の例', compare: '一般的なサービスとの違い', ours: 'COANA TOKYO', others: '一般的なサービス', plans: 'ご利用プランの例', bestFor: 'こんな方に', reasons: 'COANA TOKYOが選ばれる理由', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', message: '代表からのメッセージ', rep: '代表', faq: 'よくあるご質問', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
-        en: { home: 'Home', services: 'Services', forYou: 'Who this is for', problems: 'Sound familiar?', scheme: 'How it works', outcomes: 'What changes', before: 'Before', after: 'After', support: 'What we do', tools: 'Tools we work with', scope: 'Examples of what you can ask us', compare: 'How we are different', ours: 'COANA TOKYO', others: 'Typical services', plans: 'Example plans', bestFor: 'Best for', reasons: 'Why COANA TOKYO', scenarios: 'Example situations', flow: 'How to get started', message: 'A message from our founder', rep: 'Founder', faq: 'FAQ', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
+        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', faq: 'よくあるご質問', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
+        en: { home: 'Home', services: 'Services', problems: 'Sound familiar?', scheme: 'How it works', before: 'Before', after: 'After', support: 'What we do & plans', tools: 'Tools we work with', scope: 'Examples of what you can ask us', plans: 'Example plans', bestFor: 'Best for', scenarios: 'Example situations', flow: 'How to get started', faq: 'FAQ', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
       }
       const solLang = (sol: Solution): 'ja' | 'en' => (sol.lang === 'en' ? 'en' : 'ja')
       const solutionsDir = path.resolve(__dirname, 'content/solutions')
@@ -686,7 +681,6 @@ function coanaPageMeta(): Plugin {
           alternates,
           title: (sol.seo_title || sol.title) + T.suffix,
           description,
-          preload: remoteImageMap[sol.hero_image || ''] || sol.hero_image || services.hero_image,
           jsonld: graph(
             crumbs([{ name: T.home, url: SITE + '/' }, { name: T.services, url: SITE + '/services' }, { name: label, url }]),
             {
@@ -800,19 +794,21 @@ function coanaPageMeta(): Plugin {
       }).join('')
       const fallbackMain = (pagePath: string): string => {
         if (pagePath === '/') {
-          const strengths = (home.strengths || []) as { title: string; heading: string; description: string }[]
+          const strengths = (home.strengths || []) as { title: string; text: string }[]
+          const tools = (home.tools || []) as { name: string; category?: string }[]
           const faqItems = (home.faqs || []) as { q: string; a: string }[]
-          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + '<p>' + esc((home.hero_words || []).join('・')) + esc(home.hero_solve_text) + '</p>' +
-            '<section><h2>' + esc(home.about_title) + '</h2>' + paras(home.about_text) + anchor('/about', '会社概要を見る') + '</section>' +
+          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + '<p>' + esc((home.hero_words || []).join('・')) + esc(home.hero_solve_text) + '</p>' + paras(home.hero_lead) +
+            ((home.hero_badges || []).length ? '<ul>' + (home.hero_badges as string[]).map((b) => '<li>' + esc(b) + '</li>').join('') + '</ul>' : '') +
             '<section><h2>' + esc(home.services_title) + '</h2>' + paras(home.services_lead) + serviceSections + anchor('/services', 'サービスを詳しく見る') + '</section>' +
-            '<section><h2>' + esc(home.strengths_title) + '</h2>' + strengths.map((st) => '<h3>' + esc(st.title) + '：' + esc(st.heading) + '</h3>' + paras(st.description)).join('') + '</section>' +
+            '<section><h2>' + esc(home.strengths_title) + '</h2>' + paras(about.message_heading) + strengths.map((st) => '<h3>' + esc(st.title) + '</h3>' + paras(st.text)).join('') +
+              '<p>' + esc(home.tools_title) + '：' + esc(tools.map((t) => t.name + (t.category ? '（' + t.category + '）' : '')).join('、')) + '</p>' + paras(home.tools_note) + anchor('/about', '会社概要・代表メッセージを見る') + '</section>' +
             '<section><h2>' + esc(home.faq_title) + '</h2><dl>' + faqItems.map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' +
             '<section><h2>' + esc(home.topics_title) + '</h2>' + topicList(sortedTopics.slice(0, 5)) + anchor('/topics', 'トピックス一覧') + '</section>' +
             '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
         }
         if (pagePath === '/about') {
           const rows = (about.company || []) as { label: string; value: string }[]
-          return '<h1>会社概要</h1>' +
+          return '<h1>会社概要</h1>' + paras(about.intro) +
             '<section id="message"><h2>' + esc(about.message_heading) + '</h2>' + ((about.message || []) as string[]).map((t) => paras(t)).join('') + paras(about.signature) + '</section>' +
             '<section id="profile"><h2>代表プロフィール</h2><p>' + esc(about.profile_role) + ' ' + esc(about.profile_name) + '</p>' + ((about.profile || []) as string[]).map((t) => paras(t)).join('') + '</section>' +
             '<section id="company"><h2>会社概要</h2><dl>' + rows.map((r) => '<dt>' + esc(r.label) + '</dt><dd>' + esc(r.value).replace(/\n/g, '<br>') + '</dd>').join('') + '</dl></section>'
@@ -851,26 +847,20 @@ function coanaPageMeta(): Plugin {
       const solutionHtml = (sol: Solution): string => {
         const T = SOL_LABELS[solLang(sol)]
         const pair = pairOf(sol)
-        const flowItems: Named[] = (sol.flow ?? []).length ? (sol.flow ?? []) : (sol.steps ?? []).map((step) => ({ name: step }))
+        const supportTitle = sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support
         return '<h1>' + esc(sol.title) + '</h1>' + (sol.catch ? '<p><strong>' + esc(sol.catch.replace(/\n/g, ' ')) + '</strong></p>' : '') + paras(sol.lead) +
           ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
-          section(sol.target_title || T.forYou, named(sol.target, 'strong')) +
           section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
           section(sol.scheme?.title || T.scheme, (sol.scheme ? paras(sol.scheme.lead) +
-            ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + (n.sub2 ? ' ' + esc(n.sub2) : '') + '</li>').join('') + '</ul>' : '') +
-            named(sol.scheme.points, 'strong') + paras(sol.scheme.note) : '')) +
-          section(sol.outcome_title || T.outcomes, (sol.outcomes ?? []).length ? paras(sol.outcome_lead) + '<ul>' + (sol.outcomes ?? []).map((o) => '<li><strong>' + esc(o.label) + '</strong> ' + T.before + '：' + esc(o.before) + ' → ' + T.after + '：' + esc(o.after) + '</li>').join('') + '</ul>' : '') +
-          section(sol.features_title || T.support, paras(sol.features_lead) + named(sol.features, 'h3') +
+            ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + '</li>').join('') + '</ul>' : '') +
+            named(sol.scheme.points, 'h3') + paras(sol.scheme.note) : '')) +
+          section(supportTitle, paras(sol.features_lead) + named(sol.features, 'h3') +
+            (sol.scope && (sol.scope.groups ?? []).length ? '<h3>' + esc(sol.scope.title || T.scope) + '</h3>' + (sol.scope.groups ?? []).map((g) => '<h4>' + esc(g.name) + '</h4><ul>' + (g.items ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>').join('') : '') + paras(sol.scope?.note) +
+            (sol.plans && (sol.plans.items ?? []).length ? '<h3>' + esc(sol.plans.title || T.plans) + '</h3>' + (sol.plans.items ?? []).map((pl) => '<h4>' + esc(pl.name) + (pl.tag ? '（' + esc(pl.tag) + '）' : '') + '</h4>' + paras(pl.text) +
+              ((pl.includes ?? []).length ? '<ul>' + (pl.includes ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' : '') + (pl.best_for ? '<p>' + esc(T.bestFor) + '：' + esc(pl.best_for) + '</p>' : '')).join('') + paras(sol.plans.note) : '') +
             ((sol.tools ?? []).length ? '<p>' + esc(T.tools) + '：' + esc((sol.tools ?? []).join('、')) + '</p>' + paras(sol.tools_note) : '')) +
-          section(sol.scope?.title || T.scope, (sol.scope ? paras(sol.scope.lead) + (sol.scope.groups ?? []).map((g) => '<h3>' + esc(g.name) + '</h3><ul>' + (g.items ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>').join('') + paras(sol.scope.note) : '')) +
-          section(sol.compare?.title || T.compare, (sol.compare && (sol.compare.rows ?? []).length ? paras(sol.compare.lead) + '<table><thead><tr><th></th><th>' + esc(sol.compare.ours_label || T.ours) + '</th><th>' + esc(sol.compare.others_label || T.others) + '</th></tr></thead><tbody>' +
-            (sol.compare.rows ?? []).map((r) => '<tr><th>' + esc(r.label) + '</th><td>' + esc(r.ours) + '</td><td>' + esc(r.others) + '</td></tr>').join('') + '</tbody></table>' + paras(sol.compare.note) : '')) +
-          section(sol.plans?.title || T.plans, (sol.plans && (sol.plans.items ?? []).length ? paras(sol.plans.lead) + (sol.plans.items ?? []).map((pl) => '<h3>' + esc(pl.name) + (pl.tag ? '（' + esc(pl.tag) + '）' : '') + '</h3>' + paras(pl.text) +
-            ((pl.includes ?? []).length ? '<ul>' + (pl.includes ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' : '') + (pl.best_for ? '<p>' + esc(T.bestFor) + '：' + esc(pl.best_for) + '</p>' : '')).join('') + paras(sol.plans.note) : '')) +
-          section(sol.reasons_title || T.reasons, named(sol.reasons, 'h3')) +
-          section(sol.scenarios?.title || T.scenarios, (sol.scenarios && (sol.scenarios.items ?? []).length ? paras(sol.scenarios.lead) + (sol.scenarios.items ?? []).map((sc) => '<h3>' + esc(sc.name) + (sc.tag ? '（' + esc(sc.tag) + '）' : '') + '</h3>' + (sc.before ? '<p>' + T.before + '：' + esc(sc.before) + '</p>' : '') + paras(sc.text)).join('') + paras(sol.scenarios.note) : '')) +
-          section(sol.flow_title || T.flow, (flowItems.length ? '<ol>' + flowItems.map((st) => '<li><strong>' + esc(st.name) + '</strong>' + (st.text ? ' ' + esc(st.text) : '') + '</li>').join('') + '</ol>' + paras(sol.flow_note) : '')) +
-          section(sol.message_title || T.message, (sol.message ? paras(sol.message) + '<p>' + esc(settings.company_name) + ' ' + T.rep + ' ' + esc(solLang(sol) === 'en' ? about.profile_name_en || about.profile_name : about.profile_name) + '</p>' : '')) +
+          section(sol.scenarios?.title || T.scenarios, (sol.scenarios && (sol.scenarios.items ?? []).length ? paras(sol.scenarios.lead) + (sol.scenarios.items ?? []).map((sc) => '<h3>' + esc(sc.name) + (sc.tag ? '（' + esc(sc.tag) + '）' : '') + '</h3>' + (sc.before ? '<p>' + T.before + '：' + esc(sc.before) + '</p>' : '') + (sc.text ? '<p>' + T.after + '：' + esc(sc.text) + '</p>' : '')).join('') + paras(sol.scenarios.note) : '')) +
+          section(sol.steps_title || T.flow, ((sol.flow ?? []).length ? '<ol>' + (sol.flow ?? []).map((st) => '<li><strong>' + esc(st.name) + '</strong>' + (st.text ? ' ' + esc(st.text) : '') + '</li>').join('') + '</ol>' + paras(sol.flow_note) : '')) +
           ((sol.faqs ?? []).length ? '<section><h2>' + esc(sol.faq_title || T.faq) + '</h2><dl>' + (sol.faqs ?? []).map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' : '') +
           '<p>' + anchor('/contact', T.contact) + ' ' + anchor('/services', T.list) + (pair ? ' ' + anchor('/services/' + pair.slug, T.english) : '') + '</p>'
       }
@@ -878,20 +868,16 @@ function coanaPageMeta(): Plugin {
       const solutionMarkdown = (sol: Solution): string => {
         const T = SOL_LABELS[solLang(sol)]
         const url = SITE + '/services/' + sol.slug
-        const flowItems: Named[] = (sol.flow ?? []).length ? (sol.flow ?? []) : (sol.steps ?? []).map((step) => ({ name: step }))
         const block = (title: string | undefined, body: string) => (body.trim() ? '### ' + title + '\n\n' + body.trim() + '\n\n' : '')
         return '## ' + (sol.nav_label || sol.title) + '\n\n' + 'URL: ' + url + '\n\n' + (sol.title !== sol.nav_label ? sol.title + '\n\n' : '') + String(sol.description || sol.lead || '') + '\n\n' +
-          block(sol.target_title || T.forYou, (sol.target ?? []).map((t) => '- ' + t.name + (t.text ? '：' + t.text : '')).join('\n')) +
           block(sol.problems_title || T.problems, mdList(sol.problems)) +
-          block(sol.scheme?.title || T.scheme, (sol.scheme?.lead ? sol.scheme.lead + '\n\n' : '') + (sol.scheme?.nodes ?? []).map((n) => '- ' + n.label + (n.sub ? '：' + n.sub : '') + (n.sub2 ? ' ' + n.sub2 : '')).join('\n') + '\n' + (sol.scheme?.points ?? []).map((pt) => '- ' + pt.name + (pt.text ? '：' + pt.text : '')).join('\n') + (sol.scheme?.note ? '\n\n' + sol.scheme.note : '')) +
-          block(sol.outcome_title || T.outcomes, (sol.outcomes ?? []).map((o) => '- ' + o.label + '：' + T.before + ' ' + o.before + ' → ' + T.after + ' ' + o.after).join('\n')) +
-          block(sol.features_title || T.support, (sol.features ?? []).map((f) => '- ' + f.name + (f.text ? '：' + f.text : '')).join('\n') + ((sol.tools ?? []).length ? '\n\n' + T.tools + '：' + (sol.tools ?? []).join('、') : '')) +
-          block(sol.scope?.title || T.scope, (sol.scope?.groups ?? []).map((g) => '- ' + g.name + '：' + (g.items ?? []).join('、')).join('\n') + (sol.scope?.note ? '\n\n' + sol.scope.note : '')) +
-          block(sol.compare?.title || T.compare, (sol.compare?.rows ?? []).map((r) => '- ' + r.label + '：' + (sol.compare?.ours_label || T.ours) + '＝' + r.ours + '／' + (sol.compare?.others_label || T.others) + '＝' + r.others).join('\n')) +
-          block(sol.plans?.title || T.plans, (sol.plans?.items ?? []).map((pl) => '- ' + pl.name + (pl.tag ? '（' + pl.tag + '）' : '') + (pl.text ? '：' + pl.text : '') + ((pl.includes ?? []).length ? '（' + (pl.includes ?? []).join('、') + '）' : '')).join('\n') + (sol.plans?.lead ? '\n\n' + sol.plans.lead : '')) +
-          block(sol.reasons_title || T.reasons, (sol.reasons ?? []).map((r) => '- ' + r.name + (r.text ? '：' + r.text : '')).join('\n')) +
-          block(sol.scenarios?.title || T.scenarios, (sol.scenarios?.lead ? sol.scenarios.lead + '\n\n' : '') + (sol.scenarios?.items ?? []).map((sc) => '- ' + sc.name + (sc.tag ? '（' + sc.tag + '）' : '') + (sc.before ? ' ' + T.before + '：' + sc.before : '') + (sc.text ? ' → ' + sc.text : '')).join('\n')) +
-          block(sol.flow_title || T.flow, flowItems.map((st, i) => (i + 1) + '. ' + st.name + (st.text ? '：' + st.text : '')).join('\n') + (sol.flow_note ? '\n\n' + sol.flow_note : '')) +
+          block(sol.scheme?.title || T.scheme, (sol.scheme?.lead ? sol.scheme.lead + '\n\n' : '') + (sol.scheme?.nodes ?? []).map((n) => '- ' + n.label + (n.sub ? '：' + n.sub : '')).join('\n') + '\n' + (sol.scheme?.points ?? []).map((pt) => '- ' + pt.name + (pt.text ? '：' + pt.text : '')).join('\n') + (sol.scheme?.note ? '\n\n' + sol.scheme.note : '')) +
+          block(sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support, (sol.features ?? []).map((f) => '- ' + f.name + (f.text ? '：' + f.text : '')).join('\n') +
+            ((sol.scope?.groups ?? []).length ? '\n\n' + (sol.scope?.title || T.scope) + '：\n' + (sol.scope?.groups ?? []).map((g) => '- ' + g.name + '：' + (g.items ?? []).join('、')).join('\n') : '') + (sol.scope?.note ? '\n\n' + sol.scope.note : '') +
+            ((sol.plans?.items ?? []).length ? '\n\n' + (sol.plans?.title || T.plans) + '：\n' + (sol.plans?.items ?? []).map((pl) => '- ' + pl.name + (pl.tag ? '（' + pl.tag + '）' : '') + (pl.text ? '：' + pl.text : '') + ((pl.includes ?? []).length ? '（' + (pl.includes ?? []).join('、') + '）' : '')).join('\n') : '') +
+            ((sol.tools ?? []).length ? '\n\n' + T.tools + '：' + (sol.tools ?? []).join('、') : '')) +
+          block(sol.scenarios?.title || T.scenarios, (sol.scenarios?.lead ? sol.scenarios.lead + '\n\n' : '') + (sol.scenarios?.items ?? []).map((sc) => '- ' + sc.name + (sc.tag ? '（' + sc.tag + '）' : '') + (sc.before ? ' ' + T.before + '：' + sc.before : '') + (sc.text ? ' → ' + T.after + '：' + sc.text : '')).join('\n')) +
+          block(sol.steps_title || T.flow, (sol.flow ?? []).map((st, i) => (i + 1) + '. ' + st.name + (st.text ? '：' + st.text : '')).join('\n') + (sol.flow_note ? '\n\n' + sol.flow_note : '')) +
           block(sol.faq_title || T.faq, (sol.faqs ?? []).map((f) => '- Q. ' + f.q + '\n  A. ' + f.a).join('\n'))
       }
       const fallbackHeader = '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +

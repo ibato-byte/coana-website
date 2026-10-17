@@ -1,7 +1,8 @@
-import React, { FormEvent, KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
 import { ArticleRow, ContactBand, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
+import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 
 declare global {
   interface Window {
@@ -172,364 +173,145 @@ function Footer({ navigate }: { navigate: Nav }) {
 /* ───────────────────────── Home: Hero ───────────────────────── */
 
 function HeroSection({ navigate }: { navigate: Nav }) {
-  const ref = useRef<HTMLElement | null>(null);
-  const words: string[] = (home as { hero_words?: string[] }).hero_words ?? ["経理", "業務フロー", "ERP・ツール導入", "営業・集客"];
+  const words: string[] = home.hero_words ?? ["経理", "業務フロー", "ツール導入", "営業・集客"];
   const [wordIndex, setWordIndex] = useState(0);
   const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const firstRun = useRef(true);
-  const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
-  const [boxWidth, setBoxWidth] = useState<number | undefined>(undefined);
-  const goTo = (i: number) => {
-    firstRun.current = false;
-    setWordIndex(i);
-  };
-  const next = () => goTo((wordIndex + 1) % words.length);
   useEffect(() => {
-    const measure = () => {
-      const el = wordRefs.current[wordIndex];
-      if (el) setBoxWidth(el.offsetWidth);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [wordIndex]);
-  useEffect(() => {
-    if (!reduceMotion) return;
-    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 3600);
+    if (reduceMotion) return;
+    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2600);
     return () => window.clearInterval(id);
   }, [reduceMotion, words.length]);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || reduceMotion) return;
-    let raf = 0;
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const r = el.getBoundingClientRect();
-        el.style.setProperty("--mx", String((e.clientX - r.left) / r.width - 0.5));
-        el.style.setProperty("--my", String((e.clientY - r.top) / r.height - 0.5));
-      });
-    };
-    el.addEventListener("pointermove", onMove);
-    return () => { el.removeEventListener("pointermove", onMove); cancelAnimationFrame(raf); };
-  }, [reduceMotion]);
-  const base = firstRun.current ? 1.35 : 0;
   return (
-    <section className="hero" ref={ref}>
-      <div className="hero-bg" aria-hidden="true" style={home.hero_image ? { backgroundImage: 'url("' + home.hero_image + '")' } : undefined} />
-      <div className="hero-veil" aria-hidden="true" />
+    <section className="hero">
       <div className="container hero-grid">
         <div className="hero-copy">
-          <p className="hero-kicker hero-anim" style={{ animationDelay: "0.1s" }}><span />{home.hero_kicker}</p>
+          <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
           <h1 className="hero-title-marker">
-            <span className="hero-line" style={{ animationDelay: "0.3s" }}>{home.hero_line1}</span>
-            <span className="hero-line" style={{ animationDelay: "0.5s" }}>{home.hero_line2}</span>
+            <span className="hero-line">{home.hero_line1}</span>
+            <span className="hero-line">{home.hero_line2}</span>
           </h1>
-          <div className="hero-actions hero-anim" style={{ animationDelay: "0.85s" }}>
-            <div className="button-row">
-              <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
-              <LinkButton secondary go={navigate} args={["services"]}>{home.hero_button_secondary}</LinkButton>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="hero-solve hero-anim"
-        style={{ animationDelay: "1.15s" }}
-      >
-        <p className="solve-text">
-          <span className="solve-line">
-            <span className="solve-box" style={boxWidth ? { width: boxWidth } : undefined}>
+          <p className="hero-solve hero-anim">
+            <span className="solve-box" aria-live="off">
               {words.map((w, i) => (
-                <span
-                  key={w}
-                  ref={(el) => { wordRefs.current[i] = el; }}
-                  className={i === wordIndex ? "solve-word is-active" : i === (wordIndex + words.length - 1) % words.length && !firstRun.current ? "solve-word is-leaving" : "solve-word"}
-                  style={{ ["--d" as string]: base + "s" } as React.CSSProperties}
-                  aria-hidden={i !== wordIndex}
-                >
-                  {Array.from(w).map((ch, ci) => (
-                    <span key={ci} className="solve-ch" style={{ animationDelay: (base + 0.12 + ci * 0.045).toFixed(3) + "s" }}>{ch}</span>
-                  ))}
-                </span>
+                <span key={w} className={i === wordIndex ? "solve-word is-active" : "solve-word"} aria-hidden={i !== wordIndex}>{w}</span>
               ))}
             </span>
             <span className="solve-rest">{home.hero_solve_text}</span>
-          </span>
-        </p>
-        <span className="solve-progress" aria-hidden="true">
-          <i
-            key={wordIndex}
-            style={{ animationDelay: base + "s" }}
-            onAnimationEnd={reduceMotion ? undefined : next}
-          />
-        </span>
+          </p>
+        </div>
+        <div className="hero-visual hero-anim">
+          <HeroVideo src={home.hero_video} fallback={<HeroScene />} />
+        </div>
+        <div className="hero-body hero-anim">
+          <p className="hero-lead">{home.hero_lead}</p>
+          <div className="button-row">
+            <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
+            <LinkButton secondary go={navigate} args={["services"]}>{home.hero_button_secondary}</LinkButton>
+          </div>
+          <ul className="hero-badges">
+            {home.hero_badges.map((b) => <li key={b}><Icon name="check" size={14} />{b}</li>)}
+          </ul>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── Home: About / Services / Strengths ───────────────────────── */
+/* ───────────────────────── サービスカード（トップ・サービス一覧で共通） ───────────────────────── */
 
-function AboutIntro({ navigate }: { navigate: Nav }) {
+type ServiceItem = { name: string; text: string; short?: string; tags?: string[]; page?: string };
+const serviceGroups = [
+  { key: "backoffice", n: "01", data: services.backoffice },
+  { key: "marketing", n: "02", data: services.marketing },
+] as const;
+
+function ServiceCard({ item, navigate, detail = false }: { item: ServiceItem; navigate: Nav; detail?: boolean }) {
+  const linked = item.page && solutions.some((sol) => sol.slug === item.page);
+  const body = (
+    <>
+      <ServiceArt slug={item.page} className="service-card-art" />
+      <span className="service-card-body">
+        <strong>{item.name}</strong>
+        <span className="service-card-text">{detail ? item.text : item.short || item.text}</span>
+        {item.tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}
+      </span>
+      {linked && <span className="service-card-more">詳しく見る<Icon name="arrow" size={16} /></span>}
+    </>
+  );
+  return linked
+    ? <GoLink className={detail ? "service-card is-detail" : "service-card"} go={navigate} args={["solution", undefined, item.page]}>{body}</GoLink>
+    : <div className={detail ? "service-card is-detail" : "service-card"}>{body}</div>;
+}
+
+function ServiceGroupHead({ n, data }: { n: string; data: { en: string; title: string; note: string; lead: string } }) {
   return (
-    <section className="section about-intro">
-      <div className="container">
-        <div className="about-content">
-          <div className="about-copy">
-            <SectionTitle en="About us">{home.about_title}</SectionTitle>
-            <p data-reveal>{home.about_text}</p>
-            <div data-reveal>
-              <GoLink className="text-link" go={navigate} args={["about"]}>会社概要を見る<Icon name="arrow" size={19} /></GoLink>
-            </div>
-          </div>
-          <figure className="about-image" data-reveal>
-            <img src={home.about_image} alt="中小企業のバックオフィス業務を改善する打ち合わせの様子" />
-          </figure>
-        </div>
+    <header className="service-group-head">
+      <span className="service-num">{n}</span>
+      <div>
+        <p className="service-en">{data.en}<em>{data.note}</em></p>
+        <h3>{data.title}</h3>
       </div>
-    </section>
+      <p className="service-tagline">{data.lead}</p>
+    </header>
   );
 }
 
 function ServicesHome({ navigate }: { navigate: Nav }) {
-  const panels = [
-    { key: "backoffice", n: "01", data: services.backoffice, note: services.backoffice.note },
-    { key: "marketing", n: "02", data: services.marketing, note: services.marketing.note },
-  ] as const;
   return (
-    <section className="section services-home">
+    <section className="section services-home" id="services">
       <div className="container">
-        <SectionTitle en="Services" lead={home.services_lead}>{home.services_title}</SectionTitle>
-        <div className="service-home-grid">
-          {panels.map(({ key, n, data, note }, pi) => (
-            <article className="service-panel" key={key} data-reveal style={{ transitionDelay: `${pi * 120}ms` }}>
-              <header className="service-panel-head">
-                <span className="service-num">{n}</span>
-                <div>
-                  <p className="service-en">{data.en}</p>
-                  <h3>{data.title}</h3>
-                </div>
-                <span className="service-note">{note}</span>
-              </header>
-              <p className="service-tagline">{data.lead}</p>
-              <ul>
-                {(data.items as { name: string; tags?: string[]; page?: string }[]).map((i) => (
-                  <li key={i.name}>
-                    {i.page && solutions.some((sol) => sol.slug === i.page)
-                      ? <GoLink className="service-item-link" go={navigate} args={["solution", undefined, i.page]}>{i.name}</GoLink>
-                      : i.name}
-                    {i.tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}
-                  </li>
-                ))}
-              </ul>
-              <GoLink className="panel-link" go={navigate} args={["services", key]} aria-label={`${data.title}を詳しく見る`}>
-                <span>詳しく見る</span><Icon name="arrow" size={20} />
-              </GoLink>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-type StrengthTab = {
-  title: string;
-  heading: string;
-  description: string;
-  challenges: string[];
-  services: string[];
-  illustration: string;
-};
-
-const strengthTabs: (StrengthTab & { id: string; number: string })[] = (home.strengths as StrengthTab[]).map((item, i) => ({
-  ...item,
-  id: `s${i + 1}`,
-  number: String(i + 1).padStart(2, "0"),
-}));
-
-function StrengthIllustration({ type }: { type: string }) {
-  return (
-    <div className="strength-illustration" aria-hidden="true">
-      <svg viewBox="0 0 320 300">
-        {type === "expertise" && (
-          <>
-            <rect x="45" y="79" width="165" height="112" rx="9" />
-            <path d="M28 211h199l-17-20H45l-17 20Z" />
-            <rect className="soft-fill" x="72" y="101" width="111" height="67" rx="4" />
-            <path d="M90 143h21l10-22 17 32 12-20h17" />
-            <path className="yellow-fill" d="M212 53h62v82h-62z" />
-            <path d="M226 75h34M226 91h34M226 107h23" />
-            <circle cx="242" cy="190" r="36" />
-            <circle className="soft-fill" cx="242" cy="190" r="16" />
-            <path d="M242 142v13M242 225v13M194 190h13M277 190h13M208 156l9 9M267 215l9 9M276 156l-9 9M217 215l-9 9" />
-          </>
-        )}
-        {type === "team" && (
-          <>
-            <circle className="yellow-fill" cx="95" cy="81" r="25" />
-            <circle className="soft-fill" cx="160" cy="62" r="28" />
-            <circle className="yellow-fill" cx="225" cy="81" r="25" />
-            <path d="M48 174c4-42 20-65 47-65s43 23 47 65M178 174c4-42 20-65 47-65s43 23 47 65M106 166c5-50 23-77 54-77s49 27 54 77" />
-            <path className="soft-fill" d="M114 191h43v-16c0-8 6-14 14-14s14 6 14 14v16h39v39h-16c-8 0-14 6-14 14s6 14 14 14h16v18H114v-34h16c8 0 14-6 14-14s-6-14-14-14h-16v-23Z" />
-          </>
-        )}
-        {type === "one-stop" && (
-          <>
-            <circle className="soft-fill" cx="160" cy="154" r="48" />
-            <circle cx="160" cy="154" r="20" />
-            <path d="M160 106V65M112 154H72M208 154h40M126 188l-31 31M194 188l31 31" />
-            <rect className="yellow-fill" x="125" y="28" width="70" height="43" rx="5" />
-            <path d="M140 42h40M140 55h25" />
-            <rect className="soft-fill" x="20" y="128" width="57" height="52" rx="6" />
-            <path d="m34 164 14-13 10 8 8-18" />
-            <path className="yellow-fill" d="M246 127h49v49h-49z" />
-            <path d="M257 163v-22h11v22M275 163v-32h11v32" />
-            <rect className="soft-fill" x="55" y="215" width="68" height="48" rx="6" />
-            <path d="M69 229h40M69 241h28" />
-            <path className="yellow-fill" d="M213 220h66v39h-66z" />
-            <path d="m229 252 7-19 9 10 9-16 9 25" />
-          </>
-        )}
-        {type === "flexible" && (
-          <>
-            <path d="M37 238h246" />
-            <rect className="soft-fill" x="48" y="163" width="67" height="73" rx="7" />
-            <rect className="yellow-fill" x="126" y="111" width="67" height="125" rx="7" />
-            <rect className="soft-fill" x="204" y="64" width="67" height="172" rx="7" />
-            <path d="M67 185h29M67 201h20M145 135h29M145 151h20M223 89h29M223 105h20" />
-            <path d="m68 142 26-28 20 14 41-48 31 18 45-52" />
-            <circle className="yellow-fill" cx="68" cy="142" r="7" />
-            <circle className="soft-fill" cx="155" cy="80" r="7" />
-            <circle className="yellow-fill" cx="231" cy="46" r="7" />
-          </>
-        )}
-      </svg>
-    </div>
-  );
-}
-
-function StrengthsTabs() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const active = strengthTabs[activeIndex];
-
-  const selectTab = (index: number) => {
-    setActiveIndex(index);
-    tabRefs.current[index]?.focus();
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    let nextIndex = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % strengthTabs.length;
-    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + strengthTabs.length) % strengthTabs.length;
-    else if (event.key === "Home") nextIndex = 0;
-    else if (event.key === "End") nextIndex = strengthTabs.length - 1;
-    else return;
-    event.preventDefault();
-    selectTab(nextIndex);
-  };
-
-  return (
-    <div className="strengths-tabs" data-reveal>
-      <div className="strength-tab-list" role="tablist" aria-label="COANA TOKYOが選ばれる理由">
-        {strengthTabs.map((item, index) => (
-          <button
-            key={item.id}
-            ref={(element) => { tabRefs.current[index] = element; }}
-            id={`strength-tab-${item.id}`}
-            className={activeIndex === index ? "strength-tab active" : "strength-tab"}
-            type="button"
-            role="tab"
-            aria-selected={activeIndex === index}
-            aria-controls={`strength-panel-${item.id}`}
-            tabIndex={activeIndex === index ? 0 : -1}
-            onClick={() => setActiveIndex(index)}
-            onKeyDown={(event) => handleKeyDown(event, index)}
-          >
-            <span className="strength-tab-number">{item.number}</span>
-            <span className="strength-tab-label">{item.title}</span>
-          </button>
-        ))}
-      </div>
-
-      <div
-        key={active.id}
-        id={`strength-panel-${active.id}`}
-        className="strength-tab-panel"
-        role="tabpanel"
-        aria-labelledby={`strength-tab-${active.id}`}
-        tabIndex={0}
-      >
-        <div className="strength-panel-copy">
-          <h3>{active.heading}</h3>
-          <p className="strength-description">{active.description}</p>
-          <div className="strength-cols">
-            <div>
-              <h4>よくある課題</h4>
-              <ul className="challenge-list">
-                {active.challenges.map((challenge) => (
-                  <li key={challenge}>{challenge}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4>対応サービスの例</h4>
-              <ul className="strength-service-list">
-                {active.services.map((service) => (
-                  <li key={service}><span aria-hidden="true"><Icon name="check" size={14} /></span>{service}</li>
-                ))}
-              </ul>
+        <SectionTitle en="Services" center lead={home.services_lead}>{home.services_title}</SectionTitle>
+        {serviceGroups.map(({ key, n, data }) => (
+          <div className="service-group" key={key}>
+            <ServiceGroupHead n={n} data={data} />
+            <div className="service-card-grid">
+              {(data.items as ServiceItem[]).map((item) => <ServiceCard key={item.name} item={item} navigate={navigate} />)}
             </div>
           </div>
-        </div>
-        <StrengthIllustration type={active.illustration} />
+        ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-/* ───────────────────────── Home: Tools / Mission / Topics / Message / FAQ ───────────────────────── */
+/* ───────────────────────── Home: 支援スタイル（選ばれる理由・ツール・ミッションを統合） ───────────────────────── */
 
-function ToolsSection() {
+function StyleSection() {
   return (
-    <section className="section tools-section">
+    <section className="section style-section">
       <div className="container">
-        <div className="tools-head">
-          <SectionTitle en="Tools">{home.tools_title}</SectionTitle>
-          <p data-reveal>{home.tools_text}</p>
+        <div className="style-head" data-reveal>
+          <span className="eyebrow">Our style</span>
+          <p className="style-mission"><Lines text={about.message_heading} /></p>
+          <h2 className="style-title">{home.strengths_title}</h2>
         </div>
-        <div className="tools-grid">
-          {home.tools.map((t, i) => (
-            <article className="tool-card" key={t.name} data-reveal style={{ transitionDelay: `${(i % 4) * 90}ms` }}>
-              {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
-              <div className="tool-logo">{t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span className="tool-logo-text">{t.name}</span>}</div>
-              <p className="tool-category">{t.category}</p>
-              <h3>{t.name}</h3>
-              <p>{t.text}</p>
-            </article>
+        <ul className="style-grid">
+          {home.strengths.map((s) => (
+            <li key={s.title}>
+              <span className="style-icon"><MiniIcon name={s.icon} size={30} /></span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
           ))}
+        </ul>
+        <div className="style-tools">
+          <p className="style-tools-title">{home.tools_title}</p>
+          <ul>
+            {home.tools.map((t) => (
+              <li key={t.name} title={t.category}>
+                {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
+                {t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span>{t.name}</span>}
+              </li>
+            ))}
+          </ul>
+          {home.tools_note && <small>{home.tools_note}</small>}
         </div>
-        {home.tools_note && <p className="tools-foot" data-reveal>{home.tools_note}</p>}
       </div>
     </section>
   );
 }
 
-function MissionBand({ navigate }: { navigate: Nav }) {
-  return (
-    <section className="mission-band">
-      <span className="mission-watermark" aria-hidden="true">MISSION</span>
-      <div className="container" data-reveal>
-        <span className="eyebrow">Our mission</span>
-        <p className="mission-statement"><Lines text={about.message_heading} /></p>
-        <GoLink className="text-link text-link-light" go={navigate} args={["about", "message"]}>代表メッセージを読む<Icon name="arrow" size={19} /></GoLink>
-      </div>
-    </section>
-  );
-}
+/* ───────────────────────── Home: Topics ───────────────────────── */
 
 function TopicsHome({ navigate }: { navigate: Nav }) {
   const latest = articles.slice(0, 3);
@@ -538,12 +320,12 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
       <div className="container">
         <div className="title-with-link">
           <SectionTitle en="Topics" lead={home.topics_lead}>{home.topics_title}</SectionTitle>
-          <GoLink className="text-link" data-reveal go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={19} /></GoLink>
+          <GoLink className="text-link" go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={19} /></GoLink>
         </div>
         {latest.length ? (
           <div className="topics-card-grid">
-            {latest.map((a, i) => (
-              <GoLink key={a.slug} className="topic-card" data-reveal style={{ transitionDelay: `${i * 100}ms` }} go={navigate} args={["article", undefined, a.slug]}>
+            {latest.map((a) => (
+              <GoLink key={a.slug} className="topic-card" go={navigate} args={["article", undefined, a.slug]}>
                 <span className="topic-card-thumb">
                   {a.thumbnail
                     ? <img src={a.thumbnail} alt={a.title} loading="lazy" />
@@ -558,7 +340,7 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
             ))}
           </div>
         ) : (
-          <div className="empty-topics" data-reveal>
+          <div className="empty-topics">
             <span className="empty-icon"><Icon name="spark" /></span>
             <div><h3>お知らせは準備中です</h3><p>最新のお知らせはこちらでご案内します。</p></div>
           </div>
@@ -568,41 +350,12 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
   );
 }
 
-function MessageTeaser({ navigate }: { navigate: Nav }) {
-  return (
-    <section className="section message-teaser">
-      <div className="container message-teaser-inner">
-        <figure className="teaser-photo" data-reveal>
-          <img src={about.profile_photo} alt={`${settings.company_name} ${about.profile_role} ${about.profile_name}`} loading="lazy" />
-        </figure>
-        <div className="teaser-copy">
-          <SectionTitle en="Message">{home.message_title}</SectionTitle>
-          <p data-reveal>{home.message_text}</p>
-          <p className="teaser-name" data-reveal>{about.profile_role}　<b>{about.profile_name}</b><span>{about.profile_name_en}</span></p>
-          <div data-reveal>
-            <GoLink className="text-link" go={navigate} args={["about", "profile"]}>代表のプロフィールを見る<Icon name="arrow" size={19} /></GoLink>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-
 function Home({ navigate }: { navigate: Nav }) {
   return (
     <main>
       <HeroSection navigate={navigate} />
-      <AboutIntro navigate={navigate} />
       <ServicesHome navigate={navigate} />
-      <section className="section strengths-section">
-        <div className="container">
-          <SectionTitle en="Our strengths" center>{home.strengths_title}</SectionTitle>
-          <StrengthsTabs />
-        </div>
-      </section>
-      <ToolsSection />
-      <MissionBand navigate={navigate} />
+      <StyleSection />
       <TopicsHome navigate={navigate} />
       <FaqSection />
       <ContactBand navigate={navigate} />
@@ -615,29 +368,34 @@ function Home({ navigate }: { navigate: Nav }) {
 function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
-      <PageHero en="About us" title="会社概要" image={about.hero_image} />
+      <PageHero en="About us" title="会社概要" intro={about.intro} image={about.hero_image} imagePosition="left 45%" />
       <section id="message" className="section message-section">
         <div className="container narrow">
-          <span className="section-index" data-reveal>01<i>Message</i></span>
-          <h2 data-reveal><Lines text={about.message_heading} /></h2>
-          <div className="message-body" data-reveal>
+          <span className="section-index">01<i>Message</i></span>
+          <h2><Lines text={about.message_heading} /></h2>
+          <ul className="about-values">
+            {home.strengths.map((s) => (
+              <li key={s.title}><span className="style-icon"><MiniIcon name={s.icon} size={26} /></span>{s.title}</li>
+            ))}
+          </ul>
+          <div className="message-body">
             {about.message.map((p, i) => <p key={i}><Lines text={p} /></p>)}
           </div>
-          <p className="signature" data-reveal><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
+          <p className="signature"><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
         </div>
       </section>
       <section id="profile" className="section profile-section">
         <div className="container">
-          <span className="section-index" data-reveal>02<i>Profile</i></span>
+          <span className="section-index">02<i>Profile</i></span>
           <div className="profile-grid">
-            <figure className="profile-photo" data-reveal>
+            <figure className="profile-photo">
               <span className="profile-photo-deco" aria-hidden="true" />
               <span className="profile-photo-dots" aria-hidden="true" />
               <div className="profile-photo-frame">
                 <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
               </div>
             </figure>
-            <div data-reveal>
+            <div>
               <p className="profile-role">{about.profile_role}</p>
               <h2 className="profile-name">{about.profile_name} <span>{about.profile_name_en}</span></h2>
               <div className="profile-copy">
@@ -649,11 +407,11 @@ function About({ navigate }: { navigate: Nav }) {
       </section>
       <section className="section company-section">
         <div className="container company-inner">
-          <div data-reveal>
+          <div>
             <span className="section-index">03<i>Company</i></span>
             <h2>会社情報</h2>
           </div>
-          <dl className="company-table" data-reveal>
+          <dl className="company-table">
             {about.company.map((row) => (
               <div key={row.label}>
                 <dt>{row.label}</dt>
@@ -670,80 +428,42 @@ function About({ navigate }: { navigate: Nav }) {
 
 /* ───────────────────────── Services ───────────────────────── */
 
-function ServiceBlock({ id, number, en, title, lead, items, note, navigate }: {
-  navigate: Nav;
-  id: string;
-  number: string;
-  en: string;
-  title: string;
-  lead: string;
-  items: { name: string; text: string; tags?: string[]; page?: string }[];
-  note: string;
-}) {
-  return (
-    <section id={id} className="section service-detail">
-      <div className="container">
-        <div className="service-detail-head" data-reveal>
-          <span className="service-detail-num">{number}</span>
-          <div>
-            <p className="service-detail-en">{en}<em>{note}</em></p>
-            <h2>{title}</h2>
-            <h3>{lead}</h3>
-          </div>
-        </div>
-        <div className="service-list">
-          {items.map(({ name, text, tags, page }, index) => (
-            <article key={name} data-reveal style={{ transitionDelay: `${(index % 2) * 80}ms` }}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <div>
-                <h3>{name}{tags?.map((t) => <em className="service-tag" key={t}>{t}</em>)}</h3>
-                <p>{text}</p>
-                {page && solutions.some((sol) => sol.slug === page) && (
-                  <GoLink className="text-link service-more" go={navigate} args={["solution", undefined, page]}>
-                    詳しく見る<Icon name="arrow" size={16} />
-                  </GoLink>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+const FLOW_ICONS = ["chat", "search", "plan", "start"];
 
 function Services({ navigate }: { navigate: Nav }) {
   return (
     <main className="services-page">
-      <PageHero en="Services" title="サービス" image={services.hero_image} />
-      <section className="services-intro">
-        <div className="container" data-reveal>
-          <p>{services.intro}</p>
-        </div>
-      </section>
-      <ServiceBlock navigate={navigate} id="backoffice" number="01" note="守りを固める" {...services.backoffice} />
-      <ServiceBlock navigate={navigate} id="marketing" number="02" note="攻めを支える" {...services.marketing} />
-      <section className="section pricing-section">
-        <div className="container pricing-box" data-reveal>
-          <div>
-            <span className="eyebrow">Price</span>
-            <h2>{services.pricing_title}</h2>
+      <PageHero en="Services" title="サービス" intro={services.intro} image={services.hero_image} />
+      {serviceGroups.map(({ key, n, data }) => (
+        <section key={key} id={key} className="section service-detail">
+          <div className="container">
+            <ServiceGroupHead n={n} data={data} />
+            <div className="service-card-grid is-detail">
+              {(data.items as ServiceItem[]).map((item) => <ServiceCard key={item.name} item={item} navigate={navigate} detail />)}
+            </div>
           </div>
-          <p>{services.pricing}</p>
-        </div>
-      </section>
+        </section>
+      ))}
       <section className="section flow-section">
         <div className="container">
           <SectionTitle en="Flow" center>{services.flow_title}</SectionTitle>
           <ol className="flow-list">
             {services.flow.map((item, index) => (
-              <li key={item} data-reveal style={{ transitionDelay: `${index * 90}ms` }}>
-                <span>STEP {index + 1}</span>
+              <li key={item}>
+                <span className="flow-icon"><MiniIcon name={FLOW_ICONS[index] || "doc"} size={28} /></span>
+                <small>STEP {index + 1}</small>
                 <strong>{item}</strong>
               </li>
             ))}
           </ol>
-          <div className="center-button" data-reveal>
+          <div className="pricing-box">
+            <span className="pricing-icon" aria-hidden="true">¥</span>
+            <div>
+              <h2>{services.pricing_title}</h2>
+              <p>{services.pricing}</p>
+            </div>
+          </div>
+          <div className="center-button">
             <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
           </div>
         </div>
@@ -1102,7 +822,8 @@ export default function App() {
           }
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px -4% 0px" },
+      // 画面に入る少し手前で表示を始め、読みかけの部分が薄いまま残らないようにする
+      { threshold: 0, rootMargin: "0px 0px 12% 0px" },
     );
     targets.forEach((target) => observer.observe(target));
     // 絞り込みなどで後から表示された要素も、スクロール表示の対象にする

@@ -1,0 +1,71 @@
+/* ─────────────────────────────────────────────────────────────────────
+ * イラスト（src/illustrations.tsx）の動き。どれも小さく・ゆっくり。
+ * 動く要素だけ transform-box: fill-box にして、自分の中心・下端を基準に動かす
+ * （全要素に付けると transform 属性の基準点までずれるため）。
+ * ───────────────────────────────────────────────────────────────────── */
+
+.art { display: block; width: 100%; height: auto; overflow: visible; }
+.art-float, .art-bob, .art-grow, .art-fill, .art-pop, .art-beat, .art-rise, .art-drop, .art-flame, .art-slide, .art-cursor { transform-box: fill-box; }
+.service-art { position: relative; }
+
+.art-float { animation: art-float 6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes art-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+.art-bob { animation: art-bob 3.4s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes art-bob { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(3px, -6px); } }
+
+.art-spin { animation: art-spin 9s linear infinite; }
+@keyframes art-spin { to { transform: rotate(360deg); } }
+
+.art-grow { transform-origin: 50% 100%; animation: art-grow 4.2s var(--ease-out) infinite; animation-delay: var(--d, 0s); }
+@keyframes art-grow { 0% { transform: scaleY(.25); } 30%, 85% { transform: scaleY(1); } 100% { transform: scaleY(.25); } }
+
+.art-fill { transform-origin: 0 50%; animation: art-fill 4.5s var(--ease-out) infinite; animation-delay: var(--d, 0s); }
+@keyframes art-fill { 0% { transform: scaleX(0); } 25%, 88% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+
+.art-dash { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 10; animation: art-dash 1.6s linear infinite; animation-delay: var(--d, 0s); }
+@keyframes art-dash { to { stroke-dashoffset: -24; } }
+
+.art-draw { stroke-dasharray: 200; animation: art-draw 4.5s var(--ease-out) infinite; animation-delay: var(--d, 0s); }
+@keyframes art-draw { 0% { stroke-dashoffset: 200; } 40%, 88% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 200; } }
+
+.art-check { stroke-dasharray: 30; animation: art-check 4.8s var(--ease-out) infinite; animation-delay: var(--d, 0s); }
+@keyframes art-check { 0% { stroke-dashoffset: 30; } 15%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 30; } }
+
+.art-pop { transform-origin: 50% 50%; animation: art-pop 4.5s var(--ease-out) infinite; animation-delay: var(--d, 0s); }
+@keyframes art-pop { 0%, 10% { transform: scale(0); } 22%, 90% { transform: scale(1); } 100% { transform: scale(0); } }
+
+.art-blink { animation: art-blink 1.4s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes art-blink { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+
+.art-beat { transform-origin: 50% 60%; animation: art-beat 1.8s ease-in-out infinite; }
+@keyframes art-beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } }
+
+.art-rise { animation: art-rise 3.6s ease-in infinite; animation-delay: var(--d, 0s); }
+@keyframes art-rise { 0% { transform: translateY(20px); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-46px); opacity: 0; } }
+
+.art-drop { animation: art-drop 2.7s ease-in infinite; animation-delay: var(--d, 0s); }
+@keyframes art-drop { 0% { transform: translate(-30px, 0); opacity: 0; } 15% { opacity: 1; } 70% { transform: translate(0, 120px); opacity: 1; } 100% { transform: translate(0, 140px); opacity: 0; } }
+
+.art-flame { transform-origin: 50% 0; animation: art-flame .5s ease-in-out infinite alternate; }
+@keyframes art-flame { to { transform: scaleY(1.35); } }
+
+.art-slide { animation: art-slide 5.5s var(--ease-out) infinite; animation-delay: var(--d, 0s); }
+@keyframes art-slide { 0% { transform: translateY(12px); opacity: 0; } 18%, 86% { transform: none; opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
+
+.art-cursor { animation: art-cursor 5.5s ease-in-out infinite; }
+@keyframes art-cursor { 0%, 100% { transform: translate(0, 0); } 30% { transform: translate(-80px, -70px); } 55% { transform: translate(-60px, -90px); } 75% { transform: translate(30px, -20px); } }
+
+.hero-scene-label { font-size: 15px; font-weight: 800; fill: #16334d; letter-spacing: .02em; }
+.hero-scene-badge { font-family: var(--font-en); font-size: 15px; font-weight: 700; letter-spacing: .12em; fill: #0d2338; }
+
+/* 実写動画の差し替え枠（HeroVideo） */
+.hero-video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 24px; box-shadow: var(--shadow-lg); background: var(--sky-soft); }
+
+/* 画面外の挿絵は動かさない（.art-paused は IntersectionObserver で付け外し） */
+.art-paused .art *, .art-paused.art * { animation-play-state: paused !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .art *, .art { animation: none !important; }
+  .art-check, .art-draw { stroke-dashoffset: 0 !important; }
+}

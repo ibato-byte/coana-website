@@ -240,11 +240,12 @@ export function ContactBand({ navigate }: { navigate: Nav }) {
   );
 }
 
-export function PageHero({ en, title, intro, image }: { en: string; title: string; intro?: string; image?: string }) {
+/** ページ上部の見出し。imagePosition で写真の見える位置だけを変えられる（見た目はどのページも共通） */
+export function PageHero({ en, title, intro, image, imagePosition }: { en: string; title: string; intro?: string; image?: string; imagePosition?: string }) {
   return (
     <section
       className={image ? "page-hero has-image" : "page-hero"}
-      style={image ? { backgroundImage: `url("${image}")` } : undefined}
+      style={image ? { backgroundImage: `url("${image}")`, ...(imagePosition ? { backgroundPosition: imagePosition } : {}) } : undefined}
     >
       <div className="container">
         <p className="page-hero-en">{en}</p>
@@ -267,7 +268,7 @@ export function FaqSection({ items = faqItems, title = home.faq_title }: { items
           {items.map((item, i) => {
             const open = openIndex === i;
             return (
-              <div key={item.q} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+              <div key={item.q}>
                 <div className={open ? "faq-item open" : "faq-item"}>
                   <button
                     className="faq-q"

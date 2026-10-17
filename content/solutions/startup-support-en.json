@@ -1,28 +1,16 @@
 {
-  "message_title": "Japan is a great place to build a business. It should not be a lonely one.",
-  "steps_title": "How to get started",
-  "outcomes": [
-    {
-      "label": "Your plan",
-      "before": "An idea in your head, and a vague sense of the costs",
-      "after": "A written plan and projections ready for banks, programs, and partners"
-    },
-    {
-      "label": "Procedures",
-      "before": "Searching for who does what, mostly in Japanese",
-      "after": "A clear roadmap, and the professionals already introduced"
-    },
-    {
-      "label": "Daily operations",
-      "before": "Invoices in a spreadsheet, receipts in a drawer, questions every week",
-      "after": "Accounting software and rules set up, with a bilingual team to ask"
-    },
-    {
-      "label": "Local customs",
-      "before": "Guessing at payment terms, seals, and etiquette",
-      "after": "Knowing how business is done in Japan, before it costs you a client"
-    }
-  ],
+  "slug": "startup-support-en",
+  "order": 9,
+  "lang": "en",
+  "hidden": true,
+  "nav_label": "Startup Support (English)",
+  "en": "For international founders",
+  "title": "Startup support for founders in Japan",
+  "seo_title": "Start a Business in Japan | Bilingual Support",
+  "description": "Bilingual support for starting a business in Japan: business plan, funding, accounting and back-office setup, and introductions to licensed professionals.",
+  "catch": "Start your business in Japan\nwith a bilingual partner.",
+  "lead": "Planning, back office, local customs, and licensed professionals: one bilingual point of contact for starting a company in Japan.",
+  "hero_note": "Online nationwide, with an office in Minato-ku, Tokyo.",
   "hero_facts": [
     {
       "value": "English / 日本語",
@@ -33,39 +21,21 @@
       "label": "We coordinate the professionals you need"
     },
     {
-      "value": "Before & after launch",
+      "value": "Launch & beyond",
       "label": "From planning to day-to-day operations"
     }
   ],
-  "flow_note": "We work around your target launch date. Early-stage conversations are welcome.",
-  "scenarios": {
-    "title": "Example situations",
-    "lead": "Illustrative examples of typical situations.",
-    "items": [
-      {
-        "tag": "Restaurant / sole proprietor",
-        "name": "Opening a restaurant with a Business Manager visa plan",
-        "before": "Clear concept, but no plan document, no idea about permits, and no Japanese-speaking contact.",
-        "text": "We structured the concept, menu economics, and projections; prepared the startup-loan consultation; and introduced an administrative scrivener for the visa and permits and a tax accountant for filings."
-      },
-      {
-        "tag": "Tech company / KK",
-        "name": "Setting up a Japanese subsidiary",
-        "before": "Head office abroad needs a local entity, a bank account, and monthly reporting in English.",
-        "text": "We coordinated incorporation with a judicial scrivener, set up cloud accounting with English-language monthly reports, and established invoicing and expense rules that satisfy Japanese requirements."
-      },
-      {
-        "tag": "Consultant / freelancer",
-        "name": "Going freelance in Japan",
-        "before": "Unsure whether to stay a sole proprietor or incorporate, and how invoicing and taxes work.",
-        "text": "We compared the options, set up invoicing and bookkeeping, explained the invoice-registration system, and introduced a tax accountant for the annual filing."
-      }
-    ]
-  },
+  "problems_title": "Sound familiar?",
+  "problems": [
+    "Unsure who handles incorporation, visas, and taxes",
+    "Banks and government offices work only in Japanese",
+    "Need a business plan, but unsure what Japan expects",
+    "Invoices, hanko, and payment terms feel confusing"
+  ],
   "scheme": {
     "type": "hub",
     "title": "One bilingual point of contact",
-    "lead": "COANA TOKYO organizes your plan, money, back office, and first customers, and coordinates licensed professionals for the work that Japanese law reserves for them. You talk to one team, in English.",
+    "lead": "We organize your plan, funds, and back office, and bring in licensed professionals.",
     "center": {
       "label": "COANA TOKYO",
       "sub": "Your bilingual coordinator"
@@ -73,194 +43,84 @@
     "nodes": [
       {
         "label": "Business plan",
-        "sub": "Plan, budget, cash-flow",
-        "sub2": "Structured the Japanese way"
+        "sub": "Plan, budget, and cash flow, the Japanese way"
       },
       {
         "label": "Funding preparation",
-        "sub": "Loans and subsidies",
-        "sub2": "Documents and numbers"
+        "sub": "Loans and subsidies: documents and numbers"
       },
       {
         "label": "Back office",
-        "sub": "Accounting software, invoicing",
-        "sub2": "Tools in EN/JA"
+        "sub": "Accounting software, invoicing, EN/JA tools"
       },
       {
         "label": "Business customs",
-        "sub": "Invoices, seals, payments",
-        "sub2": "How things are done here"
+        "sub": "Invoices, seals, payments: how things work here"
       },
       {
         "label": "Licensed professionals",
-        "sub": "Scriveners (registration, permits)",
-        "sub2": "Tax and labor professionals"
+        "sub": "Scriveners, tax and labor professionals"
       },
       {
         "label": "You",
-        "sub": "Focus on your business",
-        "sub2": "Ask anything in English"
+        "sub": "Focus on your business, ask anything in English"
       }
     ],
     "points": [
       {
         "icon": "doc",
         "name": "A plan you can actually use",
-        "text": "We help you structure your idea, target customers, revenue model, budget, and cash-flow projections into a business plan you can present to banks and partners. Documents submitted for subsidy or visa applications are prepared by the licensed professionals we introduce."
+        "text": "Turn your idea, budget, and cash flow into a plan to present to banks and partners."
       },
       {
         "icon": "handshake",
-        "name": "The right professional, at the right time",
-        "text": "Company registration, visas and permits, tax filing, and social insurance are handled by licensed specialists. We introduce them and keep the communication organized."
+        "name": "Right professional, right time",
+        "text": "Registration, visas, tax, and social insurance go to licensed experts. We coordinate."
       },
       {
         "icon": "rocket",
-        "name": "Support after launch, too",
-        "text": "Bookkeeping, monthly numbers, marketing and sales setup. The questions keep coming after launch, and so do we."
+        "name": "Bilingual and hands-on",
+        "text": "Accounting, IT, and sales experience, in English, from planning to life after launch."
       }
     ],
-    "note": "COANA TOKYO is not a law firm, tax firm, or immigration office. Legal, tax, immigration, and social-insurance procedures are performed by licensed professionals we introduce you to."
+    "note": "We are not a law, tax, or immigration firm. Licensed partners we introduce handle those."
   },
-  "message": "Many founders from overseas arrive with a strong idea and plenty of energy, and then lose months to paperwork, language barriers, and not knowing who to ask. Having worked inside a cloud accounting company, a tax accounting firm, and startups, I know where those months go.\nCOANA TOKYO exists so you can spend that time on customers and products instead. We will support you on the Japanese side, explain how things work here, and bring in the right professionals when you need them.",
-  "steps": [
-    "Consultation",
-    "Roadmap",
-    "Plan and setup",
-    "Launch",
-    "Ongoing support"
-  ],
-  "reasons_title": "Why COANA TOKYO",
-  "hero_points": [
-    "Business plan and funding preparation",
-    "Accounting and back-office setup",
-    "Introductions to licensed professionals"
-  ],
-  "en": "For international founders",
-  "cta_title": "Tell us about your plan. We will tell you what comes next.",
-  "hidden": true,
-  "target_title": "Who this is for",
-  "plans": {
-    "title": "Example plans",
-    "lead": "We tailor the scope to your stage. All pricing is quoted individually.",
-    "items": [
-      {
-        "name": "Plan & Prepare",
-        "tag": "Before launch",
-        "text": "Turn your idea into a plan, projections, and a clear roadmap of what to do in which order.",
-        "includes": [
-          "Business plan support",
-          "Budget and cash-flow projections",
-          "Funding preparation",
-          "Roadmap and professional introductions"
-        ],
-        "best_for": "Founders at the planning stage"
-      },
-      {
-        "name": "Launch Package",
-        "tag": "Recommended",
-        "featured": true,
-        "text": "Everything in Plan & Prepare, plus setting up your back office and tools so the company runs from day one.",
-        "includes": [
-          "Everything in Plan & Prepare",
-          "Coordination of incorporation with professionals",
-          "Accounting software and tools setup",
-          "Invoicing and expense rules",
-          "3 months of post-launch support"
-        ],
-        "best_for": "Founders who want to focus on the business itself"
-      },
-      {
-        "name": "Ongoing Support",
-        "tag": "After launch",
-        "text": "Bookkeeping, monthly numbers, marketing and sales setup, and a bilingual team to ask.",
-        "includes": [
-          "Bookkeeping and monthly reports",
-          "Website, social media, sales support",
-          "Ongoing coordination with professionals",
-          "Regular check-ins"
-        ],
-        "best_for": "Companies that have just launched"
-      }
-    ],
-    "note": "Pricing is quoted individually based on scope. Small or partial engagements are welcome."
-  },
-  "related": [
-    "20270427-bookkeeping-in-english-japan"
-  ],
-  "slug": "startup-support-en",
-  "outcome_title": "What changes",
-  "problems_title": "Sound familiar?",
-  "flow": [
+  "features_title": "What we do",
+  "features_lead": "Choose only what you need. Everything is available in English and Japanese.",
+  "features": [
     {
-      "name": "Free consultation",
-      "text": "Tell us about your business, your timeline, and where you are stuck. Online, in English."
+      "icon": "doc",
+      "name": "Business plan support",
+      "text": "Your idea, customers, revenue, and cash flow, shaped for Japanese banks."
     },
     {
-      "name": "Roadmap and quote",
-      "text": "We map out what needs to happen in which order, who does what, and what it will cost."
+      "icon": "bank",
+      "name": "Funding preparation",
+      "text": "Numbers and documents for startup loans, local programs, and subsidies."
     },
     {
-      "name": "Plan and preparation",
-      "text": "Business plan, projections, funding preparation, and introductions to the professionals you need."
-    },
-    {
-      "name": "Setup and launch",
-      "text": "Incorporation coordinated with professionals; accounting, invoicing, and tools set up and explained."
-    },
-    {
-      "name": "Ongoing support",
-      "text": "Bookkeeping, monthly numbers, marketing and sales, and a team you can ask anything."
-    }
-  ],
-  "lang": "en",
-  "order": 9,
-  "reasons": [
-    {
-      "name": "Bilingual, hands-on, local",
-      "text": "We communicate in English and support you on the Japanese side, from reading documents to joining meetings with banks and professionals.",
-      "image": "https://images.unsplash.com/photo-1538128844159-f08f41bfb169?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      "name": "Accounting, IT, and sales experience",
-      "text": "Our founder worked at a major cloud accounting company, startups, and a tax accounting firm, and built inside-sales teams. We support both the back office and growth.",
-      "image": "https://images.unsplash.com/photo-1738566061518-99bb2ba3bcc7?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      "name": "A network of licensed professionals",
-      "text": "Tax accountants, judicial and administrative scriveners, labor consultants, and lawyers. You get the right specialist, introduced at the right time.",
-      "image": "https://images.unsplash.com/photo-1672380135241-c024f7fbfa13?auto=format&fit=crop&w=900&q=80"
-    }
-  ],
-  "faq_title": "FAQ",
-  "problems_image": "https://images.unsplash.com/photo-1480796927426-f609979314bd?auto=format&fit=crop&w=1600&q=80",
-  "target": [
-    {
-      "icon": "rocket",
-      "name": "Founders planning to incorporate in Japan",
-      "text": "You have a business idea and maybe a visa plan, but the incorporation process, bank accounts, taxes, and accounting rules are unclear."
-    },
-    {
-      "icon": "building",
-      "name": "Newly established companies",
-      "text": "Your company exists on paper. Now you need invoices, bookkeeping, payroll preparation, and tools that work in Japanese and English."
+      "icon": "cloud",
+      "name": "Accounting and back-office setup",
+      "text": "Cloud accounting, bank links, and invoice and expense rules for Japan."
     },
     {
       "icon": "globe",
-      "name": "Overseas companies opening in Japan",
-      "text": "You are setting up a Japanese subsidiary or branch and need someone local who understands both the paperwork and the customs."
+      "name": "Japanese business customs",
+      "text": "Payment terms, seals, and etiquette explained, to avoid common mistakes."
+    },
+    {
+      "icon": "handshake",
+      "name": "Professional introductions",
+      "text": "Scriveners, tax accountants, labor consultants, and lawyers, kept aligned."
+    },
+    {
+      "icon": "megaphone",
+      "name": "First customers in Japan",
+      "text": "Website, social media, sales, and events designed for the Japanese market."
     }
-  ],
-  "problems": [
-    "You do not know which professional handles what: incorporation, visas, taxes, labor",
-    "Every form, bank, and government office communicates only in Japanese",
-    "You need a business plan for a loan or investors, and are not sure what format Japan expects",
-    "Japanese invoicing, seals (hanko), payment terms, and bank transfers are confusing",
-    "You are not sure which accounting software and tools to use",
-    "You want someone who can answer practical questions quickly, in English"
   ],
   "scope": {
     "title": "Examples of what you can ask us",
-    "lead": "Partial engagements are welcome, for example just the business plan or just the accounting setup.",
     "groups": [
       {
         "name": "Planning & funding",
@@ -305,15 +165,124 @@
     ],
     "note": "Under Japanese law, company registration, visa and permit applications, tax filing and advice, social-insurance procedures, and legal advice may only be performed by licensed professionals. COANA TOKYO does not perform these services; we introduce you to licensed partners."
   },
+  "plans": {
+    "title": "Example plans",
+    "items": [
+      {
+        "name": "Plan & Prepare",
+        "tag": "Before launch",
+        "text": "Turn your idea into a plan, projections, and a clear roadmap.",
+        "includes": [
+          "Business plan support",
+          "Budget and cash flow",
+          "Funding preparation",
+          "Roadmap and introductions"
+        ],
+        "best_for": "Founders at the planning stage"
+      },
+      {
+        "name": "Launch Package",
+        "tag": "Recommended",
+        "featured": true,
+        "text": "Plan & Prepare, plus a back office that runs from day one.",
+        "includes": [
+          "Everything in Plan & Prepare",
+          "Incorporation coordination",
+          "Accounting, tools, and rules",
+          "3 months of post-launch support"
+        ],
+        "best_for": "Founders who want to focus on the business"
+      },
+      {
+        "name": "Ongoing Support",
+        "tag": "After launch",
+        "text": "Bookkeeping, monthly numbers, sales, and a bilingual team to ask.",
+        "includes": [
+          "Bookkeeping and monthly reports",
+          "Website, social, sales support",
+          "Coordination with professionals",
+          "Regular check-ins"
+        ],
+        "best_for": "Companies that have just launched"
+      }
+    ],
+    "note": "Pricing is quoted individually based on scope. Small or partial engagements are welcome."
+  },
+  "scenarios": {
+    "title": "Example situations",
+    "lead": "Illustrative examples of typical situations.",
+    "items": [
+      {
+        "tag": "Restaurant / sole proprietor",
+        "name": "Opening a restaurant in Japan",
+        "before": "A concept, but no plan, no permit know-how, no Japanese contact.",
+        "text": "Plan and projections built, loan talks prepared, scrivener and tax advisor introduced."
+      },
+      {
+        "tag": "Tech company / KK",
+        "name": "Setting up a Japanese subsidiary",
+        "before": "HQ abroad needs a local entity, bank account, and English reports.",
+        "text": "Incorporation coordinated, plus cloud accounting with English monthly reports."
+      },
+      {
+        "tag": "Consultant / freelancer",
+        "name": "Going freelance in Japan",
+        "before": "Sole proprietor or company? And how do invoicing and taxes work?",
+        "text": "Options compared, bookkeeping set up, and a tax accountant introduced for filing."
+      }
+    ]
+  },
+  "steps_title": "How to get started",
+  "flow": [
+    {
+      "name": "Free consultation",
+      "text": "Tell us your plans and where you are stuck. Online, in English."
+    },
+    {
+      "name": "Roadmap and quote",
+      "text": "What happens in which order, who does what, and what it costs."
+    },
+    {
+      "name": "Plan and preparation",
+      "text": "Business plan, projections, funding prep, and introductions."
+    },
+    {
+      "name": "Setup and launch",
+      "text": "Incorporation coordinated; accounting and tools set up."
+    },
+    {
+      "name": "Ongoing support",
+      "text": "Bookkeeping, monthly numbers, sales, and answers in English."
+    }
+  ],
+  "flow_note": "We work around your launch date. Early-stage talks are welcome.",
+  "faq_title": "FAQ",
+  "faqs": [
+    {
+      "q": "How much does it cost?",
+      "a": "It depends on scope. After a free consultation we send a quote. Partial engagements, such as only the business plan or only the accounting setup, are welcome."
+    },
+    {
+      "q": "Can you handle my visa or company registration?",
+      "a": "No. Visa and permit applications are performed by licensed administrative scriveners, and company registration by judicial scriveners. We introduce trusted partners and coordinate with them."
+    },
+    {
+      "q": "Do you file taxes or handle social insurance?",
+      "a": "No. Tax filing and advice are reserved for licensed tax accountants, and social-insurance filings for labor and social security attorneys. We set up bookkeeping and introduce the right professional."
+    },
+    {
+      "q": "Is all communication in English?",
+      "a": "Yes. We communicate in English, help you understand Japanese documents and tools, and join meetings with banks and professionals as bilingual support (not as your legal representative)."
+    },
+    {
+      "q": "Can you help before I arrive in Japan?",
+      "a": "Yes. Planning, projections, and the roadmap can all be done online before you arrive. We also prepare the materials you will need once you are here."
+    }
+  ],
+  "cta_title": "Tell us your plan. We will tell you what comes next.",
+  "cta_text": "Free, no-obligation consultation in English, online.\nThe form is in Japanese; feel free to write in English.",
   "tools_title": "Tools we work with",
-  "hero_image": "/images/tokyo-skyline-hero.jpg",
-  "features_title": "What we do",
-  "tools_note": "Most Japanese cloud accounting tools have limited English interfaces. We help you choose and operate them without the language barrier.",
-  "seo_title": "Start a Business in Japan | Bilingual Support",
-  "hero_note": "Free consultation in English. Online nationwide, office in Minato-ku, Tokyo. Inquiries are received through our contact form (Japanese page); please write in English.",
-  "nav_label": "Startup Support (English)",
-  "title": "Startup support for founders in Japan",
-  "features_image": "https://images.unsplash.com/photo-1531539427495-97c44a449837?auto=format&fit=crop&w=1600&q=80",
+  "tools_note": "Most Japanese cloud accounting tools have limited English. We help you choose and use them.",
   "tools": [
     "freee",
     "Money Forward Cloud",
@@ -322,67 +291,7 @@
     "Invoicing tools",
     "Notion"
   ],
-  "catch": "Start your business in Japan\nwith a partner who speaks both languages.",
-  "cta_text": "Free consultation in English, online.\nNo obligation, and no question is too basic. The contact form is in Japanese, but you can write your message in English.",
-  "lead": "Starting a company in Japan means navigating unfamiliar procedures, a different business culture, and a lot of paperwork in Japanese. COANA TOKYO is your single point of contact: we help you plan, set up your back office, understand how business is done here, and connect you with the right licensed professionals at the right time.",
-  "description": "Bilingual support for starting a business in Japan: business plan, funding, accounting and back-office setup, and introductions to licensed professionals.",
-  "faqs": [
-    {
-      "q": "Can you handle my visa or company registration?",
-      "a": "No. Visa and permit applications are performed by licensed administrative scriveners, and company registration by judicial scriveners. We introduce you to trusted partners and coordinate the process with them."
-    },
-    {
-      "q": "Do you file taxes or handle social insurance?",
-      "a": "Tax filing and tax advice are reserved for licensed tax accountants, and social-insurance filings for licensed labor and social security attorneys (shakai hoken roumushi). We set up your bookkeeping and connect you with the right professional for filings."
-    },
-    {
-      "q": "Is all communication in English?",
-      "a": "Yes. We communicate with you in English, help you read and understand Japanese-language documents and tools, and join conversations with professionals and banks as your bilingual support (not as your legal representative)."
-    },
-    {
-      "q": "Can you help before I arrive in Japan?",
-      "a": "Yes. Planning, projections, and the roadmap can all be done online before you arrive. We also prepare the materials you will need once you are here."
-    },
-    {
-      "q": "Do you work with sole proprietors and freelancers?",
-      "a": "Yes. We support individuals as well as companies, and help you understand the practical differences between the two. Tax implications are confirmed with a licensed tax accountant."
-    },
-    {
-      "q": "How much does it cost?",
-      "a": "It depends on scope. After a free consultation we send a quote. Partial engagements, such as only the business plan or only the accounting setup, are welcome."
-    }
-  ],
-  "features": [
-    {
-      "icon": "doc",
-      "name": "Business plan support",
-      "text": "We structure your idea, target customers, revenue model, budget, and cash-flow projections into a plan you can present to Japanese banks and partners. Where a document must be filed with a government office (subsidies, visas), we introduce the licensed professional who prepares it."
-    },
-    {
-      "icon": "bank",
-      "name": "Funding preparation",
-      "text": "We explain startup loans (e.g. Japan Finance Corporation), local government programs, and subsidies, and help you prepare the numbers and documents you will need."
-    },
-    {
-      "icon": "cloud",
-      "name": "Accounting and back-office setup",
-      "text": "We choose and configure cloud accounting software, connect bank accounts and cards, and set up invoicing, expense, and receipt rules designed with the Japanese invoice system and electronic record-keeping requirements in mind (tax judgments are confirmed with a licensed tax accountant)."
-    },
-    {
-      "icon": "globe",
-      "name": "Japanese business customs",
-      "text": "Invoicing cycles and payment terms, company seals, business cards, bank transfers, contracts, and communication etiquette. We explain what matters and help you avoid common mistakes."
-    },
-    {
-      "icon": "handshake",
-      "name": "Professional introductions and coordination",
-      "text": "Judicial scriveners (incorporation), administrative scriveners (visas, permits), tax accountants, labor consultants, and lawyers. We introduce the right person and keep everyone aligned."
-    },
-    {
-      "icon": "megaphone",
-      "name": "First customers in Japan",
-      "text": "Website, social media, sales process, and events designed for the Japanese market, so you can start building a customer base from day one."
-    }
-  ],
-  "features_lead": "Choose only what you need. Everything is available in English and Japanese."
+  "related": [
+    "20270427-bookkeeping-in-english-japan"
+  ]
 }
