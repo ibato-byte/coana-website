@@ -76,15 +76,17 @@ function Bookkeeping() {
 
 /* ── クラウド会計・ITツール導入：クラウドに各ツールがつながる ── */
 function CloudAccounting() {
+  // 3枚のカードは同じ高さ・同じ大きさで並べ、アイコンは上の色帯を除いた本体部分の上下左右中央に置く
+  const W = 88, H = 76, Y = 228, BAND = 10;
   const tiles = [
-    { x: 70, y: 220, c: SKY, icon: <path d="M90 268v-14M102 268v-24M114 268v-8" /> },
-    { x: 196, y: 248, c: YELLOW, icon: <><circle cx="240" cy="276" r="12" /><path d="M240 270v6l4 3" /></> },
-    { x: 322, y: 220, c: DEEP, icon: <path d="M352 238h22v26h-22zM357 247h12M357 255h8" /> },
+    { x: 70, c: SKY, icon: <path d="M-14 11V-1M0 11V-11M14 11V3" /> },
+    { x: 196, c: YELLOW, icon: <><circle cx="0" cy="0" r="13" /><path d="M0-6v6l5 4" /></> },
+    { x: 322, c: DEEP, icon: <><path d="M-11-13h22v26h-22z" /><path d="M-6-4h12M-6 4h8" /></> },
   ];
   return (
     <Frame>
       {tiles.map((t, i) => (
-        <path key={i} d={`M240 140 L ${t.x + 44} ${t.y}`} className="art-dash" stroke={DEEP} style={d(i * .4)} />
+        <path key={i} d={`M240 140 L ${t.x + W / 2} ${Y}`} className="art-dash" stroke={DEEP} style={d(i * .4)} />
       ))}
       <g className="art-float">
         <path d="M172 140a40 40 0 0 1-4-79.6A58 58 0 0 1 280 50a42 42 0 0 1 22 82 40 40 0 0 1-10 8Z" fill="#fff" stroke={LINE} strokeWidth="2" />
@@ -95,12 +97,15 @@ function CloudAccounting() {
           <path d="m222 122-1-9 9 0" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </g>
       </g>
-      {tiles.map((t, i) => (
-        <Card key={i} x={t.x} y={t.y} w={88} h={70} className="art-float" style={d(.5 + i * .5)}>
-          <rect x={t.x} y={t.y} width="88" height="10" rx="5" fill={t.c} />
-          <g stroke={NAVY} strokeWidth="3.5" fill="none" strokeLinecap="round" transform={i === 1 ? "translate(0 -10)" : undefined}>{t.icon}</g>
-        </Card>
-      ))}
+      {/* 3枚とも同じ動きで浮かせ、並びがずれて見えないようにする */}
+      <g className="art-float" style={d(.5)}>
+        {tiles.map((t, i) => (
+          <Card key={i} x={t.x} y={Y} w={W} h={H}>
+            <rect x={t.x} y={Y} width={W} height={BAND} rx="5" fill={t.c} />
+            <g transform={`translate(${t.x + W / 2} ${Y + BAND + (H - BAND) / 2})`} stroke={NAVY} strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round">{t.icon}</g>
+          </Card>
+        ))}
+      </g>
     </Frame>
   );
 }

@@ -62,10 +62,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 ::selection { background: rgba(85, 184, 243, .35); }
 
-/* 日本語の改行を文節単位にし、見出しの行バランスと段落末の1文字残りを防ぐ */
-h1, h2, h3, h4 { word-break: auto-phrase; text-wrap: balance; }
-p, li, dd, figcaption { text-wrap: pretty; }
-.section-lead, .services-intro p, .mission-statement, .page-intro, .strength-description, .message-body p, .contact-band p { word-break: auto-phrase; }
+/* 日本語の改行：文節（src/jsx/phrase.ts が BudouX で入れる <wbr>）でだけ改行し、単語の途中で切れないようにする。
+ * keep-all は Safari も対応（Chrome だけの word-break: auto-phrase は使わない）。収まらない長い語だけ anywhere で折り返す。
+ * line-break: strict で、句読点や小さい「っ」などが行頭に来ないようにする。
+ * Markdown から作る本文（コラム記事・プライバシーポリシー）は <wbr> が入らないので、従来どおりの改行にする。 */
+.app-shell { word-break: keep-all; overflow-wrap: anywhere; line-break: strict; }
+.article-body, .article-body * { word-break: normal; overflow-wrap: break-word; }
+/* 見出し・短い文は行の長さをそろえ、段落は最終行が1〜2文字だけにならないようにする */
+h1, h2, h3, h4, dt, figcaption, a, button, strong, small, label, summary, .faq-q-text, .service-card-text { text-wrap: balance; }
+p, li, dd { text-wrap: pretty; }
 
 .app-shell { min-height: 100vh; overflow-x: clip; }
 .container { width: min(1140px, calc(100% - 48px)); max-width: none; margin: 0 auto; }
@@ -308,6 +313,9 @@ p, li, dd, figcaption { text-wrap: pretty; }
 .footer-links a:where(.go-link):hover { color: var(--yellow); transform: translateX(4px); }
 .footer-bottom { position: relative; border-top: 1px solid rgba(219, 232, 242, .16); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
 .footer-bottom small { font-family: var(--font-en); font-size: 11px; letter-spacing: .1em; color: #8aa2b5; }
+/* フッターのリンクは左揃え（共通の a.go-link は中央揃え）。プライバシーポリシーは1語なので途中で折り返さない */
+.footer-links a:where(.go-link) { text-align: left; }
+.footer-privacy { white-space: nowrap; }
 .footer-privacy { border: 0; background: transparent; padding: 0; color: #8aa2b5; font-size: 12px; transition: color .25s; }
 .footer-privacy:hover { color: var(--yellow); }
 
@@ -940,6 +948,7 @@ a.service-card:hover .art * { animation-play-state: running; }
 }
 
 @media (max-width: 640px) {
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
   .container { width: calc(100% - 40px); }
   .section { padding: 76px 0; }
   .header-inner { width: calc(100% - 36px); height: 70px; }
