@@ -84,8 +84,9 @@
 .chat-cta-main, .chat-cta-line, .chat-cta-book { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 14px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 800; line-height: 1.4; cursor: pointer; }
 .chat-cta-main { border: 0; background: var(--sky-deep); color: var(--white); }
 .chat-cta-main:hover { background: var(--sky-ink); }
-.chat-cta-line { background: #06c755; color: var(--white); }
-.chat-cta-line:hover { background: #05a948; }
+/* LINE：サイトの LINE ボタンと同じく、白地に緑の枠・濃い緑の文字（WCAG AA） */
+.chat-cta-line { border: 1.5px solid #06c755; background: var(--white); color: #067a37; }
+.chat-cta-line:hover { background: #effbf3; }
 .chat-cta-book { border: 1px solid var(--sky-deep); color: var(--sky-ink); background: var(--white); }
 
 .chat-typing { display: inline-flex; gap: 4px; padding: 14px 16px; }

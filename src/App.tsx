@@ -299,13 +299,15 @@ function ServiceCard({ item, navigate, detail = false }: { item: ServiceItem; na
     : <div className={detail ? "service-card is-detail" : "service-card"}>{body}</div>;
 }
 
-function ServiceGroupHead({ n, data }: { n: string; data: { en: string; title: string; note: string; lead: string } }) {
+/** サービスのまとまり（01 バックオフィス支援 など）の見出し。トップでは「COANA TOKYOにできること」（h2）の下なので h3、サービス一覧ページでは h2 */
+function ServiceGroupHead({ n, data, level = 3 }: { n: string; data: { en: string; title: string; note: string; lead: string }; level?: 2 | 3 }) {
+  const Heading = level === 2 ? "h2" : "h3";
   return (
     <header className="service-group-head">
       <span className="service-num">{n}</span>
       <div>
         <p className="service-en">{data.en}<em>{data.note}</em></p>
-        <h3>{data.title}</h3>
+        <Heading>{data.title}</Heading>
       </div>
       <p className="service-tagline">{data.lead}</p>
     </header>
@@ -326,7 +328,7 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
           </div>
         ))}
         {/* 01・02 を一通り見たあとに「迷ったら診断」 */}
-        <DiagnoseBanner navigate={navigate} className="is-home" />
+        <DiagnoseBanner className="is-home" />
       </div>
     </section>
   );
@@ -514,17 +516,25 @@ function Services({ navigate }: { navigate: Nav }) {
       {serviceGroups.map(({ key, n, data }) => (
         <section key={key} id={key} className="section service-detail">
           <div className="container">
-            <ServiceGroupHead n={n} data={data} />
+            <ServiceGroupHead n={n} data={data} level={2} />
             <div className="service-card-grid is-detail">
               {(data.items as ServiceItem[]).map((item) => <ServiceCard key={item.name} item={item} navigate={navigate} detail />)}
             </div>
           </div>
         </section>
       ))}
-      {/* 01・02 を一通り見たあとに「迷ったら診断」。料金・流れの前に、はっきり気づける帯で置く */}
-      <div className="container diagnose-banner-wrap"><DiagnoseBanner navigate={navigate} /></div>
+      {/* 01・02 を一通り見たあとに「迷ったら診断」 */}
+      <div className="container diagnose-banner-wrap"><DiagnoseBanner /></div>
       <section className="section flow-section">
         <div className="container">
+          {/* 料金の考え方 → 流れ → 「まずは無料相談から」のボタンで終わる（ページの最後を相談につなげる） */}
+          <div className="pricing-box is-before-flow">
+            <span className="pricing-icon" aria-hidden="true">¥</span>
+            <div>
+              <h2>{services.pricing_title}</h2>
+              <p>{services.pricing}</p>
+            </div>
+          </div>
           <SectionTitle en="Flow" center>{services.flow_title}</SectionTitle>
           <FlowLine
             steps={services.flow.map((item, index) => ({ name: item, icon: <MiniIcon name={FLOW_ICONS[index] || "doc"} size={26} /> }))}
@@ -533,13 +543,6 @@ function Services({ navigate }: { navigate: Nav }) {
           >
             <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
           </FlowLine>
-          <div className="pricing-box">
-            <span className="pricing-icon" aria-hidden="true">¥</span>
-            <div>
-              <h2>{services.pricing_title}</h2>
-              <p>{services.pricing}</p>
-            </div>
-          </div>
         </div>
       </section>
     </main>
@@ -962,7 +965,7 @@ export default function App() {
       <div key={`${page}-${routeKey}`} className="page-fade">{content}</div>
       <Footer navigate={navigate} />
       <BackToTop />
-      <ChatLauncher navigate={navigate} />
+      <ChatLauncher navigate={navigate} page={page} />
     </div>
   );
 }

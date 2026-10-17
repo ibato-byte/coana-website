@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
-import type { Nav } from "../shared";
+import type { Nav, Page } from "../shared";
 import type { ChatPanelProps } from "./ChatPanel";
 
 // ボタンの文言はここに直接書く（content/chat.json を読み込むと、チャットの全データが最初の読み込みに含まれてしまうため）
@@ -8,17 +8,45 @@ export const CHAT_MARK = "/images/chat/coana-mark.webp";
 /** スマホではチャットを全画面のシートにする（chat.css と同じ幅） */
 export const SHEET_QUERY = "(max-width: 640px)";
 
-/* ───────────────────────── サポートチャット：画面右下の丸いボタン ─────────────────────────
+/* ───────────────────────── サポートチャット：画面右下のボタン ─────────────────────────
+ * 役割は「困ったらここ」の控えめな入口。主役（ヘッダーの「お問い合わせ」、ヒーローや各セクションの相談ボタン、ページ下部のお問い合わせ帯）より
+ * 目立たせず、どのページでも同じ場所にある。
+ * - PC：紺のピル型（白い丸にロゴマーク＋「チャットで相談・診断」）。スマホ：紺の丸（ロゴマーク）。
+ * - ページを開いた直後は出さず、少しスクロールしてから、ふわっと1回だけ現れる（ヒーローの鳩と重ならない）。繰り返し動き続けない。
+ * - フッターの最下部（プライバシーポリシーなど）が見えている間は隠れる。お問い合わせページでは、PC は丸だけ・スマホは出さない（入力の邪魔をしない）。
+ * - 各サービスLPのスマホでは、下部の固定バーにチャットのボタンを入れ、このボタンは出さない（SolutionPage の StickyCta）。
  * ページの読み込みを遅くしないよう、ここ（ボタンだけ）を最初に読み込み、チャット本体（ChatPanel・知識データ）は開いたときに読み込む。
- * 勝手に話しかけたり動き回ったりはしない。openChat()（shared.tsx）で、診断から始めた状態で開くこともできる。
+ * openChat()（shared.tsx）で、診断から始めた状態で開くこともできる。
  * スマホで開いている間は、背景のページをスクロールさせない（iOS Safari でも効くよう body を固定し、閉じたら元の位置へ戻す）。
  */
-export function ChatLauncher({ navigate }: { navigate: Nav }) {
+const SHOW_AFTER_PX = 160;
+
+export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"menu" | "diagnosis">("menu");
   const [request, setRequest] = useState(0); // 開いたまま「診断から」を押されたときに、パネルへ伝える
   const [Panel, setPanel] = useState<ComponentType<ChatPanelProps> | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [shown, setShown] = useState(false);
+  const [atFooter, setAtFooter] = useState(false);
+  // 少しスクロールしたら出す（一度出したら、上に戻っても消さない）。スクロールできないほど短いページでは最初から出す
+  useEffect(() => {
+    if (shown) return;
+    const check = () => {
+      if (window.scrollY > SHOW_AFTER_PX || document.documentElement.scrollHeight <= window.innerHeight + SHOW_AFTER_PX) setShown(true);
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    return () => window.removeEventListener("scroll", check);
+  }, [shown, page]);
+  // フッターの最下部（著作権表示・プライバシーポリシー）が見えている間は、重ならないよう隠す
+  useEffect(() => {
+    const target = document.querySelector(".footer-bottom");
+    if (!target || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([entry]) => setAtFooter(entry.isIntersecting));
+    io.observe(target);
+    return () => io.disconnect();
+  }, [page]);
 
   const load = () => import("./ChatPanel").then((m) => setPanel(() => m.ChatPanel));
   const show = (next: "menu" | "diagnosis") => {
@@ -65,7 +93,7 @@ export function ChatLauncher({ navigate }: { navigate: Nav }) {
       <button
         ref={buttonRef}
         type="button"
-        className={open ? "chat-launcher is-open" : "chat-launcher"}
+        className={["chat-launcher", open && "is-open", (shown || open) && !atFooter && "is-shown", page === "contact" && "is-quiet"].filter(Boolean).join(" ")}
         aria-expanded={open}
         aria-controls="chat-panel"
         aria-label={open ? "チャットを閉じる" : LAUNCHER_LABEL + "（チャットを開く）"}
@@ -73,12 +101,8 @@ export function ChatLauncher({ navigate }: { navigate: Nav }) {
         onPointerEnter={() => void load()}
         onFocus={() => void load()}
       >
-        <img src={CHAT_MARK} alt="" width={34} height={34} decoding="async" />
-        {/* チャットだと分かるよう、小さな吹き出しを添える */}
-        <span className="chat-launcher-badge" aria-hidden="true">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.6 3.7a.6.6 0 0 1-1-.47V16A2.5 2.5 0 0 1 4 13.5Z" /></svg>
-        </span>
-        <span className="chat-launcher-label" aria-hidden="true">ご相談</span>
+        <span className="chat-launcher-mark"><img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" /></span>
+        <span className="chat-launcher-text" aria-hidden="true">チャットで相談・診断</span>
       </button>
       {open && Panel && <Panel navigate={navigate} mode={mode} request={request} onClose={close} />}
     </>

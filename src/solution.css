@@ -217,17 +217,17 @@ a.lanes-cta-link:hover { background: var(--sky-deep); color: var(--white); }
 a.lanes-cta-link svg { transition: transform .3s var(--ease-out); }
 a.lanes-cta-link:hover svg { transform: translateX(3px); }
 /* PC：カーソルを当てる（キーボードでフォーカスする）と、その工程でやることを少し詳しく（カードの下に重ねて出す。レイアウトは動かさない） */
-@media (hover: hover) and (pointer: fine) and (min-width: 761px) {
+@media (hover: hover) and (pointer: fine) and (min-width: 981px) {
   .lanes-detail { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 4; padding: 12px 14px; border-radius: 12px; background: var(--navy-ink); color: var(--white); box-shadow: var(--shadow-md); opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .25s, transform .3s var(--m-ease); }
   .lanes-item:hover .lanes-detail, .lanes-item:focus-within .lanes-detail, .lanes-item.is-open .lanes-detail { opacity: 1; transform: none; }
   .lanes-item:hover .lanes-card { border-color: var(--sky); transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .lanes-item:hover { z-index: 5; }
 }
-@media (min-width: 761px) and (not ((hover: hover) and (pointer: fine))) {
+@media (min-width: 981px) and (not ((hover: hover) and (pointer: fine))) {
   .lanes-detail { display: none; margin-top: 8px; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); }
   .lanes-item.is-open .lanes-detail { display: block; }
 }
-@media (max-width: 760px) {
+@media (max-width: 980px) {
   .lanes { display: block; max-width: 520px; margin-top: 52px; }
   .lanes-list { display: grid; gap: 14px; padding: 0; margin: 0; }
   .lanes-label, .lanes-rest { display: none; }
@@ -316,14 +316,14 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
 /* ── 6. 流れ ── */
 
 /* ── 8. お問い合わせ ── */
-.lp-cta-band { position: relative; padding: 96px 0; overflow: hidden; color: var(--white); background: linear-gradient(135deg, var(--navy-ink), #0b4f8c 70%, var(--sky-deep)); }
+.lp-cta-band { position: relative; padding: 96px 0; overflow: hidden; color: var(--white); background: linear-gradient(135deg, var(--navy-ink), #0b4f8c 70%, #0b5aa6); } /* 右下の端でも、黄色・白の文字が AA を満たす深さ */
 .lp-cta-orbit { position: absolute; right: -160px; top: -160px; width: 480px; height: 480px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .14); box-shadow: 0 0 0 70px rgba(255, 255, 255, .03); }
 .lp-cta-inner { position: relative; }
 .lp-cta-copy { max-width: 760px; }
 .lp-cta-band .eyebrow { color: var(--yellow); }
 .lp-cta-band .eyebrow::before { background: var(--yellow); }
 .lp-cta-band h2 { margin: 12px 0 14px; font-size: clamp(25px, 3vw, 38px); font-weight: 900; line-height: 1.5; }
-.lp-cta-band p { margin: 0; line-height: 2; opacity: .92; }
+.lp-cta-band p { margin: 0; line-height: 2; }
 .lp-cta-actions { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .lp-cta-band .button { background: var(--yellow); border-color: var(--yellow); color: var(--navy-ink); box-shadow: 0 14px 34px rgba(0, 0, 0, .25); }
 .lp-cta-band .button:hover { background: #f8cb3e; border-color: #f8cb3e; color: var(--navy-ink); }
@@ -429,7 +429,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
     bottom: 12px;
     z-index: 56;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     gap: 8px;
     padding: 8px;
     border-radius: 18px;
@@ -447,12 +447,21 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-sticky a.line-button { min-height: 50px; padding: 0 18px; border-radius: 12px; font-size: 14px; }
   /* 固定CTA表示中は「ページ先頭へ」ボタンとフッター下部を押し上げる（body に has-sticky-cta を付与） */
   /* 固定バー表示中は、チャットのボタンと「ページ先頭へ」ボタンを固定バーの上に並べる */
-  /* 位置（bottom）ではなく translate で持ち上げる（レイアウトのずれ＝CLS に数えられないように） */
-  body.has-sticky-cta .chat-launcher, body.has-sticky-cta .back-to-top { translate: 0 -76px; }
+  /* 位置（bottom）ではなく translate で持ち上げる（レイアウトのずれ＝CLS に数えられないように）。
+     チャットは固定バーの中のボタンにまとめるので、右下のチャットのボタンは隠す */
+  body.has-sticky-cta .back-to-top { translate: 0 -16px; } /* 固定バーのすぐ上へ */
+  body.has-sticky-cta .chat-launcher { opacity: 0; visibility: hidden; pointer-events: none; }
+  .lp-sticky-chat { width: 50px; height: 50px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 12px; background: var(--navy); cursor: pointer; }
+  .lp-sticky-chat img { width: 30px; height: 30px; padding: 3px; border-radius: 50%; background: var(--white); box-sizing: content-box; }
   body.has-sticky-cta .site-footer { padding-bottom: 84px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lp-hero-scroll { animation: none !important; }
   .lp-scheme-dots { display: none; }
+}
+
+/* 幅 360px 以下：ヒーローの「特徴」3つの文字が途中で折れないよう、少しだけ小さく */
+@media (max-width: 360px) {
+  .lp-hero-facts strong { font-size: 11.5px; letter-spacing: -.02em; }
 }

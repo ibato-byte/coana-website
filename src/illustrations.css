@@ -82,7 +82,7 @@
 /* 実写動画の差し替え枠（HeroVideo） */
 .hero-video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 24px; box-shadow: var(--shadow-lg); background: var(--sky-soft); }
 
-/* 画面外の挿絵は動かさない（.art-paused は IntersectionObserver で付け外し） */
+/* 画面外の挿絵は動かさない（.art-paused は src/motion.ts が画面に入っているかで付け外し） */
 .art-paused .art *, .art-paused.art * { animation-play-state: paused !important; }
 
 @media (prefers-reduced-motion: reduce) {
