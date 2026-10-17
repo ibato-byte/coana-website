@@ -1000,6 +1000,77 @@ function coanaPageMeta(): Plugin {
         '',
       ].join('\n')
       fs.writeFileSync(path.join(outDir, 'llms-full.txt'), llmsFull)
+
+      // ── 鳩博士チャットの知識データ（/chat-knowledge.json）。サイトの全コンテンツから自動で作るので、
+      //    サイトを更新すればチャットの知識も自動で最新になる。AI の回答（functions/api/chat.ts）と、
+      //    AI が使えないときのキーワード検索（src/chat）の両方がこのデータだけを根拠にする。
+      type Chunk = { id: string; t: string; u: string; k: string; x: string }
+      const chunks: Chunk[] = []
+      const clean = (value: unknown) => stripHtml(String(value ?? ''))
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim()
+      const addChunk = (k: string, t: string, u: string, text: unknown) => {
+        const x = clean(text)
+        if (!x) return
+        // 長い文章は 500 字前後で区切る（検索とAIへの受け渡しの単位）
+        const parts = x.length <= 560 ? [x] : x.split(/(?<=。)\n?|\n/).reduce<string[]>((acc, line) => {
+          if (!line.trim()) return acc
+          if (!acc.length || (acc[acc.length - 1] + line).length > 500) acc.push(line.trim())
+          else acc[acc.length - 1] += line.trim()
+          return acc
+        }, [])
+        parts.forEach((part, i) => chunks.push({ id: k + '-' + chunks.length, t: parts.length > 1 ? t + '（' + (i + 1) + '）' : t, u, k, x: part }))
+      }
+      const list = (items: unknown[] | undefined, sep = '、') => (items ?? []).map((v) => clean(v)).filter(Boolean).join(sep)
+      // 会社
+      addChunk('company', '会社概要', '/about', companyRows.join('\n') + '\nお問い合わせ: お問い合わせフォーム（/contact）、メール（' + settings.email + '）' + (settings.line_url ? '、公式LINE' : '') + '。')
+      addChunk('company', '代表メッセージ', '/about', [about.message_heading, ...((about.message ?? []) as string[])].join('\n'))
+      addChunk('company', '代表プロフィール', '/about', [String(about.profile_role ?? '') + ' ' + String(about.profile_name ?? ''), ...((about.profile ?? []) as string[])].join('\n'))
+      addChunk('policy', '料金・お見積もり', '/services', String(services.pricing ?? '') + '\n具体的な金額はサイトに掲載していません。業務の内容と量を伺ってお見積もりします。')
+      addChunk('policy', 'ご利用の流れ', '/services', 'ご相談からご契約までの流れ：' + list(services.flow as string[], ' → ') + '。ご相談・お見積もりは無料です。')
+      addChunk('policy', '対応エリア・対応言語', '/about', '全国に対応しています（オンラインでのご相談・支援）。所在地は' + address + '。英語でのご相談は創業支援（英語）で対応しています。')
+      addChunk('policy', '士業の独占業務について', '/services', '税務申告・税務相談、社会保険・労働保険の手続き代行、登記、許認可申請、在留資格の申請、法律相談・契約書の作成などの士業の独占業務は行いません。必要に応じて提携する専門家（税理士・社労士・行政書士・司法書士・弁護士など）を紹介します。')
+      // サービス一覧・ツール・FAQ（トップ）
+      for (const key of ['backoffice', 'marketing'] as const) {
+        const group = services[key] || {}
+        addChunk('service', String(group.title ?? ''), '/services#' + key, String(group.lead ?? '') + '\n' + ((group.items ?? []) as { name: string; text: string }[]).map((item) => item.name + '：' + item.text).join('\n'))
+      }
+      addChunk('tools', String(home.tools_title ?? '対応ツール'), '/', list(((home.tools ?? []) as { name: string; category?: string }[]).map((tool) => tool.name + (tool.category ? '（' + tool.category + '）' : ''))) + '。' + String(home.tools_note ?? ''))
+      addChunk('strength', String(home.strengths_title ?? '選ばれる理由'), '/', ((home.strengths ?? []) as { title: string; text: string }[]).map((st) => st.title + '：' + st.text).join('\n'))
+      for (const f of faqs) addChunk('faq', 'Q. ' + f.q, '/', 'Q. ' + f.q + '\nA. ' + f.a)
+      // サービス別ページ
+      for (const sol of solutionList) {
+        if (sol.hidden) continue
+        const u = '/services/' + sol.slug
+        const name = sol.nav_label || sol.title
+        addChunk('lp', name + '：概要', u, [sol.title, String(sol.catch ?? '').replace(/\*\*/g, '').replace(/\n/g, ''), sol.lead, sol.description].filter(Boolean).join('\n'))
+        if (sol.problems?.length) addChunk('lp', name + '：こんなお悩みに', u, list(sol.problems, '\n'))
+        if (sol.scheme) addChunk('lp', name + '：支援の仕組み', u, [sol.scheme.title, sol.scheme.lead, ...(sol.scheme.points ?? []).map((pt) => pt.name + '：' + (pt.text ?? '')), sol.scheme.note].filter(Boolean).join('\n'))
+        if (sol.features?.length) addChunk('lp', name + '：支援内容', u, [sol.features_lead, ...sol.features.map((ft) => ft.name + '：' + (ft.text ?? ''))].filter(Boolean).join('\n'))
+        if (sol.tools?.length) addChunk('lp', name + '：対応ツール', u, list(sol.tools) + '。' + (sol.tools_note ?? ''))
+        if (sol.scope?.groups?.length) addChunk('lp', name + '：ご依頼いただける業務', u, sol.scope.groups.map((g) => g.name + '：' + list(g.items)).join('\n') + '\n' + (sol.scope.note ?? ''))
+        for (const plan of sol.plans?.items ?? []) addChunk('lp', name + '：プラン例「' + plan.name + '」', u, [plan.name + (plan.tag ? '（' + plan.tag + '）' : ''), plan.text, plan.includes?.length ? '含まれるもの：' + list(plan.includes) : '', plan.best_for ? 'こんな方に：' + plan.best_for : '', sol.plans?.note].filter(Boolean).join('\n'))
+        for (const sc of sol.scenarios?.items ?? []) addChunk('lp', name + '：ご利用イメージ「' + sc.name + '」', u, [sc.name, sc.before ? 'Before：' + sc.before : '', sc.text ? 'After：' + sc.text : ''].filter(Boolean).join('\n'))
+        if (sol.flow?.length) addChunk('lp', name + '：ご利用までの流れ', u, sol.flow.map((st, i) => (i + 1) + '. ' + st.name + (st.text ? '：' + st.text : '')).join('\n') + '\n' + (sol.flow_note ?? ''))
+        for (const f of sol.faqs ?? []) addChunk('faq', name + '：Q. ' + f.q, u, 'Q. ' + f.q + '\nA. ' + f.a)
+      }
+      // トピックス（セミナー・コラム）：見出しと要点
+      if (fs.existsSync(topicsDir)) {
+        for (const item of sortedTopics) {
+          const slug = item.url.replace(SITE + '/topics/', '')
+          const raw = fs.readFileSync(path.join(topicsDir, slug + '.md'), 'utf8')
+          const body = raw.replace(/^---[\s\S]*?\n---/, '').replace(/<figure[\s\S]*?<\/figure>/g, '').replace(/<[^>]+>/g, '')
+          const headings = (body.match(/^#{2,3}\s+.+$/gm) ?? []).map((h) => h.replace(/^#+\s+/, ''))
+          addChunk('topic', item.title, '/topics/' + slug, item.date + ' ' + item.title + '\n' + item.description + (headings.length ? '\n主な内容：' + headings.slice(0, 8).join('／') : ''))
+        }
+      }
+      // プライバシーポリシー（見出しごと）
+      for (const section of String(privacy.body ?? '').split(/\n(?=## )/)) {
+        const title = (section.match(/^##\s+(.+)/)?.[1] ?? 'プライバシーポリシー').trim()
+        addChunk('privacy', 'プライバシーポリシー：' + title, '/privacy', section.replace(/^##\s+.+\n?/, ''))
+      }
+      const knowledge = { generated: new Date().toISOString(), site: SITE, chunks }
+      fs.writeFileSync(path.join(outDir, 'chat-knowledge.json'), JSON.stringify(knowledge))
     },
   }
 }

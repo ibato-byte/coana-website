@@ -1,0 +1,314 @@
+{
+  "name": "鳩博士",
+  "greeting": "こんにちは、鳩博士です。COANA TOKYOのサービスについてご案内します。気になることを選ぶか、下の欄からご質問ください。",
+  "note": "会話の内容は保存しません。お名前や連絡先などの個人情報は入力しないでください。",
+  "consult_text": "よろしければ、いまの状況を伺う無料相談もご用意しています。オンラインでのご相談にも対応しており、ご相談・お見積もりは無料です。",
+  "handoff_text": "その点は、担当者から詳しくお答えします。ご質問をそのままお問い合わせフォームに引き継げます。",
+  "offtopic_text": "申し訳ありません、こちらではCOANA TOKYOのサービスやご相談についてご案内しています。",
+  "fallback_note": "サイト内の情報からお探ししました。",
+  "menu": [
+    {
+      "label": "経理を任せたい",
+      "page": "bookkeeping",
+      "text": "記帳・請求書発行・入金確認・支払い準備・経費精算・月次の締めなど、経理の実務を必要な範囲だけお任せいただけます。業務の整理や仕組みづくりからご相談いただけます。",
+      "also": [
+        "backoffice-dx"
+      ]
+    },
+    {
+      "label": "クラウド会計を入れたい",
+      "page": "cloud-accounting",
+      "text": "freee・マネーフォワード クラウドを中心に、ソフト選びから初期設定・データ移行・銀行連携・運用の定着まで支援します。乗り換えや運用の見直しにも対応しています。"
+    },
+    {
+      "label": "創業の相談",
+      "page": "startup-support",
+      "text": "これから起業する方・創業間もない会社に、事業計画書づくりのサポート、資金調達の準備、会計ソフトや業務ツールの導入、経理のルールづくり、専門家のご紹介までまとめて支援します。",
+      "also": [
+        "startup-support-en"
+      ]
+    },
+    {
+      "label": "集客・営業",
+      "page": "sales-support",
+      "text": "商品・サービスの強みと対象のお客さまを整理し、営業の進め方と販路づくりを設計から実行まで支援します。",
+      "also": [
+        "seminar-event",
+        "sns-management"
+      ]
+    },
+    {
+      "label": "Webサイト",
+      "page": "web-production",
+      "text": "目的と対象のお客さまの整理から、構成・原稿・デザイン、公開後に自社で更新できる仕組みまで、問い合わせにつながるWebサイトをつくります。"
+    },
+    {
+      "label": "SNS運用",
+      "page": "sns-management",
+      "text": "Instagram・X・Facebook・LINE公式アカウントなどの運用を、発信内容の企画から投稿の作成、日々の運用代行、振り返りまで支援します。"
+    },
+    {
+      "label": "バックオフィスをまとめて",
+      "page": "backoffice-dx",
+      "text": "経理・労務・総務・秘書・営業事務などを、担当チームが必要な分だけ代行します。業務フローの整理とツール導入で、少人数でも回る仕組みに整えます。"
+    },
+    {
+      "label": "料金について",
+      "topic": "料金",
+      "text": "料金は、支援内容と業務範囲に応じて個別にお見積もりしています。ご相談・お見積もりは無料で、小規模なご依頼や、必要な部分だけのご相談も歓迎です。",
+      "links": [
+        "/services"
+      ]
+    }
+  ],
+  "diagnosis": {
+    "title": "あなたに合うサービスを診断",
+    "intro": "いくつかの質問にお答えいただくと、合いそうなサービスをご案内します（約1分・5問）。",
+    "questions": [
+      {
+        "id": "stage",
+        "short": "事業の段階",
+        "text": "事業の段階を教えてください。",
+        "options": [
+          {
+            "label": "これから創業する",
+            "phrase": "これから創業される",
+            "scores": {
+              "startup-support": 6,
+              "cloud-accounting": 2
+            }
+          },
+          {
+            "label": "創業して3年以内",
+            "phrase": "創業して3年以内",
+            "scores": {
+              "startup-support": 2,
+              "bookkeeping": 1,
+              "cloud-accounting": 1
+            }
+          },
+          {
+            "label": "創業して3年以上",
+            "scores": {
+              "backoffice-dx": 1,
+              "bookkeeping": 1
+            }
+          },
+          {
+            "label": "英語で日本での起業を相談したい",
+            "scores": {
+              "startup-support-en": 12
+            }
+          }
+        ]
+      },
+      {
+        "id": "size",
+        "short": "従業員数",
+        "text": "従業員の人数は？（代表の方を含む）",
+        "options": [
+          {
+            "label": "1人（代表のみ）",
+            "scores": {
+              "bookkeeping": 1,
+              "startup-support": 1
+            }
+          },
+          {
+            "label": "2〜10人",
+            "scores": {
+              "bookkeeping": 1,
+              "backoffice-dx": 1
+            }
+          },
+          {
+            "label": "11〜50人",
+            "scores": {
+              "backoffice-dx": 2,
+              "cloud-accounting": 1
+            }
+          },
+          {
+            "label": "51人以上",
+            "scores": {
+              "backoffice-dx": 2,
+              "cloud-accounting": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "concern",
+        "short": "いちばん困っていること",
+        "text": "いちばん困っていることは？",
+        "options": [
+          {
+            "label": "経理・事務に時間を取られる",
+            "phrase": "経理・事務に時間を取られている",
+            "scores": {
+              "bookkeeping": 6,
+              "backoffice-dx": 3
+            }
+          },
+          {
+            "label": "担当者がいない・辞める予定",
+            "phrase": "担当者がいない（辞める予定がある）",
+            "scores": {
+              "backoffice-dx": 6,
+              "bookkeeping": 4
+            }
+          },
+          {
+            "label": "ツールを入れたい・使いこなせていない",
+            "phrase": "ツールを入れたい・使いこなせていない",
+            "scores": {
+              "cloud-accounting": 7,
+              "backoffice-dx": 2
+            }
+          },
+          {
+            "label": "問い合わせ・売上を増やしたい",
+            "phrase": "問い合わせや売上を増やしたい",
+            "scores": {
+              "sales-support": 6,
+              "web-production": 3,
+              "seminar-event": 2
+            }
+          },
+          {
+            "label": "SNSやWebサイトを整えたい",
+            "phrase": "SNSやWebサイトを整えたい",
+            "scores": {
+              "web-production": 5,
+              "sns-management": 5
+            }
+          },
+          {
+            "label": "セミナー・イベントで集客したい",
+            "phrase": "セミナー・イベントで集客したい",
+            "scores": {
+              "seminar-event": 7,
+              "sales-support": 2
+            }
+          },
+          {
+            "label": "創業の準備・資金調達が不安",
+            "phrase": "創業の準備や資金調達に不安がある",
+            "scores": {
+              "startup-support": 7,
+              "cloud-accounting": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "style",
+        "short": "進め方の希望",
+        "text": "進め方の希望は？",
+        "options": [
+          {
+            "label": "自社でできるよう仕組みを整えたい",
+            "phrase": "自社でできるよう仕組みを整えたい",
+            "scores": {
+              "cloud-accounting": 2,
+              "sales-support": 1,
+              "web-production": 1
+            }
+          },
+          {
+            "label": "実務ごと任せたい",
+            "phrase": "実務ごと任せたい",
+            "scores": {
+              "bookkeeping": 2,
+              "backoffice-dx": 2,
+              "sns-management": 2
+            }
+          },
+          {
+            "label": "まだ決めていない",
+            "scores": {}
+          }
+        ]
+      },
+      {
+        "id": "timing",
+        "short": "急ぎ度",
+        "text": "どのくらい急いでいますか？",
+        "options": [
+          {
+            "label": "すぐにでも",
+            "note": "お急ぎの場合は、お問い合わせの際にその旨をお書き添えください。"
+          },
+          {
+            "label": "1〜3か月以内"
+          },
+          {
+            "label": "情報収集の段階"
+          }
+        ]
+      }
+    ],
+    "reasons": {
+      "bookkeeping": "記帳や請求・支払いなどの経理の実務を、必要な範囲だけお任せいただけます。業務の整理から仕組みづくりまで対応します。",
+      "backoffice-dx": "経理・労務・総務などを担当チームが代行し、業務フローの整理とツール導入で、少人数でも回る仕組みに整えます。",
+      "cloud-accounting": "freee・マネーフォワード クラウドなどの選定・初期設定から運用の定着まで支援し、手入力を減らします。",
+      "startup-support": "事業計画書づくりや資金調達の準備、経理のルールづくり、専門家のご紹介まで、創業期に必要なことをまとめてご相談いただけます。",
+      "startup-support-en": "Bilingual support for starting a business in Japan, from planning and funding to accounting and introductions to licensed professionals.",
+      "sales-support": "商品・サービスの強みと対象のお客さまを整理し、営業の進め方と販路づくりを設計から実行まで支援します。",
+      "web-production": "目的と対象のお客さまの整理から、問い合わせにつながる構成・原稿・デザイン、公開後に自社で更新できる仕組みまでつくります。",
+      "sns-management": "発信内容の企画から投稿の作成、日々の運用代行、振り返りまで、続けられるSNS運用を支援します。",
+      "seminar-event": "企画・集客・資料づくり・当日運営・開催後のフォローまで、見込み客との接点になるセミナー・イベントを支援します。"
+    },
+    "combos": [
+      {
+        "pair": [
+          "startup-support",
+          "cloud-accounting"
+        ],
+        "text": "創業と同時にクラウド会計を整えておくと、創業後の経理がぐっと楽になります。"
+      },
+      {
+        "pair": [
+          "bookkeeping",
+          "backoffice-dx"
+        ],
+        "text": "経理だけでなく労務・総務もまとめてお任せいただくと、同じ担当チームが業務全体を見ながら進められます。"
+      },
+      {
+        "pair": [
+          "bookkeeping",
+          "cloud-accounting"
+        ],
+        "text": "クラウド会計を整えてから実務をお任せいただくと、数字を早く・正確に見られるようになります。"
+      },
+      {
+        "pair": [
+          "backoffice-dx",
+          "cloud-accounting"
+        ],
+        "text": "ツールの導入と実務の代行をあわせて進めると、少人数でも回る仕組みが早く整います。"
+      },
+      {
+        "pair": [
+          "web-production",
+          "sns-management"
+        ],
+        "text": "Webサイトを受け皿にしてSNSで発信すると、問い合わせにつながりやすくなります。"
+      },
+      {
+        "pair": [
+          "sales-support",
+          "web-production"
+        ],
+        "text": "営業の進め方とWebサイトの内容を揃えると、問い合わせから商談までの流れがスムーズになります。"
+      },
+      {
+        "pair": [
+          "sales-support",
+          "seminar-event"
+        ],
+        "text": "セミナーで見込み客との接点をつくり、営業につなげる流れを一緒に設計できます。"
+      }
+    ]
+  }
+}

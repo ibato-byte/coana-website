@@ -337,12 +337,62 @@ collections:
         fields:
           - { label: 本文（空欄の場合は「掲載予定」と表示）, name: body, widget: markdown, required: false }
 
+      - name: chat
+        label: 鳩博士チャット（メニュー・診断）
+        file: content/chat.json
+        fields:
+          - { label: 名前, name: name, widget: string }
+          - { label: 最初のあいさつ, name: greeting, widget: text }
+          - { label: 注意書き（保存しない・個人情報）, name: note, widget: text }
+          - { label: 無料相談の提案文（サイトにない条件は書かない）, name: consult_text, widget: text }
+          - { label: 担当者へ引き継ぐときの文, name: handoff_text, widget: text }
+          - { label: 関係のない質問への返答, name: offtopic_text, widget: text }
+          - { label: AIが使えないときの注記, name: fallback_note, widget: string }
+          - label: メニュー
+            name: menu
+            widget: list
+            fields:
+              - { label: ボタンの文言, name: label, widget: string }
+              - { label: 案内するサービス（ページのslug。例：bookkeeping）, name: page, widget: string, required: false }
+              - { label: あわせて案内するサービス（slug）, name: also, widget: list, required: false }
+              - { label: 案内文（短く）, name: text, widget: text }
+              - { label: 関連ページ（パス。例：/services）, name: links, widget: list, required: false }
+          - label: あなたに合うサービス診断
+            name: diagnosis
+            widget: object
+            fields:
+              - { label: タイトル, name: title, widget: string }
+              - { label: はじめの説明, name: intro, widget: text }
+              - label: 質問（3〜5問）
+                name: questions
+                widget: list
+                fields:
+                  - { label: ID（英数字）, name: id, widget: string }
+                  - { label: 短い名前（お問い合わせへの引き継ぎに使う）, name: short, widget: string }
+                  - { label: 質問文, name: text, widget: string }
+                  - label: 選択肢
+                    name: options
+                    widget: list
+                    fields:
+                      - { label: 選択肢の文言, name: label, widget: string }
+                      - { label: 理由に引用する言い回し（任意）, name: phrase, widget: string, required: false }
+                      - { label: 補足（任意。結果に添える）, name: note, widget: string, required: false }
+                      - { label: 点数（サービスのslug と点数。例：bookkeeping 6）, name: scores, widget: object, required: false, fields: [ { label: 経理代行（bookkeeping）, name: bookkeeping, widget: number, required: false }, { label: バックオフィス代行・DX（backoffice-dx）, name: backoffice-dx, widget: number, required: false }, { label: クラウド会計（cloud-accounting）, name: cloud-accounting, widget: number, required: false }, { label: 創業支援（startup-support）, name: startup-support, widget: number, required: false }, { label: 創業支援・英語（startup-support-en）, name: startup-support-en, widget: number, required: false }, { label: 営業・販路開拓（sales-support）, name: sales-support, widget: number, required: false }, { label: Webサイト制作（web-production）, name: web-production, widget: number, required: false }, { label: SNS運用（sns-management）, name: sns-management, widget: number, required: false }, { label: セミナー・イベント（seminar-event）, name: seminar-event, widget: number, required: false } ] }
+              - { label: おすすめの理由（サービスごと）, name: reasons, widget: object, fields: [ { label: 経理代行, name: bookkeeping, widget: text }, { label: バックオフィス代行・DX, name: backoffice-dx, widget: text }, { label: クラウド会計, name: cloud-accounting, widget: text }, { label: 創業支援, name: startup-support, widget: text }, { label: 創業支援（英語）, name: startup-support-en, widget: text }, { label: 営業・販路開拓, name: sales-support, widget: text }, { label: Webサイト制作, name: web-production, widget: text }, { label: SNS運用, name: sns-management, widget: text }, { label: セミナー・イベント, name: seminar-event, widget: text } ] }
+              - label: 組み合わせの提案
+                name: combos
+                widget: list
+                fields:
+                  - { label: 2つのサービス（slug）, name: pair, widget: list }
+                  - { label: 一言, name: text, widget: text }
+
       - name: settings
         label: 会社情報・共通設定
         file: content/settings.json
         fields:
           - { label: 会社名, name: company_name, widget: string }
           - { label: 公式LINEの友だち追加URL（空欄にするとLINEボタンを非表示）, name: line_url, widget: string, required: false, hint: "例：https://line.me/R/ti/p/@229ymxxk" }
+          - { label: 日程予約ツールのURL（任意）, name: booking_url, widget: string, required: false, hint: "Googleカレンダーの予約スケジュールなどのURLを入れると、お問い合わせページと鳩博士チャットに「日程を予約する」ボタンが表示されます。空欄なら表示しません。" }
           - { label: ファビコン（ブラウザのタブに出るアイコン）, name: favicon, widget: image, hint: "正方形のSVGまたはPNG（32×32以上）をおすすめします。公開すると約1〜2分で反映されますが、ブラウザによっては古いアイコンがしばらく残ります。" }
           - { label: スマホホーム画面用アイコン, name: apple_touch_icon, widget: image, hint: "180×180のPNG。iPhoneでホーム画面に追加したときに表示されます。" }
           - { label: SNS共有時の画像（共通）, name: og_image, widget: image, hint: "XやFacebook、LINEでURLを共有したときに表示される画像です。1200×630のJPGまたはPNG。記事ページは各記事のアイキャッチが優先されます。" }

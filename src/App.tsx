@@ -1,8 +1,9 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, BirdArrow, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, BirdArrow, DiagnoseLink, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, openChat, paths, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
+import { ChatLauncher } from "./chat/ChatLauncher";
 
 declare global {
   interface Window {
@@ -308,6 +309,7 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
             </div>
           </div>
         ))}
+        <DiagnoseLink />
       </div>
     </section>
   );
@@ -483,6 +485,7 @@ function Services({ navigate }: { navigate: Nav }) {
           </div>
         </section>
       ))}
+      <div className="container"><DiagnoseLink className="is-services" /></div>
       <section className="section flow-section">
         <div className="container">
           <SectionTitle en="Flow" center>{services.flow_title}</SectionTitle>
@@ -617,8 +620,16 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
 // お問い合わせフォームの送信先（Google Apps Script ウェブアプリ。受信内容は info@ に通知され、スプレッドシート「HP問い合わせ受信ログ_COANA TOKYO」に記録）
 const CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbyg8vAr_zinCs47Z4W0oxCK0YUoA-gLL-453lv1rvcTlpXerIGSdZRIg7zdLLRS3d9u/exec";
 
-type FormData = { company: string; name: string; email: string; type: string; message: string; consent: boolean };
-const emptyForm: FormData = { company: "", name: "", email: "", type: "", message: "", consent: false };
+type FormData = { company: string; name: string; email: string; type: string; message: string; meeting: boolean; date1: string; date2: string; date3: string; consent: boolean };
+const emptyForm: FormData = { company: "", name: "", email: "", type: "", message: "", meeting: false, date1: "", date2: "", date3: "", consent: false };
+// 日程予約ツール（Googleカレンダーの予約スケジュールなど）の URL。CMS の「会社情報・共通設定」で入れると「日程を予約する」ボタンが出る
+const BOOKING_URL = String((settings as { booking_url?: string }).booking_url || "");
+/** 送信する本文：オンライン面談の希望と日時も、本文の末尾に書き添える（受信側の仕組みを変えずに届く） */
+function messageWithMeeting(data: FormData) {
+  if (!data.meeting) return data.message;
+  const dates = [data.date1, data.date2, data.date3].map((d, i) => (d.trim() ? "第" + (i + 1) + "希望：" + d.trim() : "")).filter(Boolean);
+  return data.message.trimEnd() + "\n\n【オンライン面談】希望する" + (dates.length ? "\n" + dates.join("\n") : "");
+}
 
 // ご相談内容の種別：サービス別ページ（content/solutions）の名称を自動で選択肢にする
 const INQUIRY_TYPES = [
@@ -633,7 +644,9 @@ function takePresetInquiryType() {
 }
 
 function Contact() {
-  const [data, setData] = useState<FormData>(() => ({ ...emptyForm, type: takePresetInquiryType() }));
+  // サービス別ページ・鳩博士チャットからの引き継ぎ（相談種別・本文）。お客さまが確認・編集してから送信する
+  const [data, setData] = useState<FormData>(() => ({ ...emptyForm, type: takePresetInquiryType(), message: takeInquiryMessage() }));
+  const [fromChat] = useState(() => data.message !== "");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState<"input" | "confirm" | "complete">("input");
   const [sending, setSending] = useState(false);
@@ -652,7 +665,9 @@ function Contact() {
         name: data.name,
         email: data.email,
         type: data.type,
-        message: data.message,
+        message: messageWithMeeting(data),
+        meeting: data.meeting ? "希望する" : "",
+        preferred_dates: [data.date1, data.date2, data.date3].map((d) => d.trim()).filter(Boolean).join(" / "),
         consent: data.consent ? "同意する" : "",
       });
       const res = await fetch(CONTACT_ENDPOINT, { method: "POST", body, signal: controller.signal }).finally(() => window.clearTimeout(timer));
@@ -709,6 +724,8 @@ function Contact() {
               <div><dt>メールアドレス</dt><dd>{data.email}</dd></div>
               <div><dt>ご相談内容の種別</dt><dd>{data.type}</dd></div>
               <div><dt>お問い合わせ内容</dt><dd>{data.message}</dd></div>
+              <div><dt>オンライン面談</dt><dd>{data.meeting ? "希望する" : "希望しない"}</dd></div>
+              {data.meeting && <div><dt>ご希望の日時</dt><dd>{[data.date1, data.date2, data.date3].map((d, i) => (d.trim() ? "第" + (i + 1) + "希望：" + d.trim() : "")).filter(Boolean).join("\n") || "未入力"}</dd></div>}
             </dl>
             <div className="button-row form-actions">
               <LinkButton secondary onClick={() => setStep("input")}>入力内容を修正する</LinkButton>
@@ -731,6 +748,12 @@ function Contact() {
               <LineButton place="contact_page" />
             </div>
           )}
+          {BOOKING_URL && (
+            <div className="line-notice booking-notice">
+              <p>オンライン面談の日程は、こちらから直接ご予約いただけます。</p>
+              <a className="button button-outline" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">日程を予約する<Icon name="arrow" size={19} /></a>
+            </div>
+          )}
           <p className="form-note"><span>必須</span>の項目は必ずご入力ください。</p>
           <Field label="会社名" optional error={errors.company}>
             <input value={data.company} onChange={(e) => update("company", e.target.value)} placeholder="例）COANA TOKYO合同会社" />
@@ -751,8 +774,27 @@ function Contact() {
             <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} /></label>
           </div>
           <Field label="お問い合わせ内容" error={errors.message}>
+            {fromChat && <span className="field-hint">鳩博士チャットの内容を引き継いでいます。必要に応じて編集・削除してください。</span>}
             <textarea value={data.message} onChange={(e) => update("message", e.target.value)} rows={7} placeholder="ご相談内容をご入力ください" aria-invalid={!!errors.message} />
           </Field>
+          <fieldset className="meeting-fieldset">
+            <legend className="field-label">オンライン面談 <i className="optional">任意</i></legend>
+            <label className="consent meeting-check">
+              <input type="checkbox" checked={data.meeting} onChange={(e) => update("meeting", e.target.checked)} />
+              <span>オンライン面談を希望する</span>
+            </label>
+            {data.meeting && (
+              <div className="meeting-dates">
+                <p className="field-hint">ご希望の日時があればご記入ください（任意）。担当者より日程をご連絡します。</p>
+                {(["date1", "date2", "date3"] as const).map((key, i) => (
+                  <label key={key} className="meeting-date">
+                    <span>第{i + 1}希望</span>
+                    <input value={data[key]} onChange={(e) => update(key, e.target.value)} placeholder="例）10月20日（月）14時〜" maxLength={60} />
+                  </label>
+                ))}
+              </div>
+            )}
+          </fieldset>
           <label className="consent">
             <input type="checkbox" checked={data.consent} onChange={(e) => update("consent", e.target.checked)} />
             <span><a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する <b>必須</b></span>
@@ -920,6 +962,7 @@ export default function App() {
       <div key={`${page}-${routeKey}`} className="page-fade">{content}</div>
       <Footer navigate={navigate} />
       <BackToTop />
+      <ChatLauncher navigate={navigate} />
     </div>
   );
 }
