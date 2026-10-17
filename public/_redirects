@@ -1,0 +1,40 @@
+# 旧サイト（Odoo 時代）の URL を、現在のページへ 301 で恒久転送する（Cloudflare Pages）。
+# 上から順に、最初に一致したルールだけが適用される。具体的なパスを先に、/en/* などの広いルールを後に書く。
+# 現在のページ（/, /about, /services, /services/*, /topics, /topics/*, /contact, /privacy, /admin, sitemap.xml など）に
+# 一致するルールは置かないこと。/services は「/service」と「/service/*」のどちらにも一致しない。
+
+# ブログ・イベント → トピックス
+/blog            /topics     301
+/blog/*          /topics     301
+/en/blog         /topics     301
+/en/blog/*       /topics     301
+/event           /topics     301
+/event/*         /topics     301
+/en/event        /topics     301
+/en/event/*      /topics     301
+
+# サービス → サービス一覧
+/service         /services   301
+/service/*       /services   301
+/en/service      /services   301
+/en/service/*    /services   301
+
+# お問い合わせ・会社概要
+/contactus       /contact    301
+/contactus/*     /contact    301
+/en/contactus    /contact    301
+/en/contactus/*  /contact    301
+/aboutus         /about      301
+/aboutus/*       /about      301
+/en/aboutus      /about      301
+/en/aboutus/*    /about      301
+
+# そのほかの旧ページ（英語版のトップ・Odoo の管理画面やショップなど）→ トップ
+/en              /           301
+/en/*            /           301
+/website         /           301
+/website/*       /           301
+/shop            /           301
+/shop/*          /           301
+/web             /           301
+/web/*           /           301

@@ -485,6 +485,7 @@ function coanaPageMeta(): Plugin {
     if (page.lang === 'en') {
       html = html.replace(/<html\s+lang="[^"]*"/, '<html lang="en"')
       html = setMeta(html, 'property', 'og:locale', 'en_US')
+      html = setMeta(html, 'property', 'og:site_name', 'COANA TOKYO LLC')
     }
     html = setMeta(html, 'name', 'description', description)
     html = setMeta(html, 'name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')
@@ -579,6 +580,12 @@ function coanaPageMeta(): Plugin {
       const street = rest.slice(locality.length)
 
       const orgId = SITE + '/#organization'
+      // 提供地域：全国（オンライン）＋本拠地の東京都。Google ビジネスプロフィールは住所非表示のサービス提供地域型に合わせる
+      // （登記上の住所 address は残す。電話番号は掲載しない）
+      const areaServedFor = (lang: 'ja' | 'en') => [
+        { '@type': 'Country', name: lang === 'en' ? 'Japan' : '日本' },
+        { '@type': 'AdministrativeArea', name: lang === 'en' ? 'Tokyo' : '東京都' },
+      ]
       const organization = {
         '@type': ['Organization', 'ProfessionalService'],
         '@id': orgId,
@@ -591,7 +598,7 @@ function coanaPageMeta(): Plugin {
         description: defaultDescription,
         email: settings.email,
         address: { '@type': 'PostalAddress', postalCode: String(settings.postal_code || '').replace(/^〒/, ''), addressRegion: region, addressLocality: locality, streetAddress: street, addressCountry: 'JP' },
-        areaServed: { '@type': 'Country', name: '日本' },
+        areaServed: areaServedFor('ja'),
         founder: { '@type': 'Person', name: about.profile_name, jobTitle: about.profile_role },
         foundingDate: '2025-10',
         knowsAbout: ['経理代行・経理業務の改善', 'クラウド会計・ITツール導入支援', 'バックオフィス代行・DX支援', '創業支援', 'ERPの導入', 'グループウェアの導入', '営業・販路開拓支援', 'セミナー・イベント開催支援', 'SNS運用支援・運用代行', 'Webサイト制作'],
@@ -600,7 +607,7 @@ function coanaPageMeta(): Plugin {
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: 'サービス',
-          itemListElement: ['backoffice', 'marketing'].flatMap((key) => ((services[key]?.items ?? []) as { name: string; text: string }[]).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item.name, description: item.text, provider: { '@id': orgId }, areaServed: 'JP' } }))),
+          itemListElement: ['backoffice', 'marketing'].flatMap((key) => ((services[key]?.items ?? []) as { name: string; text: string }[]).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item.name, description: item.text, provider: { '@id': orgId }, areaServed: areaServedFor('ja') } }))),
         },
       }
       const website = { '@type': 'WebSite', '@id': SITE + '/#website', url: SITE, name: 'COANA TOKYO', publisher: { '@id': orgId }, inLanguage: ['ja', 'en'] }
@@ -693,7 +700,7 @@ function coanaPageMeta(): Plugin {
               url,
               inLanguage: lang,
               provider: { '@id': orgId },
-              areaServed: { '@type': 'Country', name: lang === 'en' ? 'Japan' : '日本' },
+              areaServed: areaServedFor(lang),
               availableLanguage: lang === 'en' ? ['English', 'Japanese'] : undefined,
               audience: { '@type': 'BusinessAudience', name: lang === 'en' ? 'Founders and small businesses in Japan' : '中小企業・小規模事業者・個人事業主' },
               offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', description: lang === 'en' ? 'Quoted individually. Consultation is free.' : '支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。' }, availability: 'https://schema.org/InStock', url: SITE + '/contact' },
@@ -880,18 +887,27 @@ function coanaPageMeta(): Plugin {
           block(sol.steps_title || T.flow, (sol.flow ?? []).map((st, i) => (i + 1) + '. ' + st.name + (st.text ? '：' + st.text : '')).join('\n') + (sol.flow_note ? '\n\n' + sol.flow_note : '')) +
           block(sol.faq_title || T.faq, (sol.faqs ?? []).map((f) => '- Q. ' + f.q + '\n  A. ' + f.a).join('\n'))
       }
-      const fallbackHeader = '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +
-        [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
-      const fallbackFooter = '<footer><p>' + esc(settings.company_name) + '</p><address>' + esc(settings.postal_code) + ' ' + esc(settings.address) + '</address><nav aria-label="フッター">' +
-        anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + solutionList.filter((sol) => !sol.hidden).map((sol) => anchor('/services/' + sol.slug, sol.nav_label || sol.title)).join(' ') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
-      const withFallback = (html: string, pagePath: string) => html.replace('<div id="root"></div>', () =>
+      // クローラ向けのヘッダー・フッター。英語ページでは英語の表記にする（ページ内の言語を揃える）
+      const englishPage = solutionList.find((sol) => sol.lang === 'en')
+      const fallbackHeader = (lang: 'ja' | 'en') => lang === 'en'
+        ? '<header>' + anchor('/', 'COANA TOKYO LLC') + '<nav aria-label="Main navigation">' +
+          [['/', 'Home (Japanese)'], ['/about', 'About us (Japanese)'], ['/services', 'Services (Japanese)'], ['/contact', 'Contact']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
+        : '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +
+          [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
+      const fallbackFooter = (lang: 'ja' | 'en') => lang === 'en'
+        ? '<footer><p>COANA TOKYO LLC</p><address>3F, 1-3-3 Kita-Aoyama, Minato-ku, Tokyo 107-0061, Japan</address><nav aria-label="Footer">' +
+          anchor('/services/startup-support', 'Startup support (Japanese)') + ' ' + anchor('/services', 'All services (Japanese)') + ' ' + anchor('/privacy', 'Privacy policy (Japanese)') + '</nav></footer>'
+        : '<footer><p>' + esc(settings.company_name) + '</p><address>' + esc(settings.postal_code) + ' ' + esc(settings.address) + '</address><nav aria-label="フッター">' +
+          anchor('/services#backoffice', 'バックオフィス支援') + ' ' + anchor('/services#marketing', 'マーケティング支援') + ' ' + solutionList.filter((sol) => !sol.hidden).map((sol) => anchor('/services/' + sol.slug, sol.nav_label || sol.title)).join(' ') +
+          (englishPage ? ' ' + anchor('/services/' + englishPage.slug, 'Startup support in English') : '') + ' ' + anchor('/privacy', 'プライバシーポリシー') + '</nav></footer>'
+      const withFallback = (html: string, pagePath: string, lang: 'ja' | 'en' = 'ja') => html.replace('<div id="root"></div>', () =>
         '<div id="root"><div class="seo-fallback" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);border:0">' +
-        fallbackHeader + '<main>' + fallbackMain(pagePath) + '</main>' + fallbackFooter + '</div></div>')
+        fallbackHeader(lang) + '<main>' + fallbackMain(pagePath) + '</main>' + fallbackFooter(lang) + '</div></div>')
 
       for (const page of pages) {
         const file = page.path === '/' ? shellPath : path.join(outDir, page.path.slice(1) + '.html')
         fs.mkdirSync(path.dirname(file), { recursive: true })
-        fs.writeFileSync(file, withFallback(render(shell, page, defaultDescription, defaultImage), page.path))
+        fs.writeFileSync(file, withFallback(render(shell, page, defaultDescription, defaultImage), page.path, page.lang === 'en' ? 'en' : 'ja'))
       }
 
       // 存在しないURLは 404 を返す（画像の取り違えキャッシュ対策を兼ねる）
