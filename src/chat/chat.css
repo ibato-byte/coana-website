@@ -130,6 +130,12 @@
   .chat-bubble, .chat-diag { max-width: 88%; }
   .chat-restart, .chat-close { width: 42px; height: 42px; }
 }
+/* 幅 380px 以下（iPhone SE・mini など）：名前（COANA TOKYO サポートチーム）を省略せず、空白の位置で2行に。説明の行は省く */
+@media (max-width: 380px) {
+  .chat-head { gap: 8px; }
+  .chat-title { white-space: normal; word-break: keep-all; }
+  .chat-sub { display: none; }
+}
 @keyframes chat-sheet-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {

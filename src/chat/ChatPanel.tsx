@@ -3,7 +3,7 @@ import chat from "../../content/chat.json";
 import { settings, solutions } from "../content";
 import { lineUrl, setInquiryMessage, setInquiryPreset, type Nav, type NavArgs } from "../shared";
 import { diagnose, type DiagConfig, type DiagResult } from "./diagnosis";
-import { NO_INFO, OFF_TOPIC, isConfident, linkTitle, search, type Knowledge } from "./search";
+import { NO_INFO, OFF_TOPIC, displayText, isConfident, linkTitle, search, type Knowledge } from "./search";
 import { CHAT_MARK, SHEET_QUERY } from "./ChatLauncher";
 import "./chat.css";
 
@@ -271,7 +271,7 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
       return;
     }
     const top = hits[0].chunk;
-    const body = top.x.replace(/^Q\. [\s\S]*?A\. /, "").replace(/^- /gm, "").replace(/\n/g, " ");
+    const body = displayText(top).replace(/\n/g, " ");
     const text = body.length > 130 ? body.slice(0, 130).replace(/[^。、]*$/, "") + "…" : body;
     const links = dedupeLinks(hits.slice(0, 2).map((h) => ({ t: linkTitle(knowledge!, h.chunk), u: h.chunk.u })));
     const slug = top.u.match(/^\/services\/([^/#]+)/)?.[1];
