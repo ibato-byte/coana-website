@@ -808,7 +808,7 @@ function coanaPageMeta(): Plugin {
         }
         if (pagePath === '/about') {
           const rows = (about.company || []) as { label: string; value: string }[]
-          return '<h1>会社概要</h1>' +
+          return '<h1>会社概要</h1>' + paras(about.intro) +
             '<section id="message"><h2>' + esc(about.message_heading) + '</h2>' + ((about.message || []) as string[]).map((t) => paras(t)).join('') + paras(about.signature) + '</section>' +
             '<section id="profile"><h2>代表プロフィール</h2><p>' + esc(about.profile_role) + ' ' + esc(about.profile_name) + '</p>' + ((about.profile || []) as string[]).map((t) => paras(t)).join('') + '</section>' +
             '<section id="company"><h2>会社概要</h2><dl>' + rows.map((r) => '<dt>' + esc(r.label) + '</dt><dd>' + esc(r.value).replace(/\n/g, '<br>') + '</dd>').join('') + '</dl></section>'

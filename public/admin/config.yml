@@ -280,7 +280,8 @@ collections:
         label: 会社概要ページ
         file: content/about.json
         fields:
-          - { label: ページ上部の画像, name: hero_image, widget: image, hint: "会社概要ページ（/about）の一番上、「会社概要」の文字の背景に表示される画像です。白い文字が読めるよう、暗めのフィルターを重ねて表示します。横長の写真がおすすめです。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
+          - { label: ページ上部の画像, name: hero_image, widget: image, hint: "会社概要ページ（/about）の一番上、「会社概要」の文字の背景に薄く表示される画像です。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
+          - { label: 導入文, name: intro, widget: text, required: false }
           - { label: メッセージ見出し（改行可）, name: message_heading, widget: text }
           - { label: メッセージ本文（段落ごと）, name: message, widget: list, field: { label: 段落, name: p, widget: text } }
           - { label: 署名, name: signature, widget: string }

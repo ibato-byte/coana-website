@@ -598,12 +598,6 @@ a.service-card:hover .art * { animation-play-state: running; }
   inset: 0;
   background: linear-gradient(90deg, rgba(240, 247, 253, .94) 0%, rgba(240, 247, 253, .7) 42%, rgba(240, 247, 253, .05) 100%);
 }
-/* 会社概要：東京タワーと富士山の写真を見せつつ、暗いオーバーレイで白文字を読ませる */
-/* 高さを画面幅に比例させ、どの幅でもタワーの先端（ヘッダーの下）から富士山の裾野までが収まる位置で切り抜く */
-.page-hero.is-dark { min-height: max(440px, 40vw); display: flex; align-items: flex-end; padding: 120px 0 110px; background-color: var(--navy-ink); background-position: 46% 8%; }
-.page-hero.is-dark::after { background: linear-gradient(90deg, rgba(7, 24, 40, .82) 0%, rgba(7, 24, 40, .55) 45%, rgba(7, 24, 40, .25) 100%), linear-gradient(0deg, rgba(7, 24, 40, .3), transparent 45%); }
-.page-hero.is-dark .page-hero-en { color: rgba(255, 255, 255, .85); }
-.page-hero.is-dark h1 { color: var(--white); text-shadow: 0 2px 16px rgba(0, 20, 40, .35); }
 .page-hero .container { position: relative; z-index: 2; }
 .page-hero-en { margin: 0; color: var(--sky-deep); font-family: var(--font-en); font-size: 13px; letter-spacing: .26em; font-weight: 600; text-transform: uppercase; animation: fade-up .8s var(--ease-out) both; }
 .page-hero h1 { margin: 12px 0 0; font-size: clamp(38px, 4.6vw, 58px); letter-spacing: -.03em; line-height: 1.35; font-weight: 900; animation: fade-up .8s var(--ease-out) both .08s; }
@@ -1009,7 +1003,6 @@ a.service-card:hover .art * { animation-play-state: running; }
 
   .page-hero { padding: 130px 0 60px; }
   .page-hero h1 { font-size: 36px; }
-  .page-hero.is-dark { min-height: 0; display: block; padding: 150px 0 80px; background-size: auto 140%; background-position: 33% 0; }
   .page-intro { margin-top: 20px; line-height: 1.95; }
 
   .message-section h2 { font-size: 27px; }

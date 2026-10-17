@@ -240,12 +240,12 @@ export function ContactBand({ navigate }: { navigate: Nav }) {
   );
 }
 
-/** ページ上部の見出し。dark を付けると、写真を見せたまま暗いオーバーレイ＋白文字にする（会社概要） */
-export function PageHero({ en, title, intro, image, dark = false }: { en: string; title: string; intro?: string; image?: string; dark?: boolean }) {
+/** ページ上部の見出し。imagePosition で写真の見える位置だけを変えられる（見た目はどのページも共通） */
+export function PageHero({ en, title, intro, image, imagePosition }: { en: string; title: string; intro?: string; image?: string; imagePosition?: string }) {
   return (
     <section
-      className={["page-hero", image ? "has-image" : "", image && dark ? "is-dark" : ""].filter(Boolean).join(" ")}
-      style={image ? { backgroundImage: `url("${image}")` } : undefined}
+      className={image ? "page-hero has-image" : "page-hero"}
+      style={image ? { backgroundImage: `url("${image}")`, ...(imagePosition ? { backgroundPosition: imagePosition } : {}) } : undefined}
     >
       <div className="container">
         <p className="page-hero-en">{en}</p>

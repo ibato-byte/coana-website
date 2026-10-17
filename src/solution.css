@@ -241,6 +241,8 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 
 /* ── Responsive ── */
 @media (max-width: 980px) {
+  /* タブレットでは関連コラムとそのほかのサービスを縦に並べ、サービス名が詰まって折り返さないようにする */
+  .solution-more-grid { grid-template-columns: 1fr; }
   .lp-hero { padding: 116px 0 56px; }
   .lp-hero-inner { grid-template-columns: 1fr; grid-template-areas: "head" "art" "body"; }
   .lp-hero-art { max-width: 380px; margin: 8px 0 0; }

@@ -368,7 +368,7 @@ function Home({ navigate }: { navigate: Nav }) {
 function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
-      <PageHero en="About us" title="会社概要" image={about.hero_image} dark />
+      <PageHero en="About us" title="会社概要" intro={about.intro} image={about.hero_image} imagePosition="left 45%" />
       <section id="message" className="section message-section">
         <div className="container narrow">
           <span className="section-index">01<i>Message</i></span>
