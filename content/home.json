@@ -20,12 +20,12 @@
   "hero_button_primary": "まずは相談してみる",
   "hero_button_secondary": "サービスを見る",
   "services_title": "COANA TOKYOにできること",
-  "services_lead": "守りのバックオフィスと、攻めのマーケティング。気になるサービスを選んでください。",
+  "services_lead": "経理・事務などのバックオフィス業務から、集客・営業などのマーケティングまで。会社の状況に合わせて、仕組みづくりから日々の実務まで必要なところをお手伝いします。",
   "strengths_title": "整えるところから、実行まで。",
   "strengths": [
     {
-      "title": "経理×ITの専門性",
-      "text": "経理の実務とITの知見で、業務の流れから見直します。",
+      "title": "実務×ITの専門性",
+      "text": "バックオフィスと営業・集客、両方の実務経験とITの知見で、仕事の流れから見直します。",
       "icon": "expertise"
     },
     {
