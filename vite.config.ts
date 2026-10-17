@@ -1004,12 +1004,12 @@ function coanaPageMeta(): Plugin {
       // ── サポートチャットの知識データ（/chat-knowledge.json）。サイトの全コンテンツから自動で作るので、
       //    サイトを更新すればチャットの知識も自動で最新になる。AI の回答（functions/api/chat.ts）と、
       //    AI が使えないときのキーワード検索（src/chat）の両方がこのデータだけを根拠にする。
-      type Chunk = { id: string; t: string; u: string; k: string; x: string }
+      type Chunk = { id: string; t: string; u: string; k: string; x: string; a?: string[] }
       const chunks: Chunk[] = []
       const clean = (value: unknown) => stripHtml(String(value ?? ''))
         .replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
         .replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim()
-      const addChunk = (k: string, t: string, u: string, text: unknown) => {
+      const addChunk = (k: string, t: string, u: string, text: unknown, ask?: string[]) => {
         const x = clean(text)
         if (!x) return
         // 長い文章は 500 字前後で区切る（検索とAIへの受け渡しの単位）
@@ -1019,7 +1019,7 @@ function coanaPageMeta(): Plugin {
           else acc[acc.length - 1] += line.trim()
           return acc
         }, [])
-        parts.forEach((part, i) => chunks.push({ id: k + '-' + chunks.length, t: parts.length > 1 ? t + '（' + (i + 1) + '）' : t, u, k, x: part }))
+        parts.forEach((part, i) => chunks.push({ id: k + '-' + chunks.length, t: parts.length > 1 ? t + '（' + (i + 1) + '）' : t, u, k, x: part, ...(ask?.length ? { a: ask } : {}) }))
       }
       const list = (items: unknown[] | undefined, sep = '、') => (items ?? []).map((v) => clean(v)).filter(Boolean).join(sep)
       // 会社
@@ -1030,6 +1030,23 @@ function coanaPageMeta(): Plugin {
       addChunk('policy', 'ご利用の流れ', '/services', 'ご相談からご契約までの流れ：' + list(services.flow as string[], ' → ') + '。ご相談・お見積もりは無料です。')
       addChunk('policy', '対応エリア・対応言語', '/about', '全国に対応しています（オンラインでのご相談・支援）。所在地は' + address + '。英語でのご相談は創業支援（英語）で対応しています。')
       addChunk('policy', '士業の独占業務について', '/services', '税務申告・税務相談、社会保険・労働保険の手続き代行、登記、許認可申請、在留資格の申請、法律相談・契約書の作成などの士業の独占業務は行いません。必要に応じて提携する専門家（税理士・社労士・行政書士・司法書士・弁護士など）を紹介します。')
+      // 公式の補足知識（content/chatbot/knowledge.md。CMS「サポートチャットの補足知識」）：読み方・略歴の補足・サービスの補足など。
+      //    「## 見出し」ごとに1つの知識。「ページ：」は案内するページ。【聞かれたときのみ】の見出しは「きっかけの言葉：」を a に持ち、
+      //    その言葉が質問に含まれるときだけ使う（src/chat/search.ts）
+      const officialPath = path.resolve(__dirname, 'content/chatbot/knowledge.md')
+      if (fs.existsSync(officialPath)) {
+        const md = fs.readFileSync(officialPath, 'utf8').replace(/^---[\s\S]*?\n---\n/, '')
+        for (const section of md.split(/\n(?=## )/).slice(1)) {
+          const title = (section.match(/^##\s+(.+)/)?.[1] ?? '').trim()
+          const lines = section.replace(/^##\s+.+\n?/, '').split('\n')
+          const meta = (label: string) => lines.find((l) => l.startsWith(label + '：'))?.slice(label.length + 1).trim()
+          const body = lines.filter((l) => !/^(ページ|きっかけの言葉)：/.test(l)).join('\n')
+          const askOnly = title.startsWith('【聞かれたときのみ】')
+          const ask = askOnly ? (meta('きっかけの言葉') ?? '').split(/[、,]/).map((w) => w.trim()).filter(Boolean) : undefined
+          if (askOnly && !ask?.length) throw new Error('knowledge.md：【聞かれたときのみ】「' + title + '」に「きっかけの言葉：」がありません')
+          addChunk('official', title, meta('ページ') || '/about', body, ask)
+        }
+      }
       // サービス一覧・ツール・FAQ（トップ）
       for (const key of ['backoffice', 'marketing'] as const) {
         const group = services[key] || {}

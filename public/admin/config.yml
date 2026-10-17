@@ -337,6 +337,16 @@ collections:
         fields:
           - { label: 本文（空欄の場合は「掲載予定」と表示）, name: body, widget: markdown, required: false }
 
+      - name: chat_knowledge
+        label: サポートチャットの補足知識（AIが答える根拠）
+        file: content/chatbot/knowledge.md
+        fields:
+          - { label: タイトル, name: title, widget: string }
+          - label: 本文（「## 見出し」ごとに1つの知識。見出しの下に「ページ：/about」。【聞かれたときのみ】の見出しには「きっかけの言葉：」）
+            name: body
+            widget: markdown
+            hint: サイトの本文と矛盾することや、具体的な料金・実績の数字は書かないでください。人名などの読み方は、ここに書いた表記だけをチャットが使います。
+
       - name: chat
         label: サポートチャット（メニュー・診断）
         file: content/chat.json

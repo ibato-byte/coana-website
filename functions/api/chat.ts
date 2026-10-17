@@ -8,7 +8,7 @@
  * - 無料枠を食いつぶされないよう、1回の文字数・IP ごとの回数・1日の回数に上限を設ける（下の LIMITS）。
  * - 会話の内容は保存しない（ログにも出さない）。回数の記録は IP アドレスから作った短い符号と回数だけ。
  */
-import { search, type Knowledge } from "../../src/chat/search";
+import { linkTitle, search, type Knowledge } from "../../src/chat/search";
 
 type Ai = { run: (model: string, input: Record<string, unknown>) => Promise<unknown> };
 type Kv = { get: (key: string) => Promise<string | null>; put: (key: string, value: string, options?: { expirationTtl?: number }) => Promise<void> };
@@ -95,6 +95,10 @@ export function systemPrompt(context: string) {
     "- 直前のやりとりの流れを踏まえて答えます（「それは」「さっきの」などが何を指すかも汲み取る）。",
     "- 経理の外注の進め方、クラウド会計の利点、SNSやWebサイトの考え方など、COANA TOKYO のサービスに関わる一般的なご質問には、一般論として分かりやすく答えてかまいません。そのうえで、関係する COANA TOKYO の支援があれば、参考情報をもとに自然に一言つなげます（押し付けない）。",
     "- COANA TOKYO 自身のこと（サービスの内容・できること・進め方・対応地域・会社や代表のこと）は、下の「参考情報」に書かれている内容だけを根拠にします。参考情報に無いことを想像で補わないでください。",
+    "- 人名・社名・ツール名の読み方や表記は、参考情報に書かれたものだけを使います。読み方が書かれていない名前に、自分で推測した読み方やふりがなを付けないでください（代表の衣鳩 翔太の読み方は「いばと しょうた」です）。",
+    "- 数字（期間・時間・件数・割合・削減効果など）は、参考情報に明記されたものだけを使い、それ以外の数字は出しません。",
+    "- 見出しに【聞かれたときのみ】と付いた参考情報は、お客さまがその事柄を直接尋ねたときだけ使います。代表の紹介など、ほかの質問への回答には自分から含めないでください。",
+    "- 代表について話すときは、前に出しすぎず簡潔にし、詳しくは会社概要ページのプロフィールをご覧いただくよう添えてもかまいません。",
     "",
     "# 答えないこと（担当者へつなぐ）",
     "- 具体的な金額・料金の目安、納期や期間の約束、実績の数字、成果の保証は、参考情報に明記がない限り答えません。",
@@ -111,7 +115,7 @@ export function systemPrompt(context: string) {
     "- 長さは2〜5文（150〜300字ほど）を目安に、短すぎず長すぎず。手順や選択肢は「・」で始まる箇条書き（3〜4個まで）にしてもかまいません。",
     "- 見出し・表・URL・リンクは書きません（関連ページはシステムが別に表示します）。最後に毎回相談を勧める必要はありません（相談のご案内はシステムが必要なときに表示します）。",
     "",
-    "# 参考情報（COANA TOKYO のWebサイトより。質問に関係しそうな部分）",
+    "# 参考情報（COANA TOKYO のWebサイトと、公式の補足知識より。質問に関係しそうな部分）",
     context,
   ].join("\n");
 }
@@ -156,18 +160,12 @@ export async function onRequestPost({ request, env }: Context): Promise<Response
     .slice(-LIMITS.historyTurns)
     .map((h) => ({ role: h.role === "assistant" ? "assistant" : "user", content: h.text.slice(0, 400) }));
   const lastUser = history.filter((h) => h.role === "user").slice(-1)[0]?.content ?? "";
-  // まず今回の質問だけで探し、足りない分を直前の質問とあわせた検索で補う（「それはいくら？」のような続きの質問のため）
-  const seen = new Set<string>();
-  const hits = [...search(knowledge, message, 5), ...(lastUser ? search(knowledge, lastUser.slice(0, 60) + " " + message, 3) : [])]
-    .filter((h) => (seen.has(h.chunk.id) ? false : (seen.add(h.chunk.id), true)))
-    .slice(0, 6);
-  const context = hits.length
-    ? hits.map((h, i) => "[" + (i + 1) + "] " + h.chunk.t + "\n" + h.chunk.x.slice(0, 520)).join("\n\n")
-    : "（この質問に関係する情報はサイトにありません）";
-  // 関連ページ：サービスのページを先に、記事やプライバシーポリシーは後に
+  const { hits, context } = pickContext(knowledge, message, lastUser);
+  // 関連ページ：いちばん近い情報のページ、次にサービスのページ、記事やプライバシーポリシーは後に
   const rank = (u: string) => (u.startsWith("/services/") ? 0 : u === "/services" || u === "/about" || u === "/" ? 1 : u.startsWith("/topics/") ? 2 : 3);
-  const sources = dedupe(hits.slice(0, 4).map((h) => ({ t: h.chunk.t.replace(/[：:].*$/, "").replace(/（\d+）$/, "").replace(/^Q\. .*/, "よくあるご質問"), u: h.chunk.u })))
-    .sort((a, b) => rank(a.u) - rank(b.u)).slice(0, 3);
+  const sources = dedupe(hits.slice(0, 4).map((h) => ({ t: linkTitle(knowledge, h.chunk), u: h.chunk.u })))
+    // いちばん近い情報のページは先頭のまま。それ以外は、サービスのページを先に
+    .map((src, i) => ({ src, order: i === 0 ? -1 : rank(src.u) })).sort((a, b) => a.order - b.order).map((x) => x.src).slice(0, 3);
 
   let text = "";
   try {
@@ -205,6 +203,18 @@ export const onRequestGet = async ({ env }: Context) =>
 export const onRequest = async ({ request }: Context) =>
   request.method === "POST" ? json({ error: "unexpected" }, 500) : json({ error: "method_not_allowed" }, 405);
 
+/** AI に渡す参考情報を選ぶ。まず今回の質問だけで探し、足りない分を直前の質問とあわせた検索で補う（「それはいくら？」のような続きの質問のため） */
+export function pickContext(knowledge: Knowledge, message: string, lastUser = "") {
+  const seen = new Set<string>();
+  const hits = [...search(knowledge, message, 5), ...(lastUser ? search(knowledge, lastUser.slice(0, 60) + " " + message, 3) : [])]
+    .filter((h) => (seen.has(h.chunk.id) ? false : (seen.add(h.chunk.id), true)))
+    .slice(0, 6);
+  const context = hits.length
+    ? hits.map((h, i) => "[" + (i + 1) + "] " + (h.chunk.k === "official" ? "公式の補足知識：" : "") + h.chunk.t + "\n" + h.chunk.x.slice(0, 520)).join("\n\n")
+    : "（この質問に関係する情報はサイトにありません）";
+  return { hits, context };
+}
+
 function dedupe(items: { t: string; u: string }[]) {
   const seen = new Set<string>();
   return items.filter((item) => (seen.has(item.u) ? false : (seen.add(item.u), true)));
@@ -228,6 +238,8 @@ export function postProcess(raw: string, evidence: string) {
   if (amounts.some((a) => !evidence.includes(a.replace(/\s/g, "")))) {
     return { text: "料金は、ご依頼の内容と量を伺ったうえで個別にお見積もりしています（ご相談・お見積もりは無料です）。具体的な金額は担当者からご案内します。", handoff: true, offtopic: false };
   }
+  // 代表の名前の誤った読み方は、正しい読み方に直す（読み方は知識ファイルの表記だけを使う）
+  text = text.replace(/ころも(?:ぐも|ばと)|コロモ(?:グモ|バト)/g, "いばと");
   if (text.length > 560) text = text.slice(0, 560).replace(/[^。！？\n]*$/, "") || text.slice(0, 560);
   return { text, handoff, offtopic };
 }
