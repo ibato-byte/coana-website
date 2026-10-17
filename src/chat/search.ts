@@ -128,6 +128,12 @@ export function isConfident(results: { chunk: Chunk; score: number }[], query: s
 }
 
 
+/** 画面にそのまま出すときの本文（AI がないときの回答）。「- ※」の項目は AI への注意書きなので出さない
+ *  （箇条書きの項目は、知識を作るときに改行がまとめられ「 - 」でつながっている） */
+export function displayText(chunk: Chunk) {
+  return chunk.x.replace(/^Q\. [\s\S]*?A\. /, "").split(/\n|\s(?=- )/).map((item) => item.replace(/^- /, "").trim()).filter((item) => item && !item.startsWith("※")).join("\n");
+}
+
 /** 回答の下に出す関連ページの名前。公式の補足知識は見出しではなく、ページの名前にする */
 export function linkTitle(knowledge: Knowledge, chunk: Chunk) {
   const short = (t: string) => t.replace(/[：:].*$/, "").replace(/（\d+）$/, "").replace(/^Q\. .*/, "よくあるご質問");

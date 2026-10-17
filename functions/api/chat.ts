@@ -8,7 +8,7 @@
  * - 無料枠を食いつぶされないよう、1回の文字数・IP ごとの回数・1日の回数に上限を設ける（下の LIMITS）。
  * - 会話の内容は保存しない（ログにも出さない）。回数の記録は IP アドレスから作った短い符号と回数だけ。
  */
-import { linkTitle, search, type Knowledge } from "../../src/chat/search";
+import { displayText, linkTitle, search, type Knowledge } from "../../src/chat/search";
 
 type Ai = { run: (model: string, input: Record<string, unknown>) => Promise<unknown> };
 type Kv = { get: (key: string) => Promise<string | null>; put: (key: string, value: string, options?: { expirationTtl?: number }) => Promise<void> };
@@ -98,6 +98,7 @@ export function systemPrompt(context: string) {
     "- 人名・社名・ツール名の読み方や表記は、参考情報に書かれたものだけを使います。読み方が書かれていない名前に、自分で推測した読み方やふりがなを付けないでください（代表の衣鳩 翔太の読み方は「いばと しょうた」です）。",
     "- 数字（期間・時間・件数・割合・削減効果など）は、参考情報に明記されたものだけを使い、それ以外の数字は出しません。",
     "- 見出しに【聞かれたときのみ】と付いた参考情報は、お客さまがその事柄を直接尋ねたときだけ使います。代表の紹介など、ほかの質問への回答には自分から含めないでください。",
+    "- 参考情報の「※」で始まる項目は、答え方の注意です。従ってください。ただし、その文自体を回答に書き写さないでください。",
     "- 代表について話すときは、前に出しすぎず簡潔にし、詳しくは会社概要ページのプロフィールをご覧いただくよう添えてもかまいません。",
     "",
     "# 答えないこと（担当者へつなぐ）",
@@ -171,7 +172,7 @@ export async function onRequestPost({ request, env }: Context): Promise<Response
   try {
     if (env.CHAT_MOCK_AI === "1" && !env.AI) {
       // ローカル確認用（本番では使わない）：AI の代わりに、いちばん近い情報の冒頭を返す
-      text = hits.length ? hits[0].chunk.x.replace(/^Q\. [\s\S]*?A\. /, "").slice(0, 160) : "[[HANDOFF]]";
+      text = hits.length ? displayText(hits[0].chunk).slice(0, 160) : "[[HANDOFF]]";
     } else {
       const run = env.AI!.run(MODEL, {
         messages: [{ role: "system", content: systemPrompt(context) }, ...history, { role: "user", content: message }],
