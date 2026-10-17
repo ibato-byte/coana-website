@@ -86,7 +86,8 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     navigate(target);
   };
   return (
-    <header className={scrolled ? "site-header is-scrolled" : "site-header"}>
+    // ヘッダー・フッターは日本語。英語ページ（<html lang="en">）でも言語を正しく伝えるため lang="ja" を明示する
+    <header lang="ja" className={scrolled ? "site-header is-scrolled" : "site-header"}>
       <div className="scroll-progress" ref={progressRef} aria-hidden="true" />
       <div className="header-inner">
         <Logo navigate={navigate} />
@@ -133,7 +134,7 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
 
 function Footer({ navigate }: { navigate: Nav }) {
   return (
-    <footer className="site-footer">
+    <footer lang="ja" className="site-footer">
       <div className="container footer-grid">
         <div className="footer-company">
           <Logo navigate={navigate} />
@@ -156,6 +157,10 @@ function Footer({ navigate }: { navigate: Nav }) {
             <GoLink go={navigate} args={["services", "marketing"]}>マーケティング支援</GoLink>
             {solutions.filter((sol) => !sol.hidden).map((sol) => (
               <GoLink key={sol.slug} go={navigate} args={["solution", undefined, sol.slug]}>{sol.nav_label}</GoLink>
+            ))}
+            {/* 英語版の創業支援ページ（一覧には出さないが、全ページから辿れるようにする） */}
+            {solutions.filter((sol) => sol.lang === "en").map((sol) => (
+              <GoLink key={sol.slug} go={navigate} args={["solution", undefined, sol.slug]}><span lang="en">Startup support in English</span></GoLink>
             ))}
           </div>
         </nav>
@@ -187,8 +192,8 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         <div className="hero-copy">
           <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
           <h1 className="hero-title-marker">
-            <span className="hero-line">{home.hero_line1}</span>
-            <span className="hero-line">{home.hero_line2}</span>
+            <span className="hero-line"><span className="hero-line-text">{home.hero_line1}</span></span>
+            <span className="hero-line"><span className="hero-line-text">{home.hero_line2}</span></span>
           </h1>
           <p className="hero-solve hero-anim">
             <span className="solve-box" aria-live="off">

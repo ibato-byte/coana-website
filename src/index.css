@@ -355,16 +355,20 @@ p, li, dd, figcaption { text-wrap: pretty; }
 }
 .hero-kicker span { width: 34px; height: 2px; background: var(--sky-deep); }
 .hero h1 { margin: 0; color: var(--navy-ink); font-size: clamp(32px, 3.9vw, 54px); line-height: 1.42; letter-spacing: -.045em; font-weight: 900; }
-.hero h1 span { position: relative; display: table; z-index: 0; padding: 0 12px 2px 4px; white-space: nowrap; }
-.hero h1 span + span { margin-top: 4px; }
-.hero h1.hero-title-marker span + span::before {
+/* 黄色マーカーは常に文字の後ろ：行ごとに重なりの文脈を閉じ（isolation）、マーカー（::before）を z-index:0、
+ * 文字（.hero-line-text）を z-index:1 に置く。負の z-index は使わない（行のフェード中に前面へ描画されるブラウザがあるため）。
+ * マーカーは行のフェードイン（.1s 遅れ＋.8s）が終わってから引き始める。 */
+.hero h1 > span { position: relative; display: table; isolation: isolate; padding: 0 12px 2px 4px; white-space: nowrap; }
+.hero h1 > span + span { margin-top: 4px; }
+.hero-line-text { position: relative; z-index: 1; }
+.hero h1.hero-title-marker > span + span::before {
   content: "";
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   inset: 0 -1%;
   background: linear-gradient(transparent 62%, rgba(255, 216, 90, .92) 62%, rgba(255, 216, 90, .92) 90%, transparent 90%);
   transform-origin: 0 50%;
-  animation: marker-draw .7s var(--ease-out) both .55s;
+  animation: marker-draw .6s var(--ease-out) both .9s;
 }
 @keyframes marker-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
@@ -946,7 +950,7 @@ a.service-card:hover .art * { animation-play-state: running; }
   .hero { padding: 100px 0 52px; }
   .hero-kicker { font-size: 11px; margin-bottom: 16px; letter-spacing: .2em; }
   .hero h1 { font-size: clamp(23px, 6.5vw, 30px); line-height: 1.55; }
-  .hero h1 span { white-space: normal; padding: 0 8px 2px 2px; }
+  .hero h1 > span { white-space: normal; padding: 0 8px 2px 2px; }
   .hero-solve { margin-top: 14px; font-size: 15px; gap: 6px; }
   .hero-visual { max-width: 340px; }
   .hero-lead { margin-top: 12px; font-size: 14.5px; line-height: 1.85; }
@@ -1064,6 +1068,8 @@ a.service-card:hover .art * { animation-play-state: running; }
   }
   [data-reveal] { opacity: 1 !important; transform: none !important; }
   .hero-anim, .hero-line { opacity: 1 !important; }
+  /* マーカーは最初から引かれた状態で表示する */
+  .hero h1.hero-title-marker > span + span::before, .lp-hero-line:last-child::before { animation: none !important; transform: none !important; }
   .contact-band, .contact-orbit { animation: none !important; }
 }
 

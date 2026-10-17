@@ -48,16 +48,19 @@
 .lp-hero-label { padding: 4px 12px; border-radius: 999px; background: var(--navy); color: var(--white); font-size: 12px; font-weight: 700; }
 .lp-hero-title { margin: 0; font-size: clamp(30px, 3.8vw, 50px); line-height: 1.42; letter-spacing: -.04em; font-weight: 900; color: var(--navy-ink); }
 .lp-hero-title.is-plain { font-size: clamp(28px, 3.4vw, 44px); }
-.lp-hero-line { position: relative; display: table; z-index: 0; padding: 0 10px 2px 4px; animation: fade-up .8s var(--ease-out) both; }
+/* マーカーは常に文字の後ろ（トップと同じ仕組み：isolation＋マーカー z-index:0／文字 z-index:1）。
+ * 行のフェードイン（最大 .12s 遅れ＋.8s）が終わってから引き始める。 */
+.lp-hero-line { position: relative; display: table; isolation: isolate; padding: 0 10px 2px 4px; animation: fade-up .8s var(--ease-out) both; }
 .lp-hero-line:nth-child(2) { animation-delay: .12s; margin-top: 4px; }
+.lp-hero-line-text { position: relative; z-index: 1; }
 .lp-hero-line:last-child::before {
   content: "";
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   inset: 0 -1%;
   background: linear-gradient(transparent 64%, rgba(255, 216, 90, .9) 64%, rgba(255, 216, 90, .9) 92%, transparent 92%);
   transform-origin: 0 50%;
-  animation: marker-draw .7s var(--ease-out) both .5s;
+  animation: marker-draw .6s var(--ease-out) both .95s;
 }
 .lp-hero-sub { margin: 16px 0 0; font-size: 15px; font-weight: 700; color: var(--navy-soft); }
 .lp-hero-lead { margin: 22px 0 0; max-width: 560px; font-size: 15.5px; line-height: 1.95; }
