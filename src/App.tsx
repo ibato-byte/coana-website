@@ -178,40 +178,40 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   useEffect(() => {
     if (reduceMotion) return;
-    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2800);
+    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2600);
     return () => window.clearInterval(id);
   }, [reduceMotion, words.length]);
   return (
     <section className="hero">
       <div className="container hero-grid">
         <div className="hero-copy">
-          <p className="hero-kicker">{home.hero_kicker}</p>
-          <h1 className="hero-title">
-            <span className="hero-line"><span>{home.hero_line1}</span></span>
-            <span className="hero-line"><span>{home.hero_line2}</span></span>
+          <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
+          <h1 className="hero-title-marker">
+            <span className="hero-line">{home.hero_line1}</span>
+            <span className="hero-line">{home.hero_line2}</span>
           </h1>
-          <p className="hero-lead">
-            <span className="hero-solve">
-              {/* キーワードは同じ書体・太さのまま色だけ変える。読み上げ用には全キーワードを並べる */}
-              <span className="visually-hidden">{words.join("・")}</span>
-              <span className="hero-word" key={wordIndex} aria-hidden="true">{words[wordIndex]}</span>
-              {home.hero_solve_text}
+          <p className="hero-solve hero-anim">
+            <span className="solve-box" aria-live="off">
+              {words.map((w, i) => (
+                <span key={w} className={i === wordIndex ? "solve-word is-active" : "solve-word"} aria-hidden={i !== wordIndex}>{w}</span>
+              ))}
             </span>
-            {home.hero_lead}
+            <span className="solve-rest">{home.hero_solve_text}</span>
           </p>
-          <div className="hero-actions">
-            <GoLink className="hero-button" go={navigate} args={["contact"]}>{home.hero_button_primary}<Icon name="arrow" size={17} /></GoLink>
-            <GoLink className="hero-textlink" go={navigate} args={["services"]}>{home.hero_button_secondary}<Icon name="arrow" size={15} /></GoLink>
-          </div>
         </div>
-        <div className="hero-visual art-line">
+        <div className="hero-visual hero-anim">
           <HeroVideo src={home.hero_video} fallback={<HeroScene />} />
         </div>
-      </div>
-      <div className="container">
-        <ul className="hero-meta">
-          {home.hero_badges.map((b) => <li key={b}>{b}</li>)}
-        </ul>
+        <div className="hero-body hero-anim">
+          <p className="hero-lead">{home.hero_lead}</p>
+          <div className="button-row">
+            <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
+            <LinkButton secondary go={navigate} args={["services"]}>{home.hero_button_secondary}</LinkButton>
+          </div>
+          <ul className="hero-badges">
+            {home.hero_badges.map((b) => <li key={b}><Icon name="check" size={14} />{b}</li>)}
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -365,35 +365,23 @@ function Home({ navigate }: { navigate: Nav }) {
 
 /* ───────────────────────── About ───────────────────────── */
 
-/* 代表メッセージ：冒頭の「」で始まる一文は引用として独立させ、本文の手動改行は外して自然に折り返す */
-const [messageQuote, messageParagraphs] = (() => {
-  const paras = about.message.map((p) => p.trim());
-  const first = paras[0] ?? "";
-  const m = first.match(/^(「[^」]+」)\n?([\s\S]*)$/);
-  const flat = (t: string) => t.replace(/\n+/g, "");
-  return m ? [m[1], [m[2], ...paras.slice(1)].filter(Boolean).map(flat)] : ["", paras.map(flat)];
-})();
-
 function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
-      <PageHero en="About us" title="会社概要" image={about.hero_image} />
+      <PageHero en="About us" title="会社概要" image={about.hero_image} dark />
       <section id="message" className="section message-section">
-        <div className="container message-grid">
-          <header className="message-head">
-            <span className="section-index">01<i>Message</i></span>
-            <h2><Lines text={about.message_heading} /></h2>
-          </header>
-          <div className="message-main">
-            {messageQuote && <blockquote className="message-quote"><p>{messageQuote}</p></blockquote>}
-            <div className="message-body">
-              {messageParagraphs.map((p, i) => <p key={i}>{p}</p>)}
-            </div>
-            <p className="signature">
-              <span>{about.signature}</span>
-              <small>{about.profile_name_en}</small>
-            </p>
+        <div className="container narrow">
+          <span className="section-index">01<i>Message</i></span>
+          <h2><Lines text={about.message_heading} /></h2>
+          <ul className="about-values">
+            {home.strengths.map((s) => (
+              <li key={s.title}><span className="style-icon"><MiniIcon name={s.icon} size={26} /></span>{s.title}</li>
+            ))}
+          </ul>
+          <div className="message-body">
+            {about.message.map((p, i) => <p key={i}><Lines text={p} /></p>)}
           </div>
+          <p className="signature"><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
         </div>
       </section>
       <section id="profile" className="section profile-section">

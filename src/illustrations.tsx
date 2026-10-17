@@ -20,9 +20,9 @@ const d = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
 function Frame({ children, label, className = "" }: { children: ReactNode; label?: string; className?: string }) {
   return (
     <svg className={`art ${className}`} viewBox="0 0 480 360" aria-hidden="true" focusable="false" data-label={label}>
-      <ellipse className="art-deco" cx="240" cy="190" rx="200" ry="150" fill={SOFT} />
-      <circle cx="400" cy="70" r="22" fill={YELLOW} opacity=".5" className="art-float art-deco" style={d(1.2)} />
-      <circle cx="70" cy="290" r="12" fill={SKY} opacity=".35" className="art-float art-deco" style={d(.4)} />
+      <ellipse cx="240" cy="190" rx="200" ry="150" fill={SOFT} />
+      <circle cx="400" cy="70" r="22" fill={YELLOW} opacity=".5" className="art-float" style={d(1.2)} />
+      <circle cx="70" cy="290" r="12" fill={SKY} opacity=".35" className="art-float" style={d(.4)} />
       {children}
     </svg>
   );
@@ -297,8 +297,8 @@ export function HeroScene() {
   const heart = "M0 6C0-2 10-4 12 3 14-4 24-2 24 6 24 13 12 20 12 20S0 13 0 6Z";
   return (
     <svg className="art hero-scene" viewBox="0 0 560 470" aria-hidden="true" focusable="false">
-      <circle className="art-deco" cx="290" cy="235" r="205" fill="#fff" opacity=".7" />
-      <circle className="art-deco" cx="290" cy="235" r="150" fill={SOFT} />
+      <circle cx="290" cy="235" r="205" fill="#fff" opacity=".7" />
+      <circle cx="290" cy="235" r="150" fill={SOFT} />
       {/* 流れ */}
       <path d="M128 140 C 170 150 180 190 205 200" className="art-dash" stroke={DEEP} />
       <path d="M128 330 C 170 320 180 290 205 280" className="art-dash" stroke={DEEP} style={d(.5)} />

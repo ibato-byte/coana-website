@@ -97,6 +97,7 @@ collections:
       - { label: 「お問い合わせ」帯の本文（改行可）, name: cta_text, widget: text, required: false }
       - { label: ページの言語（英語ページの場合は en）, name: lang, widget: select, options: [ja, en], default: ja, required: false }
       - { label: 一覧・フッターに表示しない（英語ページなど）, name: hidden, widget: boolean, default: false, required: false }
+      - { label: ページ上部｜ボタン下の一言, name: hero_note, widget: string, required: false }
       - label: ページ上部｜特徴タグ（3つ・数値ではなく事実を。語は8文字以内）
         name: hero_facts
         widget: list
@@ -279,7 +280,7 @@ collections:
         label: 会社概要ページ
         file: content/about.json
         fields:
-          - { label: ページ上部の画像, name: hero_image, widget: image, hint: "会社概要ページ（/about）の一番上、「会社概要」の文字の背景に薄く表示される画像です。トップページの「ABOUT US」の画像は「ページの文章→トップページ→About｜画像」で変更できます。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
+          - { label: ページ上部の画像, name: hero_image, widget: image, hint: "会社概要ページ（/about）の一番上、「会社概要」の文字の背景に表示される画像です。白い文字が読めるよう、暗めのフィルターを重ねて表示します。横長の写真がおすすめです。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
           - { label: メッセージ見出し（改行可）, name: message_heading, widget: text }
           - { label: メッセージ本文（段落ごと）, name: message, widget: list, field: { label: 段落, name: p, widget: text } }
           - { label: 署名, name: signature, widget: string }

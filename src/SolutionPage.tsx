@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, lineUrl, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
@@ -74,6 +74,7 @@ const LABELS = {
   ja: {
     consult: "無料で相談する",
     consultLine: "LINEで気軽に相談",
+    heroNote: "相談・お見積もりは無料。全国オンライン対応。",
     problems: "こんなお悩みはありませんか",
     bridge: ["そのお悩み、", "COANA TOKYO", "が仕組みから解決します。"],
     scheme: "支援の仕組み",
@@ -96,11 +97,13 @@ const LABELS = {
     others: "そのほかのサービス",
     allServices: "サービス一覧を見る",
     sticky: "無料で相談する",
+    scroll: "本文へスクロール",
     facts: "サービスの特徴",
   },
   en: {
     consult: "Book a free consultation",
     consultLine: "Chat on LINE",
+    heroNote: "Consultation and quotes are free. Available online nationwide, in English.",
     problems: "Sound familiar?",
     bridge: ["We help you solve these, ", "step by step", ", with a bilingual partner on your side."],
     scheme: "How it works",
@@ -123,6 +126,7 @@ const LABELS = {
     others: "Other services (Japanese pages)",
     allServices: "See all services",
     sticky: "Free consultation",
+    scroll: "Scroll to content",
     facts: "Key points",
   },
 };
@@ -150,47 +154,44 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   return (
     <section className="lp-hero">
       <div className="container lp-hero-inner">
-        <div className="lp-hero-copy">
+        <div className="lp-hero-head">
           <p className="lp-hero-kicker">
-            <span>{sol.en || "Service"}</span>
+            <span className="lp-hero-en">{sol.en || "Service"}</span>
             <span className="lp-hero-label">{sol.nav_label}</span>
-            {sol.english?.slug && (
-              <GoLink className="lp-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
-                {sol.english.button || "English page"}<Icon name="arrow" size={13} />
-              </GoLink>
-            )}
           </p>
-          <h1 className="lp-hero-title">
-            {(sol.catch || sol.title).split("\n").map((line, i) => <span key={i} className="lp-hero-line"><span>{line}</span></span>)}
+          <h1 className={sol.catch ? "lp-hero-title" : "lp-hero-title is-plain"}>
+            {sol.catch
+              ? sol.catch.split("\n").map((line, i) => <span key={i} className="lp-hero-line">{line}</span>)
+              : sol.title}
           </h1>
+          {sol.catch && <p className="lp-hero-sub">{sol.title}</p>}
+        </div>
+        <div className="lp-hero-art"><HeroVideo src={sol.hero_video} fallback={<ServiceArt slug={sol.slug} />} /></div>
+        <div className="lp-hero-body">
           <p className="lp-hero-lead"><Lines text={sol.lead} /></p>
+          {facts.length > 0 && (
+            <ul className="lp-hero-facts" aria-label={L.facts}>
+              {facts.map((f) => (
+                <li key={f.value}><span className="lp-hero-fact-icon"><Icon name="check" size={15} /></span><strong>{f.value}</strong><small>{f.label}</small></li>
+              ))}
+            </ul>
+          )}
           <div className="lp-hero-actions">
-            <GoLink className="lp-hero-button" go={navigate} args={["contact"]}>
-              {L.consult}<Icon name="arrow" size={17} />
+            <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
+              {L.consult}<Icon name="arrow" size={19} />
             </GoLink>
-            <LineTextLink place="solution_hero" label={L.consultLine} />
+            <LineButton place="solution_hero" label={L.consultLine} />
           </div>
+          <p className="lp-hero-note">{sol.hero_note || L.heroNote}</p>
+          {sol.english?.slug && (
+            <GoLink className="lp-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
+              <LpIcon name="globe" size={17} />{sol.english.button || "English page"}<Icon name="arrow" size={15} />
+            </GoLink>
+          )}
         </div>
-        <div className="lp-hero-art art-line"><HeroVideo src={sol.hero_video} fallback={<ServiceArt slug={sol.slug} />} /></div>
       </div>
-      {facts.length > 0 && (
-        <div className="container">
-          <ul className="lp-hero-facts" aria-label={L.facts}>
-            {facts.map((f) => <li key={f.value}><strong>{f.value}</strong><span>{f.label}</span></li>)}
-          </ul>
-        </div>
-      )}
+      <a className="lp-hero-scroll" href="#lp-problems" aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
     </section>
-  );
-}
-
-/** LINE相談をテキストリンクとして表示（ヒーロー用。ボタンは主CTAの1つだけにする） */
-function LineTextLink({ place, label }: { place: string; label: string }) {
-  if (!lineUrl) return null;
-  return (
-    <a className="lp-hero-textlink" href={lineUrl} target="_blank" rel="noopener noreferrer" onClick={() => window.gtag?.("event", "line_click", { link_location: place })}>
-      {label}<Icon name="arrow" size={15} />
-    </a>
   );
 }
 

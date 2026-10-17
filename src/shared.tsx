@@ -240,10 +240,11 @@ export function ContactBand({ navigate }: { navigate: Nav }) {
   );
 }
 
-export function PageHero({ en, title, intro, image }: { en: string; title: string; intro?: string; image?: string }) {
+/** ページ上部の見出し。dark を付けると、写真を見せたまま暗いオーバーレイ＋白文字にする（会社概要） */
+export function PageHero({ en, title, intro, image, dark = false }: { en: string; title: string; intro?: string; image?: string; dark?: boolean }) {
   return (
     <section
-      className={image ? "page-hero has-image" : "page-hero"}
+      className={["page-hero", image ? "has-image" : "", image && dark ? "is-dark" : ""].filter(Boolean).join(" ")}
       style={image ? { backgroundImage: `url("${image}")` } : undefined}
     >
       <div className="container">
