@@ -800,12 +800,14 @@ function coanaPageMeta(): Plugin {
         const text = lines.map(inlineMd).filter(Boolean).join('<br>')
         return text ? '<p>' + text + '</p>' : ''
       }).join('')
+      // サービスLPのキャッチコピー（画面の h1）：下線の印「**」を外し、行をつなぐ（英語の行の間だけ空白を入れる）
+      const catchText = (text: string) => text.replace(/\*\*/g, '').split('\n').reduce((acc, line) => !acc ? line : acc + (/[A-Za-z0-9.,]$/.test(acc) ? ' ' : '') + line, '')
       const fallbackMain = (pagePath: string): string => {
         if (pagePath === '/') {
           const strengths = (home.strengths || []) as { title: string; text: string }[]
           const tools = (home.tools || []) as { name: string; category?: string }[]
           const faqItems = (home.faqs || []) as { q: string; a: string }[]
-          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + '<p>' + esc((home.hero_words || []).join('・')) + esc(home.hero_solve_text) + '</p>' + paras(home.hero_lead) +
+          return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + '<p>' + esc((home.hero_words || []).join('、')) + esc(home.hero_solve_text) + '</p>' + paras(home.hero_lead) +
             ((home.hero_badges || []).length ? '<ul>' + (home.hero_badges as string[]).map((b) => '<li>' + esc(b) + '</li>').join('') + '</ul>' : '') +
             '<section><h2>' + esc(home.services_title) + '</h2>' + paras(home.services_lead) + serviceSections + anchor('/services', 'サービスを詳しく見る') + '</section>' +
             '<section><h2>' + esc(home.strengths_title) + '</h2>' + paras(about.message_heading) + strengths.map((st) => '<h3>' + esc(st.title) + '</h3>' + paras(st.text)).join('') +
@@ -856,7 +858,7 @@ function coanaPageMeta(): Plugin {
         const T = SOL_LABELS[solLang(sol)]
         const pair = pairOf(sol)
         const supportTitle = sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support
-        return '<h1>' + esc(sol.title) + '</h1>' + (sol.catch ? '<p><strong>' + esc(sol.catch.replace(/\n/g, ' ')) + '</strong></p>' : '') + paras(sol.lead) +
+        return (sol.catch ? '<h1>' + esc(catchText(sol.catch)) + '</h1><p>' + esc(sol.title) + '</p>' : '<h1>' + esc(sol.title) + '</h1>') + paras(sol.lead) +
           ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
           section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
           section(sol.scheme?.title || T.scheme, (sol.scheme ? paras(sol.scheme.lead) +

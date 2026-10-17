@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
 import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
@@ -148,6 +148,27 @@ function fitText(text: string, fontSize: number, max: number) {
 
 /* ───────────────────────── 1. Hero ───────────────────────── */
 
+/** キャッチコピーの行。「**」で囲んだ部分に下線を引く（囲みがなければ最後の行全体）。
+ *  下線のフレーズは途中で改行させず、入りきらない幅ではフレーズごと次の行へ送る（前後に改行位置 <wbr> を置く）。 */
+function CatchLines({ text }: { text: string }) {
+  const lines = text.split("\n");
+  const marked = text.includes("**");
+  return (
+    <>
+      {lines.map((line, i) => {
+        const parts = marked ? line.split(/\*\*(.+?)\*\*/) : i === lines.length - 1 ? ["", line] : [line];
+        return (
+          <span key={i} className="lp-hero-line">
+            {parts.map((part, j) => (j % 2
+              ? <Fragment key={j}><wbr /><span className="title-underline">{part}</span><wbr /></Fragment>
+              : part))}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
 function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
   const facts = sol.hero_facts ?? [];
@@ -160,9 +181,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
             <span className="lp-hero-label">{sol.nav_label}</span>
           </p>
           <h1 className={sol.catch ? "lp-hero-title" : "lp-hero-title is-plain"}>
-            {sol.catch
-              ? sol.catch.split("\n").map((line, i, all) => <span key={i} className="lp-hero-line">{i === all.length - 1 ? <span className="title-underline">{line}</span> : line}</span>)
-              : sol.title}
+            {sol.catch ? <CatchLines text={sol.catch} /> : sol.title}
           </h1>
           {sol.catch && <p className="lp-hero-sub">{sol.title}</p>}
         </div>

@@ -66,7 +66,7 @@ collections:
       - { label: ページの見出し, name: title, widget: string }
       - { label: 検索結果に出すタイトル, name: seo_title, widget: string, required: false, hint: "空欄の場合はページの見出しを使います" }
       - { label: 検索結果に出す説明文（120文字前後）, name: description, widget: text, required: false }
-      - { label: ページ上部｜キャッチコピー（改行で2行まで。空欄の場合はページの見出しを大きく表示）, name: catch, widget: text, required: false }
+      - { label: ページ上部｜キャッチコピー（改行で2行まで。1行13文字以内が目安。下線を引く部分は **〜** で囲む（例：**問い合わせが届く**サイトへ。）。囲みがなければ最後の行に下線。空欄の場合はページの見出しを大きく表示）, name: catch, widget: text, required: false }
       - { label: リード文（60文字以内）, name: lead, widget: text }
       - { label: ページ上部｜動画（任意。設定するとイラストの代わりに表示。音なし・横長4:3推奨・10MB以内のmp4）, name: hero_video, widget: file, required: false }
       - { label: お悩みの見出し, name: problems_title, widget: string, required: false, default: こんなお悩みはありませんか }
