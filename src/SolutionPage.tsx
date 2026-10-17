@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { about, articles, home, services, settings, solutions, type Article, type Solution } from "./content";
+import { about, articles, home, settings, solutions, type Article, type Solution } from "./content";
 import { ArticleRow, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
+import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
- * content/solutions/*.json（CMS「サービス別ページ」）の内容を、申し込みにつながる構成で描画する。
- * 追加項目（catch / target / outcomes / reasons / flow / message など）は任意。空欄のセクションは表示しない。
+ * content/solutions/*.json（CMS「サービス別ページ」）の内容を、1画面1メッセージの8セクションで描画する。
+ * ヒーロー → お悩み → 仕組み → 支援内容とプラン → 事例 → 流れ → FAQ → お問い合わせ（代表の一言）。
+ * 文章よりアイコン・図解を優先し、空欄のセクションは表示しない。
  */
 
 type LpIconName =
@@ -73,71 +75,61 @@ const LABELS = {
     consult: "無料で相談する",
     consultLine: "LINEで気軽に相談",
     heroNote: "相談・お見積もりは無料。全国オンライン対応。",
-    forYou: "こんな方におすすめです",
     problems: "こんなお悩みはありませんか",
     bridge: ["そのお悩み、", "COANA TOKYO", "が仕組みから解決します。"],
     scheme: "支援の仕組み",
-    outcomes: "支援後に、こう変わります",
+    support: "支援内容とプラン",
+    scope: "ご依頼いただける業務の一覧",
+    scopeOpen: "業務の一覧を見る",
+    tools: "対応ツールの例",
+    plans: "ご利用プランの例",
+    plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
+    bestFor: "こんな方に",
+    scenarios: "ご利用イメージ",
     before: "Before",
     after: "After",
-    support: "支援内容",
-    scope: "ご依頼いただける業務の例",
-    tools: "対応ツールの例",
-    compare: "一般的なサービスとの違い",
-    compareOurs: "COANA TOKYO",
-    compareOthers: "一般的なサービス",
-    plans: "ご利用プランの例",
-    plansNote: "料金は支援内容と業務範囲に応じて個別にお見積もりします。小規模なご依頼や、一部の業務だけのご相談も歓迎です。",
-    reasons: "COANA TOKYOが選ばれる理由",
     flow: "ご利用までの流れ",
-    step: "STEP",
-    flowCta: "まずは無料で相談する",
-    scenarios: "ご利用イメージ",
-    message: "代表からのメッセージ",
-    rep: "代表",
     faq: "よくあるご質問",
     column: "関連するコラム",
     ctaTitle: "まずは、現状をお聞かせください。",
-    ctaText: "ご相談・お見積もりは無料です。\n「何から相談すればいいか分からない」という段階でも、一緒に整理するところから始めます。",
+    ctaText: "ご相談・お見積もりは無料です。何から相談すればいいか分からない段階でも大丈夫です。",
     ctaButton: "無料相談・お問い合わせ",
+    founder: "代表より",
     others: "そのほかのサービス",
     allServices: "サービス一覧を見る",
     sticky: "無料で相談する",
+    scroll: "本文へスクロール",
+    facts: "サービスの特徴",
   },
   en: {
     consult: "Book a free consultation",
     consultLine: "Chat on LINE",
     heroNote: "Consultation and quotes are free. Available online nationwide, in English.",
-    forYou: "Who this is for",
     problems: "Sound familiar?",
     bridge: ["We help you solve these, ", "step by step", ", with a bilingual partner on your side."],
     scheme: "How it works",
-    outcomes: "What changes",
-    before: "Before",
-    after: "After",
-    support: "What we do",
+    support: "What we do & plans",
     scope: "Examples of what you can ask us",
+    scopeOpen: "See the full list",
     tools: "Tools we work with",
-    compare: "How we are different",
-    compareOurs: "COANA TOKYO",
-    compareOthers: "Typical services",
     plans: "Example plans",
     plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
-    reasons: "Why COANA TOKYO",
-    flow: "How to get started",
-    step: "STEP",
-    flowCta: "Book a free consultation",
+    bestFor: "Best for",
     scenarios: "Example situations",
-    message: "A message from our founder",
-    rep: "Founder",
+    before: "Before",
+    after: "After",
+    flow: "How to get started",
     faq: "FAQ",
     column: "Related articles",
     ctaTitle: "Tell us where you are. We will take it from there.",
-    ctaText: "Consultation and quotes are free.\nIf you are not sure where to start, that is exactly where we begin.",
+    ctaText: "Consultation and quotes are free. If you are not sure where to start, that is exactly where we begin.",
     ctaButton: "Contact us (free consultation)",
+    founder: "From our founder",
     others: "Other services (Japanese pages)",
     allServices: "See all services",
     sticky: "Free consultation",
+    scroll: "Scroll to content",
+    facts: "Key points",
   },
 };
 type Lang = keyof typeof LABELS;
@@ -156,17 +148,15 @@ function fitText(text: string, fontSize: number, max: number) {
   return width > max ? { textLength: max, lengthAdjust: "spacingAndGlyphs" as const } : {};
 }
 
-/* ───────────────────────── Hero ───────────────────────── */
+/* ───────────────────────── 1. Hero ───────────────────────── */
 
 function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
-  const image = sol.hero_image || services.hero_image;
+  const facts = sol.hero_facts ?? [];
   return (
     <section className="lp-hero">
-      <div className="lp-hero-bg" aria-hidden="true" style={{ backgroundImage: `url("${image}")` }} />
-      <div className="lp-hero-veil" aria-hidden="true" />
       <div className="container lp-hero-inner">
-        <div className="lp-hero-copy">
+        <div className="lp-hero-head">
           <p className="lp-hero-kicker">
             <span className="lp-hero-en">{sol.en || "Service"}</span>
             <span className="lp-hero-label">{sol.nav_label}</span>
@@ -177,10 +167,15 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
               : sol.title}
           </h1>
           {sol.catch && <p className="lp-hero-sub">{sol.title}</p>}
+        </div>
+        <div className="lp-hero-art"><HeroVideo src={sol.hero_video} fallback={<ServiceArt slug={sol.slug} />} /></div>
+        <div className="lp-hero-body">
           <p className="lp-hero-lead"><Lines text={sol.lead} /></p>
-          {(sol.hero_points ?? []).length > 0 && (
-            <ul className="lp-hero-points">
-              {(sol.hero_points ?? []).map((p) => <li key={p}><Icon name="check" size={15} />{p}</li>)}
+          {facts.length > 0 && (
+            <ul className="lp-hero-facts" aria-label={L.facts}>
+              {facts.map((f) => (
+                <li key={f.value}><span className="lp-hero-fact-icon"><Icon name="check" size={15} /></span><strong>{f.value}</strong><small>{f.label}</small></li>
+              ))}
             </ul>
           )}
           <div className="lp-hero-actions">
@@ -190,77 +185,47 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
             <LineButton place="solution_hero" label={L.consultLine} />
           </div>
           <p className="lp-hero-note">{sol.hero_note || L.heroNote}</p>
+          {sol.english?.slug && (
+            <GoLink className="lp-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
+              <LpIcon name="globe" size={17} />{sol.english.button || "English page"}<Icon name="arrow" size={15} />
+            </GoLink>
+          )}
         </div>
-        {(sol.hero_facts ?? []).length > 0 && (
-          <ul className="lp-hero-facts" aria-label={langOf(sol) === "en" ? "Key points" : "サービスの特徴"}>
-            {(sol.hero_facts ?? []).map((f) => (
-              <li key={f.label}><strong>{f.value}</strong><span>{f.label}</span></li>
-            ))}
-          </ul>
-        )}
       </div>
-      <a className="lp-hero-scroll" href="#lp-target" aria-label={langOf(sol) === "en" ? "Scroll to content" : "本文へスクロール"}><LpIcon name="arrow-down" size={18} /></a>
+      <a className="lp-hero-scroll" href="#lp-problems" aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
     </section>
   );
 }
 
-/* ───────────────────────── こんな方に ───────────────────────── */
+/* ───────────────────────── 2. お悩み ───────────────────────── */
 
-function Target({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const items = sol.target ?? [];
-  if (!items.length) return null;
-  return (
-    <section id="lp-target" className="section lp-target">
-      <div className="container">
-        <SectionTitle en="For you" center>{sol.target_title || L.forYou}</SectionTitle>
-        <div className="lp-target-grid">
-          {items.map((t, i) => (
-            <article key={t.name} className="lp-target-card" data-reveal style={{ transitionDelay: `${i * 90}ms` }}>
-              <span className="lp-target-icon"><LpIcon name={t.icon || "person"} size={28} /></span>
-              <h3>{t.name}</h3>
-              <p>{t.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── お悩み ───────────────────────── */
+const PROBLEM_FACES = ["clock", "users", "search", "chart"] as const;
 
 function Problems({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
+  if (!sol.problems.length) return null;
   return (
-    <section className="section lp-problems">
-      <div className="container lp-problems-inner">
-        <div className="lp-problems-copy">
-          <SectionTitle en="Problems">{sol.problems_title || L.problems}</SectionTitle>
-          <ul className="lp-problem-list">
-            {sol.problems.map((p, i) => (
-              <li key={p} data-reveal style={{ transitionDelay: `${(i % 5) * 70}ms` }}>
-                <span className="lp-problem-mark"><Icon name="check" size={16} /></span>
-                <span>{p}</span>
-              </li>
-            ))}
-          </ul>
+    <section id="lp-problems" className="section lp-problems">
+      <div className="container">
+        <SectionTitle en="Problems" center>{sol.problems_title || L.problems}</SectionTitle>
+        <ul className="lp-problem-grid">
+          {sol.problems.map((p, i) => (
+            <li key={p}>
+              <span className="lp-problem-icon"><LpIcon name={PROBLEM_FACES[i % PROBLEM_FACES.length]} size={22} /></span>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="lp-problems-bridge">
+          <span className="lp-bridge-arrow" aria-hidden="true"><LpIcon name="arrow-down" size={20} /></span>
+          <p>{L.bridge[0]}<strong>{L.bridge[1]}</strong>{L.bridge[2]}</p>
         </div>
-        {sol.problems_image && (
-          <figure className="lp-problems-photo" data-reveal>
-            <img src={sol.problems_image} alt="" loading="lazy" />
-          </figure>
-        )}
-      </div>
-      <div className="container lp-problems-bridge" data-reveal>
-        <span className="lp-bridge-arrow" aria-hidden="true"><LpIcon name="arrow-down" size={22} /></span>
-        <p>{L.bridge[0]}<strong>{L.bridge[1]}</strong>{L.bridge[2]}</p>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── 仕組みの図解（ハブ型ダイアグラム） ───────────────────────── */
+/* ───────────────────────── 3. 仕組みの図解 ───────────────────────── */
 
 function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const nodes = scheme.nodes ?? [];
@@ -272,7 +237,7 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
     return { x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) };
   });
   return (
-    <div className="lp-scheme-diagram" data-reveal>
+    <div className="lp-scheme-diagram">
       <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="lp-sg" x1="0" y1="0" x2="1" y2="1">
@@ -281,32 +246,28 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
           </linearGradient>
         </defs>
         {pos.map((p, i) => (
-          <g key={"l" + i}>
-            <line x1={cx} y1={cy} x2={p.x} y2={p.y} className="lp-scheme-line" />
-            <circle cx={(cx + p.x) / 2} cy={(cy + p.y) / 2} r="4" className="lp-scheme-dot" />
-          </g>
+          <line key={"l" + i} x1={cx} y1={cy} x2={p.x} y2={p.y} className="lp-scheme-line" style={{ animationDelay: `${i * 0.3}s` }} />
         ))}
         <g className="lp-scheme-center">
-          <circle cx={cx} cy={cy} r="96" fill="url(#lp-sg)" />
           <circle cx={cx} cy={cy} r="110" className="lp-scheme-ring" />
-          <text x={cx} y={cy - 8} textAnchor="middle" className="lp-scheme-center-label">{scheme.center?.label || "COANA TOKYO"}</text>
-          {scheme.center?.sub && <text x={cx} y={cy + 18} textAnchor="middle" className="lp-scheme-center-sub">{scheme.center.sub}</text>}
+          <circle cx={cx} cy={cy} r="96" fill="url(#lp-sg)" />
+          <text x={cx} y={cy - 8} textAnchor="middle" className="lp-scheme-center-label" {...fitText(scheme.center?.label || "COANA TOKYO", 23, 160)}>{scheme.center?.label || "COANA TOKYO"}</text>
+          {scheme.center?.sub && <text x={cx} y={cy + 20} textAnchor="middle" className="lp-scheme-center-sub" {...fitText(scheme.center.sub, 15, 170)}>{scheme.center.sub}</text>}
         </g>
         {nodes.map((node, i) => {
           const p = pos[i];
           return (
             <g key={node.label} className="lp-scheme-node">
-              <rect x={p.x - 122} y={p.y - 50} width="244" height="100" rx="18" />
-              <text x={p.x} y={p.y - 10} textAnchor="middle" className="lp-scheme-node-label" {...fitText(node.label, 20, 226)}>{node.label}</text>
-              {node.sub && <text x={p.x} y={p.y + 16} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub, 14, 226)}>{node.sub}</text>}
-              {node.sub2 && <text x={p.x} y={p.y + 34} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub2, 14, 226)}>{node.sub2}</text>}
+              <rect x={p.x - 122} y={p.y - 46} width="244" height="92" rx="18" />
+              <text x={p.x} y={p.y - 6} textAnchor="middle" className="lp-scheme-node-label" {...fitText(node.label, 21, 220)}>{node.label}</text>
+              {node.sub && <text x={p.x} y={p.y + 22} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub, 14, 220)}>{node.sub}</text>}
             </g>
           );
         })}
       </svg>
       <ul className="lp-scheme-list" aria-label={scheme.title || ""}>
         {nodes.map((node) => (
-          <li key={node.label}><strong>{node.label}</strong>{node.sub && <span>{node.sub}{node.sub2 ? ` ${node.sub2}` : ""}</span>}</li>
+          <li key={node.label}><strong>{node.label}</strong>{node.sub && <span>{node.sub}</span>}</li>
         ))}
       </ul>
     </div>
@@ -316,13 +277,12 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
 function SchemeFlow({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const steps = scheme.nodes ?? [];
   return (
-    <ol className="lp-scheme-flow" data-reveal>
+    <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`}>
       {steps.map((st, i) => (
-        <li key={st.label}>
-          <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /></span>
+        <li key={st.label} style={{ ["--i" as string]: i }}>
+          <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
           <strong>{st.label}</strong>
-          {st.sub && <span>{st.sub}{st.sub2 ? ` ${st.sub2}` : ""}</span>}
-          {i < steps.length - 1 && <i className="lp-scheme-flow-arrow" aria-hidden="true" />}
+          {st.sub && <span>{st.sub}</span>}
         </li>
       ))}
     </ol>
@@ -340,77 +300,77 @@ function Scheme({ sol }: { sol: Solution }) {
         {scheme.type === "flow" ? <SchemeFlow scheme={scheme} /> : <SchemeDiagram scheme={scheme} />}
         {(scheme.points ?? []).length > 0 && (
           <ul className="lp-scheme-points">
-            {(scheme.points ?? []).map((p, i) => (
-              <li key={p.name} data-reveal style={{ transitionDelay: `${i * 90}ms` }}>
-                <span className="lp-scheme-point-icon"><LpIcon name={p.icon || "check"} size={22} /></span>
-                <div><h3>{p.name}</h3><p>{p.text}</p></div>
+            {(scheme.points ?? []).map((p) => (
+              <li key={p.name}>
+                <span className="lp-scheme-point-icon"><LpIcon name={p.icon || "check"} size={24} /></span>
+                <h3>{p.name}</h3>
+                <p>{p.text}</p>
               </li>
             ))}
           </ul>
         )}
-        {scheme.note && <p className="lp-note" data-reveal>{scheme.note}</p>}
+        {scheme.note && <p className="lp-note">{scheme.note}</p>}
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── Before / After ───────────────────────── */
+/* ───────────────────────── 4. 支援内容とプラン ───────────────────────── */
 
-function Outcomes({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const items = sol.outcomes ?? [];
-  if (!items.length) return null;
-  return (
-    <section className="section lp-outcomes">
-      <div className="container">
-        <SectionTitle en="Before / After" center lead={sol.outcome_lead}>{sol.outcome_title || L.outcomes}</SectionTitle>
-        <div className="lp-outcome-list">
-          {items.map((o, i) => (
-            <div key={o.label} className="lp-outcome" data-reveal style={{ transitionDelay: `${i * 100}ms` }}>
-              <p className="lp-outcome-label">{o.label}</p>
-              <div className="lp-outcome-cols">
-                <div className="lp-outcome-before"><span>{L.before}</span><p>{o.before}</p></div>
-                <span className="lp-outcome-arrow" aria-hidden="true"><Icon name="arrow" size={22} /></span>
-                <div className="lp-outcome-after"><span>{L.after}</span><p>{o.after}</p></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── 支援内容 ───────────────────────── */
-
-function Features({ sol }: { sol: Solution }) {
+function Support({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
   const tools = sol.tools ?? [];
+  const groups = sol.scope?.groups ?? [];
+  const plans = sol.plans?.items ?? [];
   return (
-    <section className="section lp-features">
+    <section id="lp-support" className="section lp-support">
       <div className="container">
-        <div className="lp-features-head">
-          <SectionTitle en="Support" lead={sol.features_lead}>{sol.features_title || L.support}</SectionTitle>
-          {sol.features_image && (
-            <figure className="lp-features-photo" data-reveal>
-              <img src={sol.features_image} alt="" loading="lazy" />
-            </figure>
-          )}
-        </div>
-        <div className="lp-feature-grid">
-          {sol.features.map((f, i) => (
-            <article key={f.name} className="lp-feature" data-reveal style={{ transitionDelay: `${(i % 3) * 90}ms` }}>
-              <div className="lp-feature-top">
-                <span className="lp-feature-num">{String(i + 1).padStart(2, "0")}</span>
-                <span className="lp-feature-icon"><LpIcon name={f.icon} size={26} /></span>
-              </div>
-              <h3>{f.name}</h3>
-              <p>{f.text}</p>
-            </article>
+        <SectionTitle en="Services & plans" center lead={sol.features_lead}>{sol.features_title && sol.features_title !== "支援内容" ? sol.features_title : L.support}</SectionTitle>
+        <ul className="lp-feature-grid">
+          {sol.features.map((f) => (
+            <li key={f.name} className="lp-feature">
+              <span className="lp-feature-icon"><LpIcon name={f.icon} size={26} /></span>
+              <div><h3>{f.name}</h3><p>{f.text}</p></div>
+            </li>
           ))}
-        </div>
+        </ul>
+        {groups.length > 0 && (
+          <details className="lp-scope">
+            <summary><LpIcon name="rules" size={18} />{sol.scope?.title || L.scope}<span className="lp-scope-open">{L.scopeOpen}</span></summary>
+            <div className="lp-scope-grid">
+              {groups.map((g) => (
+                <div key={g.name} className="lp-scope-card">
+                  <h3><LpIcon name={g.icon || "check"} size={18} />{g.name}</h3>
+                  <ul>{(g.items ?? []).map((it) => <li key={it}>{it}</li>)}</ul>
+                </div>
+              ))}
+            </div>
+          </details>
+        )}
+        {sol.scope?.note && <p className="lp-note lp-note-legal">{sol.scope.note}</p>}
+
+        {plans.length > 0 && (
+          <>
+            <h3 className="lp-subhead">{sol.plans?.title || L.plans}</h3>
+            <div className="lp-plan-grid">
+              {plans.map((p) => (
+                <article key={p.name} className={p.featured ? "lp-plan is-featured" : "lp-plan"}>
+                  {p.tag && <span className="lp-plan-tag">{p.tag}</span>}
+                  <h4>{p.name}</h4>
+                  {p.text && <p className="lp-plan-text">{p.text}</p>}
+                  {(p.includes ?? []).length > 0 && (
+                    <ul>{(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} />{it}</li>)}</ul>
+                  )}
+                  {p.best_for && <p className="lp-plan-for"><span>{L.bestFor}</span>{p.best_for}</p>}
+                </article>
+              ))}
+            </div>
+            <p className="lp-note lp-plan-note"><LpIcon name="yen" size={16} />{sol.plans?.note || L.plansNote}</p>
+          </>
+        )}
+
         {tools.length > 0 && (
-          <div className="lp-tools" data-reveal>
+          <div className="lp-tools">
             <p className="lp-tools-title">{sol.tools_title || L.tools}</p>
             <ul>
               {tools.map((t) => {
@@ -431,121 +391,7 @@ function Features({ sol }: { sol: Solution }) {
   );
 }
 
-/* ───────────────────────── 依頼できる業務一覧 ───────────────────────── */
-
-function Scope({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const scope = sol.scope;
-  if (!scope || !(scope.groups ?? []).length) return null;
-  return (
-    <section className="section lp-scope">
-      <div className="container">
-        <SectionTitle en="Scope of work" center lead={scope.lead}>{scope.title || L.scope}</SectionTitle>
-        <div className="lp-scope-grid">
-          {(scope.groups ?? []).map((g, i) => (
-            <article key={g.name} className="lp-scope-card" data-reveal style={{ transitionDelay: `${(i % 4) * 80}ms` }}>
-              <h3><span className="lp-scope-icon"><LpIcon name={g.icon || "check"} size={22} /></span>{g.name}</h3>
-              <ul>
-                {(g.items ?? []).map((it) => <li key={it}>{it}</li>)}
-              </ul>
-            </article>
-          ))}
-        </div>
-        {scope.note && <p className="lp-note lp-note-legal" data-reveal>{scope.note}</p>}
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── 一般的なサービスとの違い ───────────────────────── */
-
-function Compare({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const cmp = sol.compare;
-  if (!cmp || !(cmp.rows ?? []).length) return null;
-  return (
-    <section className="section lp-compare">
-      <div className="container">
-        <SectionTitle en="Difference" center lead={cmp.lead}>{cmp.title || L.compare}</SectionTitle>
-        <div className="lp-compare-table" data-reveal role="table">
-          <div className="lp-compare-head" role="row">
-            <span role="columnheader" />
-            <span role="columnheader" className="is-ours">{cmp.ours_label || L.compareOurs}</span>
-            <span role="columnheader">{cmp.others_label || L.compareOthers}</span>
-          </div>
-          {(cmp.rows ?? []).map((r) => (
-            <div key={r.label} className="lp-compare-row" role="row">
-              <span className="lp-compare-label" role="rowheader">{r.label}</span>
-              <span className="lp-compare-ours" role="cell" data-label={cmp.ours_label || L.compareOurs}><Icon name="check" size={18} />{r.ours}</span>
-              <span className="lp-compare-others" role="cell" data-label={cmp.others_label || L.compareOthers}>{r.others}</span>
-            </div>
-          ))}
-        </div>
-        {cmp.note && <p className="lp-note" data-reveal>{cmp.note}</p>}
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── プラン例 ───────────────────────── */
-
-function Plans({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const plans = sol.plans;
-  if (!plans || !(plans.items ?? []).length) return null;
-  return (
-    <section className="section lp-plans">
-      <div className="container">
-        <SectionTitle en="Plans" center lead={plans.lead}>{plans.title || L.plans}</SectionTitle>
-        <div className="lp-plan-grid">
-          {(plans.items ?? []).map((p, i) => (
-            <article key={p.name} className={p.featured ? "lp-plan is-featured" : "lp-plan"} data-reveal style={{ transitionDelay: `${i * 100}ms` }}>
-              {p.tag && <span className="lp-plan-tag">{p.tag}</span>}
-              <h3>{p.name}</h3>
-              {p.text && <p className="lp-plan-text">{p.text}</p>}
-              {(p.includes ?? []).length > 0 && (
-                <ul>
-                  {(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} />{it}</li>)}
-                </ul>
-              )}
-              {p.best_for && <p className="lp-plan-for"><span>{langOf(sol) === "en" ? "Best for" : "こんな方に"}</span>{p.best_for}</p>}
-            </article>
-          ))}
-        </div>
-        <p className="lp-note lp-plan-note" data-reveal>{plans.note || L.plansNote}</p>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── 選ばれる理由 ───────────────────────── */
-
-function Reasons({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const items = sol.reasons ?? [];
-  if (!items.length) return null;
-  return (
-    <section className="section lp-reasons">
-      <div className="container">
-        <SectionTitle en="Why COANA TOKYO" center>{sol.reasons_title || L.reasons}</SectionTitle>
-        <div className="lp-reason-grid">
-          {items.map((r, i) => (
-            <article key={r.name} className="lp-reason" data-reveal style={{ transitionDelay: `${i * 110}ms` }}>
-              {r.image && <div className="lp-reason-photo"><img src={r.image} alt="" loading="lazy" /></div>}
-              <div className="lp-reason-body">
-                <span className="lp-reason-num">{String(i + 1).padStart(2, "0")}</span>
-                <h3>{r.name}</h3>
-                <p>{r.text}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── ご利用イメージ ───────────────────────── */
+/* ───────────────────────── 5. 事例（ご利用イメージ） ───────────────────────── */
 
 function Scenarios({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
@@ -556,39 +402,36 @@ function Scenarios({ sol }: { sol: Solution }) {
       <div className="container">
         <SectionTitle en="Use cases" center lead={sc.lead}>{sc.title || L.scenarios}</SectionTitle>
         <div className="lp-scenario-grid">
-          {(sc.items ?? []).map((it, i) => (
-            <article key={it.name} className="lp-scenario" data-reveal style={{ transitionDelay: `${i * 90}ms` }}>
-              {it.image && <div className="lp-scenario-photo"><img src={it.image} alt="" loading="lazy" /></div>}
-              <div className="lp-scenario-body">
-                {it.tag && <span className="lp-scenario-tag">{it.tag}</span>}
-                <h3>{it.name}</h3>
-                {it.before && <p className="lp-scenario-before"><span>{L.before}</span>{it.before}</p>}
-                <p className="lp-scenario-after"><span>{L.after}</span>{it.text}</p>
-              </div>
+          {(sc.items ?? []).map((it) => (
+            <article key={it.name} className="lp-scenario">
+              {it.tag && <span className="lp-scenario-tag"><LpIcon name="building" size={15} />{it.tag}</span>}
+              <h3>{it.name}</h3>
+              {it.before && <p className="lp-scenario-before"><span>{L.before}</span>{it.before}</p>}
+              <span className="lp-scenario-arrow" aria-hidden="true"><LpIcon name="arrow-down" size={18} /></span>
+              <p className="lp-scenario-after"><span>{L.after}</span>{it.text}</p>
             </article>
           ))}
         </div>
-        {sc.note && <p className="lp-note" data-reveal>{sc.note}</p>}
+        {sc.note && <p className="lp-note">{sc.note}</p>}
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── 進め方 ───────────────────────── */
+/* ───────────────────────── 6. 流れ ───────────────────────── */
 
 function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
-  const steps: { name: string; text?: string }[] = (sol.flow ?? []).length
-    ? (sol.flow ?? [])
-    : sol.steps.map((s) => ({ name: s }));
+  const steps = sol.flow ?? [];
+  if (!steps.length) return null;
   return (
     <section className="section lp-flow">
       <div className="container">
         <SectionTitle en="Flow" center>{sol.steps_title || L.flow}</SectionTitle>
-        <ol className={steps.length >= 5 ? "lp-flow-list is-five" : "lp-flow-list"}>
+        <ol className="lp-flow-list" style={{ ["--n" as string]: steps.length }}>
           {steps.map((s, i) => (
-            <li key={s.name} data-reveal style={{ transitionDelay: `${i * 90}ms` }}>
-              <span className="lp-flow-num"><small>{L.step}</small>{i + 1}</span>
+            <li key={s.name}>
+              <span className="lp-flow-num">{i + 1}</span>
               <div>
                 <h3>{s.name}</h3>
                 {s.text && <p>{s.text}</p>}
@@ -596,10 +439,10 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
             </li>
           ))}
         </ol>
-        {sol.flow_note && <p className="lp-flow-note" data-reveal>{sol.flow_note}</p>}
-        <div className="lp-cta-row" data-reveal>
+        {sol.flow_note && <p className="lp-flow-note"><LpIcon name="clock" size={16} />{sol.flow_note}</p>}
+        <div className="lp-cta-row">
           <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
-            {L.flowCta}<Icon name="arrow" size={19} />
+            {L.consult}<Icon name="arrow" size={19} />
           </GoLink>
           <LineButton place="solution_flow" label={L.consultLine} />
         </div>
@@ -608,67 +451,38 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   );
 }
 
-/* ───────────────────────── 代表メッセージ ───────────────────────── */
-
-function Message({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  if (!sol.message) return null;
-  return (
-    <section className="section lp-message">
-      <div className="container lp-message-inner">
-        <figure className="lp-message-photo" data-reveal>
-          <img src={about.profile_photo || "/images/representative-shota-ibato.jpg"} alt={langOf(sol) === "en" ? `${about.profile_name_en || "Shota Ibato"}, Founder of COANA TOKYO` : `${settings.company_name} ${about.profile_role || "代表"} ${about.profile_name}`} loading="lazy" />
-        </figure>
-        <div className="lp-message-copy" data-reveal>
-          <span className="eyebrow">Message</span>
-          <h2>{sol.message_title || L.message}</h2>
-          <div className="lp-message-text"><Lines text={sol.message} /></div>
-          <p className="lp-message-name"><small>{settings.company_name} {L.rep}</small>{langOf(sol) === "en" ? about.profile_name_en || about.profile_name : about.profile_name}</p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── 英語ページへの案内（創業支援） ───────────────────────── */
-
-function EnglishBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
-  const e = sol.english;
-  if (!e || !e.slug) return null;
-  return (
-    <section className="lp-english">
-      <div className="container lp-english-inner" data-reveal>
-        <div className="lp-english-copy">
-          <span className="lp-english-badge"><LpIcon name="globe" size={18} />English support</span>
-          <h2>{e.title}</h2>
-          <p><Lines text={e.text} /></p>
-        </div>
-        <GoLink className="button button-large" go={navigate} args={["solution", undefined, e.slug]}>
-          {e.button || "English page"}<Icon name="arrow" size={19} />
-        </GoLink>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── お問い合わせ帯 ───────────────────────── */
+/* ───────────────────────── 8. お問い合わせ（代表の一言つき） ───────────────────────── */
 
 function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
+  const en = langOf(sol) === "en";
+  const name = en ? about.profile_name_en || about.profile_name : about.profile_name;
   return (
     <section className="lp-cta-band">
       <div className="lp-cta-orbit" aria-hidden="true" />
-      <div className="container lp-cta-inner" data-reveal>
-        <span className="eyebrow">Contact</span>
-        <h2>{sol.cta_title || L.ctaTitle}</h2>
-        <p><Lines text={sol.cta_text || L.ctaText} /></p>
-        <div className="lp-cta-actions">
-          <GoLink className="button button-large" go={navigate} args={["contact"]}>
-            {L.ctaButton}<Icon name="arrow" size={19} />
-          </GoLink>
-          <LineButton place="solution_cta" label={L.consultLine} />
+      <div className="container lp-cta-inner">
+        <div className="lp-cta-copy">
+          <span className="eyebrow">Contact</span>
+          <h2>{sol.cta_title || L.ctaTitle}</h2>
+          <p><Lines text={sol.cta_text || L.ctaText} /></p>
+          <div className="lp-cta-actions">
+            <GoLink className="button button-large" go={navigate} args={["contact"]}>
+              {L.ctaButton}<Icon name="arrow" size={19} />
+            </GoLink>
+            <LineButton place="solution_cta" label={L.consultLine} />
+          </div>
+          <a className="lp-cta-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
-        <a className="lp-cta-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
+        {sol.message && (
+          <figure className="lp-founder">
+            <img src={about.profile_photo || "/images/representative-shota-ibato.jpg"} alt={en ? `${name}, Founder of COANA TOKYO` : `${settings.company_name} ${about.profile_role || "代表"} ${name}`} loading="lazy" width={88} height={88} />
+            <blockquote>
+              <p className="lp-founder-title">{sol.message_title || L.founder}</p>
+              <p>{sol.message}</p>
+            </blockquote>
+            <figcaption>{L.founder}<b>{name}</b></figcaption>
+          </figure>
+        )}
       </div>
     </section>
   );
@@ -726,45 +540,38 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
   return (
     <main className={`solution-page lp lp-lang-${langOf(sol)}`}>
       <Hero sol={sol} navigate={navigate} />
-      <Target sol={sol} />
       <Problems sol={sol} />
       <Scheme sol={sol} />
-      <Outcomes sol={sol} />
-      <Features sol={sol} />
-      <Scope sol={sol} />
-      <Compare sol={sol} />
-      <Plans sol={sol} />
-      <Reasons sol={sol} />
+      <Support sol={sol} />
       <Scenarios sol={sol} />
       <Flow sol={sol} navigate={navigate} />
-      <Message sol={sol} />
-      <EnglishBand sol={sol} navigate={navigate} />
       {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || L.faq} />}
-      {related.length > 0 && (
-        <section className="section solution-related">
-          <div className="container narrow">
-            <SectionTitle en="Column">{L.column}</SectionTitle>
-            <div className="article-list">
-              {related.map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
-            </div>
-          </div>
-        </section>
-      )}
       <CtaBand sol={sol} navigate={navigate} />
-      <section className="section solution-others">
-        <div className="container">
-          <SectionTitle en="Services">{L.others}</SectionTitle>
-          <div className="solution-other-list">
-            {others.map((o) => (
-              <GoLink key={o.slug} className="solution-other" go={navigate} args={["solution", undefined, o.slug]}>
-                <span>{o.nav_label}</span>
+      <section className="section solution-more">
+        <div className="container solution-more-grid">
+          {related.length > 0 && (
+            <div>
+              <h2 className="solution-more-title">{L.column}</h2>
+              <div className="article-list">
+                {related.map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
+              </div>
+            </div>
+          )}
+          <div>
+            <h2 className="solution-more-title">{L.others}</h2>
+            <div className="solution-other-list">
+              {others.map((o) => (
+                <GoLink key={o.slug} className="solution-other" go={navigate} args={["solution", undefined, o.slug]}>
+                  <ServiceArt slug={o.slug} className="solution-other-art" />
+                  <span>{o.nav_label}</span>
+                  <Icon name="arrow" size={18} />
+                </GoLink>
+              ))}
+              <GoLink className="solution-other is-all" go={navigate} args={["services"]}>
+                <span>{L.allServices}</span>
                 <Icon name="arrow" size={18} />
               </GoLink>
-            ))}
-            <GoLink className="solution-other" go={navigate} args={["services"]}>
-              <span>{L.allServices}</span>
-              <Icon name="arrow" size={18} />
-            </GoLink>
+            </div>
           </div>
         </div>
       </section>

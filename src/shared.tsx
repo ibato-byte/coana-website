@@ -267,7 +267,7 @@ export function FaqSection({ items = faqItems, title = home.faq_title }: { items
           {items.map((item, i) => {
             const open = openIndex === i;
             return (
-              <div key={item.q} data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+              <div key={item.q}>
                 <div className={open ? "faq-item open" : "faq-item"}>
                   <button
                     className="faq-q"

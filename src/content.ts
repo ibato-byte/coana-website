@@ -113,56 +113,45 @@ export type Solution = {
   seo_title?: string;
   description?: string;
   lead: string;
-  hero_image?: string;
-  problems_title?: string;
-  problems: string[];
-  features_title?: string;
-  features: { name: string; text: string; icon?: string }[];
-  tools_title?: string;
-  tools?: string[];
-  steps_title?: string;
-  steps: string[];
-  faq_title?: string;
-  faqs?: { q: string; a: string }[];
-  related?: string[];
-  /* ── 以下はランディングページ用の追加項目（すべて任意。空欄の場合はそのセクションを表示しない） ── */
-  catch?: string;
-  hero_points?: string[];
-  target_title?: string;
-  target?: { name: string; text: string; icon?: string }[];
-  problems_image?: string;
-  outcome_title?: string;
-  outcome_lead?: string;
-  outcomes?: { label: string; before: string; after: string }[];
-  features_lead?: string;
-  features_image?: string;
-  reasons_title?: string;
-  reasons?: { name: string; text: string; image?: string }[];
-  flow?: { name: string; text: string }[];
-  flow_note?: string;
-  message_title?: string;
-  message?: string;
-  cta_title?: string;
-  cta_text?: string;
-  /* 第2版で追加 */
   lang?: "ja" | "en";
   hidden?: boolean;
+  /* ── ページの構成（上から順）：ヒーロー → お悩み → 仕組み → 支援内容とプラン → 事例 → 流れ → FAQ → お問い合わせ。空欄のセクションは表示しない ── */
+  catch?: string;
   hero_note?: string;
   hero_facts?: { value: string; label: string }[];
-  tools_note?: string;
+  /** 実写動画（設定時はイラストの代わりに表示） */
+  hero_video?: string;
+  problems_title?: string;
+  problems: string[];
   scheme?: {
     type?: "hub" | "flow";
     title?: string;
     lead?: string;
     center?: { label: string; sub?: string };
-    nodes?: { label: string; sub?: string; sub2?: string; icon?: string }[];
+    nodes?: { label: string; sub?: string; icon?: string }[];
     points?: { name: string; text: string; icon?: string }[];
     note?: string;
   };
-  scope?: { title?: string; lead?: string; groups?: { name: string; icon?: string; items?: string[] }[]; note?: string };
-  compare?: { title?: string; lead?: string; ours_label?: string; others_label?: string; rows?: { label: string; ours: string; others: string }[]; note?: string };
-  plans?: { title?: string; lead?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string; featured?: boolean }[]; note?: string };
-  scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text: string; image?: string }[]; note?: string };
+  features_title?: string;
+  features_lead?: string;
+  features: { name: string; text: string; icon?: string }[];
+  scope?: { title?: string; groups?: { name: string; icon?: string; items?: string[] }[]; note?: string };
+  plans?: { title?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string; featured?: boolean }[]; note?: string };
+  tools_title?: string;
+  tools?: string[];
+  tools_note?: string;
+  scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text: string }[]; note?: string };
+  steps_title?: string;
+  flow?: { name: string; text: string }[];
+  flow_note?: string;
+  faq_title?: string;
+  faqs?: { q: string; a: string }[];
+  /** お問い合わせ欄に添える代表の一言 */
+  message_title?: string;
+  message?: string;
+  cta_title?: string;
+  cta_text?: string;
+  related?: string[];
   english?: { title: string; text: string; button?: string; slug: string };
 };
 
