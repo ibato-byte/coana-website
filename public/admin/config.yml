@@ -311,7 +311,7 @@ collections:
               - { label: 英字ラベル, name: en, widget: string }
               - { label: 名称, name: title, widget: string }
               - { label: 補足ラベル（例：守りを固める）, name: note, widget: string }
-              - { label: リード文（「、」の後で改行されます）, name: lead, widget: string }
+              - { label: リード文, name: lead, widget: text }
               - label: サービス項目
                 name: items
                 widget: list

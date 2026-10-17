@@ -177,32 +177,66 @@ function Footer({ navigate }: { navigate: Nav }) {
 
 /* ───────────────────────── Home: Hero ───────────────────────── */
 
+/** ヒーローの回転ワード：最初の切り替えまでの時間（見出し→下線が引き終わってから）と、切り替えの間隔 */
+const SOLVE_FIRST_MS = 3000;
+const SOLVE_INTERVAL_MS = 2600;
+
+/** 「〇〇の悩みを、仕組みで解決。」のキーワード。古い語が上へ抜け、新しい語が下からマスク内に入る。
+ *  紺のチップの幅は新しい語の幅へ同時に伸縮させ、後ろの文字が跳ねないようにする */
+function SolveWords({ words, rest }: { words: string[]; rest: string }) {
+  const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [state, setState] = useState({ cur: 0, prev: -1, tick: 0 });
+  const [widths, setWidths] = useState<number[]>([]);
+  const measureRef = useRef<HTMLSpanElement | null>(null);
+  // 各語のチップ幅を、同じ見た目の隠し要素で測る（フォント読み込み後・画面幅の変更時にも測り直す）
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = measureRef.current;
+      if (el) setWidths(Array.from(el.children).map((c) => Math.ceil((c as HTMLElement).getBoundingClientRect().width)));
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [words]);
+  useEffect(() => {
+    if (reduceMotion || words.length < 2) return;
+    let id = 0;
+    const next = () => setState((s) => ({ cur: (s.cur + 1) % words.length, prev: s.cur, tick: s.tick + 1 }));
+    const first = window.setTimeout(() => { next(); id = window.setInterval(next, SOLVE_INTERVAL_MS); }, SOLVE_FIRST_MS);
+    return () => { window.clearTimeout(first); window.clearInterval(id); };
+  }, [reduceMotion, words.length]);
+  const { cur, prev, tick } = state;
+  return (
+    <p className="hero-solve">
+      {/* 読み上げ用：すべてのキーワードを並べる（見た目の切り替え部分は読み上げない） */}
+      <span className="visually-hidden">{words.join("、")}{rest}</span>
+      <span className="solve-line" aria-hidden="true">
+        <span className="solve-box" style={widths[cur] ? { width: widths[cur] } : undefined}>
+          {prev >= 0 && <span key={"out" + tick} className="solve-word is-out">{words[prev]}</span>}
+          <span key={"in" + tick} className={tick ? "solve-word is-in" : "solve-word"}>{words[cur]}</span>
+        </span>
+        <span className="solve-rest">{rest}</span>
+      </span>
+      <span className="solve-measure" ref={measureRef} aria-hidden="true">
+        {words.map((w) => <span key={w} className="solve-word">{w}</span>)}
+      </span>
+    </p>
+  );
+}
+
 function HeroSection({ navigate }: { navigate: Nav }) {
   const words: string[] = home.hero_words ?? ["経理", "業務フロー", "ツール導入", "営業・集客"];
-  const [wordIndex, setWordIndex] = useState(0);
-  const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  useEffect(() => {
-    if (reduceMotion) return;
-    const id = window.setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2600);
-    return () => window.clearInterval(id);
-  }, [reduceMotion, words.length]);
   return (
     <section className="hero">
       <div className="container hero-grid">
         <div className="hero-copy">
           <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
-          <h1 className="hero-title-marker">
-            <span className="hero-line"><span className="hero-line-text">{home.hero_line1}</span></span>
-            <span className="hero-line"><span className="hero-line-text">{home.hero_line2}</span></span>
+          <h1>
+            <span className="hero-line">{home.hero_line1}</span>
+            <span className="hero-line"><span className="title-underline">{home.hero_line2}</span></span>
           </h1>
-          <p className="hero-solve hero-anim">
-            <span className="solve-box" aria-live="off">
-              {words.map((w, i) => (
-                <span key={w} className={i === wordIndex ? "solve-word is-active" : "solve-word"} aria-hidden={i !== wordIndex}>{w}</span>
-              ))}
-            </span>
-            <span className="solve-rest">{home.hero_solve_text}</span>
-          </p>
+          <SolveWords words={words} rest={home.hero_solve_text} />
         </div>
         <div className="hero-visual hero-anim">
           <HeroVideo src={home.hero_video} fallback={<HeroScene />} />
