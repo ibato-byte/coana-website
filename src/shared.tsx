@@ -30,7 +30,7 @@ export function takeInquiryPreset() {
   } catch { return ""; }
 }
 
-// 鳩博士チャットの「無料で相談する」→ お問い合わせフォームの本文に、診断・質問の要点を引き継ぐ（お客さまが確認・編集してから送信）
+// サポートチャットの「無料で相談する」→ お問い合わせフォームの本文に、診断・質問の要点を引き継ぐ（お客さまが確認・編集してから送信）
 const INQUIRY_MESSAGE_KEY = "coana_inquiry_message";
 export function setInquiryMessage(message: string) {
   try { sessionStorage.setItem(INQUIRY_MESSAGE_KEY, message); } catch { /* storage unavailable */ }
@@ -43,7 +43,7 @@ export function takeInquiryMessage() {
   } catch { return ""; }
 }
 
-/** 「どれが合うか分からない方は診断できます」の控えめな導線。押すと鳩博士チャットが診断から開く */
+/** 「どれが合うか分からない方は診断できます」の控えめな導線。押すとサポートチャットが診断から開く */
 export function DiagnoseLink({ className = "" }: { className?: string }) {
   return (
     <p className={className ? "diagnose-link " + className : "diagnose-link"}>
@@ -54,7 +54,18 @@ export function DiagnoseLink({ className = "" }: { className?: string }) {
   );
 }
 
-/** 鳩博士チャットを開く（mode: "diagnosis" で診断から始める）。ChatLauncher が受け取る */
+/** 「全部見比べる前に、診断もできます」の小さなバナー（ロゴマーク・短い一文・「診断する」ボタン）。押すとサポートチャットが診断から開く */
+export function DiagnoseBanner({ className = "" }: { className?: string }) {
+  return (
+    <div className={className ? "diagnose-banner " + className : "diagnose-banner"}>
+      <img src="/images/chat/coana-mark.webp" alt="" width={36} height={36} loading="lazy" />
+      <p><b>どのサービスが合うか迷ったら</b><span>5つの質問に答えるだけで、合いそうなサービスをご案内します（約1分）。</span></p>
+      <button type="button" onClick={() => openChat("diagnosis")}>診断する<Icon name="arrow" size={16} /></button>
+    </div>
+  );
+}
+
+/** サポートチャットを開く（mode: "diagnosis" で診断から始める）。ChatLauncher が受け取る */
 export function openChat(mode: "menu" | "diagnosis" = "menu") {
   window.dispatchEvent(new CustomEvent("coana:chat", { detail: { mode } }));
 }

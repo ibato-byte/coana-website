@@ -893,7 +893,7 @@ a.service-card:hover .art * { animation-play-state: running; }
 .meeting-dates { margin-top: 16px; display: grid; gap: 10px; }
 .meeting-dates .field-hint { margin: 0 0 2px; }
 .meeting-date { display: grid; grid-template-columns: 84px 1fr; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; }
-.meeting-date input { width: 100%; border: 1.5px solid #c3d5e1; border-radius: 10px; background: var(--paper); padding: 12px 14px; color: var(--navy); }
+.meeting-date input { width: 100%; font-size: 16px; border: 1.5px solid #c3d5e1; border-radius: 10px; background: var(--paper); padding: 12px 14px; color: var(--navy); }
 .meeting-date input:focus { background: var(--white); border-color: var(--sky-deep); box-shadow: 0 0 0 4px rgba(8, 127, 229, .12); outline: none; }
 .booking-notice .button { flex: none; }
 .consent { display: flex; align-items: flex-start; justify-content: center; gap: 12px; margin: 40px 0 0; cursor: pointer; }
@@ -951,6 +951,19 @@ a.service-card:hover .art * { animation-play-state: running; }
 .back-to-top.show { opacity: 1; transform: none; pointer-events: auto; }
 .back-to-top:hover { background: var(--navy); color: var(--white); }
 
+/* 「どのサービスが合うか迷ったら」のバナー（サービス一覧ページの冒頭）。目に留まるが、うるさくない白いカード */
+.diagnose-banner-wrap { position: relative; z-index: 2; margin-top: -36px; }
+.diagnose-banner { display: flex; align-items: center; gap: 16px; max-width: 760px; margin: 0 auto; padding: 16px 18px 16px 20px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); box-shadow: 0 14px 34px rgba(13, 35, 56, .08); }
+.diagnose-banner img { flex: none; width: 36px; height: 36px; }
+.diagnose-banner p { flex: 1; min-width: 0; margin: 0; display: grid; gap: 2px; line-height: 1.6; }
+.diagnose-banner b { font-size: 15px; font-weight: 800; color: var(--navy-ink); }
+.diagnose-banner span { font-size: 13px; color: var(--navy-soft); }
+.diagnose-banner button { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border: 1.5px solid var(--sky-deep); border-radius: 999px; background: var(--white); color: var(--sky-ink); font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; transition: background .25s, color .25s; }
+.diagnose-banner button:hover { background: var(--sky-deep); color: var(--white); }
+.diagnose-banner button svg { transition: transform .3s var(--ease-out); }
+.diagnose-banner button:hover svg { transform: translateX(3px); }
+.diagnose-link.is-top { margin: 0 0 40px; }
+
 /* 「どれが合うか分からない方は診断できます」の導線（控えめなテキストボタン） */
 .diagnose-link { margin: 40px 0 0; text-align: center; }
 .diagnose-link button { display: inline-flex; align-items: center; gap: 8px; padding: 6px 2px; border: 0; background: none; color: var(--sky-ink); font: inherit; font-size: 14.5px; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(6, 104, 189, .3); text-underline-offset: 5px; cursor: pointer; transition: text-decoration-color .25s, color .25s; }
@@ -961,7 +974,7 @@ a.service-card:hover .art * { animation-play-state: running; }
 .diagnose-link.is-lp { margin: 18px 0 0; text-align: left; }
 .diagnose-link.is-lp button { font-size: 13.5px; }
 
-/* ───────────────────────────── 鳩博士チャットの丸いボタン ─────────────────────────────
+/* ───────────────────────────── サポートチャットの丸いボタン ─────────────────────────────
  * チャット本体の見た目は src/chat/chat.css（開いたときに読み込む）。「ページ先頭へ」ボタンはこのボタンの上に並べる。 */
 .chat-launcher {
   position: fixed;
@@ -971,19 +984,27 @@ a.service-card:hover .art * { animation-play-state: running; }
   width: 60px;
   height: 60px;
   padding: 0;
-  border: 2px solid var(--white);
+  border: 0;
   border-radius: 50%;
-  background: #f6f1e7;
-  box-shadow: 0 10px 26px rgba(13, 35, 56, .22), 0 0 0 1px var(--line);
+  background: var(--white);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 26px rgba(13, 35, 56, .2), 0 0 0 1px var(--line);
   cursor: pointer;
   transition: transform .3s var(--ease-out), box-shadow .3s;
 }
-.chat-launcher img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-.chat-launcher:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(13, 35, 56, .26), 0 0 0 1px var(--line); }
+.chat-launcher img { width: 34px; height: 34px; }
+/* チャットだと分かるよう、右上に小さな吹き出し、下に「ご相談」 */
+.chat-launcher-badge { position: absolute; top: -2px; right: -2px; width: 22px; height: 22px; display: grid; place-items: center; border: 2px solid var(--white); border-radius: 50%; background: var(--sky-deep); color: var(--white); }
+.chat-launcher:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(13, 35, 56, .24), 0 0 0 1px var(--line); }
 .chat-launcher:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
-.chat-launcher-label { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); padding: 0 7px; border-radius: 999px; background: var(--navy); color: var(--white); font-size: 10px; font-weight: 800; line-height: 1.7; white-space: nowrap; }
+.chat-launcher-label { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); padding: 0 8px; border-radius: 999px; background: var(--navy); color: var(--white); font-size: 10.5px; font-weight: 800; line-height: 1.75; letter-spacing: .04em; white-space: nowrap; }
 .chat-launcher.is-open { box-shadow: 0 0 0 3px var(--sky-deep), 0 10px 26px rgba(13, 35, 56, .22); }
 .back-to-top { bottom: 98px; }
+/* チャットを開いている間は、「ページ先頭へ」とスマホ下部の固定バーを隠す（チャットと重ならないように） */
+.chat-open .back-to-top, .chat-open .lp-sticky { display: none !important; }
+/* スマホでチャットを開いている間は、背景のページを動かさない（ChatLauncher が body を固定） */
+.chat-scroll-lock, .chat-scroll-lock body { overflow: hidden; overscroll-behavior: none; }
 .menu-open .chat-launcher { display: none; }
 
 /* ───────────────────────────── Responsive ───────────────────────────── */
@@ -1167,7 +1188,15 @@ a.service-card:hover .art * { animation-play-state: running; }
   .privacy-placeholder { padding: 60px 20px; }
   .privacy-placeholder h2 { font-size: 23px; }
   .back-to-top { right: 16px; bottom: 84px; width: 46px; height: 46px; }
-  .chat-launcher { right: 14px; bottom: 16px; width: 56px; height: 56px; }
+  .chat-launcher { right: 14px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 56px; height: 56px; }
+  .diagnose-banner-wrap { margin-top: -24px; }
+  .diagnose-banner { flex-wrap: wrap; gap: 10px 12px; padding: 14px 16px; }
+  .diagnose-banner img { width: 30px; height: 30px; }
+  .diagnose-banner p { flex-basis: calc(100% - 42px); }
+  .diagnose-banner b { font-size: 14px; }
+  .diagnose-banner button { width: 100%; justify-content: center; }
+  .diagnose-link.is-top { margin: 0 0 28px; }
+  .chat-launcher img { width: 32px; height: 32px; }
   /* スマホでチャットを開いている間は、ボタンを隠す（パネルの閉じるボタンで閉じる） */
   .chat-open .chat-launcher { display: none; }
 }

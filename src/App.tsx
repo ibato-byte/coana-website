@@ -1,6 +1,6 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, BirdArrow, DiagnoseLink, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, openChat, paths, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, DiagnoseLink, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, openChat, paths, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 import { ChatLauncher } from "./chat/ChatLauncher";
@@ -301,6 +301,7 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
     <section className="section services-home" id="services">
       <div className="container">
         <SectionTitle en="Services" center lead={home.services_lead}>{home.services_title}</SectionTitle>
+        <DiagnoseLink className="is-top" />
         {serviceGroups.map(({ key, n, data }) => (
           <div className="service-group" key={key}>
             <ServiceGroupHead n={n} data={data} />
@@ -309,7 +310,6 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
             </div>
           </div>
         ))}
-        <DiagnoseLink />
       </div>
     </section>
   );
@@ -475,6 +475,8 @@ function Services({ navigate }: { navigate: Nav }) {
   return (
     <main className="services-page">
       <PageHero en="Services" title="サービス" intro={services.intro} image={services.hero_image} />
+      {/* サービスを全部見比べる前に、診断もできることを伝える */}
+      <div className="container diagnose-banner-wrap"><DiagnoseBanner /></div>
       {serviceGroups.map(({ key, n, data }) => (
         <section key={key} id={key} className="section service-detail">
           <div className="container">
@@ -644,7 +646,7 @@ function takePresetInquiryType() {
 }
 
 function Contact() {
-  // サービス別ページ・鳩博士チャットからの引き継ぎ（相談種別・本文）。お客さまが確認・編集してから送信する
+  // サービス別ページ・サポートチャットからの引き継ぎ（相談種別・本文）。お客さまが確認・編集してから送信する
   const [data, setData] = useState<FormData>(() => ({ ...emptyForm, type: takePresetInquiryType(), message: takeInquiryMessage() }));
   const [fromChat] = useState(() => data.message !== "");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -774,7 +776,7 @@ function Contact() {
             <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} /></label>
           </div>
           <Field label="お問い合わせ内容" error={errors.message}>
-            {fromChat && <span className="field-hint">鳩博士チャットの内容を引き継いでいます。必要に応じて編集・削除してください。</span>}
+            {fromChat && <span className="field-hint">チャットの内容を引き継いでいます。必要に応じて編集・削除してください。</span>}
             <textarea value={data.message} onChange={(e) => update("message", e.target.value)} rows={7} placeholder="ご相談内容をご入力ください" aria-invalid={!!errors.message} />
           </Field>
           <fieldset className="meeting-fieldset">
