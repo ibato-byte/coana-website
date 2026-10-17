@@ -1,6 +1,6 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, WingArrow, FaqSection, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 
@@ -101,9 +101,9 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
               {label}
             </GoLink>
           ))}
-          <GoLink className="button button-small" go={go} args={["contact"]}>
+          <GoLink className="button button-small button-wing" go={go} args={["contact"]}>
             お問い合わせ
-            <Icon name="arrow" size={17} />
+            <WingArrow size={17} />
           </GoLink>
         </nav>
         <button
@@ -712,7 +712,7 @@ function Contact() {
             </dl>
             <div className="button-row form-actions">
               <LinkButton secondary onClick={() => setStep("input")}>入力内容を修正する</LinkButton>
-              <button className="button" onClick={send} disabled={sending}>{sending ? "送信中…" : "送信する"}<Icon name="arrow" size={19} /></button>
+              <button className="button button-wing" onClick={send} disabled={sending}>{sending ? "送信中…" : "送信する"}<WingArrow /></button>
             </div>
             {sendError && <p className="field-error" role="alert" style={{ textAlign: "center", marginTop: 20 }}>{sendError}</p>}
           </div>
