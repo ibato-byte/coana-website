@@ -450,6 +450,8 @@ p, li, dd { text-wrap: pretty; }
 .solve-measure { position: absolute; top: 0; left: 0; visibility: hidden; pointer-events: none; display: flex; }
 .solve-measure .solve-word { position: static; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+/* お問い合わせのスパム対策の隠し項目（App.tsx の .form-honeypot）。人には見せず、display: none を使わずに画面外へ置く（ボットに気づかれにくくする） */
+.form-honeypot { position: absolute !important; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 
 .hero-lead { margin: 26px 0 0; max-width: 520px; font-size: 16px; line-height: 1.95; }
 .hero-body .button-row { margin-top: 26px; }
