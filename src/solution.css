@@ -84,8 +84,15 @@ a.lp-hero-english:hover { border-color: var(--sky); }
   line-height: 1.6;
 }
 .lp-problem-icon { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; background: var(--white); color: var(--sky-deep); box-shadow: var(--shadow-sm); }
-.lp-problems-bridge { margin-top: 40px; display: grid; justify-items: center; gap: 10px; text-align: center; }
-.lp-bridge-arrow { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); }
+.lp-problems-bridge { position: relative; margin-top: 40px; display: grid; justify-items: center; gap: 10px; text-align: center; }
+/* カードから一文へ集まる線（カードと一文の間の余白 40px の中に描く） */
+.lp-funnel { position: absolute; left: 50%; top: -40px; width: min(920px, 100%); height: 40px; transform: translateX(-50%); overflow: visible; fill: none; stroke: var(--sky); stroke-width: var(--m-line); stroke-linecap: round; }
+.lp-funnel-mid { display: none; }
+.motion-ready .lp-funnel path { transition-duration: var(--m-draw); }
+.lp-bridge-arrow { position: relative; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); }
+/* 線が集まったあとに、矢印が少しだけ降りてくる（文字は最初から表示） */
+.motion-ready .lp-bridge-arrow { transform: translateY(-8px); opacity: 0; transition: transform var(--m-text) var(--m-ease) .55s, opacity var(--m-text) var(--m-ease) .55s; }
+.motion-ready .lp-problems-bridge.in .lp-bridge-arrow { transform: none; opacity: 1; }
 .lp-problems-bridge p { margin: 0; font-size: clamp(18px, 2vw, 23px); font-weight: 800; line-height: 1.6; }
 .lp-problems-bridge strong { color: var(--sky-deep); }
 
@@ -102,24 +109,48 @@ a.lp-hero-english:hover { border-color: var(--sky); }
   right: -16px;
   width: 14px;
   height: 14px;
-  border-top: 3px solid var(--sky-deep);
-  border-right: 3px solid var(--sky-deep);
+  border-top: 2.5px solid var(--sky-deep);
+  border-right: 2.5px solid var(--sky-deep);
   transform: rotate(45deg);
-  animation: lp-nudge 1.8s ease-in-out infinite;
-  animation-delay: calc(var(--i) * .25s);
   z-index: 1;
 }
-@keyframes lp-nudge { 0%, 100% { translate: 0 0; opacity: .5; } 50% { translate: 4px 0; opacity: 1; } }
+/* 画面に入ると、ステージが左から順に点灯する（.in から 0.25 秒＋0.18 秒ずつ）。点灯前も文字とアイコンの枠は読める */
+.lp-scheme-flow-icon::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); }
+.lp-scheme-flow-icon > svg { position: relative; }
+.motion-ready .lp-scheme-flow-icon { background: var(--sky-soft); color: var(--sky-deep); transition: color var(--m-color) calc(.25s + var(--i) * .18s); }
+.motion-ready .lp-scheme-flow-icon::before { opacity: 0; transition: opacity var(--m-color) calc(.25s + var(--i) * .18s); }
+.motion-ready .lp-scheme-flow-icon b { transform: scale(.6); opacity: 0; transition: transform var(--m-color) var(--m-ease) calc(.3s + var(--i) * .18s), opacity var(--m-color) calc(.3s + var(--i) * .18s); }
+.motion-ready .lp-scheme-flow li::after { opacity: 0; translate: -4px 0; transition: opacity var(--m-color) calc(.4s + var(--i) * .18s), translate var(--m-color) var(--m-ease) calc(.4s + var(--i) * .18s); }
+.motion-ready .lp-scheme-flow.in .lp-scheme-flow-icon { color: var(--white); }
+.motion-ready .lp-scheme-flow.in .lp-scheme-flow-icon::before { opacity: 1; }
+.motion-ready .lp-scheme-flow.in .lp-scheme-flow-icon b { transform: none; opacity: 1; }
+.motion-ready .lp-scheme-flow.in li::after { opacity: 1; translate: 0 0; }
 .lp-scheme-flow-icon { position: relative; width: 60px; height: 60px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
-.lp-scheme-flow-icon b { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); font-family: var(--font-en); font-size: 13px; }
+.lp-scheme-flow-icon b { position: absolute; z-index: 1; top: -8px; right: -8px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); font-family: var(--font-en); font-size: 13px; }
 .lp-scheme-flow strong { font-size: 16px; line-height: 1.5; }
 .lp-scheme-flow span:not(.lp-scheme-flow-icon) { font-size: 13px; line-height: 1.7; color: var(--navy-soft); }
 
 .lp-scheme-diagram { margin: 36px auto 0; max-width: 980px; }
 .lp-scheme-diagram svg { display: block; width: 100%; height: auto; }
-.lp-scheme-line { stroke: var(--sky); stroke-width: 3; stroke-dasharray: 3 10; stroke-linecap: round; animation: art-dash 1.6s linear infinite; }
-.lp-scheme-ring { fill: none; stroke: var(--sky); stroke-width: 2; opacity: .5; transform-box: fill-box; transform-origin: center; animation: lp-ring 3s ease-in-out infinite; }
-@keyframes lp-ring { 0%, 100% { transform: scale(1); opacity: .5; } 50% { transform: scale(1.06); opacity: .15; } }
+/* 線は中心から外へ一度だけ広がる（.in）。その後、PC で画面内のときだけ光の粒がゆっくり流れる */
+.lp-scheme-line { fill: none; stroke: var(--sky); stroke-width: 2.5; stroke-linecap: round; transition: stroke var(--m-color), stroke-width var(--m-color), opacity var(--m-color); }
+.motion-ready .lp-scheme-lines path { transition: stroke-dashoffset var(--m-draw) var(--m-ease-line) var(--draw-d), stroke var(--m-color), stroke-width var(--m-color), opacity var(--m-color); }
+.lp-scheme-ends circle { fill: var(--white); stroke: var(--sky); stroke-width: 2.5; transition: fill var(--m-color), stroke var(--m-color); }
+.motion-ready .lp-scheme-ends circle { opacity: 0; transition: opacity var(--m-color) calc(.75s + var(--i) * .09s), fill var(--m-color), stroke var(--m-color); }
+.motion-ready .lp-scheme-diagram.in .lp-scheme-ends circle { opacity: 1; }
+.lp-scheme-dots circle { fill: var(--sky-deep); }
+.lp-scheme-dots { opacity: 0; transition: opacity .6s 1.6s; }
+.lp-scheme-diagram.in.is-live .lp-scheme-dots { opacity: 1; }
+.lp-scheme-ring { fill: none; stroke: var(--sky); stroke-width: 2; opacity: .5; }
+/* PC：カーソルを当てた要素に関係する線だけを強調（中心なら全部） */
+@media (hover: hover) and (pointer: fine) {
+  .lp-scheme-node, .lp-scheme-center { cursor: default; }
+  .lp-scheme-diagram[data-active] .lp-scheme-line { opacity: .3; }
+  .lp-scheme-diagram[data-active] .lp-scheme-line.is-active { opacity: 1; stroke: var(--sky-deep); stroke-width: 3.5; }
+  .lp-scheme-diagram[data-active] .lp-scheme-ends circle.is-active { fill: var(--yellow); stroke: var(--sky-deep); }
+  .lp-scheme-node rect { transition: stroke var(--m-color); }
+  .lp-scheme-node.is-active rect { stroke: var(--sky-deep); }
+}
 .lp-scheme-center-label { fill: var(--white); font-family: var(--font-en); font-size: 23px; font-weight: 700; letter-spacing: .04em; }
 .lp-scheme-center-sub { fill: rgba(255, 255, 255, .85); font-size: 15px; font-weight: 700; }
 .lp-scheme-node rect { fill: var(--white); stroke: var(--line); stroke-width: 2; filter: drop-shadow(0 6px 14px rgba(22, 51, 77, .08)); }
@@ -192,15 +223,6 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .lp-scenario-arrow { align-self: center; margin: 4px 0; color: var(--sky-deep); }
 
 /* ── 6. 流れ ── */
-.lp-flow-list { list-style: none; margin: 44px 0 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 14px; position: relative; }
-.lp-flow-list::before { content: ""; position: absolute; top: 24px; left: 10%; right: 10%; height: 2px; background: repeating-linear-gradient(90deg, var(--sky) 0 8px, transparent 8px 14px); }
-.lp-flow-list li { position: relative; display: grid; justify-items: center; gap: 12px; text-align: center; }
-.lp-flow-num { position: relative; width: 50px; height: 50px; display: grid; place-items: center; border-radius: 50%; background: var(--navy); color: var(--white); font-family: var(--font-en); font-size: 20px; font-weight: 700; box-shadow: 0 0 0 6px var(--white); }
-.lp-flow-list li:first-child .lp-flow-num { background: var(--sky-deep); }
-.lp-flow-list h3 { margin: 0; font-size: 15.5px; line-height: 1.5; }
-.lp-flow-list p { margin: 4px 0 0; font-size: 13px; line-height: 1.7; color: var(--navy-soft); }
-.lp-flow-note { margin: 28px auto 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--sky-ink); }
-.lp-cta-row { margin-top: 32px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
 
 /* ── 8. お問い合わせ ── */
 .lp-cta-band { position: relative; padding: 96px 0; overflow: hidden; color: var(--white); background: linear-gradient(135deg, var(--navy-ink), #0b4f8c 70%, var(--sky-deep)); }
@@ -246,14 +268,10 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-scheme-flow { grid-template-columns: 1fr; gap: 26px; max-width: 520px; margin-inline: auto; }
   .lp-scheme-flow li { grid-template-columns: 60px 1fr; justify-items: start; text-align: left; column-gap: 16px; row-gap: 2px; padding: 16px 18px; }
   .lp-scheme-flow-icon { grid-row: span 2; }
-  .lp-scheme-flow li:not(:last-child)::after { top: auto; right: auto; left: 44px; bottom: -20px; transform: rotate(135deg); animation-name: lp-nudge-down; }
+  .lp-scheme-flow li:not(:last-child)::after { top: auto; right: auto; left: 44px; bottom: -20px; transform: rotate(135deg); }
+  .motion-ready .lp-scheme-flow li::after { translate: 0 -4px; }
   .lp-scheme-points, .lp-feature-grid, .lp-scenario-grid { grid-template-columns: 1fr 1fr; }
-  .lp-flow-list { grid-template-columns: 1fr; gap: 0; max-width: 520px; margin-inline: auto; }
-  .lp-flow-list::before { top: 24px; bottom: 24px; left: 24px; right: auto; width: 2px; height: auto; background: repeating-linear-gradient(180deg, var(--sky) 0 8px, transparent 8px 14px); }
-  .lp-flow-list li { grid-template-columns: 50px 1fr; justify-items: start; text-align: left; gap: 16px; padding: 0 0 20px; }
-  .lp-flow-list h3 { margin-top: 12px; }
-}
-@keyframes lp-nudge-down { 0%, 100% { translate: 0 0; opacity: .5; } 50% { translate: 0 4px; opacity: 1; } }
+        }
 @media (max-width: 640px) {
   .lp .section { padding: 64px 0; }
   .lp-hero { padding: 104px 0 48px; }
@@ -274,6 +292,9 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-problem-grid li { padding: 14px 16px; font-size: 14.5px; }
   .lp-problem-icon { width: 38px; height: 38px; border-radius: 12px; }
   .lp-problems-bridge { margin-top: 28px; }
+  .lp-funnel { top: -28px; height: 28px; }
+  .lp-funnel-side { display: none; }
+  .lp-funnel-mid { display: inline; }
   .lp-problems-bridge p { font-size: 17px; }
   .lp-scheme-points { grid-template-columns: 1fr; gap: 10px; }
   .lp-scheme-points { margin-top: 28px; }
@@ -307,9 +328,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-cta-band .button { width: 100%; }
   .lp-cta-actions { flex-direction: column; align-items: stretch; }
   .lp-cta-actions a.line-button { width: 100%; }
-  .lp-cta-row { flex-direction: column; align-items: stretch; }
-  .lp-cta-row .button, .lp-cta-row a.line-button { width: 100%; }
-  .solution-more-grid { grid-template-columns: 1fr; }
+      .solution-more-grid { grid-template-columns: 1fr; }
   .solution-more .solution-other-list { grid-template-columns: 1fr; }
 
   .lp-sticky {
@@ -343,5 +362,6 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lp-hero-scroll, .lp-scheme-line, .lp-scheme-ring, .lp-scheme-flow li::after { animation: none !important; }
+  .lp-hero-scroll { animation: none !important; }
+  .lp-scheme-dots { display: none; }
 }

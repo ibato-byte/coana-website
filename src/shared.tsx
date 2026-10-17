@@ -54,13 +54,17 @@ export function DiagnoseLink({ className = "" }: { className?: string }) {
   );
 }
 
-/** 「全部見比べる前に、診断もできます」の小さなバナー（ロゴマーク・短い一文・「診断する」ボタン）。押すとサポートチャットが診断から開く */
-export function DiagnoseBanner({ className = "" }: { className?: string }) {
+/** 「迷ったら」の帯（1ページに1か所。サービスを一通り紹介した直後に置く）。
+ *  迷ったときの2つの選択肢＝約1分の診断（サポートチャットが診断から開く）と、無料相談（お問い合わせへ）をまとめる */
+export function DiagnoseBanner({ navigate, className = "" }: { navigate: Nav; className?: string }) {
   return (
     <div className={className ? "diagnose-banner " + className : "diagnose-banner"}>
       <img src="/images/chat/coana-mark.webp" alt="" width={36} height={36} loading="lazy" />
-      <p><b>どのサービスが合うか迷ったら</b><span>5つの質問に答えるだけで、合いそうなサービスをご案内します（約1分）。</span></p>
-      <button type="button" onClick={() => openChat("diagnosis")}>診断する<Icon name="arrow" size={16} /></button>
+      <p><b>どれが合うか迷ったら</b><span>約1分の診断で合うサービスをご案内します。直接のご相談（無料）もどうぞ。</span></p>
+      <div className="diagnose-banner-actions">
+        <button type="button" onClick={() => openChat("diagnosis")}>診断する（約1分）<Icon name="arrow" size={16} /></button>
+        <GoLink className="diagnose-banner-consult" go={navigate} args={["contact"]}>無料で相談する</GoLink>
+      </div>
     </div>
   );
 }
@@ -210,6 +214,57 @@ export function SectionTitle({
 
 /** お問い合わせ系の主ボタン（.button-fly）の矢印。ホバー（キーボードのフォーカス）で、矢印の線がつながったまま形を変え、
  *  前へ飛ぶ鳥（鳩）になる（「相談を届ける」）。形は bird.ts、動きは buttonFx.ts。翼の先だけロゴの黄色（.bird-tip）。 */
+/* ───────────────────────── ご利用までの流れ（サービス一覧・各サービスLP 共通） ─────────────────────────
+ * ステップを1本の線でつなぐ。線はスクロールに合わせて進み（motion.ts の [data-progress]）、届いたステップの番号が黄色に変わって
+ * 丸い枠とアイコンが線で描かれる。線の先は「まずは無料相談から」のボタンへつながる。PC は横並び、スマホは縦並び（左に縦線）。
+ * 文字（ステップ名・説明・目安の期間・ボタン）は、線と関係なく画面に入ったらすぐ読める。
+ */
+export type FlowStep = { name: string; text?: string; icon?: ReactNode };
+
+export function FlowLine({ steps, stepLabel, note, lead, children }: {
+  steps: FlowStep[];
+  /** 「STEP」などの小さな見出し（なければ番号だけ） */
+  stepLabel?: string;
+  /** 目安の期間など（サイトにある情報だけ） */
+  note?: ReactNode;
+  /** 線の先の一言（「まずは無料相談から」） */
+  lead: string;
+  /** 線の先のボタン */
+  children: ReactNode;
+}) {
+  const icons = steps.some((s) => s.icon);
+  return (
+    <div className={icons ? "flowx has-icons" : "flowx"} data-progress style={{ ["--n" as string]: steps.length }}>
+      <div className="flowx-area" data-progress-area>
+        <span className="flowx-track" data-track aria-hidden="true"><span className="flowx-fill" /></span>
+        <ol className="flowx-list">
+          {steps.map((s, i) => (
+            <li key={s.name} className="flowx-step" data-step data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+              <span className="flowx-node" data-node data-draw="reach">
+                <svg className="flowx-ring" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26.5" /></svg>
+                {s.icon ? <span className="flowx-icon">{s.icon}</span> : <span className="flowx-num">{i + 1}</span>}
+              </span>
+              <div className="flowx-body">
+                {stepLabel && <small>{stepLabel} {i + 1}</small>}
+                <h3>{s.name}</h3>
+                {s.text && <p>{s.text}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className="flowx-end">
+        <div className="flowx-rail">
+          <span className="flowx-drop" aria-hidden="true" />
+          {note && <p className="flowx-note">{note}</p>}
+          <p className="flowx-lead">{lead}</p>
+        </div>
+        <div className="flowx-cta">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 export function BirdArrow({ size = 19 }: { size?: number }) {
   return (
     <svg className="bird-arrow" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

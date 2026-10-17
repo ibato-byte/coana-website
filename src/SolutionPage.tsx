@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import "./solution.css";
 
@@ -89,6 +89,7 @@ const LABELS = {
     before: "Before",
     after: "After",
     flow: "ご利用までの流れ",
+    flowLead: "まずは無料相談から",
     faq: "よくあるご質問",
     column: "関連するコラム",
     ctaTitle: "まずは、現状をお聞かせください。",
@@ -118,6 +119,7 @@ const LABELS = {
     before: "Before",
     after: "After",
     flow: "How to get started",
+    flowLead: "Start with a free consultation",
     faq: "FAQ",
     column: "Related articles",
     ctaTitle: "Tell us where you are. We will take it from there.",
@@ -227,13 +229,19 @@ function Problems({ sol }: { sol: Solution }) {
         <SectionTitle en="Problems" center>{sol.problems_title || L.problems}</SectionTitle>
         <ul className="lp-problem-grid">
           {sol.problems.map((p, i) => (
-            <li key={p}>
-              <span className="lp-problem-icon"><LpIcon name={PROBLEM_FACES[i % PROBLEM_FACES.length]} size={22} /></span>
+            <li key={p} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+              <span className="lp-problem-icon" data-draw><LpIcon name={PROBLEM_FACES[i % PROBLEM_FACES.length]} size={22} /></span>
               <span>{p}</span>
             </li>
           ))}
         </ul>
-        <div className="lp-problems-bridge">
+        <div className="lp-problems-bridge" data-reveal>
+          {/* カードから下の一文へ線が集まる（既存の余白の中に描く。スマホは1本） */}
+          <svg className="lp-funnel" viewBox="0 0 920 40" preserveAspectRatio="none" aria-hidden="true" data-draw>
+            <path className="lp-funnel-side" d="M230 0C230 26 400 34 460 40" vectorEffect="non-scaling-stroke" />
+            <path className="lp-funnel-side" d="M690 0C690 26 520 34 460 40" vectorEffect="non-scaling-stroke" />
+            <path className="lp-funnel-mid" d="M460 0V40" vectorEffect="non-scaling-stroke" />
+          </svg>
           <span className="lp-bridge-arrow" aria-hidden="true"><LpIcon name="arrow-down" size={20} /></span>
           <p>{L.bridge[0]}<strong>{L.bridge[1]}</strong>{L.bridge[2]}</p>
         </div>
@@ -244,29 +252,58 @@ function Problems({ sol }: { sol: Solution }) {
 
 /* ───────────────────────── 3. 仕組みの図解 ───────────────────────── */
 
+/** 中心円型：線が中心から周りへ広がり（一度だけ）、その後は線の上を光の粒がゆっくり流れる（PC・画面内のときだけ）。
+ *  PC でカーソルを当てた要素に関係する線だけを強調する。スマホは図の代わりに一覧で表示する。 */
 function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const nodes = scheme.nodes ?? [];
+  const [active, setActive] = useState<number | null>(null);
   const W = 1000, H = 600, cx = W / 2, cy = H / 2;
   const n = nodes.length;
   const rx = 370, ry = 215;
+  const R = 110; // 中心の円（外側の輪）の半径
   const pos = nodes.map((_, i) => {
     const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
-    return { x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) };
+    const x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a);
+    // 線は中心の輪の外から、各要素の枠の手前まで（枠 244×92 との交点）
+    const dx = x - cx, dy = y - cy, len = Math.hypot(dx, dy);
+    const t = Math.min(122 / Math.abs(dx || 1e-6), 46 / Math.abs(dy || 1e-6));
+    return { x, y, sx: cx + (dx / len) * R, sy: cy + (dy / len) * R, ex: x - dx * t, ey: y - dy * t };
   });
+  const hover = (i: number | null) => () => setActive(i);
   return (
-    <div className="lp-scheme-diagram">
-      <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+    <div className="lp-scheme-diagram" data-reveal data-live data-active={active === null ? undefined : active}>
+      <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false" data-smil>
         <defs>
           <linearGradient id="lp-sg" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#087fe5" />
             <stop offset="1" stopColor="#0d2338" />
           </linearGradient>
         </defs>
-        {pos.map((p, i) => (
-          <line key={"l" + i} x1={cx} y1={cy} x2={p.x} y2={p.y} className="lp-scheme-line" style={{ animationDelay: `${i * 0.3}s` }} />
-        ))}
-        <g className="lp-scheme-center">
-          <circle cx={cx} cy={cy} r="110" className="lp-scheme-ring" />
+        <g className="lp-scheme-lines" data-draw>
+          {pos.map((p, i) => (
+            <path
+              key={"l" + i}
+              d={`M${p.sx.toFixed(1)} ${p.sy.toFixed(1)}L${p.ex.toFixed(1)} ${p.ey.toFixed(1)}`}
+              className={active === i || active === -1 ? "lp-scheme-line is-active" : "lp-scheme-line"}
+              style={{ ["--draw-d" as string]: `${(0.15 + i * 0.09).toFixed(2)}s` }}
+            />
+          ))}
+        </g>
+        <g className="lp-scheme-ends">
+          {pos.map((p, i) => (
+            <circle key={"e" + i} cx={p.ex} cy={p.ey} r="5" className={active === i || active === -1 ? "is-active" : undefined} style={{ ["--i" as string]: i }} />
+          ))}
+        </g>
+        <g className="lp-scheme-dots">
+          {pos.map((p, i) => (
+            <circle key={"d" + i} r="3.5" opacity="0">
+              <animateMotion dur="6s" begin={`${(i * 6) / n}s`} repeatCount="indefinite" path={`M${p.sx.toFixed(1)} ${p.sy.toFixed(1)}L${p.ex.toFixed(1)} ${p.ey.toFixed(1)}`} />
+              <animate attributeName="opacity" values="0;.9;.9;0" keyTimes="0;.2;.75;1" dur="6s" begin={`${(i * 6) / n}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
+        </g>
+        <g className="lp-scheme-center" onPointerEnter={hover(-1)} onPointerLeave={hover(null)}>
+          <circle cx={cx} cy={cy} r={R} className="lp-scheme-ring" />
           <circle cx={cx} cy={cy} r="96" fill="url(#lp-sg)" />
           <text x={cx} y={cy - 8} textAnchor="middle" className="lp-scheme-center-label" {...fitText(scheme.center?.label || "COANA TOKYO", 23, 160)}>{scheme.center?.label || "COANA TOKYO"}</text>
           {scheme.center?.sub && <text x={cx} y={cy + 20} textAnchor="middle" className="lp-scheme-center-sub" {...fitText(scheme.center.sub, 15, 170)}>{scheme.center.sub}</text>}
@@ -274,7 +311,7 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
         {nodes.map((node, i) => {
           const p = pos[i];
           return (
-            <g key={node.label} className="lp-scheme-node">
+            <g key={node.label} className={active === i || active === -1 ? "lp-scheme-node is-active" : "lp-scheme-node"} onPointerEnter={hover(i)} onPointerLeave={hover(null)}>
               <rect x={p.x - 122} y={p.y - 46} width="244" height="92" rx="18" />
               <text x={p.x} y={p.y - 6} textAnchor="middle" className="lp-scheme-node-label" {...fitText(node.label, 21, 220)}>{node.label}</text>
               {node.sub && <text x={p.x} y={p.y + 22} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub, 14, 220)}>{node.sub}</text>}
@@ -291,13 +328,14 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
   );
 }
 
+/** 一本の流れ型：画面に入ると、各ステージが左から順に点灯し、アイコンが線で描かれる（文字は最初から読める） */
 function SchemeFlow({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const steps = scheme.nodes ?? [];
   return (
-    <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`}>
+    <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`} data-reveal>
       {steps.map((st, i) => (
-        <li key={st.label} style={{ ["--i" as string]: i }}>
-          <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
+        <li key={st.label} style={{ ["--i" as string]: i, ["--draw-d" as string]: `${(0.25 + i * 0.18).toFixed(2)}s` }}>
+          <span className="lp-scheme-flow-icon" data-draw><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
           <strong>{st.label}</strong>
           {st.sub && <span>{st.sub}</span>}
         </li>
@@ -445,24 +483,16 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
     <section className="section lp-flow">
       <div className="container">
         <SectionTitle en="Flow" center>{sol.steps_title || L.flow}</SectionTitle>
-        <ol className="lp-flow-list" style={{ ["--n" as string]: steps.length }}>
-          {steps.map((s, i) => (
-            <li key={s.name}>
-              <span className="lp-flow-num">{i + 1}</span>
-              <div>
-                <h3>{s.name}</h3>
-                {s.text && <p>{s.text}</p>}
-              </div>
-            </li>
-          ))}
-        </ol>
-        {sol.flow_note && <p className="lp-flow-note"><LpIcon name="clock" size={16} />{sol.flow_note}</p>}
-        <div className="lp-cta-row">
+        <FlowLine
+          steps={steps.map((st) => ({ name: st.name, text: st.text }))}
+          note={sol.flow_note && <><LpIcon name="clock" size={16} />{sol.flow_note}</>}
+          lead={L.flowLead}
+        >
           <GoLink className="button button-large button-fly lp-button-primary" go={navigate} args={["contact"]}>
             {L.consult}<BirdArrow />
           </GoLink>
           <LineButton place="solution_flow" label={L.consultLine} />
-        </div>
+        </FlowLine>
       </div>
     </section>
   );
