@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { articles, home, settings, solutions, type Article, type Solution } from "./content";
 import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, setInquiryPreset, type Nav } from "./shared";
 import { HeroVideo, ServiceArt } from "./illustrations";
@@ -344,7 +344,196 @@ function SchemeFlow({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   );
 }
 
-function Scheme({ sol }: { sol: Solution }) {
+/** レーン型（経理代行など）：「御社がやること」と「COANA TOKYO がやること」を2段に分け、仕事の差をひと目で見せる。
+ *  - PC：上の段に御社（資料を入れる・報告を受け取る の2つだけ）、下の段に COANA TOKYO の工程。スマホは縦に1本の流れ。
+ *  - 画面に入ったら1回だけ（PC 約2.6秒・スマホ 約3.4秒）、領収書がクラウドに入り、COANA TOKYO の工程を順に通って、
+ *    月次レポートになって御社に戻る様子を見せる（スクロールとは連動しない）。「もう一度見る」で再生できる。
+ *  - 文字は最初から全部読める。工程にカーソルを当てる（スマホはタップ）と、その工程でやることが少し詳しく出る。
+ *  - 「動きを減らす」設定では動かさず、全工程を完了した状態で見せる。 */
+type LaneNode = NonNullable<NonNullable<Solution["scheme"]>["nodes"]>[number];
+/** 再生時間：PC 約2.6秒。スマホは順路が縦に長いので少しゆっくり */
+const lanesMs = () => (window.matchMedia("(max-width: 760px)").matches ? 3400 : 2600);
+
+function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
+  const nodes = (scheme.nodes ?? []) as LaneNode[];
+  const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const tokenRef = useRef<HTMLSpanElement | null>(null);
+  const [lines, setLines] = useState<{ main: string; side: string[] }>({ main: "", side: [] });
+  const [lit, setLit] = useState<number>(reduce ? nodes.length : -1); // ここまでの工程を「済み」として点灯
+  const [report, setReport] = useState(false); // 書類がレポートに変わったか
+  const [played, setPlayed] = useState(reduce);
+  const [open, setOpen] = useState<number | null>(null);
+  // 書類が通る順路：最後の「御社」までの工程。その後ろ（税理士への連携など）は点線でつなぐ
+  const lastClient = nodes.map((n) => n.who).lastIndexOf("client");
+  const pathEnd = lastClient > 0 ? lastClient : nodes.length - 1;
+  // PC の配置：COANA TOKYO の工程を左から順に並べ、御社の工程はその前後の工程の列に置く
+  let col = 0;
+  const place = nodes.map((n, i) => {
+    if (n.who === "client") {
+      const before = nodes.slice(0, i).some((m) => m.who !== "client");
+      return { row: 1, col: before ? col : col + 1 };
+    }
+    col += 1;
+    return { row: 2, col };
+  });
+  const teamCount = col;
+  const clientCols = place.filter((_, i) => nodes[i].who === "client").map((p) => p.col);
+  const restFrom = clientCols.length >= 2 ? clientCols[0] + 1 : 0;
+  const restTo = clientCols.length >= 2 ? clientCols[clientCols.length - 1] : 0;
+
+  // つなぐ線：各工程のアイコンの中心を、縦横の線でつなぐ（画面幅が変わったら引き直す）
+  const centers = useCallback(() => {
+    const box = boxRef.current;
+    if (!box) return [];
+    const b = box.getBoundingClientRect();
+    return Array.from(box.querySelectorAll<HTMLElement>("[data-lane-node]")).map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - b.left, y: r.top + r.height / 2 - b.top };
+    });
+  }, []);
+  useLayoutEffect(() => {
+    const draw = () => {
+      const c = centers();
+      if (c.length < 2) return;
+      const seg = (a: { x: number; y: number }, z: { x: number; y: number }) =>
+        Math.abs(a.x - z.x) < 2 || Math.abs(a.y - z.y) < 2 ? `L${z.x.toFixed(1)} ${z.y.toFixed(1)}` : `L${a.x.toFixed(1)} ${z.y.toFixed(1)}L${z.x.toFixed(1)} ${z.y.toFixed(1)}`;
+      let main = `M${c[0].x.toFixed(1)} ${c[0].y.toFixed(1)}`;
+      for (let i = 1; i <= pathEnd; i++) main += seg(c[i - 1], c[i]);
+      // 順路の後ろの工程は、直前の COANA TOKYO の工程から点線で
+      const side: string[] = [];
+      for (let i = pathEnd + 1; i < c.length; i++) {
+        let from = i - 1;
+        while (from > 0 && nodes[from].who === "client") from -= 1;
+        side.push(`M${c[from].x.toFixed(1)} ${c[from].y.toFixed(1)}` + seg(c[from], c[i]));
+      }
+      setLines({ main, side });
+    };
+    draw();
+    const ro = new ResizeObserver(draw);
+    if (boxRef.current) ro.observe(boxRef.current);
+    document.fonts?.ready.then(draw);
+    return () => ro.disconnect();
+  }, [centers, pathEnd, nodes]);
+
+  // 書類が順路を進む（Web Animations API）。工程に着くたびに点灯させる
+  const timers = useRef<number[]>([]);
+  const play = useCallback(() => {
+    const token = tokenRef.current;
+    const c = centers().slice(0, pathEnd + 1);
+    const LANES_MS = lanesMs();
+    if (!token || c.length < 2 || !token.animate) return;
+    timers.current.forEach((t) => window.clearTimeout(t));
+    setLit(0);
+    setReport(false);
+    setPlayed(false);
+    // 区間の長さに応じて時間を配分し、各工程で少しだけ止まる
+    const pts: { x: number; y: number }[] = [c[0]];
+    for (let i = 1; i < c.length; i++) {
+      const a = c[i - 1], z = c[i];
+      if (Math.abs(a.x - z.x) >= 2 && Math.abs(a.y - z.y) >= 2) pts.push({ x: a.x, y: z.y });
+      pts.push(z);
+    }
+    const len = pts.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - pts[i].x, p.y - pts[i].y), 0) || 1;
+    const dwell = 0.05;
+    const travel = 1 - dwell * (c.length - 1) - 0.08;
+    const frames: Keyframe[] = [];
+    let t = 0.04;
+    frames.push({ offset: 0, transform: `translate(${c[0].x}px, ${c[0].y - 6}px) scale(.6)`, opacity: 0 });
+    frames.push({ offset: t, transform: `translate(${c[0].x}px, ${c[0].y}px) scale(1)`, opacity: 1 });
+    const arrive: number[] = [0];
+    let node = 0;
+    for (let i = 1; i < pts.length; i++) {
+      t += (Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y) / len) * travel;
+      frames.push({ offset: Math.min(t, 1), transform: `translate(${pts[i].x}px, ${pts[i].y}px) scale(1)`, opacity: 1, easing: "cubic-bezier(.45, 0, .25, 1)" });
+      if (c.some((q) => q.x === pts[i].x && q.y === pts[i].y)) {
+        node += 1;
+        arrive.push(t);
+        t += dwell;
+        frames.push({ offset: Math.min(t, 1), transform: `translate(${pts[i].x}px, ${pts[i].y}px) scale(1)`, opacity: 1 });
+      }
+    }
+    frames.push({ offset: 1, transform: `translate(${c[c.length - 1].x}px, ${c[c.length - 1].y}px) scale(.7)`, opacity: 0 });
+    token.animate(frames, { duration: LANES_MS, easing: "linear", fill: "both" });
+    arrive.forEach((at, i) => {
+      timers.current.push(window.setTimeout(() => {
+        setLit(i);
+        // 月次の締め（御社に戻る直前の工程）で、書類がレポートに変わる
+        if (i === c.length - 2) setReport(true);
+      }, at * LANES_MS));
+    });
+    timers.current.push(window.setTimeout(() => { setLit(nodes.length); setPlayed(true); }, LANES_MS));
+  }, [centers, pathEnd, nodes.length]);
+
+  // 画面に入ったら1回だけ再生
+  useEffect(() => {
+    if (reduce || !boxRef.current || !("IntersectionObserver" in window)) { setLit(nodes.length); setPlayed(true); return; }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); window.setTimeout(play, 200); }
+    }, { rootMargin: "0px 0px -35% 0px" }); // 図の上端が画面の下から 35% の高さまで来たら
+    io.observe(boxRef.current);
+    return () => { io.disconnect(); timers.current.forEach((t) => window.clearTimeout(t)); };
+  }, [play, reduce, nodes.length]);
+
+  return (
+    <div className="lanes" ref={boxRef} style={{ ["--cols" as string]: teamCount }}>
+      <svg className="lanes-lines" aria-hidden="true" focusable="false">
+        <path className="lanes-line" d={lines.main} />
+        {lines.side.map((d, i) => <path key={i} className="lanes-line is-side" d={d} />)}
+      </svg>
+      <p className="lanes-label is-client"><span>{scheme.client_label || "御社がやること"}</span></p>
+      <p className="lanes-label is-team"><span>{scheme.team_label || "COANA TOKYOがやること"}</span></p>
+      {restTo > restFrom && scheme.rest && (
+        <p className="lanes-rest" style={{ gridColumn: `${restFrom + 1} / ${restTo + 1}` }} aria-hidden="true"><span>{scheme.rest}</span></p>
+      )}
+      <ol className="lanes-list">
+        {nodes.map((n, i) => {
+          const who = n.who === "client" ? "client" : "team";
+          const state = i <= lit ? " is-on" : "";
+          return (
+            <li key={n.label} className={`lanes-item is-${who}${state}${open === i ? " is-open" : ""}`} style={{ gridRow: place[i].row, gridColumn: place[i].col + 1 }}>
+              <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
+              <button
+                type="button"
+                className="lanes-card"
+                aria-expanded={n.detail ? open === i : undefined}
+                aria-controls={n.detail ? `lanes-detail-${i}` : undefined}
+                onClick={() => n.detail && setOpen(open === i ? null : i)}
+              >
+                <span className="lanes-icon" data-lane-node>
+                  <LpIcon name={n.icon || "check"} size={22} />
+                </span>
+                <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
+                {n.detail && <span className="lanes-more" aria-hidden="true" />}
+              </button>
+              {n.detail && <p id={`lanes-detail-${i}`} className="lanes-detail">{n.detail}</p>}
+            </li>
+          );
+        })}
+      </ol>
+      {/* 動く書類：領収書 → （月次の締めで）レポート */}
+      <span className={report ? "lanes-token is-report" : "lanes-token"} ref={tokenRef} aria-hidden="true">
+        <svg className="lanes-token-doc" viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z" /><path d="M9 8h6M9 12h6M9 16h3" /></svg>
+        <svg className="lanes-token-report" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5" /><path className="bar" d="M8 17v-3M12 17v-6M16 17V9" /></svg>
+      </span>
+      {(scheme.cycle ?? []).length > 0 && (
+        <div className="lanes-cycle">
+          <span className="lanes-cycle-label"><LpIcon name="refresh" size={16} />毎月くり返し</span>
+          <ol>
+            {(scheme.cycle ?? []).map((c) => <li key={c.when}><b>{c.when}</b>{c.text}</li>)}
+          </ol>
+        </div>
+      )}
+      {!reduce && (
+        <button type="button" className={played ? "lanes-replay is-ready" : "lanes-replay"} onClick={play} disabled={!played}>
+          <LpIcon name="refresh" size={14} />もう一度見る
+        </button>
+      )}
+    </div>
+  );
+}
+
+function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
   const scheme = sol.scheme;
   if (!scheme || !(scheme.nodes ?? []).length) return null;
@@ -352,7 +541,7 @@ function Scheme({ sol }: { sol: Solution }) {
     <section className="section lp-scheme">
       <div className="container">
         <SectionTitle en="How it works" center lead={scheme.lead}>{scheme.title || L.scheme}</SectionTitle>
-        {scheme.type === "flow" ? <SchemeFlow scheme={scheme} /> : <SchemeDiagram scheme={scheme} />}
+        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} /> : <SchemeDiagram scheme={scheme} />}
         {(scheme.points ?? []).length > 0 && (
           <ul className="lp-scheme-points">
             {(scheme.points ?? []).map((p) => (
@@ -365,6 +554,12 @@ function Scheme({ sol }: { sol: Solution }) {
           </ul>
         )}
         {scheme.note && <p className="lp-note">{scheme.note}</p>}
+        {scheme.cta && (
+          <p className="lanes-cta">
+            <span>{scheme.cta}</span>
+            <GoLink className="lanes-cta-link" go={navigate} args={["contact"]}>{L.consult}<Icon name="arrow" size={16} /></GoLink>
+          </p>
+        )}
       </div>
     </section>
   );
@@ -576,7 +771,7 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
     <main className={`solution-page lp lp-lang-${langOf(sol)}`}>
       <Hero sol={sol} navigate={navigate} />
       <Problems sol={sol} />
-      <Scheme sol={sol} />
+      <Scheme sol={sol} navigate={navigate} />
       <Support sol={sol} />
       <Scenarios sol={sol} />
       <Flow sol={sol} navigate={navigate} />
