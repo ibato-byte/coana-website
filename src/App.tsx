@@ -192,8 +192,8 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         <div className="hero-copy">
           <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
           <h1 className="hero-title-marker">
-            <span className="hero-line">{home.hero_line1}</span>
-            <span className="hero-line">{home.hero_line2}</span>
+            <span className="hero-line"><span className="hero-line-text">{home.hero_line1}</span></span>
+            <span className="hero-line"><span className="hero-line-text">{home.hero_line2}</span></span>
           </h1>
           <p className="hero-solve hero-anim">
             <span className="solve-box" aria-live="off">

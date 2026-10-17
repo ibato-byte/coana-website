@@ -161,7 +161,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           </p>
           <h1 className={sol.catch ? "lp-hero-title" : "lp-hero-title is-plain"}>
             {sol.catch
-              ? sol.catch.split("\n").map((line, i) => <span key={i} className="lp-hero-line">{line}</span>)
+              ? sol.catch.split("\n").map((line, i) => <span key={i} className="lp-hero-line"><span className="lp-hero-line-text">{line}</span></span>)
               : sol.title}
           </h1>
           {sol.catch && <p className="lp-hero-sub">{sol.title}</p>}
