@@ -3,6 +3,7 @@ import { articles, home, solutions, type Article, type Solution } from "./conten
 import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
+import { STORIES, StoryChips, useSchemeStory, type Story } from "./schemeStory";
 import "./solution.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
@@ -261,9 +262,13 @@ function Problems({ sol }: { sol: Solution }) {
 
 /** 中心円型：線が中心から周りへ広がり（一度だけ）、その後は線の上を光の粒がゆっくり流れる（PC・画面内のときだけ）。
  *  PC でカーソルを当てた要素に関係する線だけを強調する。スマホは図の代わりに一覧で表示する。 */
-function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
+function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
   const nodes = scheme.nodes ?? [];
   const [active, setActive] = useState<number | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const keys = ["c", ...nodes.map((_, i) => "n" + i)];
+  // 仕組みのアニメーション（schemeStory.tsx）。スマホ（640px 以下）は一覧の形で、カードの右上を進む
+  const { state, chips } = useSchemeStory(boxRef, story, keys, "(max-width: 640px)");
   const W = 1000, H = 600, cx = W / 2, cy = H / 2;
   const n = nodes.length;
   const rx = 370, ry = 215;
@@ -278,8 +283,8 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
   });
   const hover = (i: number | null) => () => setActive(i);
   return (
-    <div className="lp-scheme-diagram" data-reveal data-live data-active={active === null ? undefined : active}>
-      <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false" data-smil>
+    <div className="lp-scheme-diagram" ref={boxRef} data-reveal data-active={active === null ? undefined : active}>
+      <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="lp-sg" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#087fe5" />
@@ -301,15 +306,7 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
             <circle key={"e" + i} cx={p.ex} cy={p.ey} r="5" className={active === i || active === -1 ? "is-active" : undefined} style={{ ["--i" as string]: i }} />
           ))}
         </g>
-        <g className="lp-scheme-dots">
-          {pos.map((p, i) => (
-            <circle key={"d" + i} r="3.5" opacity="0">
-              <animateMotion dur="6s" begin={`${(i * 6) / n}s`} repeatCount="indefinite" path={`M${p.sx.toFixed(1)} ${p.sy.toFixed(1)}L${p.ex.toFixed(1)} ${p.ey.toFixed(1)}`} />
-              <animate attributeName="opacity" values="0;.9;.9;0" keyTimes="0;.2;.75;1" dur="6s" begin={`${(i * 6) / n}s`} repeatCount="indefinite" />
-            </circle>
-          ))}
-        </g>
-        <g className="lp-scheme-center" onPointerEnter={hover(-1)} onPointerLeave={hover(null)}>
+        <g className={`lp-scheme-center${state("c")}`} data-story="c" onPointerEnter={hover(-1)} onPointerLeave={hover(null)}>
           <circle cx={cx} cy={cy} r={R} className="lp-scheme-ring" />
           <circle cx={cx} cy={cy} r="96" fill="url(#lp-sg)" />
           <text x={cx} y={cy - 8} textAnchor="middle" className="lp-scheme-center-label" {...fitText(scheme.center?.label || "COANA TOKYO", 23, 160)}>{scheme.center?.label || "COANA TOKYO"}</text>
@@ -318,8 +315,13 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
         {nodes.map((node, i) => {
           const p = pos[i];
           return (
-            <g key={node.label} className={active === i || active === -1 ? "lp-scheme-node is-active" : "lp-scheme-node"} onPointerEnter={hover(i)} onPointerLeave={hover(null)}>
+            <g key={node.label} className={`lp-scheme-node${active === i || active === -1 ? " is-active" : ""}${state("n" + i)}${story?.checks?.includes("n" + i) ? " has-check" : ""}`} data-story={"n" + i} onPointerEnter={hover(i)} onPointerLeave={hover(null)}>
               <rect x={p.x - 122} y={p.y - 46} width="244" height="92" rx="18" />
+              {/* 整った工程の印（創業支援など） */}
+              <g className="lp-scheme-check" transform={`translate(${p.x + 104} ${p.y - 46})`}>
+                <circle r="13" />
+                <path d="M-5.5 0.5l3.8 3.8L5.8-3.6" />
+              </g>
               <text x={p.x} y={p.y - 6} textAnchor="middle" className="lp-scheme-node-label" {...fitText(node.label, 21, 220)}>{node.label}</text>
               {node.sub && <text x={p.x} y={p.y + 22} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub, 14, 220)}>{node.sub}</text>}
             </g>
@@ -327,39 +329,46 @@ function SchemeDiagram({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) 
         })}
       </svg>
       <ul className="lp-scheme-list" aria-label={scheme.title || ""}>
-        {nodes.map((node) => (
-          <li key={node.label}><strong>{node.label}</strong>{node.sub && <span>{node.sub}</span>}</li>
+        <li className={`is-center${state("c")}`} data-story="c"><strong>{scheme.center?.label || "COANA TOKYO"}</strong>{scheme.center?.sub && <span>{scheme.center.sub}</span>}</li>
+        {nodes.map((node, i) => (
+          <li key={node.label} className={(state("n" + i) + (story?.checks?.includes("n" + i) ? " has-check" : "")).trim() || undefined} data-story={"n" + i}><strong>{node.label}</strong>{node.sub && <span>{node.sub}</span>}</li>
         ))}
       </ul>
+      <StoryChips chips={chips} />
     </div>
   );
 }
 
 /** 一本の流れ型：画面に入ると、各ステージが左から順に点灯し、アイコンが線で描かれる（文字は最初から読める） */
-function SchemeFlow({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
+function SchemeFlow({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
   const steps = scheme.nodes ?? [];
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const keys = steps.map((_, i) => "n" + i);
+  // 仕組みのアニメーション（schemeStory.tsx）。980px 以下は縦に1本で、カードの右上を進む
+  const { state, chips, running } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)");
   return (
-    <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`} data-reveal>
-      {steps.map((st, i) => (
-        <li key={st.label} style={{ ["--i" as string]: i, ["--draw-d" as string]: `${(0.25 + i * 0.18).toFixed(2)}s` }}>
-          <span className="lp-scheme-flow-icon" data-draw><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
-          <strong>{st.label}</strong>
-          {st.sub && <span>{st.sub}</span>}
-        </li>
-      ))}
-    </ol>
+    <div className="lp-scheme-flow-wrap" ref={boxRef} data-run={running ? "" : undefined}>
+      <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`}>
+        {steps.map((st, i) => (
+          <li key={st.label} className={state("n" + i).trim() || undefined} data-story={"n" + i}>
+            <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
+            <strong>{st.label}</strong>
+            {st.sub && <span>{st.sub}</span>}
+          </li>
+        ))}
+      </ol>
+      <StoryChips chips={chips} />
+    </div>
   );
 }
 
 /** レーン型（経理代行など）：「御社がやること」と「COANA TOKYO がやること」を2段に分け、仕事の差をひと目で見せる。
  *  - PC：上の段に御社（資料を入れる・報告を受け取る の2つだけ）、下の段に COANA TOKYO の工程。スマホは縦に1本の流れ。
- *  - 画面に入ったら1回だけ（PC 約2.6秒・スマホ 約3.4秒）、領収書がクラウドに入り、COANA TOKYO の工程を順に通って、
- *    月次レポートになって御社に戻る様子を見せる（スクロールとは連動しない）。「もう一度見る」で再生できる。
+ *  - 領収書がクラウドに入り、COANA TOKYO の工程を順に通って、月次レポートは御社へ、決算用のデータは顧問税理士へ届く様子を、
+ *    ゆっくり繰り返し見せる（schemeStory.tsx。スクロールとは連動しない）。
  *  - 文字は最初から全部読める。工程にカーソルを当てる（スマホはタップ）と、その工程でやることが少し詳しく出る。
  *  - 「動きを減らす」設定では動かさず、全工程を完了した状態で見せる。 */
 type LaneNode = NonNullable<NonNullable<Solution["scheme"]>["nodes"]>[number];
-/** 再生時間：PC 約2.6秒。スマホは順路が縦に長いので少しゆっくり */
-const lanesMs = () => (window.matchMedia("(max-width: 980px)").matches ? 3400 : 2600);
 
 /** メディアクエリが一致しているか（画面幅や入力方法が変わったら追従） */
 function useMedia(query: string) {
@@ -377,20 +386,18 @@ function useMedia(query: string) {
 /** 開閉の目印（文字の横の ∨。開いているときは上向き） */
 const Chevron = () => <svg className="toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>;
 
-function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
+function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
   const nodes = (scheme.nodes ?? []) as LaneNode[];
-  const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const boxRef = useRef<HTMLDivElement | null>(null);
-  const tokenRef = useRef<HTMLSpanElement | null>(null);
   const [lines, setLines] = useState<{ main: string; side: string[] }>({ main: "", side: [] });
-  const [lit, setLit] = useState<number>(reduce ? nodes.length : -1); // ここまでの工程を「済み」として点灯
-  const [report, setReport] = useState(false); // 書類がレポートに変わったか
-  const [played, setPlayed] = useState(reduce);
   const [open, setOpen] = useState<number | null>(null);
   // PC（マウス）：カーソルを当てる・キーボードでフォーカスすると説明が出る（クリックでの開閉はしない）。
   // タッチ端末：「詳しく見る ∨／閉じる ∧」のボタンで開閉する
   const hoverPC = useMedia("(hover: hover) and (pointer: fine) and (min-width: 981px)");
-  // 書類が通る順路：最後の「御社」までの工程。その後ろ（税理士への連携など）は点線でつなぐ
+  // 仕組みのアニメーション（schemeStory.tsx）。工程の説明を開いている間は止める
+  const keys = nodes.map((_, i) => "n" + i);
+  const { state, chips } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)", open !== null);
+  // 書類が通る順路：最後の「御社」までの工程。その後ろ（税理士への連携など）は、直前の COANA TOKYO の工程から枝分かれ
   const lastClient = nodes.map((n) => n.who).lastIndexOf("client");
   const pathEnd = lastClient > 0 ? lastClient : nodes.length - 1;
   // PC の配置：COANA TOKYO の工程を左から順に並べ、御社の工程はその前後の工程の列に置く
@@ -426,7 +433,7 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
         Math.abs(a.x - z.x) < 2 || Math.abs(a.y - z.y) < 2 ? `L${z.x.toFixed(1)} ${z.y.toFixed(1)}` : `L${a.x.toFixed(1)} ${z.y.toFixed(1)}L${z.x.toFixed(1)} ${z.y.toFixed(1)}`;
       let main = `M${c[0].x.toFixed(1)} ${c[0].y.toFixed(1)}`;
       for (let i = 1; i <= pathEnd; i++) main += seg(c[i - 1], c[i]);
-      // 順路の後ろの工程は、直前の COANA TOKYO の工程から点線で
+      // 順路の後ろの工程は、直前の COANA TOKYO の工程から枝分かれして
       const side: string[] = [];
       for (let i = pathEnd + 1; i < c.length; i++) {
         let from = i - 1;
@@ -442,65 +449,6 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
     return () => ro.disconnect();
   }, [centers, pathEnd, nodes]);
 
-  // 書類が順路を進む（Web Animations API）。工程に着くたびに点灯させる
-  const timers = useRef<number[]>([]);
-  const play = useCallback(() => {
-    const token = tokenRef.current;
-    const c = centers().slice(0, pathEnd + 1);
-    const LANES_MS = lanesMs();
-    if (!token || c.length < 2 || !token.animate) return;
-    timers.current.forEach((t) => window.clearTimeout(t));
-    setLit(0);
-    setReport(false);
-    setPlayed(false);
-    // 区間の長さに応じて時間を配分し、各工程で少しだけ止まる
-    const pts: { x: number; y: number }[] = [c[0]];
-    for (let i = 1; i < c.length; i++) {
-      const a = c[i - 1], z = c[i];
-      if (Math.abs(a.x - z.x) >= 2 && Math.abs(a.y - z.y) >= 2) pts.push({ x: a.x, y: z.y });
-      pts.push(z);
-    }
-    const len = pts.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - pts[i].x, p.y - pts[i].y), 0) || 1;
-    const dwell = 0.05;
-    const travel = 1 - dwell * (c.length - 1) - 0.08;
-    const frames: Keyframe[] = [];
-    let t = 0.04;
-    frames.push({ offset: 0, transform: `translate(${c[0].x}px, ${c[0].y - 6}px) scale(.6)`, opacity: 0 });
-    frames.push({ offset: t, transform: `translate(${c[0].x}px, ${c[0].y}px) scale(1)`, opacity: 1 });
-    const arrive: number[] = [0];
-    let node = 0;
-    for (let i = 1; i < pts.length; i++) {
-      t += (Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y) / len) * travel;
-      frames.push({ offset: Math.min(t, 1), transform: `translate(${pts[i].x}px, ${pts[i].y}px) scale(1)`, opacity: 1, easing: "cubic-bezier(.45, 0, .25, 1)" });
-      if (c.some((q) => q.x === pts[i].x && q.y === pts[i].y)) {
-        node += 1;
-        arrive.push(t);
-        t += dwell;
-        frames.push({ offset: Math.min(t, 1), transform: `translate(${pts[i].x}px, ${pts[i].y}px) scale(1)`, opacity: 1 });
-      }
-    }
-    frames.push({ offset: 1, transform: `translate(${c[c.length - 1].x}px, ${c[c.length - 1].y}px) scale(.7)`, opacity: 0 });
-    token.animate(frames, { duration: LANES_MS, easing: "linear", fill: "both" });
-    arrive.forEach((at, i) => {
-      timers.current.push(window.setTimeout(() => {
-        setLit(i);
-        // 月次の締め（御社に戻る直前の工程）で、書類がレポートに変わる
-        if (i === c.length - 2) setReport(true);
-      }, at * LANES_MS));
-    });
-    timers.current.push(window.setTimeout(() => { setLit(nodes.length); setPlayed(true); }, LANES_MS));
-  }, [centers, pathEnd, nodes.length]);
-
-  // 画面に入ったら1回だけ再生
-  useEffect(() => {
-    if (reduce || !boxRef.current || !("IntersectionObserver" in window)) { setLit(nodes.length); setPlayed(true); return; }
-    const io = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); window.setTimeout(play, 200); }
-    }, { rootMargin: "0px 0px -35% 0px" }); // 図の上端が画面の下から 35% の高さまで来たら
-    io.observe(boxRef.current);
-    return () => { io.disconnect(); timers.current.forEach((t) => window.clearTimeout(t)); };
-  }, [play, reduce, nodes.length]);
-
   return (
     <div className="lanes" ref={boxRef} style={{ ["--cols" as string]: teamCount }}>
       <svg className="lanes-lines" aria-hidden="true" focusable="false">
@@ -515,9 +463,8 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
       <ol className="lanes-list">
         {nodes.map((n, i) => {
           const who = n.who === "client" ? "client" : "team";
-          const state = i <= lit ? " is-on" : "";
           return (
-            <li key={n.label} className={`lanes-item is-${who}${state}${open === i ? " is-open" : ""}`} style={{ gridRow: place[i].row, gridColumn: place[i].col + 1 }}>
+            <li key={n.label} className={`lanes-item is-${who}${state("n" + i)}${open === i ? " is-open" : ""}`} style={{ gridRow: place[i].row, gridColumn: place[i].col + 1 }}>
               <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
               {(() => {
                 const inner = (
@@ -528,17 +475,17 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
                     <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
                   </>
                 );
-                if (!n.detail) return <div className="lanes-card">{inner}</div>;
+                if (!n.detail) return <div className="lanes-card" data-story={"n" + i}>{inner}</div>;
                 if (hoverPC) {
                   // Esc で説明を閉じられるように（フォーカスを外す）
                   return (
-                    <div className="lanes-card is-hint" tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
+                    <div className="lanes-card is-hint" data-story={"n" + i} tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
                       {inner}
                     </div>
                   );
                 }
                 return (
-                  <button type="button" className="lanes-card" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
+                  <button type="button" className="lanes-card" data-story={"n" + i} aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
                     {inner}
                     <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
                   </button>
@@ -549,11 +496,7 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
           );
         })}
       </ol>
-      {/* 動く書類：領収書 → （月次の締めで）レポート */}
-      <span className={report ? "lanes-token is-report" : "lanes-token"} ref={tokenRef} aria-hidden="true">
-        <svg className="lanes-token-doc" viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z" /><path d="M9 8h6M9 12h6M9 16h3" /></svg>
-        <svg className="lanes-token-report" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5" /><path className="bar" d="M8 17v-3M12 17v-6M16 17V9" /></svg>
-      </span>
+      <StoryChips chips={chips} />
       {(scheme.cycle ?? []).length > 0 && (
         <div className="lanes-cycle">
           <span className="lanes-cycle-label"><LpIcon name="refresh" size={16} />毎月くり返し</span>
@@ -561,11 +504,6 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
             {(scheme.cycle ?? []).map((c) => <li key={c.when}><b>{c.when}</b>{c.text}</li>)}
           </ol>
         </div>
-      )}
-      {!reduce && (
-        <button type="button" className={played ? "lanes-replay is-ready" : "lanes-replay"} onClick={play} disabled={!played}>
-          <LpIcon name="refresh" size={14} />もう一度見る
-        </button>
       )}
     </div>
   );
@@ -575,11 +513,12 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
   const scheme = sol.scheme;
   if (!scheme || !(scheme.nodes ?? []).length) return null;
+  const story = STORIES[sol.slug];
   return (
     <section className="section lp-scheme">
       <div className="container">
         <SectionTitle en="How it works" center lead={scheme.lead}>{scheme.title || L.scheme}</SectionTitle>
-        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} /> : <SchemeDiagram scheme={scheme} />}
+        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : <SchemeDiagram scheme={scheme} story={story} />}
         {(scheme.points ?? []).length > 0 && (
           <ul className="lp-scheme-points">
             {(scheme.points ?? []).map((p) => (
