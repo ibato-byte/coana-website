@@ -476,7 +476,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
    900px 以下：上から下の1列（スマホ専用の並び）。領域は2列の小さなタグ */
 .relay {
   position: relative; max-width: 1120px; margin: 40px auto 0; display: grid;
-  grid-template-columns: minmax(0, 220px) minmax(150px, 1fr) minmax(0, 250px) minmax(196px, 1fr) minmax(0, 300px);
+  grid-template-columns: minmax(0, 220px) minmax(170px, 1fr) minmax(0, 250px) minmax(196px, 1fr) minmax(0, 300px);
   grid-template-areas:
     "side-c . side-t side-t side-t"
     "client s1 center s2 areas"

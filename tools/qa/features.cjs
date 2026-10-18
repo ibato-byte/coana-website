@@ -56,20 +56,16 @@ const shapesDrawn = (sel) => [...document.querySelectorAll(sel)].every((s) => { 
    ok('PC OUR STYLE：カーソルでカードがわずかに傾く', !!tilt, String(tilt));
    ok('PC OUR STYLE：ツールをつなぐ線が引かれている', await p.evaluate(() => getComputedStyle(document.querySelector('.style-tools-line')).transform === 'none'));
   }
-  // ── LP：PROBLEMS・HOW IT WORKS（中心円型）・FLOW ──
+  // ── LP：PROBLEMS・HOW IT WORKS（リレー型）・FLOW ──
   await p.goto(BASE + '/services/backoffice-dx', { waitUntil: 'networkidle' });
   await p.evaluate(() => document.querySelector('.lp-problems').scrollIntoView({ block: 'start' })); await p.waitForTimeout(1500);
   const pr = await p.evaluate((fn) => { const f = new Function('return ' + fn)(); return { cards: [...document.querySelectorAll('.lp-problem-grid li')].every((e) => e.classList.contains('in')), icons: f('.lp-problem-icon svg *'), funnel: getComputedStyle(document.querySelector('.lp-funnel')).display !== 'none' && f('.lp-funnel path:not([style*="none"])'), arrow: getComputedStyle(document.querySelector('.lp-bridge-arrow')).opacity }; }, shapesDrawn.toString());
   ok(`${tag} PROBLEMS：カード表示・アイコンと線が描かれ・矢印が降りている`, pr.cards && pr.icons && pr.funnel && pr.arrow === '1', JSON.stringify(pr));
   await p.evaluate(() => document.querySelector('.lp-scheme').scrollIntoView({ block: 'start' })); await p.waitForTimeout(2600);
-  if (!mobile) {
-   const hub = await p.evaluate((fn) => { const f = new Function('return ' + fn)(); const svg = document.querySelector('.lp-scheme-diagram svg'); return { lines: f('.lp-scheme-lines path'), ends: [...document.querySelectorAll('.lp-scheme-ends circle')].every((c) => getComputedStyle(c).opacity === '1'), dots: getComputedStyle(document.querySelector('.lp-scheme-dots')).opacity, playing: !svg.animationsPaused() }; }, shapesDrawn.toString());
-   ok('PC HOW IT WORKS（中心円型）：線が広がり、点が付き、光の粒が流れている', hub.lines && hub.ends && hub.dots === '1' && hub.playing, JSON.stringify(hub));
-   await p.hover('.lp-scheme-node >> nth=2'); await p.waitForTimeout(300);
-   ok('PC HOW IT WORKS：ホバーした要素に関係する線だけ強調', await p.evaluate(() => document.querySelector('.lp-scheme-diagram').dataset.active === '2' && document.querySelectorAll('.lp-scheme-line.is-active').length === 1));
-   await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(400);
-   ok('PC HOW IT WORKS：画面外では光の粒が止まる', await p.evaluate(() => document.querySelector('.lp-scheme-diagram svg').animationsPaused()));
-  } else ok('スマホ HOW IT WORKS（中心円型）：一覧で表示', await p.evaluate(() => getComputedStyle(document.querySelector('.lp-scheme-list')).display !== 'none' && document.querySelectorAll('.lp-scheme-list li').length > 3));
+  // HOW IT WORKS（リレー型）：番号付きの意味のある線（PC は矢印の線、スマホは上から下の1列）
+  const rl = await p.evaluate(() => ({ lines: document.querySelectorAll('.relay-lines .relay-line').length, arrows: document.querySelectorAll('.relay-lines [marker-end]').length, steps: [...document.querySelectorAll('.relay-step .relay-num, .relay-return .relay-num')].map((n) => n.textContent).join(','), areas: document.querySelectorAll('.relay-area').length, startLit: document.querySelector('.relay-client').classList.contains('is-now'), column: getComputedStyle(document.querySelector('.relay')).display }));
+  if (!mobile) ok('PC HOW IT WORKS（リレー型）：左→右の線と矢印・番号 1〜4・起点だけ点灯', rl.lines >= 9 && rl.arrows >= 8 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'grid', JSON.stringify(rl));
+  else ok('スマホ HOW IT WORKS（リレー型）：上から下の1列・番号 1〜4・起点だけ点灯', rl.lines === 0 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'flex', JSON.stringify(rl));
   // FLOW（静止画＋PC のホバー）
   await p.evaluate(() => document.querySelector('.lp-flow').scrollIntoView({ block: 'start' })); await p.waitForTimeout(800);
   const fl = await p.evaluate(() => ({ progress: !!document.querySelector('[data-progress]'), steps: [...document.querySelectorAll('.lp-flow .flowx-step')].filter((s) => s.getBoundingClientRect().height > 0 && getComputedStyle(s.querySelector('h3')).opacity === '1').length, nums: [...document.querySelectorAll('.lp-flow .flowx-num')].map((n) => n.textContent).join(','), cta: document.querySelectorAll('.lp-flow .flowx-cta a').length, lead: document.querySelector('.lp-flow .flowx-lead')?.textContent }));
