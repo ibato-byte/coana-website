@@ -28,11 +28,9 @@
   - 一時停止の判定は、出来事の前にもかける。
   - 動きを減らす設定では何も出さない。
 - **残り（次の一手）**：
-  1. `useFlowJourney` の一時停止を `watchReading(root, ".flowx-step", wake)` に置き換える（今は `.flowx-list` の pointerenter／pointerleave で止めている＝ホットフィックスと同じ不具合がある。**使わないこと**）。
-  2. main（ホットフィックス・ドキュメントの PR を含む）を取り込む。
-  3. `tools/qa/fj-test.cjs`・`fj-overlap.cjs` に加え、マウスを動かさないホイールスクロールでも進むかを確認（wheel.cjs の FLOW 版）。
-  4. PC・スマホの GIF を `tools/qa/vid.cjs`（実時間の録画）→ ffmpeg で作り、`claude/pr-assets` に置いて PR に載せる。
-  5. 自己評価（安心感・うるさくないか・信頼感）を PR に書く → チェック後マージ。
+  1. ~~一時停止を `watchReading` に置き換え~~（済み）。~~main の取り込み~~（済み）。~~ホイールだけで進むかの確認~~（済み：`tools/qa/fj-wheel.cjs` 全10ページ OK）。
+  2. PC・スマホの GIF を `tools/qa/vid.cjs`（実時間の録画）→ ffmpeg で作り、`claude/pr-assets` に置いて PR に載せる。
+  3. 自己評価（安心感・うるさくないか・信頼感）を PR に書く → チェック後マージ。
 - 気づき：
   - スクリプトで一瞬でスクロール位置を飛ばしたときだけ、まれに CLS 0.056 が記録される（位置は実際には変わっていない）。
   - 実際のホイール操作では 0（`tools/qa/cls-real.cjs`）。PR に正直に書く。

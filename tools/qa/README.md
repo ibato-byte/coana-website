@@ -22,6 +22,7 @@ npx wrangler pages dev dist --port 8789                             # AI なし�
 | --- | --- |
 | `wheel.cjs` | **マウスを動かさず**ホイールだけで HOW IT WORKS まで来て、数秒以内に工程が進むか（全LP）。カードの上で動かすと止まり、約2.5秒で再開するか |
 | `story-test.cjs` | HOW IT WORKS：画面外で止まる／一度に1つ／タブ非表示で止まる／一周して繰り返す／動きを減らす設定で完成形／CLS |
+| `fj-wheel.cjs` | FLOW：マウスを動かさずホイールだけで来て進むか、ステップの上でカーソルを動かすと止まり約2.5秒で再開するか |
 | `fj-test.cjs` `fj-overlap.cjs` | FLOW のアニメーション（ブランチ claude/flow-journey）：止まる条件、文字・番号に重ならないか |
 | `toggles.cjs` | 全開閉UIの「開く→閉じる→開く」（クリック・タップ・Enter・Space、aria-expanded） |
 | `entry.cjs` `entry-pages.cjs` | 入り方（再読み込み・ロゴ・メニュー・戻る/進む・リンク）を変えても演出が同じか |
