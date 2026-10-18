@@ -506,7 +506,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 .relay-client .relay-icon { background: var(--yellow); color: var(--navy-ink); }
 .relay-center { grid-area: center; border: 0; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); box-shadow: 0 14px 34px rgba(13, 35, 56, .22); }
 .relay-center .relay-icon { background: rgba(255, 255, 255, .16); color: var(--white); }
-.relay-center .relay-sub { color: rgba(255, 255, 255, .92); }
+.relay-center .relay-sub { color: var(--white); } /* 青のグラデーションの明るい側でも AA（4.5:1）を満たす */
 /* 今、鳩がいるカード：外側の輪を opacity だけで出す */
 .relay-card::before, .relay-area::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; box-shadow: 0 0 0 4px rgba(8, 127, 229, .16); opacity: 0; transition: opacity var(--m-color); pointer-events: none; }
 .relay-client::before { box-shadow: 0 0 0 4px rgba(252, 201, 52, .55); }

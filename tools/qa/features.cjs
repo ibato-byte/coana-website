@@ -69,7 +69,8 @@ const shapesDrawn = (sel) => [...document.querySelectorAll(sel)].every((s) => { 
   // FLOW（静止画＋PC のホバー）
   await p.evaluate(() => document.querySelector('.lp-flow').scrollIntoView({ block: 'start' })); await p.waitForTimeout(800);
   const fl = await p.evaluate(() => ({ progress: !!document.querySelector('[data-progress]'), steps: [...document.querySelectorAll('.lp-flow .flowx-step')].filter((s) => s.getBoundingClientRect().height > 0 && getComputedStyle(s.querySelector('h3')).opacity === '1').length, nums: [...document.querySelectorAll('.lp-flow .flowx-num')].map((n) => n.textContent).join(','), cta: document.querySelectorAll('.lp-flow .flowx-cta a').length, lead: document.querySelector('.lp-flow .flowx-lead')?.textContent }));
-  ok(`${tag} FLOW：スクロール連動なし・全ステップが最初から読める・線の先に相談ボタン1つ`, !fl.progress && fl.steps === 5 && fl.nums === '01,02,03,04,05' && fl.cta === 1 && fl.lead === 'まずは無料相談から', JSON.stringify(fl));
+  // 相談ボタンは FLOW には置かない（導線はページ下部のお問い合わせの帯に一本化。PR #33）
+  ok(`${tag} FLOW：スクロール連動なし・全ステップが最初から読める`, !fl.progress && fl.steps === 5 && fl.nums === '01,02,03,04,05', JSON.stringify(fl));
   if (!mobile) {
    await p.hover('.lp-flow .flowx-step >> nth=1'); await p.waitForTimeout(500);
    const hv = await p.evaluate(() => { const n = document.querySelectorAll('.lp-flow .flowx-node')[1]; return { bg: getComputedStyle(n).backgroundColor, tr: getComputedStyle(n).transform }; });
@@ -78,8 +79,9 @@ const shapesDrawn = (sel) => [...document.querySelectorAll(sel)].every((s) => { 
   // 一本の流れ型（営業支援）
   await p.goto(BASE + '/services/sales-support', { waitUntil: 'networkidle' });
   await p.evaluate(() => document.querySelector('.lp-scheme').scrollIntoView({ block: 'start' })); await p.waitForTimeout(2200);
-  const sf = await p.evaluate(() => ({ in: document.querySelector('.lp-scheme-flow').classList.contains('in'), lit: [...document.querySelectorAll('.lp-scheme-flow-icon')].every((i) => getComputedStyle(i, '::before').opacity === '1'), badges: [...document.querySelectorAll('.lp-scheme-flow-icon b')].every((b) => getComputedStyle(b).opacity === '1') }));
-  ok(`${tag} HOW IT WORKS（一本の流れ型）：各ステージが点灯`, sf.in && sf.lit && sf.badges, JSON.stringify(sf));
+  // 鳩が1つずつ届けるので、点灯は届いた工程だけ（起点から順に）。軌道の線は描かない。番号はすべて読める
+  const sf = await p.evaluate(() => ({ now: document.querySelectorAll('.lp-scheme-flow li.is-now').length, route: document.querySelectorAll('.lp-scheme-flow-wrap .dove-route, .lp-scheme-flow-wrap .route-base').length, badges: [...document.querySelectorAll('.lp-scheme-flow-icon b')].every((b) => getComputedStyle(b).opacity === '1') }));
+  ok(`${tag} HOW IT WORKS（一本の流れ型）：届いた工程が点灯・軌道の線なし・番号が読める`, sf.now === 1 && sf.route === 0 && sf.badges, JSON.stringify(sf));
   // サービス一覧：帯・料金→流れ→相談
   await p.goto(BASE + '/services', { waitUntil: 'networkidle' });
   const sv = await p.evaluate(() => { const order = [...document.querySelectorAll('.flow-section .pricing-box, .flow-section .section-title, .flow-section .flowx-cta')].map((e) => e.className.split(' ')[0]); const bnd = document.querySelector('.diagnose-banner'); return { order: order.join('>'), band: !!bnd && bnd.querySelectorAll('button, a').length === 1, icons: [...document.querySelectorAll('.flow-section .flowx-icon svg *')].every((s) => getComputedStyle(s).strokeDasharray === 'none') }; });
