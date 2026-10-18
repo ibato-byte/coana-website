@@ -46,7 +46,7 @@ type Options = {
 
 /* 時間（ミリ秒） */
 // 止まっている時間 ＝ 着地 0.32 ＋ 荷物を置く 0.38 ＋ 間 0.5（この間に次の荷物に持ち替える）＝ 約1.2秒
-const T = { appear: 450, startHold: 1200, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, endHold: 2000, gap: 600 };
+const T = { appear: 450, startHold: 1400, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, endHold: 2000, gap: 600 };
 const EASE_FLY = "cubic-bezier(.45, 0, .25, 1)"; // 飛ぶ：ゆっくり出て、ゆっくり降りる
 const EASE_OUT = "cubic-bezier(.22, 1, .36, 1)";
 
@@ -95,7 +95,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     });
     const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
     /** Web Animations で動かし、終わったら最終の値を style に残して animation は片付ける（積み重ねない） */
-    const anim = async (target: HTMLElement, frames: Keyframe[], o: KeyframeAnimationOptions) => {
+    const anim = async (target: HTMLElement | SVGElement, frames: Keyframe[], o: KeyframeAnimationOptions) => {
       const a = target.animate(frames, { fill: "forwards", ...o });
       await a.finished.catch(() => undefined);
       if (cancelled) return;
@@ -218,7 +218,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     const rail = (a: Pt, c: Pt, under: number[], legOffset: number): Pt[] => {
       if (Math.abs(c.y - a.y) <= 4) return [];
       const s = size();
-      const edge = Math.max(...[curKey, ...keys].map((k) => find(k)).filter((f): f is NonNullable<typeof f> => !!f).map((f) => f.r.right)) - root.getBoundingClientRect().left;
+      const edge = Math.max(...keys.map((k) => find(k)).filter((f): f is NonNullable<typeof f> => !!f).map((f) => f.r.right)) - root.getBoundingClientRect().left;
       const x = edge + s * 0.5 - 6; // 鳩の体の大部分がカードの外に出る位置
       under.push(legOffset + 1); // 縁へ出る区間の次（上下の区間）だけ後ろ
       return [{ x, y: a.y }, { x, y: c.y }];
@@ -242,37 +242,46 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       await anim(cargoCard, [{ opacity: 0, transform: "scale(.6)" }, { opacity: 1, transform: "scale(1.12)", offset: 0.7 }, { opacity: 1, transform: "scale(1)" }], { duration: 280, easing: EASE_OUT });
     };
 
-    // ── 飛ぶ：予備動作 → 弧を描いて移動（翼は CSS で羽ばたき、荷物は揺れる）→ 着地 → 荷物をそっと置く ──
-    const fly = async (path: Pt[], { exit = false, under = [] as number[] } = {}) => {
-      const to = path[path.length - 1];
-      face(to.x < pos.x - 4 ? -1 : 1);
-      await anim(body, [{ transform: "none" }, { transform: "translateY(1.5px) scale(1.07, .88)" }], { duration: T.crouch, easing: "ease-out" });
-      dove.classList.add("is-flying");
-      // 弧：区間ごとに、横の移動は上へ、縦の移動は少し右（カードの外側）へふくらませる
-      const pts: Pt[] = [pos, ...path];
+    // ── 道筋：区間ごとの弧（横の移動は上へ、縦の移動は少し右＝カードの外側へふくらむ）。飛ぶ動きと、先に見せる経路の両方に使う ──
+    type Sample = { x: number; y: number; tilt: number };
+    const N = 10;
+    const sample = (pts: Pt[], dir: number): Sample[][] => {
       const legs = pts.length - 1;
-      const N = 8;
-      const legFrames = (si: number, from: number) => {
-        const a = pts[si], b = pts[si + 1];
+      return pts.slice(1).map((b, si) => {
+        const a = pts[si];
         const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
         const horiz = Math.abs(dx) >= Math.abs(dy);
-        const h = Math.min(26, 8 + len * 0.08, horiz ? headroom(a, b, facing) : 26, legs > 1 ? 8 : 26);
-        const frames: Keyframe[] = [];
-        for (let i = from; i <= N; i++) {
+        const h = Math.min(26, 8 + len * 0.08, horiz ? headroom(a, b, dir) : 26, legs > 1 ? 8 : 26);
+        const out: Sample[] = [];
+        for (let i = 0; i <= N; i++) {
           const t = i / N, arc = 4 * t * (1 - t) * h;
-          const x = a.x + dx * t + (horiz ? 0 : arc * 0.4);
-          const y = a.y + dy * t - (horiz ? arc : 0);
-          const tilt = horiz ? (1 - 2 * t) * -9 * Math.sign(dx || 1) * facing : 0;
-          const f: Keyframe = { transform: `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${tilt.toFixed(1)}deg)` };
-          if (exit) f.opacity = String(1 - Math.max(0, (si * N + i) / (N * legs) - 0.45) / 0.55);
-          frames.push(f);
+          out.push({ x: a.x + dx * t + (horiz ? 0 : arc * 0.4), y: a.y + dy * t - (horiz ? arc : 0), tilt: horiz ? (1 - 2 * t) * -9 * Math.sign(dx || 1) * dir : 0 });
         }
-        return frames;
-      };
+        return out;
+      });
+    };
+    const frame = (p: Sample, opacity?: number): Keyframe => {
+      const f: Keyframe = { transform: `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) rotate(${p.tilt.toFixed(1)}deg)` };
+      if (opacity !== undefined) f.opacity = String(opacity);
+      return f;
+    };
+
+    // ── 飛ぶ：予備動作 → 弧を描いて移動（翼は CSS で羽ばたき、荷物は揺れる）→ 着地 → 荷物をそっと置く ──
+    // trail：通ったところから色がつく経路（飛ぶ時間に合わせて線を引く）
+    const fly = async (leg: Leg, { exit = false, trail }: { exit?: boolean; trail?: SVGSVGElement | null } = {}) => {
+      const { pts, under, samples } = leg;
+      const to = pts[pts.length - 1];
+      face(leg.dir);
+      await anim(body, [{ transform: "none" }, { transform: "translateY(1.5px) scale(1.07, .88)" }], { duration: T.crouch, easing: "ease-out" });
+      dove.classList.add("is-flying");
+      const legs = samples.length;
       const total = T.fly * (legs > 1 ? 1.35 : 1);
       void anim(body, [{ transform: "translateY(1.5px) scale(1.07, .88)" }, { transform: "scale(.95, 1.06)", offset: 0.25 }, { transform: "none", offset: 0.6 }, { transform: "none" }], { duration: T.fly * 0.6, easing: "linear" });
+      // 通った区間に色をつける（opacity だけ。線を引く描画は毎フレーム描き直しになるので使わない）
+      if (trail) void anim(trail, [{ opacity: 0 }, { opacity: 1 }], { duration: total, easing: "ease-in" });
       if (!under.length) {
-        await anim(dove, pts.slice(1).flatMap((_, si) => legFrames(si, si === 0 ? 0 : 1)), { duration: total, easing: EASE_FLY });
+        const all = samples.flatMap((s, si) => (si === 0 ? s : s.slice(1)));
+        await anim(dove, all.map((p, i) => frame(p, exit ? 1 - Math.max(0, i / (all.length - 1) - 0.45) / 0.55 : undefined)), { duration: total, easing: EASE_FLY });
       } else {
         // カードの後ろをくぐる区間がある：区間ごとに動かし、くぐる区間だけ鳩をカードの後ろへ（切り替えはカードの外＝右の余白で）
         const lens = pts.slice(1).map((b, i) => Math.hypot(b.x - pts[i].x, b.y - pts[i].y) || 1);
@@ -280,7 +289,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         for (let si = 0; si < legs; si++) {
           dove.classList.toggle("is-under", under.includes(si));
           const easing = si === 0 ? "cubic-bezier(.45, 0, .85, .65)" : si === legs - 1 ? "cubic-bezier(.15, .35, .25, 1)" : "linear";
-          await anim(dove, legFrames(si, 0), { duration: total * (lens[si] / sum), easing });
+          await anim(dove, samples[si].map((p) => frame(p)), { duration: total * (lens[si] / sum), easing });
           if (cancelled) return;
         }
         dove.classList.remove("is-under");
@@ -301,6 +310,96 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         anim(body, [{ transform: "none" }, { transform: "rotate(6deg)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY }),
         anim(cargoEl, [{ transform: "none" }, { transform: "translateY(2px)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY }),
       ]);
+    };
+
+    // ── 一周の計画：起点と、各工程への道筋をまとめて先に決める（経路を先に薄く見せるため。画面幅が変わったら作り直す） ──
+    type Leg = { pts: Pt[]; under: number[]; dir: number; samples: Sample[][] };
+    type Plan = { list: DoveStop[]; p0: Pt; legs: (Leg | null)[] };
+    const legTo = (from: Pt, stop: DoveStop, to: Pt): Leg => {
+      const path: Pt[] = [];
+      const under: number[] = [];
+      // 縦並びには「図の下を回る」道がないので、ふつうの順路（カードの後ろをくぐる）で戻る
+      const via = stop.via === "below" && vertical.matches ? undefined : stop.via;
+      if (via === "below") {
+        // 図の下の余白を回って戻る。降りる・昇るときもカードの文字の上は通らない
+        const y = below();
+        const x1 = clearX(from, { x: from.x, y }), x2 = clearX({ x: to.x, y }, to);
+        if (x1 !== null) path.push({ x: x1, y: from.y });
+        path.push({ x: x1 ?? from.x, y }, { x: x2 ?? to.x, y });
+        if (x2 !== null) path.push({ x: x2, y: to.y });
+      } else if (via) {
+        const v = perch(via);
+        if (v && edgeRail()) {
+          path.push(...rail(from, v, under, 0), v);
+          path.push(...rail(v, to, under, path.length));
+        } else if (v) path.push(...around(from, v), v, ...around(v, to));
+      } else if (edgeRail()) {
+        path.push(...rail(from, to, under, 0));
+      } else if (!vertical.matches) {
+        path.push(...around(from, to));
+      }
+      path.push(to);
+      const pts = [from, ...path];
+      const dir = to.x < from.x - 4 ? -1 : 1;
+      return { pts, under, dir, samples: sample(pts, dir) };
+    };
+    const makePlan = (list: DoveStop[]): Plan | null => {
+      textCache = null; // 文字の位置は計画のたびに1回だけ測る
+      const p0 = perch(list[0].at);
+      if (!p0) return null;
+      let cur = p0;
+      const legs = list.slice(1).map((stop) => {
+        const to = perch(stop.at);
+        if (!to) return null;
+        const leg = legTo(cur, stop, to);
+        cur = to;
+        return leg;
+      });
+      return { list, p0, legs };
+    };
+
+    // ── 経路を先に薄く見せる（点線）。通ったところは色のついた線で上からなぞる ──
+    const routeBase = q<SVGGElement>(".route-base g");
+    const routeDone = q<HTMLDivElement>(".route-done");
+    const startDot = q<HTMLSpanElement>(".dove-start");
+    const SVGNS = "http://www.w3.org/2000/svg";
+    let trails: (SVGSVGElement | null)[] = [];
+    let drawn = "";
+    const drawRoute = (plan: Plan, doneUpTo: number) => {
+      // FLOW の縦並びは、丸をつなぐ線がそのまま道筋なので重ねない
+      const show = !(opts.rail === "line" && vertical.matches);
+      const ds = plan.legs.map((leg) => {
+        if (!leg || !show) return null;
+        const pts = leg.samples.flatMap((s, si) => (si === 0 ? s : s.slice(1)));
+        return "M" + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join("L");
+      });
+      startDot.style.transform = `translate(${plan.p0.x.toFixed(1)}px, ${plan.p0.y.toFixed(1)}px)`;
+      const key = ds.join("|");
+      if (key !== drawn) {
+        // 点線（これから進む道筋）は1枚の絵に。色のついた線は区間ごとに別の絵にして、opacity だけで出す
+        drawn = key;
+        routeBase.replaceChildren();
+        routeDone.replaceChildren();
+        trails = ds.map((d) => {
+          if (!d) return null;
+          const base = document.createElementNS(SVGNS, "path");
+          base.setAttribute("d", d);
+          routeBase.append(base);
+          const svg = document.createElementNS(SVGNS, "svg");
+          const path = document.createElementNS(SVGNS, "path");
+          path.setAttribute("d", d);
+          svg.append(path);
+          routeDone.append(svg);
+          return svg;
+        });
+      }
+      trails.forEach((t, i) => { if (t) t.style.opacity = i < doneUpTo ? "1" : "0"; });
+    };
+    // 起点の印：画面に入ったら、輪が2回だけそっと広がって視線を起点へ
+    const hello = () => {
+      startDot.classList.remove("is-hello");
+      void startDot.offsetWidth;
+      startDot.classList.add("is-hello");
     };
 
     // ── 着いたときの小さな出来事（FLOW） ──
@@ -338,24 +437,70 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
 
     const setStep = (nowKey: string | null, doneKeys: string[]) => { setNow(nowKey); setDone(doneKeys); if (nowKey) curKey = nowKey; };
 
+    // 起点の工程が画面に入っているか（スマホで、起点が画面の外のまま出発しないように）
+    let startSeen = false;
+    const startIO = new IntersectionObserver((entries) => {
+      for (const e of entries) startSeen = e.isIntersecting && (e.intersectionRatio >= 0.85 || e.intersectionRect.height >= window.innerHeight * 0.6);
+      wakeRef.current();
+    }, { threshold: [0, 0.5, 0.85, 1] });
+    let watched: Element | null = null;
+    const watchStart = (key: string) => {
+      const t = find(key)?.t ?? null;
+      if (t === watched) return;
+      if (watched) startIO.unobserve(watched);
+      watched = t;
+      startSeen = false;
+      if (t) startIO.observe(t);
+    };
+    /** 出発してよいか：止める条件がなく、起点が画面に入っている */
+    const startGate = () => new Promise<void>((resolve) => {
+      const check = () => { if (cancelled || (!paused() && (startSeen || !watched))) { wakeRef.current = () => {}; resolve(); } };
+      wakeRef.current = check;
+      check();
+    });
+
+    let plan: Plan | null = null;
+    let stepIdx = 0; // 何区間目まで進んだか（画面幅が変わって経路を引き直すとき、通った区間の色を残す）
+    /** 起点に鳩を置き、起点の工程だけを点灯（動き出す前からこの状態で見せる） */
+    const setStart = (p: Plan) => {
+      const first = p.list[0];
+      face(1);
+      place(p.p0);
+      setCargo(first.cargo ?? "doc", !!first.gold);
+      cargoCard.classList.remove("show-check", "show-stamp");
+      setStep(first.at, [first.at]);
+      stepIdx = 0;
+      drawRoute(p, 0);
+      watchStart(first.at);
+    };
+
     const run = async () => {
       let loop = 0;
       while (!cancelled) {
-        const list = stops(loop);
-        await gate();
+        if (loop > 0) {
+          // 2周目から：起点に静かに現れる（経路の色はリセット）
+          await gate();
+          if (cancelled) return;
+          plan = makePlan(stops(loop));
+          if (!plan) return;
+          setStart(plan);
+          void anim(routeDone, [{ opacity: 0 }, { opacity: 1 }], { duration: 10 });
+          await anim(dove, [{ opacity: 0, transform: `translate(${plan.p0.x}px, ${plan.p0.y + 6}px) scale(.92)` }, { opacity: 1, transform: `translate(${plan.p0.x}px, ${plan.p0.y}px)` }], { duration: T.appear, easing: EASE_OUT });
+          dove.style.opacity = "1";
+        }
+        if (!plan) return;
+        // 起点：起点が画面に入ってから、しばらく静止して出発する
+        await startGate();
         if (cancelled) return;
+        hello();
+        // 起点での静止と並行して、図そのものの表示アニメーション（現れる・線を引く）が終わるのを待つ（最大1.2秒）。
+        // 動いている途中の文字の位置で道筋を決めないように
+        const appearing = (root.closest("section") ?? root).getAnimations({ subtree: true }).filter((a) => a.effect?.getTiming().iterations !== Infinity && !(a.effect instanceof KeyframeEffect && a.effect.target instanceof Element && a.effect.target.closest(".dove-layer")));
+        await Promise.all([wait(T.startHold), Promise.race([Promise.all(appearing.map((a) => a.finished.catch(() => undefined))), wait(1200)])]);
+        await startGate();
+        if (cancelled) return;
+        const list = plan.list;
         const first = list[0];
-        const p0 = perch(first.at);
-        if (!p0) return;
-        // 起点：鳩が現れて、最初の工程が点灯。しばらく静止してから出発する
-        face(1);
-        place(p0);
-        setCargo(first.cargo ?? "doc", !!first.gold);
-        cargoCard.classList.remove("show-check", "show-stamp");
-        setStep(first.at, [first.at]);
-        await anim(dove, [{ opacity: 0, transform: `translate(${p0.x}px, ${p0.y + 6}px) scale(.92)` }, { opacity: 1, transform: `translate(${p0.x}px, ${p0.y}px)` }], { duration: T.appear, easing: EASE_OUT });
-        dove.style.opacity = "1";
-        await wait(T.startHold);
         if (first.event) await runEvent(first);
         const visited = [first.at];
         for (const [i, stop] of list.slice(1).entries()) {
@@ -363,32 +508,15 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           if (cancelled) return;
           // 運ぶものを持ち替えてから飛び立つ（ふつうは前の工程で止まっている間に済んでいる）
           if (stop.cargo) await swapCargo(stop.cargo, !!stop.gold);
-          const to = perch(stop.at);
-          if (!to) continue;
-          textCache = null;
-          const path: Pt[] = [];
-          const under: number[] = [];
-          if (stop.via === "below" && !vertical.matches) {
-            // 図の下の余白を回って戻る。降りる・昇るときもカードの文字の上は通らない
-            const y = below();
-            const x1 = clearX(pos, { x: pos.x, y }), x2 = clearX({ x: to.x, y }, to);
-            if (x1 !== null) path.push({ x: x1, y: pos.y });
-            path.push({ x: x1 ?? pos.x, y }, { x: x2 ?? to.x, y });
-            if (x2 !== null) path.push({ x: x2, y: to.y });
-          } else if (stop.via) {
-            const v = perch(stop.via);
-            if (v && edgeRail()) {
-              path.push(...rail(pos, v, under, 0), v);
-              path.push(...rail(v, to, under, path.length));
-            } else if (v) path.push(...around(pos, v), v, ...around(v, to));
-          } else if (edgeRail()) {
-            path.push(...rail(pos, to, under, 0));
-          } else if (!vertical.matches) {
-            path.push(...around(pos, to));
-          }
-          path.push(to);
-          await fly(path, { under });
+          // 飛ぶ直前に、いまの配置で道筋を測り直す（表示アニメーションや文字の読み込みで位置が変わっていることがある）
+          // 飛ぶ直前に、いまの配置で道筋を測り直す（図の表示アニメーションの途中で、ほかの工程の文字が動いていることがある）。
+          // 経路の絵は、変わったときだけ描き直す
+          replan();
+          const leg = plan.legs[i];
+          if (!leg) continue;
+          await fly(leg, { trail: trails[i] });
           if (cancelled) return;
+          stepIdx = i + 1;
           visited.push(stop.at);
           setStep(stop.at, [...visited]);
           if (stop.event) await runEvent(stop);
@@ -399,12 +527,15 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         await wait(T.endHold);
         await gate();
         if (cancelled) return;
+        const fade = anim(routeDone, [{ opacity: 1 }, { opacity: 0 }], { duration: 420, easing: "ease-in" });
         if (opts.flyAway) {
           const away = vertical.matches ? { x: pos.x, y: pos.y - size() * 1.8 } : { x: pos.x + size() * 2, y: pos.y - size() * 1.3 };
-          await fly([away], { exit: true });
+          const pts = [pos, away];
+          await fly({ pts, under: [], dir: 1, samples: sample(pts, 1) }, { exit: true });
         } else {
           await anim(dove, [{ opacity: 1 }, { opacity: 0 }], { duration: 420, easing: "ease-in" });
         }
+        await fade;
         dove.style.opacity = "0";
         setStep(null, []);
         await wait(T.gap);
@@ -430,15 +561,32 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     // カードを読んでいる間だけ止める（セクションに入っただけでは止めない）
     const watcher = watchReading(root, opts.cardSelector ?? "[data-story]", () => wakeRef.current());
     reading = watcher.reading;
-    // 画面幅が変わったら、今いる工程へ（動きなしで）
-    const ro = new ResizeObserver(() => { if (curKey && !dove.classList.contains("is-flying")) { const p = perch(curKey); if (p) place(p); } });
+    // 画面幅が変わったら（文字の読み込みで高さが変わったときも）、経路を引き直し、今いる工程へ（動きなしで）
+    const replan = () => {
+      if (!plan || dove.classList.contains("is-flying")) return;
+      const next = makePlan(plan.list);
+      if (!next) return;
+      plan = next;
+      drawRoute(plan, stepIdx);
+      const p = curKey ? perch(curKey) : null;
+      if (p) place(p);
+    };
+    const ro = new ResizeObserver(replan);
     ro.observe(root);
+    void document.fonts?.ready.then(() => { if (!cancelled) replan(); });
+    // 初期表示：画面に入る前から、起点で鳩が荷物を持って待っている（起点の工程だけ点灯、経路は薄く）
+    plan = makePlan(stops(0));
+    if (plan) {
+      setStart(plan);
+      dove.style.opacity = "1";
+    }
     setRunning(true);
     void run();
     return () => {
       cancelled = true;
       wakeRef.current();
       io.disconnect();
+      startIO.disconnect();
       ro.disconnect();
       watcher.stop();
       document.removeEventListener("visibilitychange", onVis);
@@ -457,6 +605,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
 function DoveLayer({ layer }: { layer: RefObject<HTMLDivElement | null> }) {
   return (
     <div className="dove-layer" ref={layer} aria-hidden="true">
+      <div className="dove-route"><svg className="route-base"><g /></svg><div className="route-done" /></div>
+      <span className="dove-start" />
       <div className="dove-fx">
         <span className="fx-bubble is-a"><svg viewBox="0 0 22 16"><path d="M3 1.5h16a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H9l-4 3v-3H3a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2z" /><circle cx="7" cy="7" r="1" /><circle cx="11" cy="7" r="1" /><circle cx="15" cy="7" r="1" /></svg></span>
         <span className="fx-bubble is-b"><svg viewBox="0 0 22 16"><path d="M19 1.5H3a2 2 0 0 0-2 2v6.5a2 2 0 0 0 2 2h10l4 3v-3h2a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2z" /><path className="ln" d="M6 6.5h10M6 9h6" /></svg></span>

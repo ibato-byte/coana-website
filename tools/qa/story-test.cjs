@@ -7,7 +7,9 @@ const snap = (p) => p.evaluate((R) => {
   const root = document.querySelector(R);
   // 鳩（見えているもの）の数と、位置＋運んでいるもの
   const chips = [...root.querySelectorAll('.dove')].filter((c) => +getComputedStyle(c).opacity > 0.05);
-  return { done: root.querySelectorAll('.is-done').length, now: root.querySelectorAll('.is-now').length, chips: chips.length, labels: chips.map((c) => c.style.transform + (c.querySelector('.cargo-glyph')?.getAttribute('d') || '')).join('|') };
+  // 工程のキーで数える（中心型の図は、PC の図とスマホのリストに同じ工程が2つある）
+  const keysOf = (sel) => new Set([...root.querySelectorAll(sel)].map((e) => e.getAttribute('data-story') || e.querySelector('[data-story]')?.getAttribute('data-story'))).size;
+  return { done: keysOf('.is-done'), now: keysOf('.is-now'), chips: chips.length, labels: chips.map((c) => c.style.transform + (c.querySelector('.cargo-glyph')?.getAttribute('d') || '')).join('|') };
 }, ROOT);
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
@@ -20,8 +22,16 @@ const snap = (p) => p.evaluate((R) => {
       await p.goto(`http://localhost:4173/services/${slug}`, { waitUntil: 'networkidle' });
       await p.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
       await p.mouse.move(1, 1);
-      const before = await snap(p);
-      ok(`${dev} ${slug} 画面外では始まらない`, before.chips === 0 && before.done === 0, JSON.stringify(before));
+      // 初期表示：画面に入る前から、起点で鳩が待っていて起点だけ点灯。画面外では動かない
+      const before = await snap(p); await p.waitForTimeout(2500); const before2 = await snap(p);
+      ok(`${dev} ${slug} 初期表示は起点で待機（起点だけ点灯・経路と起点の印あり）・画面外では動かない`, before.chips === 1 && before.done === 1 && before.now === 1 && before.labels === before2.labels && before2.done === 1 && (await p.evaluate((R) => document.querySelector(R).querySelectorAll('.route-base path').length > 0 && !!document.querySelector(R).querySelector('.dove-start'), ROOT)), JSON.stringify(before));
+      if (dev === 'スマホ') {
+        // 起点が画面の上に外れていて、図の下のほうだけ見えている → 出発しない。起点が入ったら出発する
+        await p.evaluate((R) => { const e = document.querySelector(R); const r = e.getBoundingClientRect(); scrollTo(0, r.bottom + scrollY - innerHeight + 40); }, ROOT);
+        const startOut = await p.evaluate((R) => { const t = document.querySelector(R).querySelector('[data-story].is-now, .is-now [data-story], .is-now'); return t ? t.getBoundingClientRect().bottom < 0 : false; }, ROOT);
+        await p.waitForTimeout(5000); const w = await snap(p);
+        ok(`${dev} ${slug} 起点が画面外のままでは出発しない`, !startOut || (w.done === 1 && w.labels === before.labels), `startOut=${startOut} done=${w.done}`);
+      }
       await p.evaluate((R) => { const e = document.querySelector(R); scrollTo(0, e.getBoundingClientRect().top + scrollY - 120); }, ROOT);
       // 進む：3秒・6秒で完了した工程が増える。チップは常に1つ（経理代行の最後の分かれ道だけ2つ）
       let maxChips = 0; const dones = [];

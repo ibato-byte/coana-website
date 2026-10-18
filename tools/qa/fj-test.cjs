@@ -14,7 +14,8 @@ const st = (p) => p.evaluate(() => ({ done: document.querySelectorAll('.flowx-st
       await p.mouse.move(1, 1);
       const h0 = await p.evaluate(() => document.documentElement.scrollHeight);
       const s0 = await st(p);
-      ok(`${dev} ${u} 画面外では始まらない`, s0.done === 0 && s0.now === -1);
+      await p.waitForTimeout(2500); const s0b = await st(p);
+      ok(`${dev} ${u} 初期表示は起点で待機・画面外では動かない`, s0.done === 1 && s0.now === 0 && s0b.tr === s0.tr && s0b.done === 1, JSON.stringify(s0));
       await p.evaluate(() => { const e = document.querySelector('.flowx'); scrollTo(0, e.getBoundingClientRect().top + scrollY - 160); });
       await p.waitForTimeout(7000);
       const s1 = await st(p);

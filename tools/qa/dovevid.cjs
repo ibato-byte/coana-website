@@ -13,7 +13,10 @@ const [,, path, dev, out, name, secs, sel] = process.argv;
   const p = await ctx.newPage();
   await p.goto(BASE + path, { waitUntil: 'networkidle' });
   await p.addStyleTag({ content: 'html { scroll-behavior: auto !important; } .site-header, .chat-launcher, .back-to-top, .lp-sticky, .scroll-progress { visibility: hidden !important; }' });
-  await p.evaluate((s) => { const e = document.querySelector(s); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70); }, sel);
+  // 切り出しの目印：スクロールの直前に0.4秒だけ画面を黒くする（GIF は黒が消えた次のコマから）
+  await p.evaluate(() => { const d = document.createElement('div'); d.id = 'cut-mark'; d.style.cssText = 'position:fixed;inset:0;background:#000;z-index:2147483647'; document.body.append(d); });
+  await p.waitForTimeout(400);
+  await p.evaluate((s) => { const e = document.querySelector(s); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70); document.getElementById('cut-mark').remove(); }, sel);
   const scrolled = (Date.now() - t0) / 1000;
   await p.mouse.move(2, 2);
   const bb = await p.locator(sel).first().boundingBox();
