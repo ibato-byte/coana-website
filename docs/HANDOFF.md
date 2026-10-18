@@ -52,8 +52,8 @@
 - テスト：story-test（初期表示・起点が画面外なら出発しない）、fj-test（初期表示）。
 - 次の一手：本番での目視（接続できる環境で）。
 
-### 6. 【進行中】バックオフィス代行LP の HOW IT WORKS を作り直し（リレー型）＋ 他のハブ型LPの見直し
-- ブランチ：`claude/backoffice-relay`（WIP push 済み）。
+### 6. 【完了：PR #41 マージ済み】バックオフィス代行LP の HOW IT WORKS を作り直し（リレー型）＋ 他のハブ型LPの見直し＋全LPの鳩の見直し
+- ブランチ：`claude/backoffice-relay`／PR：https://github.com/ibato-byte/coana-website/pull/41（main 08f7f35）。
 - 依頼：ハブ型（中心＋周囲）が「流れが分かりづらい」。
   - PC：左→右の一方向（御社 →1→ COANA TOKYO チーム →2→ 領域）。下の段で 3 完了をご報告 → 4 マニュアル化 → 御社へ戻る。
   - スマホ：上→下の1列。領域は2列のタグ。高さは現状以下。
@@ -80,8 +80,7 @@
 - テスト済み：dove-overlap（1280・768・390）ALL OK、story-test（終点でそろう→去る→リセット→再出発を追加）、fj-test 132 OK、wheel・fj-wheel・toggles・features ALL OK、contrast（リレー中心カードの補足文を白に）、dove-perf（4x で長いタスク 0〜2 件）。
   - 録画：`tools/qa/finalevid.cjs`（終点の少し前〜次の周の出発までの時刻を JSON に書く）。
 - GIF・Before/After：`claude/pr-assets` の `dove-finale/`・`relay/`（コミット 59b3c99）。
-- 次の一手：
-  1. PR（自己評価「5秒で流れを説明できるか」「初見の人が混乱しないか」）→ チェック後マージ。
+- 次の一手：本番で各LPの HOW IT WORKS と /services の FLOW を目視確認（接続できる環境で）。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
@@ -108,7 +107,8 @@
 - #36 引き継ぎ準備（CLAUDE.md・HANDOFF・tools/qa）
 - #37 鳩がデータを運ぶ（HOW IT WORKS・FLOW）・低スペック対策
 - #38 HANDOFF 更新
-- #39 アニメーションのスタート地点（起点で待機・起点の印・経路の点線・起点が画面に入ってから出発）
+- #39 アニメーションのスタート地点（起点で待機・起点の印・起点が画面に入ってから出発。経路の点線は #41 で廃止）
+- #41 HOW IT WORKS をリレー型に作り直し＋全LPの鳩の見直し（軌道を描かない・終点から飛んで戻らない）
 
 ## 作業環境のメモ
 - **ローカルでの確認**：
