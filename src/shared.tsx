@@ -222,10 +222,10 @@ export function FlowLine({ steps, stepLabel, note, lead, children }: {
   stepLabel?: string;
   /** 目安の期間など（サイトにある情報だけ） */
   note?: ReactNode;
-  /** 線の先の一言（「まずは無料相談から」） */
-  lead: string;
+  /** 線の先の一言（「まずは無料相談から」）。すぐ下にお問い合わせの帯がある LP では付けない */
+  lead?: string;
   /** 線の先のボタン */
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   const icons = steps.some((s) => s.icon);
   const num = (i: number) => String(i + 1).padStart(2, "0");
@@ -245,14 +245,16 @@ export function FlowLine({ steps, stepLabel, note, lead, children }: {
           </li>
         ))}
       </ol>
-      <div className="flowx-end">
-        <div className="flowx-rail">
-          <span className="flowx-drop" aria-hidden="true" />
-          {note && <p className="flowx-note">{note}</p>}
-          <p className="flowx-lead">{lead}</p>
+      {(note || lead) && (
+        <div className={lead ? "flowx-end" : "flowx-end is-note-only"}>
+          <div className="flowx-rail">
+            <span className="flowx-drop" aria-hidden="true" />
+            {note && <p className="flowx-note">{note}</p>}
+            {lead && <p className="flowx-lead">{lead}</p>}
+          </div>
+          {children && <div className="flowx-cta">{children}</div>}
         </div>
-        <div className="flowx-cta">{children}</div>
-      </div>
+      )}
     </div>
   );
 }
@@ -335,7 +337,6 @@ export function ContactBand({ navigate }: { navigate: Nav }) {
         <div className="contact-band-action">
           <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
           <LineButton place="contact_band" />
-          <a className="contact-band-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
       </div>
     </section>

@@ -326,14 +326,10 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
 .lp-cta-band .eyebrow::before { background: var(--yellow); }
 .lp-cta-band h2 { margin: 12px 0 14px; font-size: clamp(25px, 3vw, 38px); font-weight: 900; line-height: 1.5; }
 .lp-cta-band p { margin: 0; line-height: 2; }
-.lp-cta-actions { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.lp-cta-band .button { background: var(--yellow); border-color: var(--yellow); color: var(--navy-ink); box-shadow: 0 14px 34px rgba(0, 0, 0, .25); }
-.lp-cta-band .button:hover { background: #f8cb3e; border-color: #f8cb3e; color: var(--navy-ink); }
-.lp-cta-band .button-fly { --btn-bg: var(--yellow); --btn-fill: #f8cb3e; }
-/* 黄色のボタンの上では、翼の先をロゴの「C」と同じ青にする */
-.lp-cta-band .bird-tip { stroke: #26a3da; }
-.lp-cta-mail { margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-en); font-size: 14px; font-weight: 600; border-bottom: 1px solid rgba(255, 255, 255, .5); padding-bottom: 2px; text-decoration: none; }
-.lp-cta-mail:hover { color: var(--yellow); border-color: var(--yellow); }
+/* 相談の入口：トップなどの帯（.contact-band）と同じく、主は白地に紺の文字で大きめ、副（LINE）は一回り小さく横に並べる（中心をそろえる） */
+.lp-cta-actions { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; }
+.lp-cta-band .button { background: var(--white); border-color: var(--white); color: var(--navy); min-width: 280px; box-shadow: 0 14px 34px rgba(0, 0, 0, .25); }
+.lp-cta-band .button-fly { --btn-bg: var(--white); --btn-fill: #e8f3fc; }
 
 /* ── 関連コラム・そのほかのサービス ── */
 .solution-more { background: var(--white); }
@@ -419,7 +415,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-scope-open { font-size: 12.5px; }
   .lp-scope-grid { padding: 0 14px 14px; }
   .lp-cta-band { padding: 64px 0 72px; }
-  .lp-cta-band .button { width: 100%; }
+  .lp-cta-band .button { width: 100%; min-width: 0; }
   .lp-cta-actions { flex-direction: column; align-items: stretch; }
   .lp-cta-actions a.line-button { width: 100%; }
       .solution-more-grid { grid-template-columns: 1fr; }

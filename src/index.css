@@ -704,12 +704,11 @@ a.service-card:hover .art * { animation-play-state: running; }
 .contact-band .eyebrow::before { background: var(--yellow); }
 .contact-band h2 { margin: 12px 0 16px; font-size: clamp(27px, 2.9vw, 40px); line-height: 1.55; font-weight: 900; }
 .contact-band p { margin: 0; line-height: 2.1; opacity: .96; }
-.contact-band-action { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.contact-band .button { background: var(--white); border-color: var(--white); color: var(--navy); min-width: 250px; box-shadow: 0 14px 34px rgba(4, 48, 86, .3); }
+/* 相談の入口：主（お問い合わせ）は白地に紺の文字で大きめ、副（LINE）は一回り小さく。中心をそろえて縦に並べる */
+.contact-band-action { flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.contact-band .button { background: var(--white); border-color: var(--white); color: var(--navy); min-width: 280px; box-shadow: 0 14px 34px rgba(4, 48, 86, .3); }
 .contact-band .button:hover { background: #e8f3fc; border-color: #e8f3fc; color: var(--navy-ink); }
 .contact-band .button-fly { --btn-bg: var(--white); --btn-fill: #e8f3fc; }
-.contact-band-mail { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-en); font-size: 14px; font-weight: 600; letter-spacing: .04em; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, .55); padding-bottom: 2px; }
-.contact-band-mail:hover { color: var(--yellow); border-color: var(--yellow); }
 
 /* ───────────────────────────── Page hero ───────────────────────────── */
 
@@ -1272,7 +1271,8 @@ a.service-card:hover .art * { animation-play-state: running; }
   .contact-band { padding: 76px 0; }
   .contact-band-inner { display: block; }
   .contact-band-action { margin-top: 32px; }
-  .contact-band .button { width: 100%; }
+  .contact-band-action { align-items: stretch; }
+  .contact-band .button { width: 100%; min-width: 0; }
   .contact-band p br { display: none; }
 
   .page-hero { padding: 130px 0 60px; }
@@ -1419,6 +1419,8 @@ a.line-button:hover {
   box-shadow: var(--shadow-md);
 }
 a.line-button svg { flex: none; color: #06c755; }
+/* お問い合わせの帯の中では、主ボタン（お問い合わせ）より一回り小さい副ボタンとして */
+.contact-band a.line-button, .lp-cta-band a.line-button { min-height: 50px; padding: 0 26px; font-size: 14.5px; box-shadow: 0 8px 22px rgba(4, 48, 86, .22); }
 .line-notice {
   display: flex;
   align-items: center;
