@@ -77,10 +77,11 @@
   - 短く自然な弧だけ（エンジンの `arc()` が文字に当たらない高さ・向きを選ぶ）。大きな迂回・カードの裏くぐりは廃止。perch を外の余白へ（経理代行のレーン：御社側は `out-r`、チーム側は `above-tr`。スマホはカード右に鳩の通り道の余白）。
   - 終点から起点へ飛んで戻らない：置く → 全工程が完了でそろう → 上へ去る → 間 → 点灯リセット（`data-cycle` の「毎月くり返し」が回る）→ 起点に舞い降りる → 静止 → 出発。
   - CLAUDE.md・docs/motion-rules.md にルールを追記済み。
+- テスト済み：dove-overlap（1280・768・390）ALL OK、story-test（終点でそろう→去る→リセット→再出発を追加）、fj-test 132 OK、wheel・fj-wheel・toggles・features ALL OK、contrast（リレー中心カードの補足文を白に）、dove-perf（4x で長いタスク 0〜2 件）。
+  - 録画：`tools/qa/finalevid.cjs`（終点の少し前〜次の周の出発までの時刻を JSON に書く）。
 - 次の一手：
-  1. 全テスト（dove-overlap・story-test・fj-test・wheel・fj-wheel・toggles・features・contrast・rmcheck・dove-perf）。
-  2. 各LPの「終点→再スタート」を含む GIF（PC/390）、Before/After。
-  3. PR（自己評価「5秒で流れを説明できるか」「初見の人が混乱しないか」）→ チェック後マージ。
+  1. 各LPの「終点→再スタート」GIF（PC/390）を `claude/pr-assets` に。
+  2. PR（自己評価「5秒で流れを説明できるか」「初見の人が混乱しないか」）→ チェック後マージ。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
