@@ -492,6 +492,9 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         // 起点：起点が画面に入ってから、しばらく静止して出発する
         await startGate();
         if (cancelled) return;
+        // 図そのものの表示アニメーション（現れる・線を引く）が終わるのを待つ（最大2秒）。動いている途中の文字の位置で道筋を決めないように
+        const appearing = (root.closest("section") ?? root).getAnimations({ subtree: true }).filter((a) => a.effect?.getTiming().iterations !== Infinity && !(a.effect instanceof KeyframeEffect && a.effect.target instanceof Element && a.effect.target.closest(".dove-layer")));
+        if (appearing.length) await Promise.race([Promise.all(appearing.map((a) => a.finished.catch(() => undefined))), wait(2000)]);
         hello();
         await wait(T.startHold);
         await startGate();
@@ -506,11 +509,9 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           // 運ぶものを持ち替えてから飛び立つ（ふつうは前の工程で止まっている間に済んでいる）
           if (stop.cargo) await swapCargo(stop.cargo, !!stop.gold);
           // 飛ぶ直前に、いまの配置で道筋を測り直す（表示アニメーションや文字の読み込みで位置が変わっていることがある）
-          // 位置が変わっていなければ測り直さない（文字の位置を測るのは重いので）
-          const planned = plan.legs[i];
-          const from = perch(list[i].at), to = perch(stop.at);
-          const moved = (a: Pt | null, b: Pt | undefined) => !a || !b || Math.abs(a.x - b.x) > 1 || Math.abs(a.y - b.y) > 1;
-          if (!planned || moved(from, planned.pts[0]) || moved(to, planned.pts[planned.pts.length - 1])) replan();
+          // 飛ぶ直前に、いまの配置で道筋を測り直す（図の表示アニメーションの途中で、ほかの工程の文字が動いていることがある）。
+          // 経路の絵は、変わったときだけ描き直す
+          replan();
           const leg = plan.legs[i];
           if (!leg) continue;
           await fly(leg, { trail: trails[i] });
