@@ -120,7 +120,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       const r = { left: f.r.left - b.left, right: f.r.right - b.left, top: f.r.top - b.top, width: f.r.width };
       if (mode === "in-tr") return { x: r.right - s * 0.78 - 10, y: r.top + 10 + s * 0.82 };
       if (mode === "above-c") return { x: r.left + r.width / 2 - s * 0.18, y: r.top - 3 };
-      return { x: r.right - s * 0.78 - 10, y: r.top + 1 }; // above-tr
+      return { x: r.right - s * 0.78 - 10, y: r.top + 4 }; // above-tr（上の縁に立つ。足もとはカードの上の余白）
     };
     const center = (key: string): Pt | null => {
       const f = find(key);
@@ -131,6 +131,93 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     const below = () => {
       const top = root.getBoundingClientRect().top;
       return Math.max(...keys.map((k) => { const f = find(k); return f ? f.r.bottom - top : 0; })) + size() * 0.9 + 6;
+    };
+
+    // 真っすぐ飛ぶと文字の上を横切るときは、その文字の横を回る（位置の計算は飛ぶ前に1回だけ）
+    const texts = () => {
+      const b = root.getBoundingClientRect();
+      const out: { l: number; r: number; t: number; b: number }[] = [];
+      const walk = document.createTreeWalker(root.closest("section") ?? root, NodeFilter.SHOW_TEXT, { acceptNode: (n) => {
+        const el = n.parentElement;
+        // 見えていない文字（閉じている説明・ホバーで出る説明）は避けなくてよい
+        const shown = el && !el.closest(".dove-layer") && (el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) ?? true);
+        return n.textContent?.trim() && shown ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      } });
+      const range = document.createRange();
+      for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+        range.selectNodeContents(n);
+        // SVG の文字は textLength で詰めて描いているので、描かれた <text> の箱で測る
+        const svgText = n.parentElement?.closest("text");
+        for (const r of svgText ? [svgText.getBoundingClientRect()] : range.getClientRects()) if (r.width > 0 && r.height > 0) out.push({ l: r.left - b.left - 2, r: r.right - b.left + 2, t: r.top - b.top - 2, b: r.bottom - b.top + 2 });
+      }
+      return out;
+    };
+    /** 鳩と荷物の横の広がり（足もとから左・右）。荷物は向いている側に下がる */
+    const reach = (dir: number) => { const s = size(); return dir > 0 ? [s * 0.5 + 6, s * 0.95 + 6] : [s * 0.95 + 6, s * 0.5 + 6]; };
+    /** 横の移動で弧を描くとき、上にある文字に届かない高さ */
+    const headroom = (a: Pt, b: Pt, dir: number) => {
+      const s = size();
+      const [bl, br] = reach(dir);
+      const l = Math.min(a.x, b.x) - bl, r = Math.max(a.x, b.x) + br;
+      const top = Math.min(a.y, b.y) - s * 0.85;
+      let room = Infinity;
+      for (const R of texts()) if (R.r > l && R.l < r && R.b <= top + 2) room = Math.min(room, top - R.b);
+      return Math.max(0, room - 4);
+    };
+    type Box = { l: number; r: number; t: number; b: number };
+    /** a から c へまっすぐ飛ぶと重なる文字 */
+    const hits = (all: Box[], a: Pt, c: Pt, dir: number) => {
+      const s = size();
+      const [bl, br] = reach(dir);
+      return all.filter((R) => {
+        for (let i = 1; i < 16; i++) {
+          const x = a.x + ((c.x - a.x) * i) / 16, y = a.y + ((c.y - a.y) * i) / 16;
+          if (x + br > R.l && x - bl < R.r && y > R.t && y - s * 0.85 < R.b) return true;
+        }
+        return false;
+      });
+    };
+    /** 文字を横切るときに、縦に通れる x（左右のうち近いほう）。横切らなければ null */
+    const clearX = (a: Pt, c: Pt): number | null => {
+      const all = texts();
+      const dir = c.x < a.x - 4 ? -1 : 1;
+      const first = hits(all, a, c, dir);
+      if (!first.length) return null;
+      const [bl, br] = reach(dir);
+      const w = root.getBoundingClientRect().width;
+      let best: number | null = null, cost = Infinity;
+      for (const side of [1, -1]) {
+        let l = Math.min(...first.map((R) => R.l)), r = Math.max(...first.map((R) => R.r));
+        for (let k = 0; k < 6; k++) {
+          const x = side > 0 ? r + bl + 4 : l - br - 4;
+          if (x - bl < 0 || x + br > w) break;
+          const more = hits(all, { x, y: a.y }, { x, y: c.y }, dir);
+          if (!more.length) {
+            const d = Math.abs(a.x - x) + Math.abs(c.x - x);
+            if (d < cost) { cost = d; best = x; }
+            break;
+          }
+          l = Math.min(l, ...more.map((R) => R.l));
+          r = Math.max(r, ...more.map((R) => R.r));
+        }
+      }
+      return best;
+    };
+    const around = (a: Pt, c: Pt): Pt[] => {
+      const x = clearX(a, c);
+      return x === null ? [] : [{ x, y: a.y }, { x, y: c.y }];
+    };
+
+    // 縦並び（スマホ）：カードが画面幅いっぱいに積まれているので、次のカードへはカードの後ろをくぐる。
+    // 右の縁へ出て → カードの後ろ（右の余白から少しのぞく）を上下へ → 次のカードの前へ出て止まる
+    const edgeRail = () => vertical.matches && opts.rail === "edge";
+    const rail = (a: Pt, c: Pt, under: number[], legOffset: number): Pt[] => {
+      if (Math.abs(c.y - a.y) <= 4) return [];
+      const s = size();
+      const edge = Math.max(...[curKey, ...keys].map((k) => find(k)).filter((f): f is NonNullable<typeof f> => !!f).map((f) => f.r.right)) - root.getBoundingClientRect().left;
+      const x = edge + s * 0.5 - 6; // 鳩の体の大部分がカードの外に出る位置
+      under.push(legOffset + 1); // 縁へ出る区間の次（上下の区間）だけ後ろ
+      return [{ x, y: a.y }, { x, y: c.y }];
     };
 
     let pos: Pt = { x: 0, y: 0 };
@@ -152,33 +239,48 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     };
 
     // ── 飛ぶ：予備動作 → 弧を描いて移動（翼は CSS で羽ばたき、荷物は揺れる）→ 着地 → 荷物をそっと置く ──
-    const fly = async (path: Pt[], { exit = false } = {}) => {
+    const fly = async (path: Pt[], { exit = false, under = [] as number[] } = {}) => {
       const to = path[path.length - 1];
       face(to.x < pos.x - 4 ? -1 : 1);
       await anim(body, [{ transform: "none" }, { transform: "translateY(1.5px) scale(1.07, .88)" }], { duration: T.crouch, easing: "ease-out" });
       dove.classList.add("is-flying");
-      // 弧：区間ごとに、横の移動は上へ、縦の移動は少し横へふくらませる
+      // 弧：区間ごとに、横の移動は上へ、縦の移動は少し右（カードの外側）へふくらませる
       const pts: Pt[] = [pos, ...path];
-      const frames: Keyframe[] = [];
+      const legs = pts.length - 1;
       const N = 8;
-      pts.slice(1).forEach((b, si) => {
-        const a = pts[si];
+      const legFrames = (si: number, from: number) => {
+        const a = pts[si], b = pts[si + 1];
         const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
-        const h = Math.min(26, 8 + len * 0.08);
-        for (let i = si === 0 ? 0 : 1; i <= N; i++) {
+        const horiz = Math.abs(dx) >= Math.abs(dy);
+        const h = Math.min(26, 8 + len * 0.08, horiz ? headroom(a, b, facing) : 26, legs > 1 ? 8 : 26);
+        const frames: Keyframe[] = [];
+        for (let i = from; i <= N; i++) {
           const t = i / N, arc = 4 * t * (1 - t) * h;
-          const horiz = Math.abs(dx) >= Math.abs(dy);
-          const x = a.x + dx * t + (horiz ? 0 : -arc * 0.4);
+          const x = a.x + dx * t + (horiz ? 0 : arc * 0.4);
           const y = a.y + dy * t - (horiz ? arc : 0);
           const tilt = horiz ? (1 - 2 * t) * -9 * Math.sign(dx || 1) * facing : 0;
           const f: Keyframe = { transform: `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${tilt.toFixed(1)}deg)` };
-          if (exit) f.opacity = String(1 - Math.max(0, (si * N + i) / (N * (pts.length - 1)) - 0.45) / 0.55);
+          if (exit) f.opacity = String(1 - Math.max(0, (si * N + i) / (N * legs) - 0.45) / 0.55);
           frames.push(f);
         }
-      });
-      const legs = pts.length - 1;
+        return frames;
+      };
+      const total = T.fly * (legs > 1 ? 1.35 : 1);
       void anim(body, [{ transform: "translateY(1.5px) scale(1.07, .88)" }, { transform: "scale(.95, 1.06)", offset: 0.25 }, { transform: "none", offset: 0.6 }, { transform: "none" }], { duration: T.fly * 0.6, easing: "linear" });
-      await anim(dove, frames, { duration: T.fly * (legs > 1 ? 1.35 : 1), easing: EASE_FLY });
+      if (!under.length) {
+        await anim(dove, pts.slice(1).flatMap((_, si) => legFrames(si, si === 0 ? 0 : 1)), { duration: total, easing: EASE_FLY });
+      } else {
+        // カードの後ろをくぐる区間がある：区間ごとに動かし、くぐる区間だけ鳩をカードの後ろへ（切り替えはカードの外＝右の余白で）
+        const lens = pts.slice(1).map((b, i) => Math.hypot(b.x - pts[i].x, b.y - pts[i].y) || 1);
+        const sum = lens.reduce((x, y) => x + y, 0);
+        for (let si = 0; si < legs; si++) {
+          dove.classList.toggle("is-under", under.includes(si));
+          const easing = si === 0 ? "cubic-bezier(.45, 0, .85, .65)" : si === legs - 1 ? "cubic-bezier(.15, .35, .25, 1)" : "linear";
+          await anim(dove, legFrames(si, 0), { duration: total * (lens[si] / sum), easing });
+          if (cancelled) return;
+        }
+        dove.classList.remove("is-under");
+      }
       pos = to;
       dove.style.transform = `translate(${to.x.toFixed(1)}px, ${to.y.toFixed(1)}px)`;
       dove.classList.remove("is-flying");
@@ -188,8 +290,10 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         anim(body, [{ transform: "none" }, { transform: "translateY(1.5px) scale(1.08, .9)", offset: 0.35 }, { transform: "scale(.98, 1.03)", offset: 0.7 }, { transform: "none" }], { duration: T.land, easing: EASE_FLY }),
         anim(cargoEl, [{ transform: "rotate(10deg)" }, { transform: "rotate(-5deg)", offset: 0.45 }, { transform: "rotate(2deg)", offset: 0.8 }, { transform: "rotate(0deg)" }], { duration: T.land + 160, easing: EASE_FLY }),
       ]);
-      // 荷物をそっと置く：少しかがんで荷物が下につき、また顔を上げる
+      // 荷物をそっと置く：少しかがんで荷物が下につき、また顔を上げる。左を向いて着いたときは右へ向き直る（荷物が文字の側に下がらないように）
+      const turn = facing < 0 ? anim(flip, [{ transform: "scaleX(-1)" }, { transform: "scaleX(1)" }], { duration: 260, easing: EASE_FLY }).then(() => { facing = 1; flip.style.transform = ""; }) : Promise.resolve();
       await Promise.all([
+        turn,
         anim(body, [{ transform: "none" }, { transform: "rotate(6deg)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY }),
         anim(cargoEl, [{ transform: "none" }, { transform: "translateY(2px)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY }),
       ]);
@@ -198,11 +302,12 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     // ── 着いたときの小さな出来事（FLOW） ──
     const fxAt = (p: Pt) => { fx.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`; };
     const play = async (cls: string, ms: number) => {
-      fx.classList.remove(cls);
+      const list = cls.split(" ");
+      fx.classList.remove(...list);
       void fx.offsetWidth; // 同じ出来事をもう一度起こすため
-      fx.classList.add(cls);
+      fx.classList.add(...list);
       await wait(ms);
-      fx.classList.remove(cls);
+      fx.classList.remove(...list);
     };
     const events = {
       chat: async () => {
@@ -258,19 +363,27 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           if (!to) continue;
           setStep(null, [...visited]);
           const path: Pt[] = [];
+          const under: number[] = [];
           if (stop.via === "below" && !vertical.matches) {
+            // 図の下の余白を回って戻る。降りる・昇るときもカードの文字の上は通らない
             const y = below();
-            path.push({ x: pos.x, y }, { x: to.x, y });
+            const x1 = clearX(pos, { x: pos.x, y }), x2 = clearX({ x: to.x, y }, to);
+            if (x1 !== null) path.push({ x: x1, y: pos.y });
+            path.push({ x: x1 ?? pos.x, y }, { x: x2 ?? to.x, y });
+            if (x2 !== null) path.push({ x: x2, y: to.y });
           } else if (stop.via) {
             const v = perch(stop.via);
-            if (v) path.push(v);
-          } else if (vertical.matches && opts.rail === "edge" && Math.abs(to.y - pos.y) > 4) {
-            // 縦並び：カードの右の縁を通る（文字の上を横切らない）
-            const x = Math.max(pos.x, to.x) + size() * 0.45;
-            path.push({ x, y: pos.y - size() * 0.5 }, { x, y: to.y - size() * 0.5 });
+            if (v && edgeRail()) {
+              path.push(...rail(pos, v, under, 0), v);
+              path.push(...rail(v, to, under, path.length));
+            } else if (v) path.push(...around(pos, v), v, ...around(v, to));
+          } else if (edgeRail()) {
+            path.push(...rail(pos, to, under, 0));
+          } else if (!vertical.matches) {
+            path.push(...around(pos, to));
           }
           path.push(to);
-          await fly(path);
+          await fly(path, { under });
           if (cancelled) return;
           visited.push(stop.at);
           setStep(stop.at, [...visited]);
