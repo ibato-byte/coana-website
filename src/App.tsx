@@ -4,7 +4,7 @@ import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLin
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 import { ChatLauncher } from "./chat/ChatLauncher";
-import { HeroDove, dovePlayed } from "./heroDove";
+import { HeroDove } from "./heroDove";
 
 declare global {
   interface Window {
@@ -186,7 +186,7 @@ const SOLVE_INTERVAL_MS = 2600;
 
 /** 「〇〇の悩みを、仕組みで解決。」のキーワード。古い語が上へ抜け、新しい語が下からマスク内に入る。
  *  紺のチップの幅は新しい語の幅へ同時に伸縮させ、後ろの文字が跳ねないようにする */
-function SolveWords({ words, rest }: { words: string[]; rest: string }) {
+function SolveWords({ words, rest, dove }: { words: string[]; rest: string; dove: boolean }) {
   const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [state, setState] = useState({ cur: 0, prev: -1, tick: 0 });
   const [widths, setWidths] = useState<number[]>([]);
@@ -206,19 +206,23 @@ function SolveWords({ words, rest }: { words: string[]; rest: string }) {
     if (reduceMotion || words.length < 2) return;
     let id = 0;
     const next = () => setState((s) => ({ cur: (s.cur + 1) % words.length, prev: s.cur, tick: s.tick + 1 }));
-    // 下線の鳩が飛び去ってから切り替え始める（鳩がいないときや、合図が来ないときは SOLVE_FIRST_MS 後）
+    // 下線の鳩がいるときは、このヒーローの鳩が飛び去ってから切り替え始める（どの入り方でも同じ順番）。
+    // 鳩がいないとき（動きを減らす設定以外では基本ない）は SOLVE_FIRST_MS 後
     let first = 0;
     const begin = (wait: number) => {
       if (id) return; // もう切り替え始めている
       window.clearTimeout(first);
       first = window.setTimeout(() => { next(); id = window.setInterval(next, SOLVE_INTERVAL_MS); }, wait);
     };
-    const onDove = () => begin(SOLVE_AFTER_DOVE_MS);
-    const flying = !!document.querySelector(".title-underline.is-dove:not(.is-done)");
-    begin(flying ? SOLVE_FIRST_MS + 2000 : SOLVE_FIRST_MS);
-    window.addEventListener("coana:dove-done", onDove, { once: true });
+    const hero = measureRef.current?.closest(".hero");
+    const onDove = (e: Event) => {
+      const line = (e as CustomEvent<Element | undefined>).detail;
+      if (!line || hero?.contains(line)) begin(SOLVE_AFTER_DOVE_MS);
+    };
+    if (!dove) begin(SOLVE_FIRST_MS);
+    window.addEventListener("coana:dove-done", onDove);
     return () => { window.clearTimeout(first); window.clearInterval(id); window.removeEventListener("coana:dove-done", onDove); };
-  }, [reduceMotion, words.length]);
+  }, [reduceMotion, words.length, dove]);
   const { cur, prev, tick } = state;
   return (
     <p className="hero-solve">
@@ -240,7 +244,14 @@ function SolveWords({ words, rest }: { words: string[]; rest: string }) {
 
 function HeroSection({ navigate }: { navigate: Nav }) {
   const words: string[] = home.hero_words ?? ["経理", "業務フロー", "ツール導入", "営業・集客"];
-  const [dove] = useState(() => !dovePlayed() && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [dove] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  // ブラウザの「戻る・進む」でページが保存された状態のまま戻ったとき（別サイトから戻ったときなど）も、鳩と回転ワードを最初から
+  const [replay, setReplay] = useState(0);
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => { if (e.persisted) setReplay((n) => n + 1); };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
   return (
     <section className="hero">
       <div className="container hero-grid">
@@ -249,11 +260,11 @@ function HeroSection({ navigate }: { navigate: Nav }) {
           <h1>
             <span className="hero-line">{home.hero_line1}</span>
             <span className="hero-line">
-              {/* 下線は、ページを開いたときに1回だけ鳩が引いて飛び去る（heroDove.tsx）。動きを減らす設定・2回目以降は最初から引かれた状態 */}
-              <span className={dove ? "title-underline is-dove" : "title-underline"}>{home.hero_line2}{dove && <HeroDove />}</span>
+              {/* 下線は、ヒーローが表示されるたびに鳩が引いて飛び去る（heroDove.tsx）。動きを減らす設定では最初から引かれた状態 */}
+              <span key={replay} className={dove ? "title-underline is-dove" : "title-underline"}>{home.hero_line2}{dove && <HeroDove />}</span>
             </span>
           </h1>
-          <SolveWords words={words} rest={home.hero_solve_text} />
+          <SolveWords key={replay} words={words} rest={home.hero_solve_text} dove={dove} />
         </div>
         <div className="hero-visual hero-anim">
           <HeroVideo src={home.hero_video} fallback={<HeroScene />} />
