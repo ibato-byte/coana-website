@@ -1,5 +1,6 @@
 import { useEffect, useRef, type RefObject } from "react";
 import { birdPaths, BIRD_REST } from "./bird";
+import { watchReading } from "./readingPause";
 
 /* ───────────────────────── ご利用までの流れ（FLOW）：お客さまの「相談」が進んでいくアニメーション ─────────────────────────
  * 小さな手紙（＝お客さまからの相談）が、ステップの丸の上をひとつずつ弧を描いて進み、各ステップで小さな出来事が起きる。
@@ -13,7 +14,8 @@ import { birdPaths, BIRD_REST } from "./bird";
  * 動き：アニメーションの原則（予備動作・スローイン／スローアウト・弧の動き・控えめなスクワッシュ＆ストレッチ・フォロースルー）。
  * 1ステップ 約1秒の移動＋出来事の間。一周したら落ち着いた間をおいて繰り返す（docs/motion-rules.md）。
  * 文字・番号には重ならない（丸の上の余白を進む。スマホは丸の列の中だけ）。レイアウトもページの長さも変えない。
- * 止める：画面外・タブが非表示・ステップにカーソルを当てている間。「動きを減らす」設定では何も出さない（FlowLine が判断）。 */
+ * 止める：画面外・タブが非表示・ステップに実際にカーソルを合わせた／フォーカスした間（約2.5秒動かさなければ再開。readingPause.ts）。
+ *   セクションに入っただけでは止めない。「動きを減らす」設定では何も出さない（FlowLine が判断）。 */
 
 type Kind = "inquiry" | "hearing" | "proposal" | "prepare" | "contract" | "start" | "after";
 
@@ -80,10 +82,10 @@ export function useFlowJourney(box: RefObject<HTMLElement | null>, kinds: Kind[]
     const vertical = window.matchMedia("(max-width: 980px)");
 
     let cancelled = false;
-    let hover = false;
     let visible = false;
     let wake = () => {};
-    const paused = () => !visible || document.hidden || hover;
+    let reading = () => false;
+    const paused = () => !visible || document.hidden || reading();
     const gate = () => new Promise<void>((resolve) => {
       const check = () => { if (cancelled || !paused()) { wake = () => {}; resolve(); } };
       wake = check;
@@ -338,12 +340,9 @@ export function useFlowJourney(box: RefObject<HTMLElement | null>, kinds: Kind[]
     io.observe(root);
     const onVis = () => wake();
     document.addEventListener("visibilitychange", onVis);
-    // ステップにカーソルを当てている間は止める（PC のホバーの表現と重ねない）
-    const list = root.querySelector(".flowx-list");
-    const enter = (e: Event) => { if ((e as PointerEvent).pointerType === "mouse") hover = true; };
-    const leave = (e: Event) => { if ((e as PointerEvent).pointerType === "mouse") { hover = false; wake(); } };
-    list?.addEventListener("pointerenter", enter);
-    list?.addEventListener("pointerleave", leave);
+    // ステップを読んでいる間だけ止める（セクションに入っただけでは止めない）
+    const watcher = watchReading(root, ".flowx-step", () => wake());
+    reading = watcher.reading;
     const onResize = () => { const p = rest(Math.max(0, steps.findIndex((s) => s.classList.contains("is-journey-now")))); if (p) place(p, tilt); };
     window.addEventListener("resize", onResize);
     void run();
@@ -352,8 +351,7 @@ export function useFlowJourney(box: RefObject<HTMLElement | null>, kinds: Kind[]
       wake();
       io.disconnect();
       document.removeEventListener("visibilitychange", onVis);
-      list?.removeEventListener("pointerenter", enter);
-      list?.removeEventListener("pointerleave", leave);
+      watcher.stop();
       window.removeEventListener("resize", onResize);
       for (const a of el.getAnimations({ subtree: true })) a.cancel();
       setStep(-1, 0);
