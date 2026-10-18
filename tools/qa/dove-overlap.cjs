@@ -4,7 +4,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const BASE = process.env.BASE || 'http://localhost:4173';
 const SLUGS = ['bookkeeping', 'backoffice-dx', 'cloud-accounting', 'startup-support', 'startup-support-en', 'sales-support', 'seminar-event', 'sns-management', 'web-production'];
 const ONLY = process.env.ONLY;
-const TARGETS = [['/services', '.flowx'], ...SLUGS.flatMap((s) => [[`/services/${s}`, '.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap'], [`/services/${s}`, '.flowx']])].filter(([u, s]) => !ONLY || (u + ' ' + s).includes(ONLY));
+const TARGETS = [['/services', '.flowx'], ...SLUGS.flatMap((s) => [[`/services/${s}`, '.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap, .relay'], [`/services/${s}`, '.flowx']])].filter(([u, s]) => !ONLY || (u + ' ' + s).includes(ONLY));
 const WIDTHS = process.argv[2] ? [+process.argv[2]] : [1280, 390, 768];
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
@@ -20,7 +20,7 @@ const WIDTHS = process.argv[2] ? [+process.argv[2]] : [1280, 390, 768];
       await p.evaluate((s) => { const e = document.querySelector(s); scrollTo(0, e.getBoundingClientRect().top + scrollY - 140); }, sel);
       await p.mouse.move(1, 1);
       const hits = new Set(); let seen = 0, maxX = 0;
-      for (let i = 0; i < 170; i++) {
+      for (let i = 0; i < (+process.env.SAMPLES || 170); i++) {
         await p.waitForTimeout(100);
         const r = await p.evaluate(([s, dbg]) => {
           const root = document.querySelector(s);

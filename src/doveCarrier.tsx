@@ -14,7 +14,7 @@ import { watchReading } from "./readingPause";
  * 鳩・荷物は文字に重ならない位置に止まる（カードの右上の空き、または上の縁の外。data-perch で指定）。
  */
 
-export type Cargo = "receipt" | "doc" | "data" | "report" | "mail" | "chat" | "person" | "people" | "card" | "calendar" | "heart" | "check" | "star" | "layout" | "manual" | "target" | "megaphone" | "photo" | "handshake" | "chart" | "refresh";
+export type Cargo = "receipt" | "doc" | "data" | "report" | "mail" | "chat" | "person" | "people" | "card" | "calendar" | "heart" | "check" | "star" | "layout" | "manual" | "target" | "megaphone" | "photo" | "handshake" | "chart" | "refresh" | "payslip" | "contract" | "estimate" | "flowchart";
 
 export type DoveStop = {
   /** 止まる工程のキー（data-story） */
@@ -26,7 +26,8 @@ export type DoveStop = {
   /** 途中で通る点："c"（中心）など、または "below"（図の下の余白を回って戻る） */
   via?: string;
   /** 着いたときの小さな出来事（FLOW）：吹き出しが交わる／チェック／印／続いていく輪 */
-  event?: "chat" | "check" | "stamp" | "ring";
+  /** page：その工程のカードにページが1枚加わる（マニュアル化の図） */
+  event?: "chat" | "check" | "stamp" | "ring" | "page";
 };
 
 type Options = {
@@ -42,6 +43,8 @@ type Options = {
   flyAway?: boolean;
   /** 縦並びでの移動の通り道：カードの右の縁（HOW IT WORKS）／丸の列（FLOW、丸の後ろをくぐる） */
   rail?: "edge" | "line";
+  /** これから進む道筋を薄い点線で先に見せる（図そのものに意味のある線があるときは false） */
+  route?: boolean;
 };
 
 /* 時間（ミリ秒） */
@@ -120,6 +123,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       const mode = (vertical.matches && f.t.getAttribute("data-perch-v")) || f.t.getAttribute("data-perch") || "above-tr";
       const r = { left: f.r.left - b.left, right: f.r.right - b.left, top: f.r.top - b.top, width: f.r.width };
       if (mode === "in-tr") return { x: r.right - s * 0.78 - 10, y: r.top + 10 + s * 0.82 };
+      if (mode === "group-tr" && f.t.parentElement) {
+        // 小さなタグの並び：タグの上ではなく、並び全体の右上の縁に止まる（どのタグかは点灯で示す）
+        const g = f.t.parentElement.getBoundingClientRect();
+        return { x: g.right - b.left - s * 0.78 - 10, y: g.top - b.top + 4 };
+      }
       if (mode === "above-c") return { x: r.left + r.width / 2 - s * 0.18, y: r.top - 3 };
       return { x: r.right - s * 0.78 - 10, y: r.top + 4 }; // above-tr（上の縁に立つ。足もとはカードの上の余白）
     };
@@ -173,9 +181,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     const hits = (all: Box[], a: Pt, c: Pt, dir: number) => {
       const s = size();
       const [bl, br] = reach(dir);
+      // 約8px ごとに確かめる（長い飛行で文字の角をすり抜けないように）
+      const n = Math.max(16, Math.ceil(Math.hypot(c.x - a.x, c.y - a.y) / 8));
       return all.filter((R) => {
-        for (let i = 1; i < 16; i++) {
-          const x = a.x + ((c.x - a.x) * i) / 16, y = a.y + ((c.y - a.y) * i) / 16;
+        for (let i = 1; i < n; i++) {
+          const x = a.x + ((c.x - a.x) * i) / n, y = a.y + ((c.y - a.y) * i) / n;
           if (x + br > R.l && x - bl < R.r && y > R.t && y - s * 0.85 < R.b) return true;
         }
         return false;
@@ -207,9 +217,27 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       }
       return best;
     };
+    /** 文字を横切るときの回り道。横を回る／上を越える／下をくぐる のうち、どの区間も文字に重ならない、いちばん短い道 */
     const around = (a: Pt, c: Pt): Pt[] => {
+      const all = texts();
+      const dir = c.x < a.x - 4 ? -1 : 1;
+      if (!hits(all, a, c, dir).length) return [];
+      const clear = (pts: Pt[]) => pts.slice(1).every((p, i) => !hits(all, pts[i], p, dir).length);
+      const length = (pts: Pt[]) => pts.slice(1).reduce((n, p, i) => n + Math.hypot(p.x - pts[i].x, p.y - pts[i].y), 0);
+      const cands: Pt[][] = [];
       const x = clearX(a, c);
-      return x === null ? [] : [{ x, y: a.y }, { x, y: c.y }];
+      if (x !== null) cands.push([{ x, y: a.y }, { x, y: c.y }]);
+      for (const sgn of [-1, 1]) {
+        const from = sgn < 0 ? Math.min(a.y, c.y) : Math.max(a.y, c.y);
+        for (let k = 1; k <= 30; k++) {
+          const y = from + sgn * k * 12;
+          const pts = [{ x: a.x, y }, { x: c.x, y }];
+          if (clear([a, ...pts, c])) { cands.push(pts); break; }
+        }
+      }
+      const ok = cands.filter((pts) => clear([a, ...pts, c]));
+      const pick = (ok.length ? ok : cands).sort((p, q) => length([a, ...p, c]) - length([a, ...q, c]))[0];
+      return pick ?? [];
     };
 
     // 縦並び（スマホ）：カードが画面幅いっぱいに積まれているので、次のカードへはカードの後ろをくぐる。
@@ -251,13 +279,21 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         const a = pts[si];
         const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
         const horiz = Math.abs(dx) >= Math.abs(dy);
-        const h = Math.min(26, 8 + len * 0.08, horiz ? headroom(a, b, dir) : 26, legs > 1 ? 8 : 26);
-        const out: Sample[] = [];
-        for (let i = 0; i <= N; i++) {
-          const t = i / N, arc = 4 * t * (1 - t) * h;
-          out.push({ x: a.x + dx * t + (horiz ? 0 : arc * 0.4), y: a.y + dy * t - (horiz ? arc : 0), tilt: horiz ? (1 - 2 * t) * -9 * Math.sign(dx || 1) * dir : 0 });
-        }
-        return out;
+        const build = (h: number) => {
+          const out: Sample[] = [];
+          for (let i = 0; i <= N; i++) {
+            const t = i / N, arc = 4 * t * (1 - t) * h;
+            out.push({ x: a.x + dx * t + (horiz ? 0 : arc * 0.4), y: a.y + dy * t - (horiz ? arc : 0), tilt: horiz ? (1 - 2 * t) * -9 * Math.sign(dx || 1) * dir : 0 });
+          }
+          return out;
+        };
+        const arced = build(Math.min(26, 8 + len * 0.08, horiz ? headroom(a, b, dir) : 26, legs > 1 ? 8 : 26));
+        // 弧にすると文字にかかるときは、まっすぐ飛ぶ（まっすぐの道は文字を避けて決めてある）
+        const s0 = size();
+        const [bl, br] = reach(dir);
+        const near = (p: { x: number; y: number }) => texts().some((R) => p.x + br > R.l && p.x - bl < R.r && p.y > R.t && p.y - s0 * 0.85 < R.b);
+        const touches = arced.some((p, i) => i > 0 && [0.25, 0.5, 0.75, 1].some((t) => near({ x: arced[i - 1].x + (p.x - arced[i - 1].x) * t, y: arced[i - 1].y + (p.y - arced[i - 1].y) * t })));
+        return touches ? build(0) : arced;
       });
     };
     const frame = (p: Sample, opacity?: number): Keyframe => {
@@ -367,7 +403,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     let drawn = "";
     const drawRoute = (plan: Plan, doneUpTo: number) => {
       // FLOW の縦並びは、丸をつなぐ線がそのまま道筋なので重ねない
-      const show = !(opts.rail === "line" && vertical.matches);
+      const show = opts.route !== false && !(opts.rail === "line" && vertical.matches);
       const ds = plan.legs.map((leg) => {
         if (!leg || !show) return null;
         const pts = leg.samples.flatMap((s, si) => (si === 0 ? s : s.slice(1)));
@@ -547,6 +583,12 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       if (stop.event === "stamp") await events.stamp();
       else if (stop.event === "ring") await events.ring(stop.at);
       else if (stop.event === "chat") await events.chat();
+      else if (stop.event === "page") {
+        // カードにページが1枚加わる（カード側の CSS で .is-page のときだけ動く）
+        const t = find(stop.at)?.t;
+        if (t) { t.classList.remove("is-page"); void (t as HTMLElement).offsetWidth; t.classList.add("is-page"); }
+        await wait(900);
+      }
     };
 
     // 画面に入っている間だけ進める
@@ -594,11 +636,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       setRunning(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [box, stops, still, keyList, opts.verticalQuery, opts.flyAway, opts.rail]);
+  }, [box, stops, still, keyList, opts.verticalQuery, opts.flyAway, opts.rail, opts.route]);
 
   const state = (key: string) => `${done.includes(key) ? " is-done" : ""}${now === key ? " is-now" : ""}`;
   const node = still ? null : <DoveLayer layer={layer} />;
-  return { state, layer: node, running, still };
+  return { state, layer: node, running, still, now, done };
 }
 
 /** 鳩と荷物、着いたときの出来事（読み上げない・クリックできない重ね絵） */
@@ -668,4 +710,8 @@ const GLYPHS: Record<Cargo, string> = {
   handshake: "M3 11l4-4 4 2 3-2 7 5-4 4-3-2-2 2-3-2-2 1zM11 9l3 3",
   chart: "M4 20h16M7 16v-4M12 16V8M17 16v-7",
   refresh: "M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4",
+  payslip: "M6 3h12v18H6zM9.5 7.5l2.5 3.5 2.5-3.5M12 11v5.5M9.8 12.6h4.4M9.8 14.8h4.4",
+  contract: "M6 3h9l3 3v15H6zM9 8h6M9 11h6M9 14h3M13.5 17.5a2 2 0 1 0 4 0a2 2 0 1 0-4 0",
+  estimate: "M9 3.5h6v3H9zM9 5H6v16h12V5h-3M9 11h6M9 14h6M9 17h3.5",
+  flowchart: "M3.5 4h7v5h-7zM13.5 15h7v5h-7zM7 9v3.5h10V15M13.5 6.5h7",
 };

@@ -470,3 +470,103 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 @media (max-width: 360px) {
   .lp-hero-facts strong { font-size: 11.5px; letter-spacing: -.02em; }
 }
+
+/* ───────── リレー型（バックオフィス代行など）：御社 →(1) COANA TOKYO →(2) 対応する領域 →(3) 完了をご報告 →(4) マニュアル化 → 御社 ─────────
+   PC：左から右の一方向。戻りは下の段を右から左へ。線は意味のある線だけ（SVG。カードの位置から引く）。鳩が通った線から色がつく。
+   900px 以下：上から下の1列（スマホ専用の並び）。領域は2列の小さなタグ */
+.relay {
+  position: relative; max-width: 1120px; margin: 40px auto 0; display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(150px, 1fr) minmax(0, 250px) minmax(196px, 1fr) minmax(0, 300px);
+  grid-template-areas:
+    "side-c . side-t side-t side-t"
+    "client s1 center s2 areas"
+    ". r1 r1 . r0";
+  row-gap: 16px; align-items: center;
+}
+.relay-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.relay-line, .relay-line-lit { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.relay-line { stroke: rgba(8, 127, 229, .38); stroke-width: 2; }
+.relay-line-lit { stroke: var(--sky-deep); stroke-width: 2.6; opacity: 0; transition: opacity .45s; }
+.relay-lines .is-on .relay-line-lit { opacity: 1; }
+.relay-head { fill: none; stroke: rgba(8, 127, 229, .5); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.relay-head.is-lit { stroke: var(--sky-deep); }
+/* 役割の見出し（御社／COANA TOKYO） */
+.relay-side { margin: 0; }
+.relay-side.is-client { grid-area: side-c; }
+.relay-side.is-team { grid-area: side-t; }
+.relay-side span { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 800; line-height: 1.4; }
+.relay-side.is-client span { background: var(--yellow-soft); color: var(--navy-ink); box-shadow: inset 0 0 0 1px rgba(242, 165, 22, .35); }
+.relay-side.is-team span { background: var(--navy); color: var(--white); }
+/* カード */
+.relay-card { position: relative; z-index: 1; display: grid; justify-items: start; gap: 4px; padding: 18px 18px 17px; border-radius: 18px; border: 1px solid var(--line); background: var(--white); color: var(--navy-ink); box-shadow: var(--shadow-sm); }
+.relay-card strong { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 20px; font-weight: 800; line-height: 1.45; }
+.relay-sub { font-size: 14px; line-height: 1.6; color: var(--navy-soft); }
+.relay-icon { position: relative; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-soft); color: var(--sky-deep); }
+.relay-client { grid-area: client; background: #fffdf6; border-color: rgba(242, 165, 22, .45); }
+.relay-client .relay-icon { background: var(--yellow); color: var(--navy-ink); }
+.relay-center { grid-area: center; border: 0; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); box-shadow: 0 14px 34px rgba(13, 35, 56, .22); }
+.relay-center .relay-icon { background: rgba(255, 255, 255, .16); color: var(--white); }
+.relay-center .relay-sub { color: rgba(255, 255, 255, .92); }
+/* 今、鳩がいるカード：外側の輪を opacity だけで出す */
+.relay-card::before, .relay-area::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; box-shadow: 0 0 0 4px rgba(8, 127, 229, .16); opacity: 0; transition: opacity var(--m-color); pointer-events: none; }
+.relay-client::before { box-shadow: 0 0 0 4px rgba(252, 201, 52, .55); }
+.relay-card.is-now::before, .relay-area.is-now::before { opacity: 1; }
+/* 矢印に添える番号と言葉（1・2） */
+.relay-step { position: relative; z-index: 1; margin: 0 0 54px; display: flex; white-space: nowrap; align-items: center; justify-content: center; gap: 7px; font-size: 14px; font-weight: 800; line-height: 1.4; color: var(--navy-ink); text-align: center; }
+.relay-step.is-1 { grid-area: s1; }
+.relay-step.is-2 { grid-area: s2; padding-right: 24px; }
+.relay-num { flex: none; width: 24px; height: 24px; display: inline-grid; place-items: center; border-radius: 50%; background: var(--navy); color: var(--white); font-family: var(--font-en); font-size: 13px; font-weight: 700; line-height: 1; }
+.relay-step.is-on .relay-num, .relay-return.is-on .relay-num { background: var(--sky-deep); }
+/* 対応する領域（PC：縦に整然と） */
+.relay-areas { grid-area: areas; position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.relay-area { position: relative; display: grid; grid-template-columns: 34px 1fr; column-gap: 12px; align-items: center; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow-sm); }
+.relay-area .relay-icon { grid-row: span 2; width: 34px; height: 34px; transition: background var(--m-color), color var(--m-color); }
+.relay-area strong { font-size: 18px; font-weight: 800; line-height: 1.4; color: var(--navy-ink); }
+.relay-area .relay-sub { font-size: 13.5px; line-height: 1.5; }
+.relay-area.is-now .relay-icon, .relay-area.is-done .relay-icon { background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
+/* 戻り（3・4）：下の段を右から左へ */
+.relay-return { margin-top: 30px; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; padding: 14px 18px; }
+.relay-return .relay-icon { grid-row: span 2; width: 38px; height: 38px; }
+.relay-return strong { margin-top: 0; font-size: 17px; }
+.relay-return .relay-sub { font-size: 13.5px; }
+.relay-return.is-r0 { grid-area: r0; }
+.relay-return.is-r1 { grid-area: r1; justify-self: end; width: max-content; max-width: 100%; }
+/* 4：マニュアルにページが1枚加わる（鳩が着いたときだけ） */
+.relay-arrow { display: none; }
+.relay-page { position: absolute; right: -4px; top: -6px; width: 14px; height: 17px; border-radius: 2px; background: var(--white); border: 1.5px solid var(--sky-deep); opacity: 0; }
+.relay-page::before { content: ""; position: absolute; left: 2.5px; right: 2.5px; top: 4px; height: 6px; border-top: 1.5px solid var(--sky-deep); border-bottom: 1.5px solid var(--sky-deep); }
+.relay-return.is-page .relay-page { animation: relay-page .9s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes relay-page { 0% { opacity: 0; transform: translate(4px, -14px) rotate(8deg); } 45% { opacity: 1; transform: translate(0, 0) rotate(0deg); } 80% { opacity: 1; transform: translate(-2px, 6px) scale(.85); } 100% { opacity: 0; transform: translate(-4px, 10px) scale(.6); } }
+
+@media (max-width: 900px) {
+  /* スマホ専用の並び：上から下の1列。役割の見出しはカードの中の言葉で足りるので出さない */
+  .relay { max-width: 480px; display: flex; flex-direction: column; align-items: stretch; row-gap: 0; }
+  .relay-lines, .relay-side { display: none; }
+  .relay-card { grid-template-columns: 40px 1fr; column-gap: 12px; row-gap: 2px; align-items: center; padding: 10px 16px; }
+  .relay-card .relay-icon { grid-row: span 2; width: 40px; height: 40px; }
+  .relay-card strong { margin-top: 0; font-size: 17px; }
+  .relay-sub { font-size: 13.5px; }
+  .relay-return strong { font-size: 16px; }
+  /* 矢印（上から下）：線と番号と言葉。通った区間から色がつく */
+  .relay-step { margin: 0; min-height: 36px; white-space: normal; justify-content: flex-start; padding: 0 0 0 54px; font-size: 13.5px; }
+  .relay-step.is-2 { padding-right: 0; }
+  .relay-step::before, .relay-return::after { content: ""; position: absolute; left: 35px; top: 5px; bottom: 9px; width: 2px; border-radius: 2px; background: rgba(8, 127, 229, .38); transition: background .45s; }
+  .relay-step::after, .relay-return > .relay-arrow { content: ""; position: absolute; left: 31px; bottom: 6px; width: 8px; height: 8px; border-right: 2px solid rgba(8, 127, 229, .5); border-bottom: 2px solid rgba(8, 127, 229, .5); transform: rotate(45deg); transition: border-color .45s; }
+  .relay-step.is-on::before { background: var(--sky-deep); }
+  .relay-step.is-on::after { border-color: var(--sky-deep); }
+  .relay-step .relay-num { width: 22px; height: 22px; font-size: 12px; }
+  /* 領域：2列の小さなタグ。鳩はタグの並びの右上の縁に止まり、届け先のタグが点灯する */
+  .relay-areas { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .relay-area { grid-template-columns: 26px 1fr; column-gap: 8px; padding: 8px 10px; border-radius: 12px; box-shadow: none; }
+  .relay-area .relay-icon { width: 26px; height: 26px; }
+  .relay-area .relay-icon svg { width: 16px; height: 16px; }
+  .relay-area strong { font-size: 15px; line-height: 1.35; }
+  .relay-area .relay-sub { display: none; }
+  /* 戻り（3・4）は下へ続く：上に短い矢印 */
+  .relay-return { margin-top: 30px; }
+  .relay-return.is-r1 { width: auto; }
+  .relay-return::after { top: -26px; bottom: auto; height: 17px; }
+  .relay-return > .relay-arrow { display: block; top: -14px; bottom: auto; }
+  .relay-return.is-on::after { background: var(--sky-deep); }
+  .relay-return.is-on > .relay-arrow { border-color: var(--sky-deep); }
+}

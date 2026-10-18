@@ -52,6 +52,32 @@
 - テスト：story-test（初期表示・起点が画面外なら出発しない）、fj-test（初期表示）。
 - 次の一手：本番での目視（接続できる環境で）。
 
+### 6. 【進行中】バックオフィス代行LP の HOW IT WORKS を作り直し（リレー型）＋ 他のハブ型LPの見直し
+- ブランチ：`claude/backoffice-relay`（WIP push 済み）。
+- 依頼：ハブ型（中心＋周囲）が「流れが分かりづらい」。
+  - PC：左→右の一方向（御社 →1→ COANA TOKYO チーム →2→ 領域）。下の段で 3 完了をご報告 → 4 マニュアル化 → 御社へ戻る。
+  - スマホ：上→下の1列。領域は2列のタグ。高さは現状以下。
+  - 線は意味のある線だけ。番号付き。通った線から色。鳩エンジンはそのまま。
+  - 他のハブ型LP（創業支援 JA/EN・クラウド会計）も確認して見直し。
+  - PR に Before/After と GIF、「5秒で流れを説明できるか」の自己評価。
+- 実装：
+  - `src/SolutionPage.tsx` の `SchemeRelay`（新しい図の種類 `relay`）
+  - `src/solution.css` の `.relay*`
+  - `content/solutions/backoffice-dx.json`（client／steps／returns）
+  - `src/schemeStory.tsx`（周ごとに領域と荷物が変わる）
+  - エンジン（`src/doveCarrier.tsx`）の追加：
+    - `route: false`
+    - `group-tr` の止まり方
+    - `page` の出来事
+    - 荷物（給与明細・契約書・見積書・フロー図）
+    - 回り道を「横・上・下」から選ぶ
+- 次の一手：
+  1. 他のハブ型LPの見直し。
+  2. CMS 設定（relay 型の項目）。
+  3. 全テスト。
+  4. Before/After・GIF。
+  5. PR → チェック後マージ。
+
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
 - **使われていない画像の削除可否**：オーナー時代から未使用、または CMS のメディア。

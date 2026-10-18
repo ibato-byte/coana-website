@@ -2,7 +2,7 @@
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const SLUGS = ['bookkeeping', 'backoffice-dx', 'cloud-accounting', 'startup-support', 'startup-support-en', 'sales-support', 'seminar-event', 'sns-management', 'web-production'];
 const out = []; const ok = (n, c, x = '') => out.push((c ? 'OK ' : 'NG ') + n + (x ? ' ' + x : ''));
-const ROOT = '.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap';
+const ROOT = '.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap, .relay';
 const snap = (p) => p.evaluate((R) => {
   const root = document.querySelector(R);
   // 鳩（見えているもの）の数と、位置＋運んでいるもの

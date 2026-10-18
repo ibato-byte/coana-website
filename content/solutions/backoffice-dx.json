@@ -38,37 +38,62 @@
     ]
   },
   "scheme": {
-    "type": "hub",
+    "type": "relay",
     "title": "御社の「バックオフィスチーム」として",
     "lead": "チャットで依頼するだけ。任せるほど、業務の仕組みが整っていきます。",
-    "center": {
-      "label": "COANA TOKYO",
-      "sub": "少数精鋭チーム"
+    "client_label": "御社がやること",
+    "team_label": "COANA TOKYOがやること",
+    "client": {
+      "label": "経営者（御社）",
+      "sub": "社内のスタッフに頼む感覚で",
+      "icon": "person"
     },
+    "center": {
+      "label": "COANA TOKYO チーム",
+      "sub": "窓口はひとつ。内容に合わせて振り分け",
+      "icon": "users"
+    },
+    "steps": [
+      "チャットで依頼",
+      "領域を横断して対応"
+    ],
     "nodes": [
       {
         "label": "経理",
-        "sub": "記帳・請求・支払い"
+        "sub": "記帳・請求・支払い",
+        "icon": "invoice"
       },
       {
         "label": "労務・人事",
-        "sub": "給与計算の準備"
+        "sub": "給与計算の準備",
+        "icon": "yen"
       },
       {
         "label": "総務・秘書",
-        "sub": "備品・契約書管理"
+        "sub": "備品・契約書管理",
+        "icon": "building"
       },
       {
         "label": "営業事務",
-        "sub": "見積・納品書作成"
+        "sub": "見積・納品書作成",
+        "icon": "doc"
       },
       {
         "label": "業務整理・DX",
-        "sub": "業務フロー設計"
+        "sub": "業務フロー設計",
+        "icon": "refresh"
+      }
+    ],
+    "returns": [
+      {
+        "label": "完了をご報告",
+        "sub": "チャットで結果を共有",
+        "icon": "check"
       },
       {
-        "label": "経営者",
-        "sub": "チャットで依頼"
+        "label": "手順をマニュアル化",
+        "sub": "任せるほど、仕組みが整う",
+        "icon": "rules"
       }
     ],
     "points": [

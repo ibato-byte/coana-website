@@ -339,6 +339,109 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
   );
 }
 
+/** リレー型：御社 →（1）COANA TOKYO →（2）対応する領域 →（3）完了をご報告 →（4）手順をマニュアル化 → 御社へ戻る。
+ *  PC は左から右へ一方向（戻りは下の段を右から左へ）、900px 以下は上から下の1列（スマホ専用の並び）。
+ *  線は意味のある線だけ（矢印で順序が分かる）。鳩が通った線から色がつく。点線の道筋は出さない */
+function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
+  const areas = scheme.nodes ?? [];
+  const returns = scheme.returns ?? [];
+  const steps = scheme.steps ?? [];
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const keys = ["client", "c", ...areas.map((_, i) => "n" + i), ...returns.map((_, i) => "r" + i)];
+  const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 900px)", false, false);
+  const lit = (k: string) => still || done.includes(k);
+  const anyArea = areas.some((_, i) => lit("n" + i));
+  const backHome = still || (returns.length > 0 && lit("r" + (returns.length - 1)) && now === "client");
+  // PC の線：カードの位置から引く（幅が変わったら・文字が読み込まれたら引き直す）
+  const [geom, setGeom] = useState<{ k: string; d: string; arrow: boolean }[]>([]);
+  useLayoutEffect(() => {
+    const root = boxRef.current;
+    if (!root) return;
+    const measure = () => {
+      const pc = !window.matchMedia("(max-width: 900px)").matches;
+      if (!pc) { setGeom([]); return; }
+      const b = root.getBoundingClientRect();
+      const r = (sel: string) => { const e = root.querySelector(sel); if (!e) return null; const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; };
+      const client = r(".relay-client"), center = r(".relay-center"), list = r(".relay-areas");
+      const items = [...root.querySelectorAll(".relay-area")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, cy: x.top - b.top + x.height / 2 }; });
+      const rets = [...root.querySelectorAll(".relay-return")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; });
+      if (!client || !center || !list || !items.length) return;
+      const f = (n: number) => n.toFixed(1);
+      const g: { k: string; d: string; arrow: boolean }[] = [];
+      const y = center.cy;
+      g.push({ k: "c", d: `M${f(client.r + 8)} ${f(y)}H${f(center.l - 10)}`, arrow: true });
+      const spine = list.l - 24;
+      g.push({ k: "trunk", d: `M${f(center.r + 8)} ${f(y)}H${f(spine)}M${f(spine)} ${f(items[0].cy)}V${f(items[items.length - 1].cy)}`, arrow: false });
+      items.forEach((it, i) => g.push({ k: "n" + i, d: `M${f(spine)} ${f(it.cy)}H${f(it.l - 9)}`, arrow: true }));
+      // 戻り：領域の下 → 3 → 4 → 御社（下の段を右から左へ、最後は上向き）
+      if (rets.length) {
+        const r0 = rets[0];
+        g.push({ k: "r0", d: `M${f(r0.cx)} ${f(list.bt + 8)}V${f(r0.t - 10)}`, arrow: true });
+        rets.slice(1).forEach((rt, i) => g.push({ k: "r" + (i + 1), d: `M${f(rets[i].l - 8)} ${f(rt.cy)}H${f(rt.r + 10)}`, arrow: true }));
+        const last = rets[rets.length - 1];
+        const rad = 14;
+        g.push({ k: "home", d: `M${f(last.l - 8)} ${f(last.cy)}H${f(client.cx + rad)}Q${f(client.cx)} ${f(last.cy)} ${f(client.cx)} ${f(last.cy - rad)}V${f(client.bt + 10)}`, arrow: true });
+      }
+      setGeom(g);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(root);
+    void document.fonts?.ready.then(measure);
+    return () => ro.disconnect();
+  }, [areas.length, returns.length]);
+  const on = (k: string) => (k === "trunk" ? anyArea : k === "home" ? backHome : lit(k));
+  const num = (i: number) => <b className="relay-num">{i}</b>;
+  return (
+    <div className="relay" ref={boxRef} data-reveal>
+      <svg className="relay-lines" aria-hidden="true" focusable="false">
+        <defs>
+          <marker id="relay-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path className="relay-head" d="M1 1.5 8 5l-7 3.5" /></marker>
+          <marker id="relay-arrow-lit" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path className="relay-head is-lit" d="M1 1.5 8 5l-7 3.5" /></marker>
+        </defs>
+        {geom.map((l) => (
+          <g key={l.k} className={on(l.k) ? "is-on" : undefined}>
+            <path className="relay-line" d={l.d} markerEnd={l.arrow ? "url(#relay-arrow)" : undefined} />
+            <path className="relay-line-lit" d={l.d} markerEnd={l.arrow ? "url(#relay-arrow-lit)" : undefined} />
+          </g>
+        ))}
+      </svg>
+      <p className="relay-side is-client"><span>{scheme.client_label || "御社がやること"}</span></p>
+      <p className="relay-side is-team"><span>{scheme.team_label || "COANA TOKYOがやること"}</span></p>
+      <div className={`relay-card relay-client${state("client")}`} data-story="client" data-perch="above-tr" data-perch-v="in-tr">
+        <span className="relay-icon"><LpIcon name={scheme.client?.icon || "person"} size={24} /></span>
+        <strong>{scheme.client?.label}</strong>
+        {scheme.client?.sub && <span className="relay-sub">{scheme.client.sub}</span>}
+      </div>
+      <p className={`relay-step is-1${lit("c") ? " is-on" : ""}`}>{num(1)}<span>{steps[0]}</span></p>
+      <div className={`relay-card relay-center${state("c")}`} data-story="c" data-perch="above-tr" data-perch-v="in-tr">
+        <span className="relay-icon"><LpIcon name={scheme.center?.icon || "users"} size={24} /></span>
+        <strong>{scheme.center?.label || "COANA TOKYO"}</strong>
+        {scheme.center?.sub && <span className="relay-sub">{scheme.center.sub}</span>}
+      </div>
+      <p className={`relay-step is-2${anyArea ? " is-on" : ""}`}>{num(2)}<span>{steps[1]}</span></p>
+      <ul className={`relay-areas${anyArea ? " is-on" : ""}`}>
+        {areas.map((a, i) => (
+          <li key={a.label} className={`relay-area${state("n" + i)}`} data-story={"n" + i} data-perch="in-tr" data-perch-v="group-tr">
+            <span className="relay-icon"><LpIcon name={a.icon || "check"} size={20} /></span>
+            <strong>{a.label}</strong>
+            {a.sub && <span className="relay-sub">{a.sub}</span>}
+          </li>
+        ))}
+      </ul>
+      {returns.map((rt, i) => (
+        <div key={rt.label} className={`relay-card relay-return is-r${i}${state("r" + i)}${lit("r" + i) ? " is-on" : ""}`} data-story={"r" + i} data-perch="above-tr" data-perch-v="in-tr">
+          <i className="relay-arrow" aria-hidden="true" />
+          <span className="relay-icon"><LpIcon name={rt.icon || "check"} size={22} />{i === returns.length - 1 && <i className="relay-page" aria-hidden="true" />}</span>
+          <strong>{num(i + 3)}{rt.label}</strong>
+          {rt.sub && <span className="relay-sub">{rt.sub}</span>}
+        </div>
+      ))}
+      {layer}
+    </div>
+  );
+}
+
 /** 一本の流れ型：画面に入ると、各ステージが左から順に点灯し、アイコンが線で描かれる（文字は最初から読める） */
 function SchemeFlow({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
   const steps = scheme.nodes ?? [];
@@ -521,7 +624,7 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
     <section className="section lp-scheme">
       <div className="container">
         <SectionTitle en="How it works" center lead={scheme.lead}>{scheme.title || L.scheme}</SectionTitle>
-        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : <SchemeDiagram scheme={scheme} story={story} />}
+        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : scheme.type === "relay" ? <SchemeRelay scheme={scheme} story={story} /> : <SchemeDiagram scheme={scheme} story={story} />}
         {(scheme.points ?? []).length > 0 && (
           <ul className="lp-scheme-points">
             {(scheme.points ?? []).map((p) => (
