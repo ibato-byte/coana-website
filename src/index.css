@@ -856,7 +856,9 @@ a.service-card:hover .art * { animation-play-state: running; }
 /* 鳩がデータを運ぶ（doveCarrier.tsx・HOW IT WORKS と FLOW 共通）。動かすのは transform と opacity だけ。
    .dove の原点は鳩の足もと。鳩は工程の右上の空き、または上の縁の外に止まり、文字には重ならない */
 .flowx { position: relative; }
-.dove-layer { --dove: 40px; position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+/* 図の箱（.lanes など）を重なりの基準にして、鳩・印・出来事は前に、経路の点線はカードの後ろに置く */
+.lanes, .lp-scheme-flow-wrap, .lp-scheme-diagram, .flowx { isolation: isolate; }
+.dove-layer { --dove: 40px; position: absolute; inset: 0; pointer-events: none; }
 .dove { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; will-change: transform, opacity; }
 .dove-flip, .dove-bob { position: absolute; left: 0; top: 0; width: 0; height: 0; }
 /* 動く部品は最初から合成レイヤーに（飛ぶたびにレイヤーを作り直さない） */
@@ -891,7 +893,7 @@ a.service-card:hover .art * { animation-play-state: running; }
 @keyframes dove-bob { from { transform: translateY(0); } to { transform: translateY(-2px); } }
 @keyframes dove-sway { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
 /* 着いたときの小さな出来事（FLOW）。.dove-fx の原点は鳩の足もと（輪は丸の中心、印の波紋は荷物の中心） */
-.dove-fx { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 1; }
+.dove-fx { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 7; }
 .fx-bubble { position: absolute; left: 0; top: 0; width: 26px; height: 19px; opacity: 0; transform-origin: 50% 100%; }
 .fx-bubble.is-a { translate: calc(var(--dove) * -.5 - 32px) calc(var(--dove) * -.95); }
 .fx-bubble.is-b { translate: calc(var(--dove) * .95 + 4px) calc(var(--dove) * -1.05); }
@@ -918,22 +920,33 @@ a.service-card:hover .art * { animation-play-state: running; }
 @media (max-width: 980px) {
   .dove-layer { --dove: 34px; }
   /* FLOW の縦並び：鳩は小さめで丸のすぐ上に。次のステップへは丸の後ろをくぐる（番号・文字に重ならない） */
-  .flowx .dove-layer { --dove: 26px; z-index: auto; }
+  .flowx .dove-layer { --dove: 26px; }
   .flowx-node { z-index: 1; }
   .flowx .dove { z-index: 0; }
   .flowx .dove-fx { z-index: 2; }
 }
 /* HOW IT WORKS の縦並び（スマホ）：次のカードへはカードの後ろをくぐる（.is-under）。右の余白から少しのぞき、画面の外にははみ出さない */
 @media (max-width: 980px) {
-  .lanes, .lp-scheme-flow-wrap { isolation: isolate; }
-  .lanes .dove-layer, .lp-scheme-flow-wrap .dove-layer { z-index: auto; overflow: clip; overflow-clip-margin: 20px; }
+  .lanes .dove-layer, .lp-scheme-flow-wrap .dove-layer { overflow: clip; overflow-clip-margin: 20px; }
 }
 @media (max-width: 640px) {
-  .lp-scheme-diagram { isolation: isolate; }
-  .lp-scheme-diagram .dove-layer { z-index: auto; overflow: clip; overflow-clip-margin: 20px; }
+  .lp-scheme-diagram .dove-layer { overflow: clip; overflow-clip-margin: 20px; }
 }
 .dove { z-index: 6; }
 .dove.is-under { z-index: -1; }
+/* これから進む道筋：薄い点線を先に見せ、鳩が通ったところから色のついた線でなぞる（カードの後ろ＝文字には重ならない） */
+.dove-route { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; z-index: -1; }
+.dove-route path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.route-base path { stroke: var(--sky-deep); stroke-opacity: .4; stroke-width: 2.2; stroke-dasharray: 0 7; }
+.route-done path { stroke: var(--sky-deep); stroke-opacity: .75; stroke-width: 2; }
+/* 起点の印：鳩が立つ小さな黄色の点。画面に入ったときだけ、輪が2回そっと広がる */
+.dove-start { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 5; }
+.dove-start::before, .dove-start::after { content: ""; position: absolute; border-radius: 50%; }
+.dove-start::before { left: -6px; top: -6px; width: 12px; height: 12px; background: var(--yellow); border: 2px solid var(--white); box-shadow: 0 0 0 1px rgba(13, 35, 56, .3); }
+.dove-start::after { left: -14px; top: -14px; width: 28px; height: 28px; border: 1.5px solid var(--yellow-deep, #e9a800); opacity: 0; }
+.dove-start.is-hello::after { animation: dove-hello 1.5s cubic-bezier(.22, 1, .36, 1) 2; }
+@keyframes dove-hello { 0% { opacity: .9; transform: scale(.45); } 100% { opacity: 0; transform: scale(1.5); } }
+@media (max-width: 980px) { .flowx .dove-start { z-index: 2; } }
 @media (prefers-reduced-motion: reduce) { .dove-layer { display: none; } }
 .flowx-end { margin-top: 28px; display: grid; justify-items: center; gap: 16px; text-align: center; }
 .flowx-rail { position: relative; display: grid; justify-items: center; gap: 12px; }
