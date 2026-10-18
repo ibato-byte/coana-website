@@ -18,8 +18,8 @@
 ### 2. 【置き換え】FLOW（ご利用までの流れ）の「手紙」アニメーション
 - ブランチ `claude/flow-journey` は PR を作らず、3. の鳩の仕組みに統合した（同じ鳩で FLOW も動かす）。
 
-### 3. 【進行中】「鳩がデータを運ぶ」改修（HOW IT WORKS 全LP＋FLOW）
-- ブランチ：`claude/dove-carrier`（`claude/flow-journey` から作成。WIP を push 済み）。
+### 3. 【完了：PR #37 マージ済み】「鳩がデータを運ぶ」改修（HOW IT WORKS 全LP＋FLOW）
+- ブランチ：`claude/dove-carrier`／PR：https://github.com/ibato-byte/coana-website/pull/37（main a5ea294）。
 - 依頼の要点：
   - 起点で約1.2秒静止 → 予備動作 → 1工程ずつ（移動約1秒・停止約1秒）→ 終点で約2秒の余韻 → 起点へ戻る（ワープしない）。
   - 鳩がくちばしで荷物（領収書・データ・レポート…）を運ぶ。LPごとに変えるのは荷物と順路だけ。
@@ -39,7 +39,7 @@
   - 計測 `tools/qa/dove-perf.cjs`：CPU 1x/4x は長いタスクなし（4x で 53ms が1件）。6x は 50〜80ms が数件。
   - 演出の棚卸しで間引き：お問い合わせ帯の背景位置アニメ → transform、画面外では停止。LP ヒーローの矢印のバウンドは4回だけ。
   - GIF：`claude/pr-assets` の `dove/`（eef0f05）。
-- 次の一手：PR 作成 → Cloudflare Pages のチェック後マージ。
+- 次の一手：本番での目視（接続できる環境で）。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
@@ -63,6 +63,8 @@
 - #33 お問い合わせの帯のボタン・重複導線の整理
 - #34 HOW IT WORKS の仕組みのアニメーション（全LP）
 - #35 ホットフィックス：HOW IT WORKS がマウスを動かさないと進まない／受け渡しの注記
+- #36 引き継ぎ準備（CLAUDE.md・HANDOFF・tools/qa）
+- #37 鳩がデータを運ぶ（HOW IT WORKS・FLOW）・低スペック対策
 
 ## 作業環境のメモ
 - **ローカルでの確認**：
