@@ -33,37 +33,62 @@
     "Invoices, hanko, and payment terms feel confusing"
   ],
   "scheme": {
-    "type": "hub",
+    "type": "relay",
     "title": "One bilingual point of contact",
     "lead": "We organize your plan, funds, and back office, and bring in licensed professionals.",
+    "client_label": "What you do",
+    "team_label": "What COANA TOKYO does",
+    "client": {
+      "label": "You",
+      "sub": "Ask anything, in English",
+      "icon": "person"
+    },
     "center": {
       "label": "COANA TOKYO",
-      "sub": "Your bilingual coordinator"
+      "sub": "One bilingual contact",
+      "icon": "users"
     },
+    "steps": [
+      "Ask us anything",
+      "Set up in order"
+    ],
     "nodes": [
       {
         "label": "Business plan",
-        "sub": "Plan, budget, and cash flow, the Japanese way"
+        "sub": "Plan, budget, and cash flow, the Japanese way",
+        "icon": "doc"
       },
       {
         "label": "Funding preparation",
-        "sub": "Loans and subsidies: documents and numbers"
+        "sub": "Loans and subsidies: documents and numbers",
+        "icon": "yen"
       },
       {
         "label": "Back office",
-        "sub": "Accounting software, invoicing, EN/JA tools"
+        "sub": "Accounting software, invoicing, EN/JA tools",
+        "icon": "tools"
       },
       {
         "label": "Business customs",
-        "sub": "Invoices, seals, payments: how things work here"
+        "sub": "Invoices, seals, payments: how things work here",
+        "icon": "globe"
       },
       {
         "label": "Licensed professionals",
-        "sub": "Scriveners, tax and labor professionals"
+        "sub": "Scriveners, tax and labor professionals",
+        "icon": "handshake"
+      }
+    ],
+    "returns": [
+      {
+        "label": "Progress shared",
+        "sub": "One thing at a time, in English",
+        "icon": "check"
       },
       {
-        "label": "You",
-        "sub": "Focus on your business, ask anything in English"
+        "label": "Ready to open",
+        "sub": "And support after you launch",
+        "icon": "rocket"
       }
     ],
     "points": [

@@ -2,7 +2,7 @@
 // 長いタスク（50ms 超）・メインスレッドの占有・フレーム間隔（rAF で測るだけ。サイト側は rAF を使っていない）を記録する
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const BASE = process.env.BASE || 'http://localhost:4173';
-const CASES = [['/services/bookkeeping', '.lanes', 1280], ['/services/backoffice-dx', '.lp-scheme-diagram', 1280], ['/services/bookkeeping', '.flowx', 1280], ['/services/bookkeeping', '.lanes', 390], ['/services/bookkeeping', '.flowx', 390]];
+const CASES = [['/services/bookkeeping', '.lanes', 1280], ['/services/backoffice-dx', '.relay', 1280], ['/services/bookkeeping', '.flowx', 1280], ['/services/bookkeeping', '.lanes', 390], ['/services/bookkeeping', '.flowx', 390]];
 const SECONDS = 14;
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });

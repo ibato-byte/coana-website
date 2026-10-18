@@ -113,17 +113,36 @@ collections:
         required: false
         collapsed: true
         fields:
-          - { label: 図の種類, name: type, widget: select, options: [{ label: 中心と周囲（ハブ型）, value: hub }, { label: 左から右の流れ（フロー型）, value: flow }, { label: 御社とCOANAの役割を分けた流れ（レーン型）, value: lanes }], default: hub, required: false }
+          - { label: 図の種類, name: type, widget: select, options: [{ label: 御社 → COANA TOKYO → 対応する領域 → 戻り（リレー型）, value: relay }, { label: 中心と周囲（ハブ型）, value: hub }, { label: 左から右の流れ（フロー型）, value: flow }, { label: 御社とCOANAの役割を分けた流れ（レーン型）, value: lanes }], default: relay, required: false }
           - { label: 見出し, name: title, widget: string, required: false }
           - { label: リード文, name: lead, widget: text, required: false }
-          - label: 中心（ハブ型のみ）
+          - label: リレー型｜起点（御社。図の左／スマホでは一番上）
+            name: client
+            widget: object
+            required: false
+            fields:
+              - { label: ラベル, name: label, widget: string, required: false }
+              - { label: 補足, name: sub, widget: string, required: false }
+              - { label: アイコン, name: icon, widget: string, required: false }
+          - label: 中心（ハブ型・リレー型）
             name: center
             widget: object
             required: false
             fields:
               - { label: ラベル, name: label, widget: string, required: false, default: COANA TOKYO }
               - { label: 補足, name: sub, widget: string, required: false }
-          - label: 周囲の要素／流れのステップ
+              - { label: アイコン（リレー型）, name: icon, widget: string, required: false }
+          - { label: リレー型｜矢印に添える言葉（1：起点→中心、2：中心→領域）, name: steps, widget: list, required: false }
+          - label: リレー型｜戻りの流れ（3・4。領域から起点へ戻る順）
+            name: returns
+            widget: list
+            required: false
+            summary: "{{fields.label}}"
+            fields:
+              - { label: ラベル, name: label, widget: string }
+              - { label: 補足, name: sub, widget: string, required: false }
+              - { label: アイコン, name: icon, widget: string, required: false }
+          - label: 周囲の要素／流れのステップ／対応する領域（リレー型）
             name: nodes
             widget: list
             required: false
@@ -131,11 +150,11 @@ collections:
             fields:
               - { label: ラベル, name: label, widget: string }
               - { label: 補足1行目, name: sub, widget: string, required: false }
-              - { label: アイコン（フロー型・レーン型）, name: icon, widget: string, required: false }
+              - { label: アイコン（フロー型・レーン型・リレー型）, name: icon, widget: string, required: false }
               - { label: 担当（レーン型のみ）, name: who, widget: select, options: [{ label: 御社, value: client }, { label: COANA TOKYO, value: team }], required: false }
               - { label: 詳しい説明（レーン型：カーソルを当てる／タップで表示）, name: detail, widget: text, required: false }
-          - { label: レーン型｜御社の段の見出し, name: client_label, widget: string, required: false }
-          - { label: レーン型｜COANA TOKYOの段の見出し, name: team_label, widget: string, required: false }
+          - { label: レーン型・リレー型｜御社の見出し, name: client_label, widget: string, required: false }
+          - { label: レーン型・リレー型｜COANA TOKYOの見出し, name: team_label, widget: string, required: false }
           - { label: レーン型｜受け渡しの注記（御社の最初の工程から COANA TOKYO の工程へ降りる線の横に表示。例：ここから先は COANA TOKYO が対応します）, name: rest, widget: string, required: false }
           - label: レーン型｜1か月の流れ
             name: cycle

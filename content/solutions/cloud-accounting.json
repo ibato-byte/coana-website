@@ -39,33 +39,52 @@
     ]
   },
   "scheme": {
-    "type": "hub",
+    "type": "relay",
     "title": "クラウド会計を「回る仕組み」にする",
     "lead": "銀行・カード・請求書・税理士とのつながりまで設計し、入力を減らします。",
-    "center": {
-      "label": "COANA TOKYO",
-      "sub": "設計・設定・定着支援"
+    "client_label": "御社のいつもの取引",
+    "team_label": "COANA TOKYOが整える仕組み",
+    "client": {
+      "label": "日々の取引",
+      "sub": "銀行・カード・請求書・経費",
+      "icon": "bank"
     },
+    "center": {
+      "label": "クラウド会計ソフト",
+      "sub": "freee／マネーフォワード。連携を設計・設定",
+      "icon": "cloud"
+    },
+    "steps": [
+      "自動で取り込み",
+      "必要な人へ届く"
+    ],
     "nodes": [
       {
-        "label": "銀行・カード",
-        "sub": "明細の自動取込"
-      },
-      {
-        "label": "請求書・経費精算",
-        "sub": "請求〜入金確認"
-      },
-      {
-        "label": "クラウド会計ソフト",
-        "sub": "freee／マネーフォワード"
+        "label": "仕訳・帳簿",
+        "sub": "ルールに沿って自動で整う",
+        "icon": "rules"
       },
       {
         "label": "顧問税理士",
-        "sub": "データをそのまま共有"
+        "sub": "データをそのまま共有",
+        "icon": "handshake"
       },
       {
         "label": "経営者・担当者",
-        "sub": "翌月早々に数字を把握"
+        "sub": "翌月早々に数字を把握",
+        "icon": "chart"
+      }
+    ],
+    "returns": [
+      {
+        "label": "ルールを決めて定着",
+        "sub": "保存・入力・締め方まで",
+        "icon": "doc"
+      },
+      {
+        "label": "担当が変わっても回る",
+        "sub": "毎月くり返せる仕組みに",
+        "icon": "refresh"
       }
     ],
     "points": [

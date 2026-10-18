@@ -52,6 +52,37 @@
 - テスト：story-test（初期表示・起点が画面外なら出発しない）、fj-test（初期表示）。
 - 次の一手：本番での目視（接続できる環境で）。
 
+### 6. 【進行中】バックオフィス代行LP の HOW IT WORKS を作り直し（リレー型）＋ 他のハブ型LPの見直し
+- ブランチ：`claude/backoffice-relay`（WIP push 済み）。
+- 依頼：ハブ型（中心＋周囲）が「流れが分かりづらい」。
+  - PC：左→右の一方向（御社 →1→ COANA TOKYO チーム →2→ 領域）。下の段で 3 完了をご報告 → 4 マニュアル化 → 御社へ戻る。
+  - スマホ：上→下の1列。領域は2列のタグ。高さは現状以下。
+  - 線は意味のある線だけ。番号付き。通った線から色。鳩エンジンはそのまま。
+  - 他のハブ型LP（創業支援 JA/EN・クラウド会計）も確認して見直し。
+  - PR に Before/After と GIF、「5秒で流れを説明できるか」の自己評価。
+- 実装：
+  - `src/SolutionPage.tsx` の `SchemeRelay`（新しい図の種類 `relay`）
+  - `src/solution.css` の `.relay*`
+  - `content/solutions/backoffice-dx.json`（client／steps／returns）
+  - `src/schemeStory.tsx`（周ごとに領域と荷物が変わる）
+  - エンジン（`src/doveCarrier.tsx`）の追加：
+    - `route: false`
+    - `group-tr` の止まり方
+    - `page` の出来事
+    - 荷物（給与明細・契約書・見積書・フロー図）
+    - 回り道を「横・上・下」から選ぶ
+- 済み：創業支援 JA/EN・クラウド会計もリレー型に変更。CMS 設定（relay 型の項目）。
+- **追加指示（同じブランチで対応中）：全LPの鳩の見直し（オーナーフィードバック）**
+  - 軌道（飛ぶ道筋・軌跡・点線の先出し）は描かない → 削除。進み具合はカード側（点灯＋小さなチェック `StepCheck`）。
+  - 短く自然な弧だけ（エンジンの `arc()` が文字に当たらない高さ・向きを選ぶ）。大きな迂回・カードの裏くぐりは廃止。perch を外の余白へ（経理代行のレーン：御社側は `out-r`、チーム側は `above-tr`。スマホはカード右に鳩の通り道の余白）。
+  - 終点から起点へ飛んで戻らない：置く → 全工程が完了でそろう → 上へ去る → 間 → 点灯リセット（`data-cycle` の「毎月くり返し」が回る）→ 起点に舞い降りる → 静止 → 出発。
+  - CLAUDE.md・docs/motion-rules.md にルールを追記済み。
+- テスト済み：dove-overlap（1280・768・390）ALL OK、story-test（終点でそろう→去る→リセット→再出発を追加）、fj-test 132 OK、wheel・fj-wheel・toggles・features ALL OK、contrast（リレー中心カードの補足文を白に）、dove-perf（4x で長いタスク 0〜2 件）。
+  - 録画：`tools/qa/finalevid.cjs`（終点の少し前〜次の周の出発までの時刻を JSON に書く）。
+- GIF・Before/After：`claude/pr-assets` の `dove-finale/`・`relay/`（コミット 59b3c99）。
+- 次の一手：
+  1. PR（自己評価「5秒で流れを説明できるか」「初見の人が混乱しないか」）→ チェック後マージ。
+
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
 - **使われていない画像の削除可否**：オーナー時代から未使用、または CMS のメディア。

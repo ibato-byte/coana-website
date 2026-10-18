@@ -10,10 +10,10 @@ const [,, slug, dev, out, secs = '14', fps = '6'] = process.argv;
   await p.goto(`http://localhost:4173/services/${slug}`, { waitUntil: 'networkidle' });
   const sel = '.lp-scheme .container';
   await p.addStyleTag({ content: 'html { scroll-behavior: auto !important; } .site-header, .chat-launcher, .back-to-top, .lp-sticky { visibility: hidden !important; }' });
-  await p.evaluate(() => { const e = document.querySelector('.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap'); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70); });
+  await p.evaluate(() => { const e = document.querySelector('.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap, .relay'); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 70); });
   await p.waitForTimeout(300);
   await p.mouse.move(2, 2);
-  const el = p.locator('.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap').first();
+  const el = p.locator('.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap, .relay').first();
   const n = Math.round(+secs * +fps);
   for (let i = 0; i < n; i++) {
     const t0 = Date.now();

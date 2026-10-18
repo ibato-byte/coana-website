@@ -56,24 +56,21 @@ const shapesDrawn = (sel) => [...document.querySelectorAll(sel)].every((s) => { 
    ok('PC OUR STYLE：カーソルでカードがわずかに傾く', !!tilt, String(tilt));
    ok('PC OUR STYLE：ツールをつなぐ線が引かれている', await p.evaluate(() => getComputedStyle(document.querySelector('.style-tools-line')).transform === 'none'));
   }
-  // ── LP：PROBLEMS・HOW IT WORKS（中心円型）・FLOW ──
+  // ── LP：PROBLEMS・HOW IT WORKS（リレー型）・FLOW ──
   await p.goto(BASE + '/services/backoffice-dx', { waitUntil: 'networkidle' });
   await p.evaluate(() => document.querySelector('.lp-problems').scrollIntoView({ block: 'start' })); await p.waitForTimeout(1500);
   const pr = await p.evaluate((fn) => { const f = new Function('return ' + fn)(); return { cards: [...document.querySelectorAll('.lp-problem-grid li')].every((e) => e.classList.contains('in')), icons: f('.lp-problem-icon svg *'), funnel: getComputedStyle(document.querySelector('.lp-funnel')).display !== 'none' && f('.lp-funnel path:not([style*="none"])'), arrow: getComputedStyle(document.querySelector('.lp-bridge-arrow')).opacity }; }, shapesDrawn.toString());
   ok(`${tag} PROBLEMS：カード表示・アイコンと線が描かれ・矢印が降りている`, pr.cards && pr.icons && pr.funnel && pr.arrow === '1', JSON.stringify(pr));
   await p.evaluate(() => document.querySelector('.lp-scheme').scrollIntoView({ block: 'start' })); await p.waitForTimeout(2600);
-  if (!mobile) {
-   const hub = await p.evaluate((fn) => { const f = new Function('return ' + fn)(); const svg = document.querySelector('.lp-scheme-diagram svg'); return { lines: f('.lp-scheme-lines path'), ends: [...document.querySelectorAll('.lp-scheme-ends circle')].every((c) => getComputedStyle(c).opacity === '1'), dots: getComputedStyle(document.querySelector('.lp-scheme-dots')).opacity, playing: !svg.animationsPaused() }; }, shapesDrawn.toString());
-   ok('PC HOW IT WORKS（中心円型）：線が広がり、点が付き、光の粒が流れている', hub.lines && hub.ends && hub.dots === '1' && hub.playing, JSON.stringify(hub));
-   await p.hover('.lp-scheme-node >> nth=2'); await p.waitForTimeout(300);
-   ok('PC HOW IT WORKS：ホバーした要素に関係する線だけ強調', await p.evaluate(() => document.querySelector('.lp-scheme-diagram').dataset.active === '2' && document.querySelectorAll('.lp-scheme-line.is-active').length === 1));
-   await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(400);
-   ok('PC HOW IT WORKS：画面外では光の粒が止まる', await p.evaluate(() => document.querySelector('.lp-scheme-diagram svg').animationsPaused()));
-  } else ok('スマホ HOW IT WORKS（中心円型）：一覧で表示', await p.evaluate(() => getComputedStyle(document.querySelector('.lp-scheme-list')).display !== 'none' && document.querySelectorAll('.lp-scheme-list li').length > 3));
+  // HOW IT WORKS（リレー型）：番号付きの意味のある線（PC は矢印の線、スマホは上から下の1列）
+  const rl = await p.evaluate(() => ({ lines: document.querySelectorAll('.relay-lines .relay-line').length, arrows: document.querySelectorAll('.relay-lines [marker-end]').length, steps: [...document.querySelectorAll('.relay-step .relay-num, .relay-return .relay-num')].map((n) => n.textContent).join(','), areas: document.querySelectorAll('.relay-area').length, startLit: document.querySelector('.relay-client').classList.contains('is-now'), column: getComputedStyle(document.querySelector('.relay')).display }));
+  if (!mobile) ok('PC HOW IT WORKS（リレー型）：左→右の線と矢印・番号 1〜4・起点だけ点灯', rl.lines >= 9 && rl.arrows >= 8 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'grid', JSON.stringify(rl));
+  else ok('スマホ HOW IT WORKS（リレー型）：上から下の1列・番号 1〜4・起点だけ点灯', rl.lines === 0 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'flex', JSON.stringify(rl));
   // FLOW（静止画＋PC のホバー）
   await p.evaluate(() => document.querySelector('.lp-flow').scrollIntoView({ block: 'start' })); await p.waitForTimeout(800);
   const fl = await p.evaluate(() => ({ progress: !!document.querySelector('[data-progress]'), steps: [...document.querySelectorAll('.lp-flow .flowx-step')].filter((s) => s.getBoundingClientRect().height > 0 && getComputedStyle(s.querySelector('h3')).opacity === '1').length, nums: [...document.querySelectorAll('.lp-flow .flowx-num')].map((n) => n.textContent).join(','), cta: document.querySelectorAll('.lp-flow .flowx-cta a').length, lead: document.querySelector('.lp-flow .flowx-lead')?.textContent }));
-  ok(`${tag} FLOW：スクロール連動なし・全ステップが最初から読める・線の先に相談ボタン1つ`, !fl.progress && fl.steps === 5 && fl.nums === '01,02,03,04,05' && fl.cta === 1 && fl.lead === 'まずは無料相談から', JSON.stringify(fl));
+  // 相談ボタンは FLOW には置かない（導線はページ下部のお問い合わせの帯に一本化。PR #33）
+  ok(`${tag} FLOW：スクロール連動なし・全ステップが最初から読める`, !fl.progress && fl.steps === 5 && fl.nums === '01,02,03,04,05', JSON.stringify(fl));
   if (!mobile) {
    await p.hover('.lp-flow .flowx-step >> nth=1'); await p.waitForTimeout(500);
    const hv = await p.evaluate(() => { const n = document.querySelectorAll('.lp-flow .flowx-node')[1]; return { bg: getComputedStyle(n).backgroundColor, tr: getComputedStyle(n).transform }; });
@@ -82,8 +79,9 @@ const shapesDrawn = (sel) => [...document.querySelectorAll(sel)].every((s) => { 
   // 一本の流れ型（営業支援）
   await p.goto(BASE + '/services/sales-support', { waitUntil: 'networkidle' });
   await p.evaluate(() => document.querySelector('.lp-scheme').scrollIntoView({ block: 'start' })); await p.waitForTimeout(2200);
-  const sf = await p.evaluate(() => ({ in: document.querySelector('.lp-scheme-flow').classList.contains('in'), lit: [...document.querySelectorAll('.lp-scheme-flow-icon')].every((i) => getComputedStyle(i, '::before').opacity === '1'), badges: [...document.querySelectorAll('.lp-scheme-flow-icon b')].every((b) => getComputedStyle(b).opacity === '1') }));
-  ok(`${tag} HOW IT WORKS（一本の流れ型）：各ステージが点灯`, sf.in && sf.lit && sf.badges, JSON.stringify(sf));
+  // 鳩が1つずつ届けるので、点灯は届いた工程だけ（起点から順に）。軌道の線は描かない。番号はすべて読める
+  const sf = await p.evaluate(() => ({ now: document.querySelectorAll('.lp-scheme-flow li.is-now').length, route: document.querySelectorAll('.lp-scheme-flow-wrap .dove-route, .lp-scheme-flow-wrap .route-base').length, badges: [...document.querySelectorAll('.lp-scheme-flow-icon b')].every((b) => getComputedStyle(b).opacity === '1') }));
+  ok(`${tag} HOW IT WORKS（一本の流れ型）：届いた工程が点灯・軌道の線なし・番号が読める`, sf.now === 1 && sf.route === 0 && sf.badges, JSON.stringify(sf));
   // サービス一覧：帯・料金→流れ→相談
   await p.goto(BASE + '/services', { waitUntil: 'networkidle' });
   const sv = await p.evaluate(() => { const order = [...document.querySelectorAll('.flow-section .pricing-box, .flow-section .section-title, .flow-section .flowx-cta')].map((e) => e.className.split(' ')[0]); const bnd = document.querySelector('.diagnose-banner'); return { order: order.join('>'), band: !!bnd && bnd.querySelectorAll('button, a').length === 1, icons: [...document.querySelectorAll('.flow-section .flowx-icon svg *')].every((s) => getComputedStyle(s).strokeDasharray === 'none') }; });
