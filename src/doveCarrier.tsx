@@ -492,11 +492,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         // 起点：起点が画面に入ってから、しばらく静止して出発する
         await startGate();
         if (cancelled) return;
-        // 図そのものの表示アニメーション（現れる・線を引く）が終わるのを待つ（最大2秒）。動いている途中の文字の位置で道筋を決めないように
-        const appearing = (root.closest("section") ?? root).getAnimations({ subtree: true }).filter((a) => a.effect?.getTiming().iterations !== Infinity && !(a.effect instanceof KeyframeEffect && a.effect.target instanceof Element && a.effect.target.closest(".dove-layer")));
-        if (appearing.length) await Promise.race([Promise.all(appearing.map((a) => a.finished.catch(() => undefined))), wait(2000)]);
         hello();
-        await wait(T.startHold);
+        // 起点での静止と並行して、図そのものの表示アニメーション（現れる・線を引く）が終わるのを待つ（最大1.2秒）。
+        // 動いている途中の文字の位置で道筋を決めないように
+        const appearing = (root.closest("section") ?? root).getAnimations({ subtree: true }).filter((a) => a.effect?.getTiming().iterations !== Infinity && !(a.effect instanceof KeyframeEffect && a.effect.target instanceof Element && a.effect.target.closest(".dove-layer")));
+        await Promise.all([wait(T.startHold), Promise.race([Promise.all(appearing.map((a) => a.finished.catch(() => undefined))), wait(1200)])]);
         await startGate();
         if (cancelled) return;
         const list = plan.list;
