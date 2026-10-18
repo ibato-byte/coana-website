@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { articles, home, settings, solutions, type Article, type Solution } from "./content";
+import { articles, home, solutions, type Article, type Solution } from "./content";
 import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
@@ -94,7 +94,6 @@ const LABELS = {
     before: "Before",
     after: "After",
     flow: "ご利用までの流れ",
-    flowLead: "まずは無料相談から",
     faq: "よくあるご質問",
     column: "関連するコラム",
     ctaTitle: "まずは、現状をお聞かせください。",
@@ -128,7 +127,6 @@ const LABELS = {
     before: "Before",
     after: "After",
     flow: "How to get started",
-    flowLead: "Start with a free consultation",
     faq: "FAQ",
     column: "Related articles",
     ctaTitle: "Tell us where you are. We will take it from there.",
@@ -716,7 +714,7 @@ function Scenarios({ sol }: { sol: Solution }) {
 
 /* ───────────────────────── 6. 流れ ───────────────────────── */
 
-function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
+function Flow({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
   const steps = sol.flow ?? [];
   if (!steps.length) return null;
@@ -727,13 +725,8 @@ function Flow({ sol, navigate }: { sol: Solution; navigate: Nav }) {
         <FlowLine
           steps={steps.map((st) => ({ name: st.name, text: st.text }))}
           note={sol.flow_note && <><LpIcon name="clock" size={16} />{sol.flow_note}</>}
-          lead={L.flowLead}
-        >
-          {/* LINE はヒーロー・ページ下部のお問い合わせ帯・スマホの固定バーにあるので、ここは相談ボタン1つに絞る */}
-          <GoLink className="button button-large button-fly lp-button-primary" go={navigate} args={["contact"]}>
-            {L.consult}<BirdArrow />
-          </GoLink>
-        </FlowLine>
+        />
+        {/* 相談のボタンは置かない：よくあるご質問のすぐ後に、ページ下部のお問い合わせの帯がある（PC はヘッダー、スマホは固定バーからもいつでも相談できる） */}
       </div>
     </section>
   );
@@ -757,7 +750,6 @@ function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
             </GoLink>
             <LineButton place="solution_cta" label={L.consultLine} />
           </div>
-          <a className="lp-cta-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
       </div>
     </section>
@@ -824,7 +816,7 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
       <Scheme sol={sol} navigate={navigate} />
       <Support sol={sol} />
       <Scenarios sol={sol} />
-      <Flow sol={sol} navigate={navigate} />
+      <Flow sol={sol} />
       {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || L.faq} />}
       <CtaBand sol={sol} navigate={navigate} />
       <section className="section solution-more">
