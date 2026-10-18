@@ -671,9 +671,13 @@ a.service-card:hover .art * { animation-play-state: running; }
 }
 .faq-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--navy); color: var(--white); display: grid; place-items: center; font-family: var(--font-en); font-weight: 700; font-size: 15px; }
 .faq-item.open .faq-mark { background: var(--sky-deep); }
-.faq-toggle { color: var(--sky-deep); display: grid; place-items: center; transition: transform .45s var(--ease-out), opacity .3s; }
-.faq-item.open .faq-q { cursor: default; }
-.faq-item.open .faq-toggle { opacity: 0; transform: rotate(90deg) scale(.6); }
+/* 開閉の目印：閉じているとき「＋」、開いているとき「－」（縦の線をたたむ） */
+.faq-toggle { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(8, 127, 229, .35); color: var(--sky-deep); display: grid; place-items: center; transition: background .3s, color .3s, border-color .3s; }
+.faq-toggle .v { transform-origin: 12px 12px; transition: transform .35s var(--ease-out); }
+.faq-item.open .faq-toggle { background: var(--sky-deep); border-color: var(--sky-deep); color: var(--white); }
+.faq-item.open .faq-toggle .v { transform: scaleY(0); }
+/* 文字の横の開閉の目印（∨）。開いているときは上向き（LP の「業務の一覧を見る」、HOW IT WORKS の「詳しく見る」） */
+.toggle-chevron { flex: none; transition: transform .3s var(--ease-out); }
 .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--ease-out); }
 .faq-item.open .faq-a { grid-template-rows: 1fr; }
 .faq-a-inner { overflow: hidden; }
