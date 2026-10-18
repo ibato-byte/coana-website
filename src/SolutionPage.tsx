@@ -572,7 +572,10 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
                   {scheme.rest}
                 </p>
               )}
-              <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
+              {/* スマホ：担当が切り替わる工程にだけ「御社／COANA TOKYO」の札（受け渡しの地点は注記が兼ねる） */}
+              {(i === 0 || nodes[i - 1].who !== n.who) && !(i === handoff && scheme.rest) && (
+                <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
+              )}
               {(() => {
                 const inner = (
                   <>
@@ -595,7 +598,7 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
                 return (
                   <button type="button" className="lanes-card" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
                     {inner}
-                    <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
+                    <span className="lanes-more"><span className="lanes-more-text">{open === i ? "閉じる" : "詳しく見る"}</span><Chevron /></span>
                   </button>
                 );
               })()}

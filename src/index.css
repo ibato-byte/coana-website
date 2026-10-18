@@ -928,13 +928,6 @@ a.service-card:hover .art * { animation-play-state: running; }
 .step-check { position: absolute; right: -5px; bottom: -5px; z-index: 1; width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); box-shadow: 0 0 0 2px var(--white); opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
 .flowx-step.is-done:not(.is-now) .step-check { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .step-check { display: none; } }
-/* 起点の印：鳩が立つ小さな黄色の点。画面に入ったときだけ、輪が2回そっと広がる */
-.dove-start { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 5; }
-.dove-start::before, .dove-start::after { content: ""; position: absolute; border-radius: 50%; }
-.dove-start::before { left: -6px; top: -6px; width: 12px; height: 12px; background: var(--yellow); border: 2px solid var(--white); box-shadow: 0 0 0 1px rgba(13, 35, 56, .3); }
-.dove-start::after { left: -14px; top: -14px; width: 28px; height: 28px; border: 1.5px solid var(--yellow-deep, #e9a800); opacity: 0; }
-.dove-start.is-hello::after { animation: dove-hello 1.5s cubic-bezier(.22, 1, .36, 1) 2; }
-@keyframes dove-hello { 0% { opacity: .9; transform: scale(.45); } 100% { opacity: 0; transform: scale(1.5); } }
 @media (prefers-reduced-motion: reduce) { .dove-layer { display: none; } }
 .flowx-end { margin-top: 28px; display: grid; justify-items: center; gap: 16px; text-align: center; }
 .flowx-rail { position: relative; display: grid; justify-items: center; gap: 12px; }
