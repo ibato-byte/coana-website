@@ -66,7 +66,7 @@
 .lp-hero-note { margin: 12px 0 0; font-size: 12.5px; color: var(--navy-soft); }
 a.lp-hero-english { margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); font-size: 13.5px; font-weight: 700; color: var(--sky-ink); }
 a.lp-hero-english:hover { border-color: var(--sky); }
-.lp-hero-scroll { position: absolute; left: 50%; bottom: 18px; width: 38px; height: 38px; margin-left: -19px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--sky-deep); animation: lp-bounce 2.4s ease-in-out infinite; }
+.lp-hero-scroll { position: absolute; left: 50%; bottom: 18px; width: 38px; height: 38px; margin-left: -19px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--sky-deep); animation: lp-bounce 2.4s ease-in-out 1.2s 4 /* 数回だけ。ずっと動かし続けない */; }
 @keyframes lp-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
 /* ── 2. お悩み ── */
@@ -117,21 +117,22 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 /* 画面に入ると、ステージが左から順に点灯する（.in から 0.25 秒＋0.18 秒ずつ）。点灯前も文字とアイコンの枠は読める */
 .lp-scheme-flow-icon::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); }
 .lp-scheme-flow-icon > svg { position: relative; }
-/* 仕組みのアニメーション中（[data-run]）：チップがまだ来ていない工程のアイコンは淡く、来た工程（.is-done）から点灯する。
+/* 仕組みのアニメーション中（[data-run]）：鳩がまだ来ていない工程のアイコンは淡く、来た工程（.is-done）から点灯する。
    番号と文字は最初から読める。「動きを減らす」設定では最初から全部点灯 */
 .lp-scheme-flow-icon, .lp-scheme-flow-icon::before { transition: color var(--m-color), opacity var(--m-color); }
 .lp-scheme-flow-wrap { position: relative; }
 .lp-scheme-flow-wrap[data-run] li:not(.is-done) .lp-scheme-flow-icon { color: var(--sky-deep); background: var(--sky-soft); }
 .lp-scheme-flow-wrap[data-run] li:not(.is-done) .lp-scheme-flow-icon::before { opacity: 0; }
-.lp-scheme-flow li { transition: border-color var(--m-color), box-shadow var(--m-color); }
-.lp-scheme-flow li.is-now { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(8, 127, 229, .1), var(--shadow-sm); }
+/* 今、鳩がいる工程：枠の外側の輪を重ねて opacity だけで出し入れする（box-shadow は動かさない） */
+.lp-scheme-flow li::before, .lanes-card::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid var(--sky); box-shadow: 0 0 0 4px rgba(8, 127, 229, .1); opacity: 0; transition: opacity var(--m-color); pointer-events: none; }
+.lp-scheme-flow li.is-now::before, .lanes-item.is-now .lanes-card::before { opacity: 1; }
 .lp-scheme-flow-icon { position: relative; width: 60px; height: 60px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
 .lp-scheme-flow-icon b { position: absolute; z-index: 1; top: -8px; right: -8px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); font-family: var(--font-en); font-size: 13px; }
 .lp-scheme-flow strong { font-size: 16px; line-height: 1.5; }
 .lp-scheme-flow span:not(.lp-scheme-flow-icon) { font-size: 13px; line-height: 1.7; color: var(--navy-soft); }
 
 .lp-scheme-diagram { margin: 36px auto 0; max-width: 980px; }
-.lp-scheme-diagram svg { display: block; width: 100%; height: auto; }
+.lp-scheme-diagram > svg { display: block; width: 100%; height: auto; }
 /* 線は中心から外へ一度だけ広がる（.in）。その後、PC で画面内のときだけ光の粒がゆっくり流れる */
 .lp-scheme-line { fill: none; stroke: var(--sky); stroke-width: 2.5; stroke-linecap: round; transition: stroke var(--m-color), stroke-width var(--m-color), opacity var(--m-color); }
 .motion-ready .lp-scheme-lines path { transition: stroke-dashoffset var(--m-draw) var(--m-ease-line) var(--draw-d), stroke var(--m-color), stroke-width var(--m-color), opacity var(--m-color); }
@@ -139,7 +140,7 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .motion-ready .lp-scheme-ends circle { opacity: 0; transition: opacity var(--m-color) calc(.75s + var(--i) * .09s), fill var(--m-color), stroke var(--m-color); }
 .motion-ready .lp-scheme-diagram.in .lp-scheme-ends circle { opacity: 1; }
 .lp-scheme-ring { fill: none; stroke: var(--sky); stroke-width: 2; opacity: .5; }
-/* 仕組みのアニメーション：チップが止まっている要素をそっと強調。中心は外側の輪が黄色に */
+/* 仕組みのアニメーション：鳩が止まっている要素をそっと強調。中心は外側の輪が黄色に */
 .lp-scheme-diagram { position: relative; }
 .lp-scheme-ring { transition: stroke var(--m-color), opacity var(--m-color); }
 .lp-scheme-center.is-now .lp-scheme-ring { stroke: var(--yellow); opacity: 1; stroke-width: 3; }
@@ -186,15 +187,14 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .lanes-card { position: relative; display: grid; align-content: start; justify-items: start; gap: 10px; width: 100%; height: 100%; padding: 18px 16px 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--white); color: var(--navy); font: inherit; text-align: left; cursor: default; box-shadow: var(--shadow-sm); transition: border-color var(--m-color), box-shadow var(--m-color), transform .3s var(--m-ease); }
 .lanes-card[aria-controls] { cursor: pointer; }
 .lanes-item.is-client .lanes-card { background: #fffdf6; border-color: rgba(242, 165, 22, .35); }
-.lanes-icon { position: relative; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-soft); color: var(--sky-deep); transition: background var(--m-color), color var(--m-color), box-shadow var(--m-color); }
+.lanes-icon { position: relative; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-soft); color: var(--sky-deep); transition: color var(--m-color); }
 .lanes-item.is-client .lanes-icon { background: var(--yellow-soft); color: var(--navy-ink); }
 /* 書類が通った工程は点灯（「動きを減らす」設定や再生後は、全工程が点灯した状態） */
 .lanes-item.is-team.is-done .lanes-icon { background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
 .lanes-item.is-client.is-done .lanes-icon { background: var(--yellow); }
 .lanes-item.is-done .lanes-icon { box-shadow: 0 0 0 5px rgba(6, 112, 203, .08); }
-/* 今チップが止まっている工程：枠をそっと強調（レイアウトは動かさない） */
-.lanes-card { transition: border-color var(--m-color), box-shadow var(--m-color); }
-.lanes-item.is-now .lanes-card { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(8, 127, 229, .1), var(--shadow-sm); }
+/* 今鳩が止まっている工程：枠をそっと強調（レイアウトは動かさない） */
+.lanes-card { transition: border-color var(--m-color), box-shadow var(--m-color); } /* ホバーのときだけ動く */
 .lanes-text { display: grid; gap: 4px; }
 .lanes-text strong { font-size: 15.5px; font-weight: 800; line-height: 1.45; }
 .lanes-text span { font-size: 12.5px; line-height: 1.7; color: var(--navy-soft); }
@@ -251,13 +251,6 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
     .lanes-cta { margin-top: 48px; flex-direction: column; font-size: 14.5px; }
 }
 
-/* 仕組みのアニメーションで動くチップ（schemeStory.tsx）。カードの上の縁に止まり、文字に重ならない */
-.story-chip { position: absolute; left: 0; top: 0; z-index: 6; display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px 4px 9px; border-radius: 999px; background: var(--white); border: 1px solid rgba(6, 112, 203, .35); box-shadow: 0 6px 16px rgba(13, 35, 56, .16); color: var(--navy-ink); font-size: 12px; font-weight: 800; line-height: 1.4; white-space: nowrap; pointer-events: none; translate: -50% -50%; transition: transform .95s cubic-bezier(.45, 0, .25, 1), opacity .35s, background-color .35s, border-color .35s; will-change: transform; }
-.story-chip svg, .lp-scheme-diagram .story-chip svg { flex: none; display: block; width: 14px; height: 14px; color: var(--sky-deep); }
-.story-chip.is-gold { background: var(--yellow); border-color: #e9b21c; }
-.story-chip.is-gold svg { color: var(--navy-ink); }
-.story-chip.is-instant { transition: opacity .35s; }
-.story-chip.is-right { translate: -100% -50%; } /* 縦並び：カードの右上に、右端をそろえて止まる */
 .lp-scheme-points { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .lp-scheme-points li { padding: 24px 22px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); }
 .lp-scheme-point-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: var(--yellow-soft); color: var(--navy); }
@@ -397,16 +390,17 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-scheme-point-icon { grid-row: span 2; }
   .lp-scheme-points h3 { margin: 0; font-size: 15.5px; }
   .lp-scheme-points p { font-size: 13.5px; }
-  .lp-scheme-diagram svg { display: none; }
+  .lp-scheme-diagram > svg { display: none; }
   .lp-scheme-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .lp-scheme-list li { display: grid; gap: 2px; padding: 12px 16px; border-radius: 14px; background: var(--white); border-left: 4px solid var(--sky-deep); }
   .lp-scheme-list strong { font-size: 15px; }
   .lp-scheme-list span { font-size: 13px; color: var(--navy-soft); line-height: 1.6; }
-  .lp-scheme-list li { transition: border-color var(--m-color), box-shadow var(--m-color), background var(--m-color); }
+  .lp-scheme-list li { position: relative; }
+  .lp-scheme-list li::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 3px rgba(8, 127, 229, .18); opacity: 0; transition: opacity var(--m-color); pointer-events: none; }
   .lp-scheme-list li.is-center { border-left-color: var(--yellow); background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
-  .lp-scheme-list li.is-center span { color: rgba(255, 255, 255, .85); }
-  .lp-scheme-list li.is-now { box-shadow: 0 0 0 3px rgba(8, 127, 229, .18); }
-  .lp-scheme-list li.is-center.is-now { box-shadow: 0 0 0 3px rgba(252, 201, 52, .7); }
+  .lp-scheme-list li.is-center span { color: rgba(255, 255, 255, .95); } /* AA（4.5:1）を満たす濃さ */
+  .lp-scheme-list li.is-center::before { box-shadow: 0 0 0 3px rgba(252, 201, 52, .7); }
+  .lp-scheme-list li.is-now::before { opacity: 1; }
   .lp-scheme-list li.has-check.is-done strong::after { content: "✓"; display: inline-grid; place-items: center; width: 18px; height: 18px; margin-left: 8px; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); font-size: 11px; vertical-align: 2px; }
   .lp-feature-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 28px; }
   .lp-feature { flex-direction: column; gap: 8px; padding: 14px; }

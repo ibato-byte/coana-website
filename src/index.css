@@ -688,13 +688,26 @@ a.service-card:hover .art * { animation-play-state: running; }
 .contact-band {
   position: relative;
   padding: 100px 0;
-  background: linear-gradient(120deg, #0a6fd0 0%, var(--sky-deep) 45%, #136fc0 100%); /* 白い文字が AA を満たす明るさまで */
-  background-size: 180% 180%;
-  animation: band-shift 16s ease-in-out infinite alternate;
+  background: var(--sky-deep);
   color: var(--white);
   overflow: hidden;
 }
-@keyframes band-shift { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+/* グラデーションのゆっくりした移ろい：背景の位置を動かすと毎フレーム帯全体を描き直すので、幅の広い層を transform で動かす（見え方は同じ） */
+.contact-band::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 180%;
+  background: linear-gradient(120deg, #0a6fd0 0%, var(--sky-deep) 45%, #136fc0 100%); /* 白い文字が AA を満たす明るさまで */
+  animation: band-shift 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes band-shift { from { transform: translateX(0); } to { transform: translateX(-44.44%); } }
+/* 画面に入っている間だけ動かす（[data-live] → .is-live。止めるときはその場で一時停止） */
+.contact-band::before, .contact-orbit { animation-play-state: paused; }
+.contact-band.is-live::before, .contact-band.is-live .contact-orbit { animation-play-state: running; }
 .contact-orbit { position: absolute; border: 1px dashed rgba(255, 255, 255, .55); border-radius: 50%; animation: orbit-spin 34s linear infinite; }
 .orbit-one { width: 420px; height: 420px; right: -80px; top: -170px; }
 .orbit-two { width: 260px; height: 260px; right: 20px; bottom: -160px; animation-duration: 24s; animation-direction: reverse; }
@@ -840,6 +853,88 @@ a.service-card:hover .art * { animation-play-state: running; }
 }
 @keyframes flowx-redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 /* 線の先：目安の期間 → 「まずは無料相談から」 → ボタン */
+/* 鳩がデータを運ぶ（doveCarrier.tsx・HOW IT WORKS と FLOW 共通）。動かすのは transform と opacity だけ。
+   .dove の原点は鳩の足もと。鳩は工程の右上の空き、または上の縁の外に止まり、文字には重ならない */
+.flowx { position: relative; }
+.dove-layer { --dove: 40px; position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+.dove { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; will-change: transform, opacity; }
+.dove-flip, .dove-bob { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+/* 動く部品は最初から合成レイヤーに（飛ぶたびにレイヤーを作り直さない） */
+.dove-bob, .dove-body, .dove-wing, .dove-cargo { will-change: transform; }
+.dove-body { position: absolute; left: calc(var(--dove) / -2); top: calc(var(--dove) * -.82); width: var(--dove); height: calc(var(--dove) * .82); transform-origin: 50% 100%; }
+.dove-body svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.dove-shape .bodyline, .dove-shape .tail { fill: var(--white); stroke: var(--navy-ink); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.dove-shape .beak { fill: var(--yellow); stroke: var(--navy-ink); stroke-width: 1.1; stroke-linejoin: round; }
+.dove-shape .eye { fill: var(--navy-ink); }
+.dove-shape .feet { fill: none; stroke: var(--navy-ink); stroke-width: 1.3; stroke-linecap: round; }
+.dove-wing { position: absolute; inset: 0; transform-origin: 58% 45%; }
+.dove-wing .wing { fill: #dcecf9; stroke: var(--navy-ink); stroke-width: 1.4; stroke-linejoin: round; }
+.dove-wing .wing-tip { fill: none; stroke: var(--yellow); stroke-width: 1.6; stroke-linecap: round; }
+/* 荷物：くちばしの先にさげる小さなカード */
+.dove-cargo { position: absolute; left: 90%; top: 38%; width: calc(var(--dove) * .5); height: calc(var(--dove) * .5); transform-origin: 30% 0; }
+.cargo-card { position: relative; display: grid; place-items: center; width: 100%; height: 100%; border-radius: 4px; background: var(--white); border: 1.3px solid var(--navy-ink); }
+.cargo-card > svg { width: 78%; height: 78%; overflow: visible; }
+.cargo-glyph { fill: none; stroke: var(--sky-deep); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cargo-card.is-gold { background: var(--yellow); }
+.cargo-card.is-gold .cargo-glyph { stroke: var(--navy-ink); }
+.cargo-badge { position: absolute; right: -7px; top: -7px; width: 13px; height: 13px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); border: 1px solid var(--navy-ink); opacity: 0; transform: scale(0); }
+.cargo-badge svg { width: 10px; height: 10px; }
+.cargo-badge path, .cargo-badge circle { fill: none; stroke: var(--navy-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.cargo-badge.is-stamp circle { stroke-width: 1.1; }
+.cargo-card.show-check .cargo-badge.is-check, .cargo-card.show-stamp .cargo-badge.is-stamp { animation: dove-pop .42s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes dove-pop { 0% { opacity: 0; transform: scale(0); } 70% { opacity: 1; transform: scale(1.18); } 100% { opacity: 1; transform: scale(1); } }
+/* 飛んでいる間：羽ばたき（約0.36秒）・体の上下・荷物の揺れ */
+.dove.is-flying .dove-wing { animation: dove-flap .36s ease-in-out infinite alternate; }
+.dove.is-flying .dove-bob { animation: dove-bob .36s ease-in-out infinite alternate; }
+.dove.is-flying .dove-cargo { animation: dove-sway .72s ease-in-out infinite alternate; }
+@keyframes dove-flap { from { transform: rotate(-10deg); } to { transform: rotate(46deg) scaleY(.92); } }
+@keyframes dove-bob { from { transform: translateY(0); } to { transform: translateY(-2px); } }
+@keyframes dove-sway { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+/* 着いたときの小さな出来事（FLOW）。.dove-fx の原点は鳩の足もと（輪は丸の中心、印の波紋は荷物の中心） */
+.dove-fx { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 1; }
+.fx-bubble { position: absolute; left: 0; top: 0; width: 26px; height: 19px; opacity: 0; transform-origin: 50% 100%; }
+.fx-bubble.is-a { translate: calc(var(--dove) * -.5 - 32px) calc(var(--dove) * -.95); }
+.fx-bubble.is-b { translate: calc(var(--dove) * .95 + 4px) calc(var(--dove) * -1.05); }
+.fx-bubble svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.fx-bubble.is-a path { fill: var(--white); stroke: var(--navy-ink); stroke-width: 1.3; stroke-linejoin: round; }
+.fx-bubble.is-a circle { fill: var(--navy-ink); }
+.fx-bubble.is-b path:first-child { fill: var(--yellow); stroke: var(--navy-ink); stroke-width: 1.3; stroke-linejoin: round; }
+.fx-bubble.is-b .ln { fill: none; stroke: var(--navy-ink); stroke-width: 1.3; stroke-linecap: round; }
+.dove-fx.is-chat .fx-bubble.is-a { animation: dove-bubble 1.45s cubic-bezier(.22, 1, .36, 1) both; }
+.dove-fx.is-chat .fx-bubble.is-b { animation: dove-bubble 1.45s cubic-bezier(.22, 1, .36, 1) .45s both; }
+@keyframes dove-bubble { 0% { opacity: 0; transform: translateY(4px) scale(.6); } 18% { opacity: 1; transform: none; } 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-3px); } }
+.dove-fx.is-narrow .fx-bubble { width: 20px; height: 15px; }
+.dove-fx.is-narrow .fx-bubble.is-a { translate: -23px -19px; }
+.dove-fx.is-narrow .fx-bubble.is-b { translate: 1px -24px; }
+.fx-ring { position: absolute; left: 0; top: 0; width: calc(var(--node, 60px) + 10px); height: calc(var(--node, 60px) + 10px); margin: calc(var(--node, 60px) / -2 - 5px) 0 0 calc(var(--node, 60px) / -2 - 5px); border-radius: 50%; border: 2px solid var(--yellow); opacity: 0; }
+.dove-fx.is-ring .fx-ring { animation: dove-ring 1.3s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes dove-ring { 0% { opacity: 0; transform: scale(.88); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.14); } }
+.fx-ripple { position: absolute; left: -13px; top: -13px; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--yellow); opacity: 0; }
+.dove-fx.is-stamp .fx-ripple { animation: dove-ripple .9s ease-out both; }
+@keyframes dove-ripple { 0% { opacity: .95; transform: scale(.5); } 100% { opacity: 0; transform: scale(1.5); } }
+/* FLOW：今、鳩がいるステップ・通ったステップ（丸の枠だけ。ホバーの黄色とは重ならない） */
+.flowx-step.is-now .flowx-node { border-color: var(--sky-deep); box-shadow: 0 0 0 5px rgba(8, 127, 229, .1); }
+.flowx-step.is-done .flowx-node { border-color: rgba(8, 127, 229, .6); }
+@media (max-width: 980px) {
+  .dove-layer { --dove: 34px; }
+  /* FLOW の縦並び：鳩は小さめで丸のすぐ上に。次のステップへは丸の後ろをくぐる（番号・文字に重ならない） */
+  .flowx .dove-layer { --dove: 26px; z-index: auto; }
+  .flowx-node { z-index: 1; }
+  .flowx .dove { z-index: 0; }
+  .flowx .dove-fx { z-index: 2; }
+}
+/* HOW IT WORKS の縦並び（スマホ）：次のカードへはカードの後ろをくぐる（.is-under）。右の余白から少しのぞき、画面の外にははみ出さない */
+@media (max-width: 980px) {
+  .lanes, .lp-scheme-flow-wrap { isolation: isolate; }
+  .lanes .dove-layer, .lp-scheme-flow-wrap .dove-layer { z-index: auto; overflow: clip; overflow-clip-margin: 20px; }
+}
+@media (max-width: 640px) {
+  .lp-scheme-diagram { isolation: isolate; }
+  .lp-scheme-diagram .dove-layer { z-index: auto; overflow: clip; overflow-clip-margin: 20px; }
+}
+.dove { z-index: 6; }
+.dove.is-under { z-index: -1; }
+@media (prefers-reduced-motion: reduce) { .dove-layer { display: none; } }
 .flowx-end { margin-top: 28px; display: grid; justify-items: center; gap: 16px; text-align: center; }
 .flowx-rail { position: relative; display: grid; justify-items: center; gap: 12px; }
 .flowx-drop { width: 1px; height: 32px; background: linear-gradient(var(--flow-line), var(--yellow)); }

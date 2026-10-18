@@ -15,31 +15,31 @@
 - 検証：`tools/qa/wheel.cjs`。修正前の本番ビルドでは5ページで 0→1 のまま止まることを再現、修正後は全9LPで 0→3。
 - 次の一手：本番で /services/bookkeeping を、マウスを動かさずスクロールして確認（接続できる環境で）。
 
-### 2. 【進行中】FLOW（ご利用までの流れ）：お客さまの「相談」が進んでいくアニメーション
-- ブランチ：`claude/flow-journey`（WIP コミット push 済み、PR 未作成）。
-- 依頼の要点：サービス一覧と全LPの FLOW（共通の `FlowLine`）。
-  - 小さな手紙が「お問い合わせ → ヒアリング（吹き出し）→ 提案（封が開いて提案書）→ 準備（チェック）→ 契約（印）→ スタート（矢印に折られて鳩になり飛び立つ）→ 改善・伴走（舞い降りて輪）」と進む。
-  - 「ディズニー品質」：アニメーションの12原則に沿う。キャラクターは使わない。
-  - 別PR、チェック後マージ OK。
-- 実装：`src/flowJourney.tsx`（新規）、`src/shared.tsx`（FlowLine に組み込み）、`src/index.css`（`.flowj*`）、docs/motion-rules.md に追記済み。
-- 済み：
-  - 文字・番号に重ならないことを確認（`tools/qa/fj-overlap.cjs`、3幅×4ページ ALL OK）。
-  - スマホは丸の列の中だけを進み、次の丸へは丸の後ろをくぐる。ヒアリングでは手紙が控えて吹き出しが並ぶ。
-  - 一時停止の判定は、出来事の前にもかける。
-  - 動きを減らす設定では何も出さない。
-- **残り（次の一手）**：
-  1. `useFlowJourney` の一時停止を `watchReading(root, ".flowx-step", wake)` に置き換える（今は `.flowx-list` の pointerenter／pointerleave で止めている＝ホットフィックスと同じ不具合がある。**使わないこと**）。
-  2. main（ホットフィックス・ドキュメントの PR を含む）を取り込む。
-  3. `tools/qa/fj-test.cjs`・`fj-overlap.cjs` に加え、マウスを動かさないホイールスクロールでも進むかを確認（wheel.cjs の FLOW 版）。
-  4. PC・スマホの GIF を `tools/qa/vid.cjs`（実時間の録画）→ ffmpeg で作り、`claude/pr-assets` に置いて PR に載せる。
-  5. 自己評価（安心感・うるさくないか・信頼感）を PR に書く → チェック後マージ。
-- 気づき：
-  - スクリプトで一瞬でスクロール位置を飛ばしたときだけ、まれに CLS 0.056 が記録される（位置は実際には変わっていない）。
-  - 実際のホイール操作では 0（`tools/qa/cls-real.cjs`）。PR に正直に書く。
+### 2. 【置き換え】FLOW（ご利用までの流れ）の「手紙」アニメーション
+- ブランチ `claude/flow-journey` は PR を作らず、3. の鳩の仕組みに統合した（同じ鳩で FLOW も動かす）。
 
-### 3. 【未着手】「鳩がデータを運ぶ」改修
-- オーナーから依頼済み（詳細は元の依頼文を参照。このセッションでは着手前）。
-- 上の2つ（ホットフィックス）より後。一時停止は必ず `src/readingPause.ts` の方式で。セクション全体の hover で止めない。
+### 3. 【進行中】「鳩がデータを運ぶ」改修（HOW IT WORKS 全LP＋FLOW）
+- ブランチ：`claude/dove-carrier`（`claude/flow-journey` から作成。WIP を push 済み）。
+- 依頼の要点：
+  - 起点で約1.2秒静止 → 予備動作 → 1工程ずつ（移動約1秒・停止約1秒）→ 終点で約2秒の余韻 → 起点へ戻る（ワープしない）。
+  - 鳩がくちばしで荷物（領収書・データ・レポート…）を運ぶ。LPごとに変えるのは荷物と順路だけ。
+  - transform/opacity のみ、WAAPI/CSS のみ（rAF で毎フレーム DOM を書かない）。
+  - 画面外・タブ非表示・カードを読んでいる間は停止。動きを減らす設定では静止。
+  - CPU 4x/6x でも滑らか、長いタスクなし。同じページの重い演出の棚卸し。
+  - PC・390px の GIF を PR に。自己評価5項目（スタートがわかるか／読みやすさ／くどくないか／軽く見えないか／低スペックで止まらないか）。
+- 実装：
+  - `src/doveCarrier.tsx`（共通エンジン）
+  - `src/schemeStory.tsx`（LPごとの順路と荷物）
+  - `src/flowJourney.ts`（FLOW の順路）
+  - CSS は `src/index.css` の `.dove-*`
+  - 止まる位置は各カードの `data-perch`／`data-perch-v`
+- 済み：
+  - 重なりテスト `tools/qa/dove-overlap.cjs`：全LP＋FLOW × 1280・390・768 で ALL OK（止まっている間も飛んでいる間も）。
+  - 挙動テスト：story-test・fj-test・wheel・fj-wheel。
+  - 計測 `tools/qa/dove-perf.cjs`：CPU 1x/4x は長いタスクなし（4x で 53ms が1件）。6x は 50〜80ms が数件。
+  - 演出の棚卸しで間引き：お問い合わせ帯の背景位置アニメ → transform、画面外では停止。LP ヒーローの矢印のバウンドは4回だけ。
+  - GIF：`claude/pr-assets` の `dove/`（eef0f05）。
+- 次の一手：PR 作成 → Cloudflare Pages のチェック後マージ。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。

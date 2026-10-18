@@ -56,7 +56,9 @@ COANA TOKYO合同会社のWebサイト（https://coana.co.jp）。オーナー�
 | ファイル | 役割 |
 | --- | --- |
 | `src/motion.ts` | 画面に入ったら表示（`[data-reveal]`）、線で描く（`[data-draw]`）、画面内だけ動かす（`[data-live]`、`.art-paused`）、PC のカードの傾き |
-| `src/schemeStory.tsx` | HOW IT WORKS の仕組みのアニメーション（チップが工程を進む。LPごとの `STORIES` と伝えたい一文） |
+| `src/doveCarrier.tsx` | 鳩がデータを運ぶアニメーション（HOW IT WORKS・FLOW 共通。動き・タイミング・文字を避ける通り道・止める条件） |
+| `src/schemeStory.tsx` | HOW IT WORKS：LPごとの順路と運ぶもの（`STORIES` と伝えたい一文） |
+| `src/flowJourney.ts` | FLOW：ステップ名から順路と運ぶもの・出来事を決める |
 | `src/readingPause.ts` | 「読んでいる間だけ止める」の正しい実装（カード上の pointermove／フォーカス、約2.5秒で再開） |
 | `src/heroDove.tsx` `src/bird.ts` `src/buttonFx.ts` | 鳩の下線、矢印⇄鳩の形、ボタンのホバー |
 | `src/shared.tsx` | 共通パーツ（FlowLine＝ご利用までの流れ、FAQ、お問い合わせの帯、LINE ボタン など） |
