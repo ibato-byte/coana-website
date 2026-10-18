@@ -1,6 +1,7 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import { home, settings, type Article } from "./content";
 import { ARROW_PATHS } from "./bird";
+import { FlowJourneyLayer, journeyKinds, useFlowJourney } from "./flowJourney";
 
 /* ───────────────────────── 共通パーツ（App.tsx と SolutionPage.tsx から利用） ───────────────────────── */
 
@@ -229,8 +230,13 @@ export function FlowLine({ steps, stepLabel, note, lead, children }: {
 }) {
   const icons = steps.some((s) => s.icon);
   const num = (i: number) => String(i + 1).padStart(2, "0");
+  // お客さまの「相談」がステップを進んでいくアニメーション（flowJourney.tsx）。「動きを減らす」設定では出さない
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const [journey] = useState(() => typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const layer = useFlowJourney(boxRef, steps.map((s) => journeyKinds(s.name)), journey);
   return (
-    <div className={icons ? "flowx has-icons" : "flowx"} style={{ ["--n" as string]: steps.length }}>
+    <div className={icons ? "flowx has-icons" : "flowx"} ref={boxRef} style={{ ["--n" as string]: steps.length }}>
+      {journey && <FlowJourneyLayer layer={layer} />}
       <ol className="flowx-list">
         {steps.map((s, i) => (
           <li key={s.name} className="flowx-step">
