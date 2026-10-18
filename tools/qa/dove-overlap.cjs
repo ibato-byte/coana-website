@@ -15,7 +15,7 @@ const WIDTHS = process.argv[2] ? [+process.argv[2]] : [1280, 390, 768];
       const ctx = await b.newContext({ viewport: { width: w, height: 900 }, isMobile: mob, hasTouch: mob });
       const p = await ctx.newPage();
       const errs = []; p.on('pageerror', (e) => errs.push(e.message));
-      await p.goto(BASE + u, { waitUntil: 'networkidle' });
+      await p.goto(BASE + u, { waitUntil: 'networkidle', timeout: 120000 });
       await p.addStyleTag({ content: 'html{scroll-behavior:auto!important} .dove-layer, .dove-layer *{pointer-events:auto!important}' });
       await p.evaluate((s) => { const e = document.querySelector(s); scrollTo(0, e.getBoundingClientRect().top + scrollY - 140); }, sel);
       await p.mouse.move(1, 1);
