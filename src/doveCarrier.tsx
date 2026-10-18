@@ -193,11 +193,14 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       };
       const base = horiz ? Math.min(26, 8 + len * 0.08) : Math.min(12, 4 + len * 0.04);
       const maxH = Math.max(base, len * 0.38);
-      // ふつうの弧 → 少しずつ高く → 反対側へふくらむ、の順に試し、文字にかからない最初のもの
-      const tries: [number, number][] = [[base, 1]];
+      // ふつうの弧 → 低めの弧 → 少しずつ高く（縦の移動だけ、反対側へふくらむのも試す）の順に、文字にかからない最初のもの。
+      // 横の移動は下へふくらませない（カードの上を横切ってしまう）
+      const tries: [number, number][] = [[base, 1], [base * 0.6, 1], [base * 0.3, 1]];
       for (let h = base + 10; h <= maxH; h += 10) tries.push([h, 1]);
-      if (!horiz) tries.push([base, -1]);
-      for (let h = base + 10; h <= maxH; h += 10) tries.push([h, -1]);
+      if (!horiz) {
+        tries.push([base, -1]);
+        for (let h = base + 10; h <= maxH; h += 10) tries.push([h, -1]);
+      }
       let best = build(base, 1), bestCost = Infinity;
       for (const [h, side] of tries) {
         const pts = build(h, side);
