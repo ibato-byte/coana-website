@@ -5,15 +5,15 @@
 
 ## 優先順の残タスク
 
-### 1. 【進行中・最優先】HOW IT WORKS が「マウスを動かさないと進まない」不具合のホットフィックス
+### 1. 【完了：PR #35 マージ済み】HOW IT WORKS が「マウスを動かさないと進まない」不具合のホットフィックス
 - ブランチ：`claude/hotfix-story-hover`／PR：https://github.com/ibato-byte/coana-website/pull/35
-- 状態：実装・検証済み。Cloudflare Pages のチェック待ち → 通ればマージ。
+- 状態：マージ済み（main e4a4094）。本番の目視確認だけ残り（作業環境から本番に接続できないため）。
 - 内容：
   - `src/readingPause.ts`（新規）：セクションへの pointerenter では止めない。カード上の pointermove（移動量あり）／フォーカスのときだけ止め、約2.5秒で再開。
   - `src/schemeStory.tsx` から利用。
   - 経理代行の「あとはお任せください」→ 受け渡しの線の横の注記「ここから先は COANA TOKYO が対応します」（`content/solutions/bookkeeping.json` の `rest`）。
 - 検証：`tools/qa/wheel.cjs`。修正前の本番ビルドでは5ページで 0→1 のまま止まることを再現、修正後は全9LPで 0→3。
-- 次の一手：PR #35 のチェック確認 → マージ → 本番で /services/bookkeeping を、マウスを動かさずスクロールして確認。
+- 次の一手：本番で /services/bookkeeping を、マウスを動かさずスクロールして確認（接続できる環境で）。
 
 ### 2. 【進行中】FLOW（ご利用までの流れ）：お客さまの「相談」が進んでいくアニメーション
 - ブランチ：`claude/flow-journey`（WIP コミット push 済み、PR 未作成）。
@@ -62,6 +62,7 @@
 - #32 開閉UIの不具合と「＋」の見直し
 - #33 お問い合わせの帯のボタン・重複導線の整理
 - #34 HOW IT WORKS の仕組みのアニメーション（全LP）
+- #35 ホットフィックス：HOW IT WORKS がマウスを動かさないと進まない／受け渡しの注記
 
 ## 作業環境のメモ
 - **ローカルでの確認**：
