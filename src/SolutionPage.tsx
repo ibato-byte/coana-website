@@ -3,7 +3,7 @@ import { articles, home, solutions, type Article, type Solution } from "./conten
 import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
-import { STORIES, StoryChips, useSchemeStory, type Story } from "./schemeStory";
+import { STORIES, useSchemeStory, type Story } from "./schemeStory";
 import "./solution.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
@@ -268,7 +268,7 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
   const boxRef = useRef<HTMLDivElement | null>(null);
   const keys = ["c", ...nodes.map((_, i) => "n" + i)];
   // 仕組みのアニメーション（schemeStory.tsx）。スマホ（640px 以下）は一覧の形で、カードの右上を進む
-  const { state, chips } = useSchemeStory(boxRef, story, keys, "(max-width: 640px)");
+  const { state, layer } = useSchemeStory(boxRef, story, keys, "(max-width: 640px)");
   const W = 1000, H = 600, cx = W / 2, cy = H / 2;
   const n = nodes.length;
   const rx = 370, ry = 215;
@@ -306,7 +306,7 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
             <circle key={"e" + i} cx={p.ex} cy={p.ey} r="5" className={active === i || active === -1 ? "is-active" : undefined} style={{ ["--i" as string]: i }} />
           ))}
         </g>
-        <g className={`lp-scheme-center${state("c")}`} data-story="c" onPointerEnter={hover(-1)} onPointerLeave={hover(null)}>
+        <g className={`lp-scheme-center${state("c")}`} data-story="c" data-perch="above-c" onPointerEnter={hover(-1)} onPointerLeave={hover(null)}>
           <circle cx={cx} cy={cy} r={R} className="lp-scheme-ring" />
           <circle cx={cx} cy={cy} r="96" fill="url(#lp-sg)" />
           <text x={cx} y={cy - 8} textAnchor="middle" className="lp-scheme-center-label" {...fitText(scheme.center?.label || "COANA TOKYO", 23, 160)}>{scheme.center?.label || "COANA TOKYO"}</text>
@@ -315,7 +315,7 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
         {nodes.map((node, i) => {
           const p = pos[i];
           return (
-            <g key={node.label} className={`lp-scheme-node${active === i || active === -1 ? " is-active" : ""}${state("n" + i)}${story?.checks?.includes("n" + i) ? " has-check" : ""}`} data-story={"n" + i} onPointerEnter={hover(i)} onPointerLeave={hover(null)}>
+            <g key={node.label} className={`lp-scheme-node${active === i || active === -1 ? " is-active" : ""}${state("n" + i)}${story?.checks?.includes("n" + i) ? " has-check" : ""}`} data-story={"n" + i} data-perch="above-tr" onPointerEnter={hover(i)} onPointerLeave={hover(null)}>
               <rect x={p.x - 122} y={p.y - 46} width="244" height="92" rx="18" />
               {/* 整った工程の印（創業支援など） */}
               <g className="lp-scheme-check" transform={`translate(${p.x + 104} ${p.y - 46})`}>
@@ -329,12 +329,12 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
         })}
       </svg>
       <ul className="lp-scheme-list" aria-label={scheme.title || ""}>
-        <li className={`is-center${state("c")}`} data-story="c"><strong>{scheme.center?.label || "COANA TOKYO"}</strong>{scheme.center?.sub && <span>{scheme.center.sub}</span>}</li>
+        <li className={`is-center${state("c")}`} data-story="c" data-perch="in-tr"><strong>{scheme.center?.label || "COANA TOKYO"}</strong>{scheme.center?.sub && <span>{scheme.center.sub}</span>}</li>
         {nodes.map((node, i) => (
-          <li key={node.label} className={(state("n" + i) + (story?.checks?.includes("n" + i) ? " has-check" : "")).trim() || undefined} data-story={"n" + i}><strong>{node.label}</strong>{node.sub && <span>{node.sub}</span>}</li>
+          <li key={node.label} className={(state("n" + i) + (story?.checks?.includes("n" + i) ? " has-check" : "")).trim() || undefined} data-story={"n" + i} data-perch="in-tr"><strong>{node.label}</strong>{node.sub && <span>{node.sub}</span>}</li>
         ))}
       </ul>
-      <StoryChips chips={chips} />
+      {layer}
     </div>
   );
 }
@@ -345,19 +345,19 @@ function SchemeFlow({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>
   const boxRef = useRef<HTMLDivElement | null>(null);
   const keys = steps.map((_, i) => "n" + i);
   // 仕組みのアニメーション（schemeStory.tsx）。980px 以下は縦に1本で、カードの右上を進む
-  const { state, chips, running } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)");
+  const { state, layer, running } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)");
   return (
     <div className="lp-scheme-flow-wrap" ref={boxRef} data-run={running ? "" : undefined}>
       <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`}>
         {steps.map((st, i) => (
-          <li key={st.label} className={state("n" + i).trim() || undefined} data-story={"n" + i}>
+          <li key={st.label} className={state("n" + i).trim() || undefined} data-story={"n" + i} data-perch="above-tr" data-perch-v="in-tr">
             <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
             <strong>{st.label}</strong>
             {st.sub && <span>{st.sub}</span>}
           </li>
         ))}
       </ol>
-      <StoryChips chips={chips} />
+      {layer}
     </div>
   );
 }
@@ -396,7 +396,7 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
   const hoverPC = useMedia("(hover: hover) and (pointer: fine) and (min-width: 981px)");
   // 仕組みのアニメーション（schemeStory.tsx）。工程の説明を開いている間は止める
   const keys = nodes.map((_, i) => "n" + i);
-  const { state, chips } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)", open !== null);
+  const { state, layer } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)", open !== null);
   // 書類が通る順路：最後の「御社」までの工程。その後ろ（税理士への連携など）は、直前の COANA TOKYO の工程から枝分かれ
   const lastClient = nodes.map((n) => n.who).lastIndexOf("client");
   const pathEnd = lastClient > 0 ? lastClient : nodes.length - 1;
@@ -478,17 +478,17 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
                     <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
                   </>
                 );
-                if (!n.detail) return <div className="lanes-card" data-story={"n" + i}>{inner}</div>;
+                if (!n.detail) return <div className="lanes-card" data-story={"n" + i} data-perch="in-tr">{inner}</div>;
                 if (hoverPC) {
                   // Esc で説明を閉じられるように（フォーカスを外す）
                   return (
-                    <div className="lanes-card is-hint" data-story={"n" + i} tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
+                    <div className="lanes-card is-hint" data-story={"n" + i} data-perch="in-tr" tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
                       {inner}
                     </div>
                   );
                 }
                 return (
-                  <button type="button" className="lanes-card" data-story={"n" + i} aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
+                  <button type="button" className="lanes-card" data-story={"n" + i} data-perch="in-tr" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
                     {inner}
                     <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
                   </button>
@@ -499,7 +499,7 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
           );
         })}
       </ol>
-      <StoryChips chips={chips} />
+      {layer}
       {(scheme.cycle ?? []).length > 0 && (
         <div className="lanes-cycle">
           <span className="lanes-cycle-label"><LpIcon name="refresh" size={16} />毎月くり返し</span>

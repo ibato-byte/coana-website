@@ -117,7 +117,7 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 /* 画面に入ると、ステージが左から順に点灯する（.in から 0.25 秒＋0.18 秒ずつ）。点灯前も文字とアイコンの枠は読める */
 .lp-scheme-flow-icon::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, var(--sky-deep), var(--navy)); }
 .lp-scheme-flow-icon > svg { position: relative; }
-/* 仕組みのアニメーション中（[data-run]）：チップがまだ来ていない工程のアイコンは淡く、来た工程（.is-done）から点灯する。
+/* 仕組みのアニメーション中（[data-run]）：鳩がまだ来ていない工程のアイコンは淡く、来た工程（.is-done）から点灯する。
    番号と文字は最初から読める。「動きを減らす」設定では最初から全部点灯 */
 .lp-scheme-flow-icon, .lp-scheme-flow-icon::before { transition: color var(--m-color), opacity var(--m-color); }
 .lp-scheme-flow-wrap { position: relative; }
@@ -139,7 +139,7 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .motion-ready .lp-scheme-ends circle { opacity: 0; transition: opacity var(--m-color) calc(.75s + var(--i) * .09s), fill var(--m-color), stroke var(--m-color); }
 .motion-ready .lp-scheme-diagram.in .lp-scheme-ends circle { opacity: 1; }
 .lp-scheme-ring { fill: none; stroke: var(--sky); stroke-width: 2; opacity: .5; }
-/* 仕組みのアニメーション：チップが止まっている要素をそっと強調。中心は外側の輪が黄色に */
+/* 仕組みのアニメーション：鳩が止まっている要素をそっと強調。中心は外側の輪が黄色に */
 .lp-scheme-diagram { position: relative; }
 .lp-scheme-ring { transition: stroke var(--m-color), opacity var(--m-color); }
 .lp-scheme-center.is-now .lp-scheme-ring { stroke: var(--yellow); opacity: 1; stroke-width: 3; }
@@ -192,7 +192,7 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .lanes-item.is-team.is-done .lanes-icon { background: linear-gradient(135deg, var(--sky-deep), var(--navy)); color: var(--white); }
 .lanes-item.is-client.is-done .lanes-icon { background: var(--yellow); }
 .lanes-item.is-done .lanes-icon { box-shadow: 0 0 0 5px rgba(6, 112, 203, .08); }
-/* 今チップが止まっている工程：枠をそっと強調（レイアウトは動かさない） */
+/* 今鳩が止まっている工程：枠をそっと強調（レイアウトは動かさない） */
 .lanes-card { transition: border-color var(--m-color), box-shadow var(--m-color); }
 .lanes-item.is-now .lanes-card { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(8, 127, 229, .1), var(--shadow-sm); }
 .lanes-text { display: grid; gap: 4px; }
@@ -251,13 +251,6 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
     .lanes-cta { margin-top: 48px; flex-direction: column; font-size: 14.5px; }
 }
 
-/* 仕組みのアニメーションで動くチップ（schemeStory.tsx）。カードの上の縁に止まり、文字に重ならない */
-.story-chip { position: absolute; left: 0; top: 0; z-index: 6; display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px 4px 9px; border-radius: 999px; background: var(--white); border: 1px solid rgba(6, 112, 203, .35); box-shadow: 0 6px 16px rgba(13, 35, 56, .16); color: var(--navy-ink); font-size: 12px; font-weight: 800; line-height: 1.4; white-space: nowrap; pointer-events: none; translate: -50% -50%; transition: transform .95s cubic-bezier(.45, 0, .25, 1), opacity .35s, background-color .35s, border-color .35s; will-change: transform; }
-.story-chip svg, .lp-scheme-diagram .story-chip svg { flex: none; display: block; width: 14px; height: 14px; color: var(--sky-deep); }
-.story-chip.is-gold { background: var(--yellow); border-color: #e9b21c; }
-.story-chip.is-gold svg { color: var(--navy-ink); }
-.story-chip.is-instant { transition: opacity .35s; }
-.story-chip.is-right { translate: -100% -50%; } /* 縦並び：カードの右上に、右端をそろえて止まる */
 .lp-scheme-points { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .lp-scheme-points li { padding: 24px 22px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); }
 .lp-scheme-point-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: var(--yellow-soft); color: var(--navy); }

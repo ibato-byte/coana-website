@@ -1,7 +1,7 @@
 import React, { ReactNode, useRef, useState } from "react";
 import { home, settings, type Article } from "./content";
 import { ARROW_PATHS } from "./bird";
-import { FlowJourneyLayer, journeyKinds, useFlowJourney } from "./flowJourney";
+import { useFlowJourney } from "./flowJourney";
 
 /* ───────────────────────── 共通パーツ（App.tsx と SolutionPage.tsx から利用） ───────────────────────── */
 
@@ -233,14 +233,14 @@ export function FlowLine({ steps, stepLabel, note, lead, children }: {
   // お客さまの「相談」がステップを進んでいくアニメーション（flowJourney.tsx）。「動きを減らす」設定では出さない
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [journey] = useState(() => typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const layer = useFlowJourney(boxRef, steps.map((s) => journeyKinds(s.name)), journey);
+  const { layer, state } = useFlowJourney(boxRef, steps.map((s) => s.name), journey);
   return (
     <div className={icons ? "flowx has-icons" : "flowx"} ref={boxRef} style={{ ["--n" as string]: steps.length }}>
-      {journey && <FlowJourneyLayer layer={layer} />}
+      {layer}
       <ol className="flowx-list">
         {steps.map((s, i) => (
-          <li key={s.name} className="flowx-step">
-            <span className="flowx-node" aria-hidden="true">
+          <li key={s.name} className={`flowx-step${journey ? state("n" + i) : ""}`}>
+            <span className="flowx-node" aria-hidden="true" data-story={"n" + i} data-perch="above-c">
               {s.icon ? <span className="flowx-icon" data-redraw>{s.icon}</span> : <span className="flowx-num">{num(i)}</span>}
             </span>
             <div className="flowx-body">
