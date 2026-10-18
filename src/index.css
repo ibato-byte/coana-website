@@ -935,7 +935,9 @@ a.service-card:hover .art * { animation-play-state: running; }
 .dove { z-index: 6; }
 .dove.is-under { z-index: -1; }
 /* これから進む道筋：薄い点線を先に見せ、鳩が通ったところから色のついた線でなぞる（カードの後ろ＝文字には重ならない） */
-.dove-route { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; z-index: -1; }
+.dove-route { position: absolute; inset: 0; z-index: -1; }
+.dove-route svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+.route-done svg { opacity: 0; }
 .dove-route path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .route-base path { stroke: var(--sky-deep); stroke-opacity: .4; stroke-width: 2.2; stroke-dasharray: 0 7; }
 .route-done path { stroke: var(--sky-deep); stroke-opacity: .75; stroke-width: 2; }

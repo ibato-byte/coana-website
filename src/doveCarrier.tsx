@@ -268,7 +268,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
 
     // ── 飛ぶ：予備動作 → 弧を描いて移動（翼は CSS で羽ばたき、荷物は揺れる）→ 着地 → 荷物をそっと置く ──
     // trail：通ったところから色がつく経路（飛ぶ時間に合わせて線を引く）
-    const fly = async (leg: Leg, { exit = false, trail }: { exit?: boolean; trail?: SVGPathElement | null } = {}) => {
+    const fly = async (leg: Leg, { exit = false, trail }: { exit?: boolean; trail?: SVGSVGElement | null } = {}) => {
       const { pts, under, samples } = leg;
       const to = pts[pts.length - 1];
       face(leg.dir);
@@ -277,11 +277,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       const legs = samples.length;
       const total = T.fly * (legs > 1 ? 1.35 : 1);
       void anim(body, [{ transform: "translateY(1.5px) scale(1.07, .88)" }, { transform: "scale(.95, 1.06)", offset: 0.25 }, { transform: "none", offset: 0.6 }, { transform: "none" }], { duration: T.fly * 0.6, easing: "linear" });
-      if (trail) {
-        const L = trail.getTotalLength();
-        trail.style.strokeDasharray = `${L} ${L}`;
-        void anim(trail, [{ strokeDashoffset: L }, { strokeDashoffset: 0 }], { duration: total, easing: under.length ? "linear" : EASE_FLY });
-      }
+      // 通った区間に色をつける（opacity だけ。線を引く描画は毎フレーム描き直しになるので使わない）
+      if (trail) void anim(trail, [{ opacity: 0 }, { opacity: 1 }], { duration: total, easing: "ease-in" });
       if (!under.length) {
         const all = samples.flatMap((s, si) => (si === 0 ? s : s.slice(1)));
         await anim(dove, all.map((p, i) => frame(p, exit ? 1 - Math.max(0, i / (all.length - 1) - 0.45) / 0.55 : undefined)), { duration: total, easing: EASE_FLY });
@@ -362,32 +359,41 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     };
 
     // ── 経路を先に薄く見せる（点線）。通ったところは色のついた線で上からなぞる ──
-    const routeBase = q<SVGGElement>(".route-base");
-    const routeDone = q<SVGGElement>(".route-done");
+    const routeBase = q<SVGGElement>(".route-base g");
+    const routeDone = q<HTMLDivElement>(".route-done");
     const startDot = q<HTMLSpanElement>(".dove-start");
     const SVGNS = "http://www.w3.org/2000/svg";
-    let trails: (SVGPathElement | null)[] = [];
+    let trails: (SVGSVGElement | null)[] = [];
+    let drawn = "";
     const drawRoute = (plan: Plan, doneUpTo: number) => {
-      routeBase.replaceChildren();
-      routeDone.replaceChildren();
       // FLOW の縦並びは、丸をつなぐ線がそのまま道筋なので重ねない
       const show = !(opts.rail === "line" && vertical.matches);
-      trails = plan.legs.map((leg, i) => {
+      const ds = plan.legs.map((leg) => {
         if (!leg || !show) return null;
         const pts = leg.samples.flatMap((s, si) => (si === 0 ? s : s.slice(1)));
-        const d = "M" + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join("L");
-        const base = document.createElementNS(SVGNS, "path");
-        base.setAttribute("d", d);
-        routeBase.append(base);
-        const done = document.createElementNS(SVGNS, "path");
-        done.setAttribute("d", d);
-        routeDone.append(done);
-        const L = done.getTotalLength();
-        done.style.strokeDasharray = `${L} ${L}`;
-        done.style.strokeDashoffset = i < doneUpTo ? "0" : String(L);
-        return done;
+        return "M" + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join("L");
       });
       startDot.style.transform = `translate(${plan.p0.x.toFixed(1)}px, ${plan.p0.y.toFixed(1)}px)`;
+      const key = ds.join("|");
+      if (key !== drawn) {
+        // 点線（これから進む道筋）は1枚の絵に。色のついた線は区間ごとに別の絵にして、opacity だけで出す
+        drawn = key;
+        routeBase.replaceChildren();
+        routeDone.replaceChildren();
+        trails = ds.map((d) => {
+          if (!d) return null;
+          const base = document.createElementNS(SVGNS, "path");
+          base.setAttribute("d", d);
+          routeBase.append(base);
+          const svg = document.createElementNS(SVGNS, "svg");
+          const path = document.createElementNS(SVGNS, "path");
+          path.setAttribute("d", d);
+          svg.append(path);
+          routeDone.append(svg);
+          return svg;
+        });
+      }
+      trails.forEach((t, i) => { if (t) t.style.opacity = i < doneUpTo ? "1" : "0"; });
     };
     // 起点の印：画面に入ったら、輪が2回だけそっと広がって視線を起点へ
     const hello = () => {
@@ -500,7 +506,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           // 運ぶものを持ち替えてから飛び立つ（ふつうは前の工程で止まっている間に済んでいる）
           if (stop.cargo) await swapCargo(stop.cargo, !!stop.gold);
           // 飛ぶ直前に、いまの配置で道筋を測り直す（表示アニメーションや文字の読み込みで位置が変わっていることがある）
-          replan();
+          // 位置が変わっていなければ測り直さない（文字の位置を測るのは重いので）
+          const planned = plan.legs[i];
+          const from = perch(list[i].at), to = perch(stop.at);
+          const moved = (a: Pt | null, b: Pt | undefined) => !a || !b || Math.abs(a.x - b.x) > 1 || Math.abs(a.y - b.y) > 1;
+          if (!planned || moved(from, planned.pts[0]) || moved(to, planned.pts[planned.pts.length - 1])) replan();
           const leg = plan.legs[i];
           if (!leg) continue;
           await fly(leg, { trail: trails[i] });
@@ -594,7 +604,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
 function DoveLayer({ layer }: { layer: RefObject<HTMLDivElement | null> }) {
   return (
     <div className="dove-layer" ref={layer} aria-hidden="true">
-      <svg className="dove-route"><g className="route-base" /><g className="route-done" /></svg>
+      <div className="dove-route"><svg className="route-base"><g /></svg><div className="route-done" /></div>
       <span className="dove-start" />
       <div className="dove-fx">
         <span className="fx-bubble is-a"><svg viewBox="0 0 22 16"><path d="M3 1.5h16a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H9l-4 3v-3H3a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2z" /><circle cx="7" cy="7" r="1" /><circle cx="11" cy="7" r="1" /><circle cx="15" cy="7" r="1" /></svg></span>
