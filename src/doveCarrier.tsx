@@ -45,7 +45,8 @@ type Options = {
 };
 
 /* 時間（ミリ秒） */
-const T = { appear: 450, startHold: 1200, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 1000, endHold: 2000, gap: 600 };
+// 止まっている時間 ＝ 着地 0.32 ＋ 荷物を置く 0.38 ＋ 間 0.5（この間に次の荷物に持ち替える）＝ 約1.2秒
+const T = { appear: 450, startHold: 1200, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, endHold: 2000, gap: 600 };
 const EASE_FLY = "cubic-bezier(.45, 0, .25, 1)"; // 飛ぶ：ゆっくり出て、ゆっくり降りる
 const EASE_OUT = "cubic-bezier(.22, 1, .36, 1)";
 
@@ -357,10 +358,10 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         await wait(T.startHold);
         if (first.event) await runEvent(first);
         const visited = [first.at];
-        for (const stop of list.slice(1)) {
+        for (const [i, stop] of list.slice(1).entries()) {
           await gate();
           if (cancelled) return;
-          // 運ぶものを持ち替えてから飛び立つ
+          // 運ぶものを持ち替えてから飛び立つ（ふつうは前の工程で止まっている間に済んでいる）
           if (stop.cargo) await swapCargo(stop.cargo, !!stop.gold);
           const to = perch(stop.at);
           if (!to) continue;
@@ -391,7 +392,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           visited.push(stop.at);
           setStep(stop.at, [...visited]);
           if (stop.event) await runEvent(stop);
-          await wait(T.dwell);
+          const next = list[i + 2];
+          await Promise.all([wait(T.dwell), next?.cargo && swapCargo(next.cargo, !!next.gold)]);
         }
         // 終点：余韻のあと、飛び去る（FLOW）か、静かに消えて起点へ戻る（止まっている間は、終点のまま待つ）
         await wait(T.endHold);

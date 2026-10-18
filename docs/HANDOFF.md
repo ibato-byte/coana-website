@@ -33,11 +33,13 @@
   - `src/flowJourney.ts`（FLOW の順路）
   - CSS は `src/index.css` の `.dove-*`
   - 止まる位置は各カードの `data-perch`／`data-perch-v`
-- 次の一手：
-  1. 目視（PC/390）で重なりの確認。
-  2. tools/qa のテストを `.dove` に合わせて実行。
-  3. CPU スロットリングでの計測。
-  4. GIF の作成 → PR → チェック後マージ。
+- 済み：
+  - 重なりテスト `tools/qa/dove-overlap.cjs`：全LP＋FLOW × 1280・390・768 で ALL OK（止まっている間も飛んでいる間も）。
+  - 挙動テスト：story-test・fj-test・wheel・fj-wheel。
+  - 計測 `tools/qa/dove-perf.cjs`：CPU 1x/4x は長いタスクなし（4x で 53ms が1件）。6x は 50〜80ms が数件。
+  - 演出の棚卸しで間引き：お問い合わせ帯の背景位置アニメ → transform、画面外では停止。LP ヒーローの矢印のバウンドは4回だけ。
+  - GIF：`claude/pr-assets` の `dove/`（eef0f05）。
+- 次の一手：PR 作成 → Cloudflare Pages のチェック後マージ。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。

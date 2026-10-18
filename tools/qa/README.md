@@ -23,7 +23,9 @@ npx wrangler pages dev dist --port 8789                             # AI なし�
 | `wheel.cjs` | **マウスを動かさず**ホイールだけで HOW IT WORKS まで来て、数秒以内に工程が進むか（全LP）。カードの上で動かすと止まり、約2.5秒で再開するか |
 | `story-test.cjs` | HOW IT WORKS：画面外で止まる／一度に1つ／タブ非表示で止まる／一周して繰り返す／動きを減らす設定で完成形／CLS |
 | `fj-wheel.cjs` | FLOW：マウスを動かさずホイールだけで来て進むか、ステップの上でカーソルを動かすと止まり約2.5秒で再開するか |
-| `fj-test.cjs` `fj-overlap.cjs` | FLOW のアニメーション（ブランチ claude/flow-journey）：止まる条件、文字・番号に重ならないか |
+| `fj-test.cjs` | FLOW の鳩：画面に入ると進む・画面外／タブ非表示で止まる・ホバーの表現・はみ出し・動きを減らす設定 |
+| `dove-overlap.cjs` | 鳩と荷物が文字に重ならないか（HOW IT WORKS と FLOW、全LP × 1280・390・768。止まっている間も飛んでいる間も 100ms ごと）。`DEBUG=1 ONLY=…` で詳細 |
+| `dove-perf.cjs` | CPU 1x/4x/6x での長いタスク・フレーム間隔・メインスレッド使用率。`BASELINE=1` で動きなしの比較、`RATES=6` で倍率を指定 |
 | `toggles.cjs` | 全開閉UIの「開く→閉じる→開く」（クリック・タップ・Enter・Space、aria-expanded） |
 | `entry.cjs` `entry-pages.cjs` | 入り方（再読み込み・ロゴ・メニュー・戻る/進む・リンク）を変えても演出が同じか |
 | `features.cjs` | 今回つくった演出・パーツの個別確認（鳩、回転ワード、OUR STYLE など） |
