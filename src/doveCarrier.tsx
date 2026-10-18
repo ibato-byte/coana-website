@@ -321,15 +321,17 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     const legTo = (from: Pt, stop: DoveStop, to: Pt): Leg => {
       const path: Pt[] = [];
       const under: number[] = [];
-      if (stop.via === "below" && !vertical.matches) {
+      // 縦並びには「図の下を回る」道がないので、ふつうの順路（カードの後ろをくぐる）で戻る
+      const via = stop.via === "below" && vertical.matches ? undefined : stop.via;
+      if (via === "below") {
         // 図の下の余白を回って戻る。降りる・昇るときもカードの文字の上は通らない
         const y = below();
         const x1 = clearX(from, { x: from.x, y }), x2 = clearX({ x: to.x, y }, to);
         if (x1 !== null) path.push({ x: x1, y: from.y });
         path.push({ x: x1 ?? from.x, y }, { x: x2 ?? to.x, y });
         if (x2 !== null) path.push({ x: x2, y: to.y });
-      } else if (stop.via) {
-        const v = perch(stop.via);
+      } else if (via) {
+        const v = perch(via);
         if (v && edgeRail()) {
           path.push(...rail(from, v, under, 0), v);
           path.push(...rail(v, to, under, path.length));
@@ -497,6 +499,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           if (cancelled) return;
           // 運ぶものを持ち替えてから飛び立つ（ふつうは前の工程で止まっている間に済んでいる）
           if (stop.cargo) await swapCargo(stop.cargo, !!stop.gold);
+          // 飛ぶ直前に、いまの配置で道筋を測り直す（表示アニメーションや文字の読み込みで位置が変わっていることがある）
+          replan();
           const leg = plan.legs[i];
           if (!leg) continue;
           await fly(leg, { trail: trails[i] });
