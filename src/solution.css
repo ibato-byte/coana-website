@@ -260,10 +260,9 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
   .lanes-icon svg { width: 20px; height: 20px; }
   .lanes-text span { display: none; }
   .lanes-text strong { font-size: 15px; }
-  /* 「詳しく見る」は工程名の右の小さな矢印に（読み上げでは「詳しく見る／閉じる」） */
+  /* 「詳しく見る ∨」は工程名と同じ行の右に（文字のまま） */
   .lanes-card[aria-controls] { grid-template-columns: 38px 1fr auto; }
-  .lanes-more { grid-column: 3; grid-row: 1; margin: 0; align-self: center; color: var(--sky-ink); }
-  .lanes-more-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lanes-more { grid-column: 3; grid-row: 1; margin: 0; align-self: center; white-space: nowrap; }
   .lanes-tag { margin: 4px 0 6px 52px; }
   .lanes-handoff { margin: 4px 0 6px 40px; padding: 2px 10px 2px 7px; font-size: 12px; white-space: nowrap; text-wrap: nowrap; }
   .lanes-detail { margin: 6px 0 0 24px; }

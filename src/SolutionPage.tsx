@@ -598,7 +598,7 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
                 return (
                   <button type="button" className="lanes-card" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
                     {inner}
-                    <span className="lanes-more"><span className="lanes-more-text">{open === i ? "閉じる" : "詳しく見る"}</span><Chevron /></span>
+                    <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
                   </button>
                 );
               })()}
