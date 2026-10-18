@@ -404,7 +404,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           setStep(stop.at, [...visited]);
           if (stop.event) await runEvent(stop);
           const next = list[i + 2];
-          await Promise.all([wait(T.dwell), next?.cargo && swapCargo(next.cargo, !!next.gold)]);
+          // 止まっている間（画面外など）は持ち替えない。再開してから飛び立つ前に持ち替える
+          await Promise.all([wait(T.dwell), next?.cargo && !paused() && swapCargo(next.cargo, !!next.gold)]);
         }
         // 終点：通った工程がそろって「完了」になる（達成感）→ 鳩は上へ羽ばたいて去る
         setStep(null, [...visited]);

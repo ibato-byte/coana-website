@@ -1,6 +1,6 @@
 // 仕組みのアニメーション：全LPで、進む・一度に1つ・止まる条件・繰り返し・動きを減らす・CLS・エラー
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const SLUGS = ['bookkeeping', 'backoffice-dx', 'cloud-accounting', 'startup-support', 'startup-support-en', 'sales-support', 'seminar-event', 'sns-management', 'web-production'];
+const SLUGS = ['bookkeeping', 'backoffice-dx', 'cloud-accounting', 'startup-support', 'startup-support-en', 'sales-support', 'seminar-event', 'sns-management', 'web-production'].filter((s) => !process.env.ONLY || process.env.ONLY.split(',').includes(s));
 const out = []; const ok = (n, c, x = '') => out.push((c ? 'OK ' : 'NG ') + n + (x ? ' ' + x : ''));
 const ROOT = '.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap, .relay';
 const snap = (p) => p.evaluate((R) => {
@@ -54,7 +54,7 @@ const snap = (p) => p.evaluate((R) => {
       // 画面外で止まる
       await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(3000);
       const o1 = await snap(p); await p.waitForTimeout(3500); const o2 = await snap(p);
-      ok(`${dev} ${slug} 画面外では止まる`, o1.done === o2.done && (o1.labels === o2.labels || o2.chips === 0), `${o1.done}→${o2.done}`);
+      ok(`${dev} ${slug} 画面外では止まる`, o1.done === o2.done && (o1.labels === o2.labels || o2.chips === 0), `${o1.done}→${o2.done} ${o1.labels} ${o2.labels}`);
       // タブが非表示のときも止まる
       await p.evaluate((R) => { const e = document.querySelector(R); scrollTo(0, e.getBoundingClientRect().top + scrollY - 120); }, ROOT);
       await p.waitForTimeout(800);
@@ -68,7 +68,8 @@ const snap = (p) => p.evaluate((R) => {
       let all = false, gone = false, reset = false, again = false;
       for (let t = 0; t < 140 && !again; t++) {
         await p.waitForTimeout(250); const s = await snap(p);
-        if (s.done >= keysTotal && s.now === 0) all = true;
+        // バックオフィス代行は周ごとに5つの領域のうち1つへ届けるので、全工程は「経営者・チーム・領域1つ・報告・マニュアル」
+        if (s.done >= (slug === 'backoffice-dx' ? keysTotal - 4 : keysTotal) && s.now === 0) all = true;
         if (all && s.chips === 0) gone = true;
         if (gone && s.done === 0) reset = true;
         else if (reset && s.done > 0) again = true;
