@@ -411,9 +411,9 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
     return { row: 2, col };
   });
   const teamCount = col;
-  const clientCols = place.filter((_, i) => nodes[i].who === "client").map((p) => p.col);
-  const restFrom = clientCols.length >= 2 ? clientCols[0] + 1 : 0;
-  const restTo = clientCols.length >= 2 ? clientCols[clientCols.length - 1] : 0;
+  // 受け渡しの地点：御社の最初の工程のすぐ後の、COANA TOKYO の工程。ここに「ここから先は COANA TOKYO が対応します」を添える
+  const firstClient = nodes.findIndex((n) => n.who === "client");
+  const handoff = firstClient >= 0 ? nodes.findIndex((n, i) => i > firstClient && n.who !== "client") : -1;
 
   // つなぐ線：各工程のアイコンの中心を、縦横の線でつなぐ（画面幅が変わったら引き直す）
   const centers = useCallback(() => {
@@ -457,14 +457,17 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
       </svg>
       <p className="lanes-label is-client"><span>{scheme.client_label || "御社がやること"}</span></p>
       <p className="lanes-label is-team"><span>{scheme.team_label || "COANA TOKYOがやること"}</span></p>
-      {restTo > restFrom && scheme.rest && (
-        <p className="lanes-rest" style={{ gridColumn: `${restFrom + 1} / ${restTo + 1}` }} aria-hidden="true"><span>{scheme.rest}</span></p>
-      )}
       <ol className="lanes-list">
         {nodes.map((n, i) => {
           const who = n.who === "client" ? "client" : "team";
           return (
             <li key={n.label} className={`lanes-item is-${who}${state("n" + i)}${open === i ? " is-open" : ""}`} style={{ gridRow: place[i].row, gridColumn: place[i].col + 1 }}>
+              {i === handoff && scheme.rest && (
+                <p className="lanes-handoff">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6" /></svg>
+                  {scheme.rest}
+                </p>
+              )}
               <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
               {(() => {
                 const inner = (
