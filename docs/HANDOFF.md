@@ -41,6 +41,17 @@
   - GIF：`claude/pr-assets` の `dove/`（eef0f05）。
 - 次の一手：本番での目視（接続できる環境で）。
 
+### 5. 【進行中】各LPアニメーションの「スタート地点」の分かりやすさ
+- ブランチ：`claude/dove-start`（WIP push 済み）。
+- 依頼：初めて見た人が1秒以内に「ここから始まる」と分かる。
+  - 初期表示で起点に鳩が待機。起点だけ点灯。起点の印（ドット）。
+  - 経路を薄く先に見せ、通ったところから色。
+  - スマホは起点が画面内に入ってから出発。
+  - PR に最初の2秒の GIF（PC・390px）と自己評価。
+- 実装：`src/doveCarrier.tsx`（一周の計画 makePlan → 経路の点線 drawRoute、起点の印 .dove-start、startGate）。CSS は `.dove-route` `.dove-start`。
+- テスト：story-test（初期表示・起点が画面外なら出発しない）、fj-test（初期表示）。
+- 次の一手：全テスト → GIF → PR → チェック後マージ。
+
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
 - **使われていない画像の削除可否**：オーナー時代から未使用、または CMS のメディア。

@@ -46,7 +46,7 @@ type Options = {
 
 /* 時間（ミリ秒） */
 // 止まっている時間 ＝ 着地 0.32 ＋ 荷物を置く 0.38 ＋ 間 0.5（この間に次の荷物に持ち替える）＝ 約1.2秒
-const T = { appear: 450, startHold: 1200, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, endHold: 2000, gap: 600 };
+const T = { appear: 450, startHold: 1400, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, endHold: 2000, gap: 600 };
 const EASE_FLY = "cubic-bezier(.45, 0, .25, 1)"; // 飛ぶ：ゆっくり出て、ゆっくり降りる
 const EASE_OUT = "cubic-bezier(.22, 1, .36, 1)";
 

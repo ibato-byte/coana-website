@@ -7,7 +7,9 @@ const snap = (p) => p.evaluate((R) => {
   const root = document.querySelector(R);
   // 鳩（見えているもの）の数と、位置＋運んでいるもの
   const chips = [...root.querySelectorAll('.dove')].filter((c) => +getComputedStyle(c).opacity > 0.05);
-  return { done: root.querySelectorAll('.is-done').length, now: root.querySelectorAll('.is-now').length, chips: chips.length, labels: chips.map((c) => c.style.transform + (c.querySelector('.cargo-glyph')?.getAttribute('d') || '')).join('|') };
+  // 工程のキーで数える（中心型の図は、PC の図とスマホのリストに同じ工程が2つある）
+  const keysOf = (sel) => new Set([...root.querySelectorAll(sel)].map((e) => e.getAttribute('data-story') || e.querySelector('[data-story]')?.getAttribute('data-story'))).size;
+  return { done: keysOf('.is-done'), now: keysOf('.is-now'), chips: chips.length, labels: chips.map((c) => c.style.transform + (c.querySelector('.cargo-glyph')?.getAttribute('d') || '')).join('|') };
 }, ROOT);
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
