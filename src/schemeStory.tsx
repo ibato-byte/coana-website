@@ -41,8 +41,7 @@ export const STORIES: Record<string, Story> = {
         { at: "c", cargo: "chat" },
         { at: "n" + k, cargo: BO_AREAS[k] },
         { at: "r0", cargo: "check", event: "check" },
-        { at: "r1", event: "page" },
-        { at: "client", cargo: "check", gold: true },
+        { at: "r1", cargo: "manual", gold: true, event: "page" },
       ];
     },
   },
@@ -55,8 +54,7 @@ export const STORIES: Record<string, Story> = {
       { at: "n1", cargo: "data" },
       { at: "n2", cargo: "report", gold: true },
       { at: "r0", cargo: "manual", event: "check" },
-      { at: "r1", cargo: "refresh" },
-      { at: "client", cargo: "refresh", gold: true },
+      { at: "r1", cargo: "refresh", gold: true },
     ],
   },
   "startup-support": {
@@ -71,7 +69,6 @@ export const STORIES: Record<string, Story> = {
       { at: "n4", cargo: "handshake", event: "check" },
       { at: "r0", cargo: "check" },
       { at: "r1", cargo: "check", gold: true },
-      { at: "client", cargo: "check", gold: true },
     ],
   },
   "startup-support-en": {
@@ -86,11 +83,10 @@ export const STORIES: Record<string, Story> = {
       { at: "n4", cargo: "handshake", event: "check" },
       { at: "r0", cargo: "check" },
       { at: "r1", cargo: "check", gold: true },
-      { at: "client", cargo: "check", gold: true },
     ],
   },
   "sales-support": {
-    message: "見込み客が、相談→商談→受注まで一本の流れで進み、振り返りが次の一手につながる。",
+    message: "見込み客が、相談→商談→受注まで一本の流れで進み、数字の振り返りで次の一手が決まる。",
     stops: () => [
       { at: "n0", cargo: "person" },
       { at: "n1", cargo: "person" },
@@ -98,7 +94,6 @@ export const STORIES: Record<string, Story> = {
       { at: "n3", cargo: "doc" },
       { at: "n3", cargo: "star", gold: true },
       { at: "n4", cargo: "chart" },
-      { at: "n0", via: "below", cargo: "refresh" },
     ],
   },
   "seminar-event": {
@@ -119,8 +114,7 @@ export const STORIES: Record<string, Story> = {
       { at: "n1", cargo: "calendar" },
       { at: "n2", cargo: "photo" },
       { at: "n3", cargo: "photo" },
-      { at: "n4", cargo: "heart" },
-      { at: "n1", via: "below", cargo: "refresh", gold: true },
+      { at: "n4", cargo: "heart", gold: true },
     ],
   },
   "web-production": {
@@ -137,6 +131,6 @@ export const STORIES: Record<string, Story> = {
 };
 
 /** HOW IT WORKS の図に鳩を飛ばす。verticalQuery：縦に並ぶレイアウトになる幅。hold：工程の説明を開いている間など */
-export function useSchemeStory(box: RefObject<HTMLElement | null>, story: Story | undefined, keys: string[], verticalQuery: string, hold = false, route = true) {
-  return useDoveCarrier(box, story?.stops, keys, { verticalQuery, hold, rail: "edge", route });
+export function useSchemeStory(box: RefObject<HTMLElement | null>, story: Story | undefined, keys: string[], verticalQuery: string, hold = false) {
+  return useDoveCarrier(box, story?.stops, keys, { verticalQuery, hold });
 }

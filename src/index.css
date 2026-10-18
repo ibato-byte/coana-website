@@ -918,29 +918,16 @@ a.service-card:hover .art * { animation-play-state: running; }
 .flowx-step.is-now .flowx-node { border-color: var(--sky-deep); box-shadow: 0 0 0 5px rgba(8, 127, 229, .1); }
 .flowx-step.is-done .flowx-node { border-color: rgba(8, 127, 229, .6); }
 @media (max-width: 980px) {
-  .dove-layer { --dove: 34px; }
-  /* FLOW の縦並び：鳩は小さめで丸のすぐ上に。次のステップへは丸の後ろをくぐる（番号・文字に重ならない） */
+  /* 縦並び（スマホ）：鳩は小さめ。カードの右側を「鳩の通り道」として空けておき、そこを上下に短く飛ぶ（文字に重ならない） */
+  .dove-layer { --dove: 30px; }
   .flowx .dove-layer { --dove: 26px; }
-  .flowx-node { z-index: 1; }
-  .flowx .dove { z-index: 0; }
-  .flowx .dove-fx { z-index: 2; }
-}
-/* HOW IT WORKS の縦並び（スマホ）：次のカードへはカードの後ろをくぐる（.is-under）。右の余白から少しのぞき、画面の外にははみ出さない */
-@media (max-width: 980px) {
-  .lanes .dove-layer, .lp-scheme-flow-wrap .dove-layer { overflow: clip; overflow-clip-margin: 20px; }
-}
-@media (max-width: 640px) {
-  .lp-scheme-diagram .dove-layer { overflow: clip; overflow-clip-margin: 20px; }
+  .flowx-body { padding-right: 46px; }
 }
 .dove { z-index: 6; }
-.dove.is-under { z-index: -1; }
-/* これから進む道筋：薄い点線を先に見せ、鳩が通ったところから色のついた線でなぞる（カードの後ろ＝文字には重ならない） */
-.dove-route { position: absolute; inset: 0; z-index: -1; }
-.dove-route svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
-.route-done svg { opacity: 0; }
-.dove-route path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.route-base path { stroke: var(--sky-deep); stroke-opacity: .4; stroke-width: 2.2; stroke-dasharray: 0 7; }
-.route-done path { stroke: var(--sky-deep); stroke-opacity: .75; stroke-width: 2; }
+/* 済んだ工程の小さなチェック（今いる工程には出さない。終点では通った工程にそろって付く） */
+.step-check { position: absolute; right: -5px; bottom: -5px; z-index: 1; width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); box-shadow: 0 0 0 2px var(--white); opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+.flowx-step.is-done:not(.is-now) .step-check { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .step-check { display: none; } }
 /* 起点の印：鳩が立つ小さな黄色の点。画面に入ったときだけ、輪が2回そっと広がる */
 .dove-start { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 5; }
 .dove-start::before, .dove-start::after { content: ""; position: absolute; border-radius: 50%; }
@@ -948,7 +935,6 @@ a.service-card:hover .art * { animation-play-state: running; }
 .dove-start::after { left: -14px; top: -14px; width: 28px; height: 28px; border: 1.5px solid var(--yellow-deep, #e9a800); opacity: 0; }
 .dove-start.is-hello::after { animation: dove-hello 1.5s cubic-bezier(.22, 1, .36, 1) 2; }
 @keyframes dove-hello { 0% { opacity: .9; transform: scale(.45); } 100% { opacity: 0; transform: scale(1.5); } }
-@media (max-width: 980px) { .flowx .dove-start { z-index: 2; } }
 @media (prefers-reduced-motion: reduce) { .dove-layer { display: none; } }
 .flowx-end { margin-top: 28px; display: grid; justify-items: center; gap: 16px; text-align: center; }
 .flowx-rail { position: relative; display: grid; justify-items: center; gap: 12px; }

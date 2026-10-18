@@ -217,6 +217,15 @@ export function SectionTitle({
  */
 export type FlowStep = { name: string; text?: string; icon?: ReactNode };
 
+/** 済んだ工程の小さなチェック（鳩のアニメーションで、親に .is-done が付いたら出る。点灯中＝今いる工程には出さない） */
+export function StepCheck() {
+  return (
+    <span className="step-check" aria-hidden="true">
+      <svg viewBox="0 0 12 12" width="10" height="10"><path d="M2.6 6.2l2.1 2.1 4.4-4.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    </span>
+  );
+}
+
 export function FlowLine({ steps, stepLabel, note, lead, children }: {
   steps: FlowStep[];
   /** 「STEP」などの小さな見出し（なければ番号だけ） */
@@ -240,8 +249,9 @@ export function FlowLine({ steps, stepLabel, note, lead, children }: {
       <ol className="flowx-list">
         {steps.map((s, i) => (
           <li key={s.name} className={`flowx-step${journey ? state("n" + i) : ""}`}>
-            <span className="flowx-node" aria-hidden="true" data-story={"n" + i} data-perch="above-c">
+            <span className="flowx-node" aria-hidden="true" data-story={"n" + i} data-perch="above-c" data-perch-v="parent-tr">
               {s.icon ? <span className="flowx-icon" data-redraw>{s.icon}</span> : <span className="flowx-num">{num(i)}</span>}
+              {journey && <StepCheck />}
             </span>
             <div className="flowx-body">
               {stepLabel && <small><span>{stepLabel}</span>{num(i)}</small>}

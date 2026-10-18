@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { articles, home, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, openChat, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import { STORIES, useSchemeStory, type Story } from "./schemeStory";
@@ -348,10 +348,11 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
   const steps = scheme.steps ?? [];
   const boxRef = useRef<HTMLDivElement | null>(null);
   const keys = ["client", "c", ...areas.map((_, i) => "n" + i), ...returns.map((_, i) => "r" + i)];
-  const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 900px)", false, false);
+  const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 900px)");
   const lit = (k: string) => still || done.includes(k);
   const anyArea = areas.some((_, i) => lit("n" + i));
-  const backHome = still || (returns.length > 0 && lit("r" + (returns.length - 1)) && now === "client");
+  // 最後の矢印（御社へ戻る）は、一周の終わりに全工程がそろって完了したときに点灯（鳩は飛んで戻らない）
+  const backHome = still || (returns.length > 0 && lit("r" + (returns.length - 1)) && now === null);
   // PC の線：カードの位置から引く（幅が変わったら・文字が読み込まれたら引き直す）
   const [geom, setGeom] = useState<{ k: string; d: string; arrow: boolean }[]>([]);
   useLayoutEffect(() => {
@@ -409,21 +410,21 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
       <p className="relay-side is-client"><span>{scheme.client_label || "御社がやること"}</span></p>
       <p className="relay-side is-team"><span>{scheme.team_label || "COANA TOKYOがやること"}</span></p>
       <div className={`relay-card relay-client${state("client")}`} data-story="client" data-perch="above-tr" data-perch-v="in-tr">
-        <span className="relay-icon"><LpIcon name={scheme.client?.icon || "person"} size={24} /></span>
+        <span className="relay-icon"><LpIcon name={scheme.client?.icon || "person"} size={24} /><StepCheck /></span>
         <strong>{scheme.client?.label}</strong>
         {scheme.client?.sub && <span className="relay-sub">{scheme.client.sub}</span>}
       </div>
       <p className={`relay-step is-1${lit("c") ? " is-on" : ""}`}>{num(1)}<span>{steps[0]}</span></p>
       <div className={`relay-card relay-center${state("c")}`} data-story="c" data-perch="above-tr" data-perch-v="in-tr">
-        <span className="relay-icon"><LpIcon name={scheme.center?.icon || "users"} size={24} /></span>
+        <span className="relay-icon"><LpIcon name={scheme.center?.icon || "users"} size={24} /><StepCheck /></span>
         <strong>{scheme.center?.label || "COANA TOKYO"}</strong>
         {scheme.center?.sub && <span className="relay-sub">{scheme.center.sub}</span>}
       </div>
       <p className={`relay-step is-2${anyArea ? " is-on" : ""}`}>{num(2)}<span>{steps[1]}</span></p>
       <ul className={`relay-areas${anyArea ? " is-on" : ""}`}>
         {areas.map((a, i) => (
-          <li key={a.label} className={`relay-area${state("n" + i)}`} data-story={"n" + i} data-perch="in-tr" data-perch-v="group-tr">
-            <span className="relay-icon"><LpIcon name={a.icon || "check"} size={20} /></span>
+          <li key={a.label} className={`relay-area${state("n" + i)}`} data-story={"n" + i} data-perch="group-tr">
+            <span className="relay-icon"><LpIcon name={a.icon || "check"} size={20} /><StepCheck /></span>
             <strong>{a.label}</strong>
             {a.sub && <span className="relay-sub">{a.sub}</span>}
           </li>
@@ -432,7 +433,7 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
       {returns.map((rt, i) => (
         <div key={rt.label} className={`relay-card relay-return is-r${i}${state("r" + i)}${lit("r" + i) ? " is-on" : ""}`} data-story={"r" + i} data-perch="above-tr" data-perch-v="in-tr">
           <i className="relay-arrow" aria-hidden="true" />
-          <span className="relay-icon"><LpIcon name={rt.icon || "check"} size={22} />{i === returns.length - 1 && <i className="relay-page" aria-hidden="true" />}</span>
+          <span className="relay-icon"><LpIcon name={rt.icon || "check"} size={22} /><StepCheck />{i === returns.length - 1 && <i className="relay-page" aria-hidden="true" />}</span>
           <strong>{num(i + 3)}{rt.label}</strong>
           {rt.sub && <span className="relay-sub">{rt.sub}</span>}
         </div>
@@ -454,7 +455,7 @@ function SchemeFlow({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>
       <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`}>
         {steps.map((st, i) => (
           <li key={st.label} className={state("n" + i).trim() || undefined} data-story={"n" + i} data-perch="above-tr" data-perch-v="in-tr">
-            <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b></span>
+            <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b><StepCheck /></span>
             <strong>{st.label}</strong>
             {st.sub && <span>{st.sub}</span>}
           </li>
@@ -577,21 +578,22 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
                   <>
                     <span className="lanes-icon" data-lane-node>
                       <LpIcon name={n.icon || "check"} size={22} />
+                      <StepCheck />
                     </span>
                     <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
                   </>
                 );
-                if (!n.detail) return <div className="lanes-card" data-story={"n" + i} data-perch="in-tr">{inner}</div>;
+                if (!n.detail) return <div className="lanes-card" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr">{inner}</div>;
                 if (hoverPC) {
                   // Esc で説明を閉じられるように（フォーカスを外す）
                   return (
-                    <div className="lanes-card is-hint" data-story={"n" + i} data-perch="in-tr" tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
+                    <div className="lanes-card is-hint" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr" tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
                       {inner}
                     </div>
                   );
                 }
                 return (
-                  <button type="button" className="lanes-card" data-story={"n" + i} data-perch="in-tr" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
+                  <button type="button" className="lanes-card" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
                     {inner}
                     <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
                   </button>
@@ -605,7 +607,7 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
       {layer}
       {(scheme.cycle ?? []).length > 0 && (
         <div className="lanes-cycle">
-          <span className="lanes-cycle-label"><LpIcon name="refresh" size={16} />毎月くり返し</span>
+          <span className="lanes-cycle-label" data-cycle><LpIcon name="refresh" size={16} />毎月くり返し</span>
           <ol>
             {(scheme.cycle ?? []).map((c) => <li key={c.when}><b>{c.when}</b>{c.text}</li>)}
           </ol>

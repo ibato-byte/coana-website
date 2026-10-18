@@ -104,7 +104,7 @@
     ],
     "client_label": "御社がやること",
     "team_label": "COANA TOKYOがやること",
-    "rest": "ここから先は COANA TOKYO が対応します",
+    "rest": "ここから先は\nCOANA TOKYO が対応します",
     "cycle": [
       {
         "when": "日々",

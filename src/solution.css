@@ -570,3 +570,24 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .relay-return.is-on::after { background: var(--sky-deep); }
   .relay-return.is-on > .relay-arrow { border-color: var(--sky-deep); }
 }
+
+/* 鳩のアニメーション：済んだ工程の小さなチェック（index.css の .step-check）を出す場所 */
+.lanes-item.is-done:not(.is-now) .step-check,
+.lp-scheme-flow li.is-done:not(.is-now) .step-check,
+.relay-card.is-done:not(.is-now) .step-check,
+.relay-area.is-done:not(.is-now) .step-check { opacity: 1; transform: none; }
+/* 「毎月くり返し」：一周が終わって次の周が始まるとき、矢印がそっと1回まわる（鳩は飛んで戻らない） */
+.lanes-cycle-label svg { transition: color var(--m-color); }
+.lanes-cycle-label.is-cycle svg { animation: cycle-turn 1.1s cubic-bezier(.45, 0, .25, 1); color: var(--sky-deep); }
+@keyframes cycle-turn { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (max-width: 980px) {
+  /* 縦並び：カードの右側を「鳩の通り道」として空ける */
+  .lanes-card, .lp-scheme-flow li { padding-right: 56px; }
+}
+@media (max-width: 900px) {
+  .relay-card { padding-right: 56px; }
+}
+@media (min-width: 981px) {
+  /* 受け渡しの注記：縦の線の左（見出しの列の空き）に2行で。鳩の止まる位置・飛ぶ道を空ける */
+  .lanes-handoff { left: auto; right: calc(100% - 26px); bottom: calc(100% + 2px); width: max-content; flex-direction: row-reverse; padding: 3px 10px; white-space: pre-line; text-wrap: nowrap; text-align: right; border-radius: 12px; }
+}

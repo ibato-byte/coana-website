@@ -45,7 +45,7 @@ function journeyStops(names: string[]): DoveStop[] {
 
 export function useFlowJourney(box: RefObject<HTMLElement | null>, names: string[], enabled: boolean) {
   const stops = enabled ? STOPS_CACHE.get(names.join("|")) ?? cache(names) : undefined;
-  return useDoveCarrier(box, stops, names.map((_, i) => "n" + i), { verticalQuery: "(max-width: 980px)", cardSelector: ".flowx-step", visibleRatio: 0.35, flyAway: true, rail: "line" });
+  return useDoveCarrier(box, stops, names.map((_, i) => "n" + i), { verticalQuery: "(max-width: 980px)", cardSelector: ".flowx-step", visibleRatio: 0.35 });
 }
 
 // 順路の関数は、同じステップの並びなら同じものを使う（再描画で作り直さない）
