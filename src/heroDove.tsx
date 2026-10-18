@@ -7,11 +7,10 @@ import { birdPaths } from "./bird";
  * - 形はボタンの「矢印 → 鳥」と同じ（bird.ts）。紺の線で、前の翼の先だけロゴの黄色。目やくちばしは描かない。
  * - 見出しの文字は最初から表示。鳩は文字の下の線の位置だけを飛ぶ（翼は低めの姿勢で、文字にかからないように）。
  * - 位置は transform だけで動かし、線は親（.title-underline）の --ul を進める。レイアウトは動かさない。
- * - ページを開いたときに1回だけ（トップへ戻ってきても再生しない）。「動きを減らす」設定では使わない（HeroSection が判断）。
- * - 飛び去ったら window に "coana:dove-done" を送る（回転ワードはそのあとで切り替え始める）。
+ * - トップのヒーローが表示されるたびに1回（再読み込み・ロゴやメニュー・戻る/進む・他ページからの移動のどれでも同じ）。
+ *   ヒーローが画面に入ってから飛び始め、同じページ内のスクロールでは繰り返さない。「動きを減らす」設定では使わない（HeroSection が判断）。
+ * - 飛び去ったら window に "coana:dove-done"（detail は下線の要素）を送る（回転ワードはそのあとで切り替え始める）。
  */
-let played = false;
-export const dovePlayed = () => played;
 
 /** 3次ベジェのイージング（CSS の cubic-bezier と同じ） */
 function bezier(x1: number, y1: number, x2: number, y2: number) {
@@ -48,7 +47,6 @@ export function HeroDove() {
     const body = el?.querySelector<SVGPathElement>(".dove-body");
     const wings = el ? Array.from(el.querySelectorAll<SVGPathElement>(".dove-wing")) : [];
     if (!el || !line || !body) return;
-    played = true;
     const small = window.matchMedia("(max-width: 640px)").matches;
     // スマホは短く、羽ばたきも少なめに
     const T = small ? { glide: 0.8, away: 0.36 } : { glide: 0.95, away: 0.42 };
@@ -64,7 +62,8 @@ export function HeroDove() {
       line.style.setProperty("--tip", "0");
       line.classList.add("is-done");
       el.style.opacity = "0";
-      window.dispatchEvent(new Event("coana:dove-done"));
+      // ページを移ってすでに外れた鳩の合図は送らない（新しいヒーローの回転ワードを早く始めないように）
+      if (line.isConnected) window.dispatchEvent(new CustomEvent("coana:dove-done", { detail: line }));
     };
     const step = (now: number) => {
       if (!start) start = now;
@@ -101,14 +100,33 @@ export function HeroDove() {
       if (t >= T.glide + T.away) finish();
       else frame = requestAnimationFrame(step);
     };
-    // 見出しが表示されて、フォントが読み込まれてから飛ぶ（位置を正しく測るため）
+    // 見出しが画面に入り、表示されて、フォントが読み込まれてから飛ぶ（位置を正しく測るため）。
+    // 待っている間に画面から外れたら（#付きのリンクで下へ移動したときなど）、また画面に入るまで待つ
     let cancelled = false;
-    const delay = new Promise((r) => window.setTimeout(r, 700));
-    Promise.all([delay, document.fonts?.ready ?? Promise.resolve()]).then(() => {
-      if (!cancelled) frame = requestAnimationFrame(step);
+    let stopWatching = () => {};
+    const whenVisible = () => new Promise<void>((resolve) => {
+      if (!("IntersectionObserver" in window)) return resolve();
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { io.disconnect(); resolve(); }
+      });
+      io.observe(line);
+      stopWatching = () => io.disconnect();
     });
+    const visibleNow = () => {
+      const r = line.getBoundingClientRect();
+      return r.bottom > 0 && r.top < window.innerHeight;
+    };
+    void (async () => {
+      do {
+        await whenVisible();
+        await Promise.all([new Promise((r) => window.setTimeout(r, 700)), document.fonts?.ready ?? Promise.resolve()]);
+        if (cancelled) return;
+      } while (!visibleNow() && "IntersectionObserver" in window);
+      frame = requestAnimationFrame(step);
+    })();
     return () => {
       cancelled = true;
+      stopWatching();
       cancelAnimationFrame(frame);
       if (line.style.getPropertyValue("--ul") !== "1") finish();
     };
