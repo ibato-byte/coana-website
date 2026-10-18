@@ -124,7 +124,7 @@ export function Lines({ text }: { text: string }) {
 
 export type IconName =
   | "arrow" | "menu" | "close" | "chat" | "spark" | "check"
-  | "mail" | "plus" | "up" | "quote" | "shield" | "compass" | "handshake" | "pin";
+  | "mail" | "up" | "quote" | "shield" | "compass" | "handshake" | "pin";
 
 export function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
   const common = {
@@ -161,8 +161,6 @@ export function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
       );
     case "mail":
       return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m4 7 8 6 8-6" /></svg>;
-    case "plus":
-      return <svg {...common}><path d="M12 5v14M5 12h14" /></svg>;
     case "up":
       return <svg {...common}><path d="M12 19V5M6 11l6-6 6 6" /></svg>;
     case "quote":
@@ -363,7 +361,7 @@ export function PageHero({ en, title, intro, image, imagePosition }: { en: strin
 export const faqItems: { q: string; a: string }[] = home.faqs ?? [];
 
 export function FaqSection({ items = faqItems, title = home.faq_title }: { items?: { q: string; a: string }[]; title?: string } = {}) {
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(0); // 最初の質問だけ開いた状態。どれも閉じられる（-1）
   return (
     <section className="section faq-section">
       <div className="container narrow">
@@ -378,11 +376,11 @@ export function FaqSection({ items = faqItems, title = home.faq_title }: { items
                     className="faq-q"
                     aria-expanded={open}
                     aria-controls={`faq-a-${i}`}
-                    onClick={() => setOpenIndex(i)}
+                    onClick={() => setOpenIndex(open ? -1 : i)}
                   >
                     <span className="faq-mark">Q</span>
                     <span className="faq-q-text">{item.q}</span>
-                    <span className="faq-toggle" aria-hidden="true"><Icon name="plus" size={18} /></span>
+                    <span className="faq-toggle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path className="v" d="M12 5v14" /><path d="M5 12h14" /></svg></span>
                   </button>
                   <div id={`faq-a-${i}`} className="faq-a" role="region">
                     <div className="faq-a-inner"><p>{item.a}</p></div>

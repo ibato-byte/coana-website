@@ -187,11 +187,12 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .lanes-text { display: grid; gap: 4px; }
 .lanes-text strong { font-size: 15.5px; font-weight: 800; line-height: 1.45; }
 .lanes-text span { font-size: 12.5px; line-height: 1.7; color: var(--navy-soft); }
-/* 詳しい説明があることの印（＋） */
-.lanes-more { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); }
-.lanes-more::before, .lanes-more::after { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 1.5px; margin: -.75px 0 0 -4px; background: var(--sky-deep); transition: transform .3s var(--m-ease); }
-.lanes-more::after { transform: rotate(90deg); }
-.lanes-item.is-open .lanes-more::after { transform: rotate(0deg); }
+/* タッチ端末：説明の開閉（「詳しく見る ∨／閉じる ∧」） */
+.lanes-more { justify-self: start; display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 800; color: var(--sky-ink); }
+.lanes-item.is-open .lanes-more .toggle-chevron { transform: rotate(180deg); }
+/* PC：説明があるカードは、キーボードのフォーカスでも説明を出す */
+.lanes-card.is-hint { cursor: default; }
+.lanes-card.is-hint:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 .lanes-detail { margin: 0; font-size: 13px; line-height: 1.8; }
 /* 動く書類 */
 .lanes-token { position: absolute; left: 0; top: 0; z-index: 3; width: 32px; height: 32px; margin: -16px 0 0 -16px; display: grid; place-items: center; border-radius: 10px; background: var(--white); box-shadow: 0 6px 16px rgba(13, 35, 56, .18), 0 0 0 1px rgba(6, 112, 203, .25); opacity: 0; pointer-events: none; will-change: transform, opacity; }
@@ -219,9 +220,10 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
 /* PC：カーソルを当てる（キーボードでフォーカスする）と、その工程でやることを少し詳しく（カードの下に重ねて出す。レイアウトは動かさない） */
 @media (hover: hover) and (pointer: fine) and (min-width: 981px) {
   .lanes-detail { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 4; padding: 12px 14px; border-radius: 12px; background: var(--navy-ink); color: var(--white); box-shadow: var(--shadow-md); opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .25s, transform .3s var(--m-ease); }
-  .lanes-item:hover .lanes-detail, .lanes-item:focus-within .lanes-detail, .lanes-item.is-open .lanes-detail { opacity: 1; transform: none; }
-  .lanes-item:hover .lanes-card { border-color: var(--sky); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-  .lanes-item:hover { z-index: 5; }
+  /* マウスでクリックしたあとのフォーカスでは出したままにしない（キーボードのフォーカスだけ :focus-visible） */
+  .lanes-item:hover .lanes-detail, .lanes-item:has(.lanes-card:focus-visible) .lanes-detail { opacity: 1; transform: none; }
+  .lanes-item:hover .lanes-card, .lanes-card:focus-visible { border-color: var(--sky); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .lanes-item:hover, .lanes-item:has(.lanes-card:focus-visible) { z-index: 5; }
 }
 @media (min-width: 981px) and (not ((hover: hover) and (pointer: fine))) {
   .lanes-detail { display: none; margin-top: 8px; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); }
@@ -236,9 +238,9 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
   .lanes-tag { display: block; justify-self: start; margin: 0 0 6px 62px; padding: 1px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
   .lanes-item.is-client .lanes-tag { background: var(--yellow-soft); color: var(--navy-ink); box-shadow: inset 0 0 0 1px rgba(242, 165, 22, .35); }
   .lanes-item.is-team .lanes-tag { background: var(--navy); color: var(--white); }
-  .lanes-card { grid-template-columns: 46px 1fr 20px; align-items: center; column-gap: 14px; padding: 14px; }
-  .lanes-more { position: relative; top: auto; right: auto; }
-  .lanes-detail { display: none; margin: 8px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); }
+  .lanes-card { grid-template-columns: 46px 1fr; align-items: center; column-gap: 14px; padding: 14px; }
+  .lanes-more { grid-column: 2; margin-top: 2px; }
+  .lanes-detail { display: none; margin: 8px 0 0 30px; padding: 12px 16px; border-radius: 12px; background: var(--white); border: 1px dashed rgba(6, 112, 203, .35); font-size: 13.5px; }
   .lanes-item.is-open .lanes-detail { display: block; }
   .lanes-cycle { margin-top: 20px; justify-content: flex-start; }
   .lanes-cycle ol { gap: 6px; }
@@ -267,9 +269,9 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
 .lp-scope summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 20px; font-weight: 800; font-size: 15px; color: var(--navy); }
 .lp-scope summary::-webkit-details-marker { display: none; }
 .lp-scope summary svg { color: var(--sky-deep); flex: none; }
-.lp-scope-open { margin-left: auto; font-size: 13px; color: var(--sky-ink); display: inline-flex; align-items: center; gap: 6px; }
-.lp-scope-open::after { content: "+"; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-deep); color: var(--white); font-weight: 700; transition: transform .3s; }
-.lp-scope[open] .lp-scope-open::after { transform: rotate(45deg); }
+.lp-scope-open { margin-left: auto; flex: none; font-size: 13px; color: var(--sky-ink); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.lp-scope[open] .lp-scope-open .toggle-chevron { transform: rotate(180deg); }
+.lp-scope summary:hover .lp-scope-open { text-decoration: underline; text-underline-offset: 3px; }
 .lp-scope-grid { padding: 0 20px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 .lp-scope-card { padding: 16px 18px; border-radius: 14px; background: var(--white); border: 1px solid var(--line); }
 .lp-scope-card h3 { margin: 0 0 8px; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--sky-ink); }
@@ -412,8 +414,9 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-plan { padding: 26px 20px 20px; }
   .lp-scenario { padding: 20px 18px; }
   .lp-scope summary { padding: 14px 16px; font-size: 14px; }
-  .lp-scope-open { font-size: 0; gap: 0; }
-  .lp-scope-open::after { font-size: 16px; }
+  .lp-scope summary { flex-wrap: wrap; row-gap: 4px; }
+  .lp-scope-title { flex: 1 1 auto; }
+  .lp-scope-open { font-size: 12.5px; }
   .lp-scope-grid { padding: 0 14px 14px; }
   .lp-cta-band { padding: 64px 0 72px; }
   .lp-cta-band .button { width: 100%; }

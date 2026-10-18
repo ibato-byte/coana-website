@@ -82,6 +82,10 @@ const LABELS = {
     support: "支援内容とプラン",
     scope: "ご依頼いただける業務の一覧",
     scopeOpen: "業務の一覧を見る",
+    scopeClose: "閉じる",
+    count: (n: number) => `（${n}件）`,
+    more: "詳しく見る",
+    less: "閉じる",
     tools: "対応ツールの例",
     plans: "ご利用プランの例",
     plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
@@ -112,6 +116,10 @@ const LABELS = {
     support: "What we do & plans",
     scope: "Examples of what you can ask us",
     scopeOpen: "See the full list",
+    scopeClose: "Close",
+    count: (n: number) => ` (${n})`,
+    more: "Details",
+    less: "Close",
     tools: "Tools we work with",
     plans: "Example plans",
     plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
@@ -355,6 +363,22 @@ type LaneNode = NonNullable<NonNullable<Solution["scheme"]>["nodes"]>[number];
 /** 再生時間：PC 約2.6秒。スマホは順路が縦に長いので少しゆっくり */
 const lanesMs = () => (window.matchMedia("(max-width: 980px)").matches ? 3400 : 2600);
 
+/** メディアクエリが一致しているか（画面幅や入力方法が変わったら追従） */
+function useMedia(query: string) {
+  const [match, setMatch] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const on = () => setMatch(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, [query]);
+  return match;
+}
+
+/** 開閉の目印（文字の横の ∨。開いているときは上向き） */
+const Chevron = () => <svg className="toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>;
+
 function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const nodes = (scheme.nodes ?? []) as LaneNode[];
   const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -365,6 +389,9 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
   const [report, setReport] = useState(false); // 書類がレポートに変わったか
   const [played, setPlayed] = useState(reduce);
   const [open, setOpen] = useState<number | null>(null);
+  // PC（マウス）：カーソルを当てる・キーボードでフォーカスすると説明が出る（クリックでの開閉はしない）。
+  // タッチ端末：「詳しく見る ∨／閉じる ∧」のボタンで開閉する
+  const hoverPC = useMedia("(hover: hover) and (pointer: fine) and (min-width: 981px)");
   // 書類が通る順路：最後の「御社」までの工程。その後ろ（税理士への連携など）は点線でつなぐ
   const lastClient = nodes.map((n) => n.who).lastIndexOf("client");
   const pathEnd = lastClient > 0 ? lastClient : nodes.length - 1;
@@ -494,20 +521,32 @@ function SchemeLanes({ scheme }: { scheme: NonNullable<Solution["scheme"]> }) {
           return (
             <li key={n.label} className={`lanes-item is-${who}${state}${open === i ? " is-open" : ""}`} style={{ gridRow: place[i].row, gridColumn: place[i].col + 1 }}>
               <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
-              <button
-                type="button"
-                className="lanes-card"
-                aria-expanded={n.detail ? open === i : undefined}
-                aria-controls={n.detail ? `lanes-detail-${i}` : undefined}
-                onClick={() => n.detail && setOpen(open === i ? null : i)}
-              >
-                <span className="lanes-icon" data-lane-node>
-                  <LpIcon name={n.icon || "check"} size={22} />
-                </span>
-                <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
-                {n.detail && <span className="lanes-more" aria-hidden="true" />}
-              </button>
-              {n.detail && <p id={`lanes-detail-${i}`} className="lanes-detail">{n.detail}</p>}
+              {(() => {
+                const inner = (
+                  <>
+                    <span className="lanes-icon" data-lane-node>
+                      <LpIcon name={n.icon || "check"} size={22} />
+                    </span>
+                    <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
+                  </>
+                );
+                if (!n.detail) return <div className="lanes-card">{inner}</div>;
+                if (hoverPC) {
+                  // Esc で説明を閉じられるように（フォーカスを外す）
+                  return (
+                    <div className="lanes-card is-hint" tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
+                      {inner}
+                    </div>
+                  );
+                }
+                return (
+                  <button type="button" className="lanes-card" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
+                    {inner}
+                    <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
+                  </button>
+                );
+              })()}
+              {n.detail && <p id={`lanes-detail-${i}`} className="lanes-detail" role={hoverPC ? "tooltip" : undefined}>{n.detail}</p>}
             </li>
           );
         })}
@@ -573,6 +612,8 @@ function Support({ sol }: { sol: Solution }) {
   const tools = sol.tools ?? [];
   const groups = sol.scope?.groups ?? [];
   const plans = sol.plans?.items ?? [];
+  const scopeCount = groups.reduce((sum, g) => sum + (g.items?.length ?? 0), 0);
+  const [scopeOpen, setScopeOpen] = useState(false);
   return (
     <section id="lp-support" className="section lp-support">
       <div className="container">
@@ -586,8 +627,12 @@ function Support({ sol }: { sol: Solution }) {
           ))}
         </ul>
         {groups.length > 0 && (
-          <details className="lp-scope">
-            <summary><LpIcon name="rules" size={18} />{sol.scope?.title || L.scope}<span className="lp-scope-open">{L.scopeOpen}</span></summary>
+          <details className="lp-scope" onToggle={(e) => setScopeOpen(e.currentTarget.open)}>
+            <summary>
+              <LpIcon name="rules" size={18} />
+              <span className="lp-scope-title">{sol.scope?.title || L.scope}</span>
+              <span className="lp-scope-open">{scopeOpen ? L.scopeClose : L.scopeOpen + L.count(scopeCount)}<Chevron /></span>
+            </summary>
             <div className="lp-scope-grid">
               {groups.map((g) => (
                 <div key={g.name} className="lp-scope-card">
