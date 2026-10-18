@@ -22,8 +22,8 @@ const out = []; const ok = (n, c, x = '') => out.push((c ? 'OK ' : 'NG ') + n + 
     await p.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps: 6 });
     await p.mouse.move(bb.x + bb.width / 2 + 6, bb.y + bb.height / 2 + 3, { steps: 4 });
     await p.waitForTimeout(400);
-    const r = await p.evaluate((R) => document.querySelector(R).querySelectorAll('.story-chip').length, ROOT);
-    const snap = () => p.evaluate((R) => [...document.querySelector(R).querySelectorAll('.story-chip')].map((c) => c.style.transform + c.textContent).join('|') + '/' + document.querySelector(R).querySelectorAll('.is-done').length, ROOT);
+    const r = await p.evaluate((R) => document.querySelector(R).querySelectorAll('.dove').length, ROOT);
+    const snap = () => p.evaluate((R) => [...document.querySelector(R).querySelectorAll('.dove')].map((c) => c.style.transform + (c.querySelector('.cargo-glyph')?.getAttribute('d') || '')).join('|') + '/' + document.querySelector(R).querySelectorAll('.is-done').length, ROOT);
     await p.waitForTimeout(1200); const a = await snap(); await p.waitForTimeout(800); const c = await snap();
     ok(`${slug} カードの上でカーソルを動かすと止まる`, a === c, '');
     await p.waitForTimeout(4500); const e = await snap();

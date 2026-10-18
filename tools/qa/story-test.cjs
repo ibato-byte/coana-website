@@ -5,8 +5,9 @@ const out = []; const ok = (n, c, x = '') => out.push((c ? 'OK ' : 'NG ') + n + 
 const ROOT = '.lanes, .lp-scheme-diagram, .lp-scheme-flow-wrap';
 const snap = (p) => p.evaluate((R) => {
   const root = document.querySelector(R);
-  const chips = [...root.querySelectorAll('.story-chip')].filter((c) => +getComputedStyle(c).opacity > 0.05);
-  return { done: root.querySelectorAll('.is-done').length, now: root.querySelectorAll('.is-now').length, chips: chips.length, labels: chips.map((c) => c.textContent).join('|') };
+  // 鳩（見えているもの）の数と、位置＋運んでいるもの
+  const chips = [...root.querySelectorAll('.dove')].filter((c) => +getComputedStyle(c).opacity > 0.05);
+  return { done: root.querySelectorAll('.is-done').length, now: root.querySelectorAll('.is-now').length, chips: chips.length, labels: chips.map((c) => c.style.transform + (c.querySelector('.cargo-glyph')?.getAttribute('d') || '')).join('|') };
 }, ROOT);
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
@@ -26,13 +27,18 @@ const snap = (p) => p.evaluate((R) => {
       let maxChips = 0; const dones = [];
       for (let t = 0; t < 30; t++) { await p.waitForTimeout(250); const s = await snap(p); maxChips = Math.max(maxChips, s.chips); if (t % 6 === 5) dones.push(s.done); }
       ok(`${dev} ${slug} 工程が順に進む`, dones[0] >= 1 && dones[dones.length - 1] > dones[0], JSON.stringify(dones));
-      ok(`${dev} ${slug} 一度に動くのは1つ`, maxChips <= (slug === 'bookkeeping' ? 2 : 1), String(maxChips));
+      ok(`${dev} ${slug} 一度に動くのは1つ`, maxChips <= 1, String(maxChips));
       // カーソルを当てると止まる（PC）
       if (dev === 'PC') {
         const box = await p.locator(ROOT).first().boundingBox();
-        await p.mouse.move(box.x + 30, box.y + box.height / 2); await p.waitForTimeout(3000);
-        const h1 = await snap(p); await p.waitForTimeout(3000); const h2 = await snap(p);
-        ok(`${dev} ${slug} カーソルを当てている間は止まる`, h1.done === h2.done && (h1.labels === h2.labels || h2.chips === 0), `${h1.done}→${h2.done}`);
+        // カードの上でカーソルを動かし続けている間（読んでいる間）は止まる
+        const cb = await p.locator(`:is(${ROOT}) [data-story]`).nth(1).boundingBox();
+        for (let k = 0; k < 12; k++) { await p.mouse.move(cb.x + cb.width / 2 + (k % 2 ? 5 : -5), cb.y + cb.height / 2, { steps: 3 }); await p.waitForTimeout(300); }
+        const h1 = await snap(p);
+        for (let k = 0; k < 10; k++) { await p.mouse.move(cb.x + cb.width / 2 + (k % 2 ? 5 : -5), cb.y + cb.height / 2, { steps: 3 }); await p.waitForTimeout(300); }
+        const h2 = await snap(p);
+        ok(`${dev} ${slug} カードを読んでいる間は止まる`, h1.done === h2.done && (h1.labels === h2.labels || h2.chips === 0), `${h1.done}→${h2.done}`);
+        void box;
         await p.mouse.move(1, 1);
       }
       // 画面外で止まる
@@ -68,7 +74,7 @@ const snap = (p) => p.evaluate((R) => {
     await p.goto(`http://localhost:4173/services/${slug}`, { waitUntil: 'networkidle' });
     await p.evaluate((R) => document.querySelector(R).scrollIntoView(), ROOT); await p.waitForTimeout(2500);
     const s = await snap(p); const total = await p.evaluate((R) => document.querySelector(R).querySelectorAll('[data-story]').length, ROOT);
-    ok(`動きを減らす ${slug}：最初から全工程が完了・チップなし`, s.chips === 0 && s.done > 0 && s.now === 0, `${s.done}/${total}`);
+    ok(`動きを減らす ${slug}：最初から全工程が完了・鳩なし`, s.chips === 0 && s.done > 0 && s.now === 0, `${s.done}/${total}`);
     await ctx.close();
   }
   await b.close();

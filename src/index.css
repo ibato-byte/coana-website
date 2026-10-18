@@ -688,13 +688,26 @@ a.service-card:hover .art * { animation-play-state: running; }
 .contact-band {
   position: relative;
   padding: 100px 0;
-  background: linear-gradient(120deg, #0a6fd0 0%, var(--sky-deep) 45%, #136fc0 100%); /* 白い文字が AA を満たす明るさまで */
-  background-size: 180% 180%;
-  animation: band-shift 16s ease-in-out infinite alternate;
+  background: var(--sky-deep);
   color: var(--white);
   overflow: hidden;
 }
-@keyframes band-shift { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+/* グラデーションのゆっくりした移ろい：背景の位置を動かすと毎フレーム帯全体を描き直すので、幅の広い層を transform で動かす（見え方は同じ） */
+.contact-band::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 180%;
+  background: linear-gradient(120deg, #0a6fd0 0%, var(--sky-deep) 45%, #136fc0 100%); /* 白い文字が AA を満たす明るさまで */
+  animation: band-shift 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes band-shift { from { transform: translateX(0); } to { transform: translateX(-44.44%); } }
+/* 画面に入っている間だけ動かす（[data-live] → .is-live。止めるときはその場で一時停止） */
+.contact-band::before, .contact-orbit { animation-play-state: paused; }
+.contact-band.is-live::before, .contact-band.is-live .contact-orbit { animation-play-state: running; }
 .contact-orbit { position: absolute; border: 1px dashed rgba(255, 255, 255, .55); border-radius: 50%; animation: orbit-spin 34s linear infinite; }
 .orbit-one { width: 420px; height: 420px; right: -80px; top: -170px; }
 .orbit-two { width: 260px; height: 260px; right: 20px; bottom: -160px; animation-duration: 24s; animation-direction: reverse; }
@@ -846,6 +859,8 @@ a.service-card:hover .art * { animation-play-state: running; }
 .dove-layer { --dove: 40px; position: absolute; inset: 0; z-index: 6; pointer-events: none; }
 .dove { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; will-change: transform, opacity; }
 .dove-flip, .dove-bob { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+/* 動く部品は最初から合成レイヤーに（飛ぶたびにレイヤーを作り直さない） */
+.dove-bob, .dove-body, .dove-wing, .dove-cargo { will-change: transform; }
 .dove-body { position: absolute; left: calc(var(--dove) / -2); top: calc(var(--dove) * -.82); width: var(--dove); height: calc(var(--dove) * .82); transform-origin: 50% 100%; }
 .dove-body svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .dove-shape .bodyline, .dove-shape .tail { fill: var(--white); stroke: var(--navy-ink); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }

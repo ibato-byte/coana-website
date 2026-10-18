@@ -134,7 +134,10 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     };
 
     // 真っすぐ飛ぶと文字の上を横切るときは、その文字の横を回る（位置の計算は飛ぶ前に1回だけ）
-    const texts = () => {
+    // 文字の位置は飛ぶ前に1回だけ測る（同じ飛行の中では使い回す）
+    let textCache: { l: number; r: number; t: number; b: number }[] | null = null;
+    const texts = () => (textCache ??= measureTexts());
+    const measureTexts = () => {
       const b = root.getBoundingClientRect();
       const out: { l: number; r: number; t: number; b: number }[] = [];
       const walk = document.createTreeWalker(root.closest("section") ?? root, NodeFilter.SHOW_TEXT, { acceptNode: (n) => {
@@ -361,7 +364,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           if (stop.cargo) await swapCargo(stop.cargo, !!stop.gold);
           const to = perch(stop.at);
           if (!to) continue;
-          setStep(null, [...visited]);
+          textCache = null;
           const path: Pt[] = [];
           const under: number[] = [];
           if (stop.via === "below" && !vertical.matches) {
@@ -390,8 +393,10 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           if (stop.event) await runEvent(stop);
           await wait(T.dwell);
         }
-        // 終点：余韻のあと、飛び去る（FLOW）か、静かに消えて起点へ戻る
+        // 終点：余韻のあと、飛び去る（FLOW）か、静かに消えて起点へ戻る（止まっている間は、終点のまま待つ）
         await wait(T.endHold);
+        await gate();
+        if (cancelled) return;
         if (opts.flyAway) {
           const away = vertical.matches ? { x: pos.x, y: pos.y - size() * 1.8 } : { x: pos.x + size() * 2, y: pos.y - size() * 1.3 };
           await fly([away], { exit: true });

@@ -6,10 +6,10 @@ const CASES = [['/services/bookkeeping', '.lanes', 1280], ['/services/backoffice
 const SECONDS = 14;
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
-  for (const rate of [1, 4, 6]) {
+  for (const rate of (process.env.RATES || '1,4,6').split(',').map(Number)) {
     for (const [u, sel, w] of CASES) {
       const mob = w < 700;
-      const ctx = await b.newContext({ viewport: { width: w, height: mob ? 844 : 900 }, isMobile: mob, hasTouch: mob });
+      const ctx = await b.newContext({ viewport: { width: w, height: mob ? 844 : 900 }, isMobile: mob, hasTouch: mob, reducedMotion: process.env.BASELINE ? 'reduce' : 'no-preference' }); // BASELINE=1：アニメーションなしの比較用
       const p = await ctx.newPage();
       await p.goto(BASE + u, { waitUntil: 'networkidle' });
       await p.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });

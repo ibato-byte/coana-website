@@ -1,7 +1,7 @@
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const PAGES = ['/services', ...['bookkeeping', 'backoffice-dx', 'cloud-accounting', 'startup-support', 'startup-support-en', 'sales-support', 'seminar-event', 'sns-management', 'web-production'].map((s) => '/services/' + s)];
 const out = []; const ok = (n, c, x = '') => out.push((c ? 'OK ' : 'NG ') + n + (x ? ' ' + x : ''));
-const st = (p) => p.evaluate(() => ({ done: document.querySelectorAll('.flowx-step.is-journey-done').length, now: [...document.querySelectorAll('.flowx-step')].findIndex((s) => s.classList.contains('is-journey-now')), tr: document.querySelector('.flowj-traveler')?.style.transform || '' }));
+const st = (p) => p.evaluate(() => ({ done: document.querySelectorAll('.flowx-step.is-done').length, now: [...document.querySelectorAll('.flowx-step')].findIndex((s) => s.classList.contains('is-now')), tr: document.querySelector('.flowx .dove')?.style.transform || '' }));
 (async () => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
   for (const [dev, vp, mob] of [['PC', { width: 1280, height: 900 }, false], ['スマホ', { width: 390, height: 844 }, true]]) {
@@ -20,10 +20,10 @@ const st = (p) => p.evaluate(() => ({ done: document.querySelectorAll('.flowx-st
       const s1 = await st(p);
       ok(`${dev} ${u} 画面に入ると進む`, s1.done >= 1, JSON.stringify(s1));
       if (dev === 'PC') {
-        await p.hover('.flowx-step:nth-child(2) .flowx-node'); await p.waitForTimeout(3500);
-        const a = await st(p); await p.waitForTimeout(3000); const c = await st(p);
+        // カーソルで止まる・約2.5秒で再開するかは fj-wheel.cjs。ここではホバーの表現が残っているかだけ
+        await p.hover('.flowx-step:nth-child(2) .flowx-node'); await p.waitForTimeout(600);
         const lifted = await p.evaluate(() => getComputedStyle(document.querySelector('.flowx-step:nth-child(2) .flowx-node')).backgroundColor);
-        ok(`${dev} ${u} ステップにカーソルで止まる・ホバーの表現はそのまま`, a.done === c.done && a.tr === c.tr && /255, 216, 90|252, 201, 52/.test(lifted), `${a.done}→${c.done} ${lifted}`);
+        ok(`${dev} ${u} ホバーの表現はそのまま`, /255, 216, 90|252, 201, 52/.test(lifted), lifted);
         await p.mouse.move(1, 1);
       }
       await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(3500);
@@ -44,7 +44,7 @@ const st = (p) => p.evaluate(() => ({ done: document.querySelectorAll('.flowx-st
     const p = await (await b.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' })).newPage();
     await p.goto('http://localhost:4173' + u, { waitUntil: 'networkidle' });
     await p.evaluate(() => document.querySelector('.flowx').scrollIntoView()); await p.waitForTimeout(3000);
-    ok(`動きを減らす ${u}：アニメーションなし`, await p.evaluate(() => !document.querySelector('.flowj') && !document.querySelector('.is-journey-now')));
+    ok(`動きを減らす ${u}：アニメーションなし`, await p.evaluate(() => !document.querySelector('.flowx .dove-layer') && !document.querySelector('.is-now')));
     await p.context().close();
   }
   await b.close();

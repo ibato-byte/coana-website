@@ -12,9 +12,9 @@ const out = []; const ok = (n, c, x = '') => out.push((c ? 'OK ' : 'NG ') + n + 
     await p.mouse.move(640, 500); // 以後マウスは動かさない
     let y = 0; while (y < target) { await p.mouse.wheel(0, 100); y += 100; await p.waitForTimeout(40); }
     const under = await p.evaluate(() => !!document.elementFromPoint(640, 500)?.closest('.flowx'));
-    const st = () => p.evaluate(() => [document.querySelectorAll('.flowx-step.is-journey-done').length, document.querySelector('.flowj-traveler')?.style.transform || ''].join('/'));
+    const st = () => p.evaluate(() => [document.querySelectorAll('.flowx-step.is-done').length, document.querySelector('.flowx .dove')?.style.transform || ''].join('/'));
     await p.waitForTimeout(6000);
-    const d = await p.evaluate(() => document.querySelectorAll('.flowx-step.is-journey-done').length + (document.querySelector('.flowx-step.is-journey-now') ? 1 : 0));
+    const d = await p.evaluate(() => document.querySelectorAll('.flowx-step.is-done').length + (document.querySelector('.flowx-step.is-now') ? 1 : 0));
     ok(`${u} ホイールだけ（カーソルは流れの上：${under}）→ 6秒で進む`, d >= 2, String(d));
     // ステップの上でカーソルを動かし続けている間は止まる
     const bb = await p.locator('.flowx-step').nth(2).boundingBox();

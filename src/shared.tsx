@@ -331,7 +331,7 @@ export function LineButton({ place, label = "LINEで気軽に相談する", tabI
 
 export function ContactBand({ navigate }: { navigate: Nav }) {
   return (
-    <section className="contact-band">
+    <section className="contact-band" data-live>
       <div className="contact-orbit orbit-one" aria-hidden="true" />
       <div className="contact-orbit orbit-two" aria-hidden="true" />
       <div className="container contact-band-inner" data-reveal>
