@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { watchReading } from "./readingPause";
 
 /* ───────────────────────── HOW IT WORKS：仕組みのアニメーション（各サービスLP） ─────────────────────────
  * 図の工程（カード）のあいだを、小さなラベル付きのチップ（「領収書」「会計データ」「見込み客」など）が1つずつ移動して、
@@ -6,7 +7,8 @@ import { useEffect, useRef, useState, type RefObject } from "react";
  * - 一度に動くのは1つ（経理代行の最後だけ、レポートが御社へ・データが税理士へと同時に分かれる）。
  * - 移動は約0.9秒のなめらかな動き。着いたらカードの上の縁に止まり（文字に重ならない）、その工程をそっと強調して「今ここ」が読める間を取る。
  * - 一周（約8〜12秒）したら、完成した状態のまま約8秒ひと息置いてから、また最初から。
- * - 止めるとき：画面外・タブが非表示・図にカーソルを当てている・工程の説明を開いている間（戻れば続きから）。
+ * - 止めるとき：画面外・タブが非表示・工程のカードに実際にカーソルを合わせた／フォーカスした（約2.5秒動かさなければ再開）・
+ *   工程の説明を開いている間（戻れば続きから）。セクションに入っただけでは止めない（readingPause.ts）。
  * - 文字は常に読める。レイアウトは動かさない（チップは transform だけ）。
  * - 「動きを減らす」設定では動かさず、全工程を終えた状態で見せる。
  * 工程の指定は、各図のカード（またはSVGの要素）に付けた data-story="n0" などのキー。"c" は中心（COANA TOKYO）。 */
@@ -182,7 +184,6 @@ export function useSchemeStory(box: RefObject<HTMLElement | null>, story: Story 
   const [chips, setChips] = useState<Chip[]>([]);
   const [running, setRunning] = useState(false);
   const holdRef = useRef(hold);
-  const hoverRef = useRef(false);
   const visibleRef = useRef(false);
   const wakeRef = useRef<() => void>(() => {});
   holdRef.current = hold;
@@ -197,7 +198,8 @@ export function useSchemeStory(box: RefObject<HTMLElement | null>, story: Story 
     if (still || !el || !story) return;
     let cancelled = false;
     const vertical = window.matchMedia(verticalQuery);
-    const paused = () => !visibleRef.current || document.hidden || holdRef.current || hoverRef.current;
+    let reading = () => false;
+    const paused = () => !visibleRef.current || document.hidden || holdRef.current || reading();
     // 止めている間は待ち、再開したら続きから
     const gate = () => new Promise<void>((resolve) => {
       const check = () => { if (cancelled || !paused()) { wakeRef.current = () => {}; resolve(); } };
@@ -312,11 +314,9 @@ export function useSchemeStory(box: RefObject<HTMLElement | null>, story: Story 
     io.observe(el);
     const onVis = () => wakeRef.current();
     document.addEventListener("visibilitychange", onVis);
-    // PC：図にカーソルを当てている間は止める
-    const enter = (e: PointerEvent) => { if (e.pointerType === "mouse") hoverRef.current = true; };
-    const leave = (e: PointerEvent) => { if (e.pointerType === "mouse") { hoverRef.current = false; wakeRef.current(); } };
-    el.addEventListener("pointerenter", enter);
-    el.addEventListener("pointerleave", leave);
+    // 工程のカードを読んでいる間だけ止める（セクションに入っただけでは止めない）
+    const watcher = watchReading(el, "[data-story]", () => wakeRef.current());
+    reading = watcher.reading;
     // 画面幅が変わったら、チップを今いる工程の位置へ（動きなしで）
     const ro = new ResizeObserver(() => setChips((cs) => cs.map((c) => { const p = point(c.at); return p ? { ...c, x: p.x, y: p.y, instant: true, right: vertical.matches } : c; })));
     ro.observe(el);
@@ -328,8 +328,7 @@ export function useSchemeStory(box: RefObject<HTMLElement | null>, story: Story 
       io.disconnect();
       ro.disconnect();
       document.removeEventListener("visibilitychange", onVis);
-      el.removeEventListener("pointerenter", enter);
-      el.removeEventListener("pointerleave", leave);
+      watcher.stop();
       setRunning(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

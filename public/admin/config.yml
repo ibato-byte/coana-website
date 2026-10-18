@@ -136,7 +136,7 @@ collections:
               - { label: 詳しい説明（レーン型：カーソルを当てる／タップで表示）, name: detail, widget: text, required: false }
           - { label: レーン型｜御社の段の見出し, name: client_label, widget: string, required: false }
           - { label: レーン型｜COANA TOKYOの段の見出し, name: team_label, widget: string, required: false }
-          - { label: レーン型｜御社の段の空き部分の一言, name: rest, widget: string, required: false }
+          - { label: レーン型｜受け渡しの注記（御社の最初の工程から COANA TOKYO の工程へ降りる線の横に表示。例：ここから先は COANA TOKYO が対応します）, name: rest, widget: string, required: false }
           - label: レーン型｜1か月の流れ
             name: cycle
             widget: list
