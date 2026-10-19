@@ -29,6 +29,7 @@ npx wrangler pages dev dist --port 8789                             # AI なし�
 | `toggles.cjs` | 全開閉UIの「開く→閉じる→開く」（クリック・タップ・Enter・Space、aria-expanded） |
 | `entry.cjs` `entry-pages.cjs` | 入り方（再読み込み・ロゴ・メニュー・戻る/進む・リンク）を変えても演出が同じか |
 | `features.cjs` | 今回つくった演出・パーツの個別確認（鳩、回転ワード、OUR STYLE など） |
+| `full-check.cjs` | **公開前の全体検査**：全ページ × 1440〜320 の8幅＋横向き 844×390。静的（title・description の欠けと重複、canonical、OGP 画像、JSON-LD、sitemap・robots・llms、電話番号）、表示（横スクロール・はみ出し・文字の重なり・画像の欠け・コンソールエラー・404・出現の取り残し・固定表示がリンクやボタンを隠さない・スマホの入力欄 16px・info@ はフッター1か所）、操作（内部リンクとアンカー・ハンバーガーメニュー・お問い合わせフォームの未入力エラー→確認→完了。送信先はテスト用に差し替え）。`ENGINES=chromium,webkit,firefox` で Safari 相当・Firefox も（Playwright のブラウザが入っている環境で）、`W=` `ONLY=` `BASE=` `DIST=` で絞り込み |
 | `check9.cjs` | 全ページ × 9種の幅：はみ出し・重なり・画像・コンソールエラー |
 | `contrast.cjs` `a11y.cjs` `kbd.cjs` `hidden-check.cjs` | コントラスト・見出し構造など・キーボード操作・スパム対策欄が見えないこと |
 | `patterns.cjs` `rmcheck.cjs` | スクロールの仕方を変えても文字が読めるか／動きを減らす設定 |
