@@ -1087,9 +1087,6 @@ a.service-card:hover .art * { animation-play-state: running; }
 .form-actions { justify-content: center; margin-top: 56px; }
 .center-button { margin-top: 56px; }
 .form-section .center-button { margin-top: 56px; }
-.direct-contact { max-width: 840px; margin: 90px auto 0; padding: 36px; background: var(--sky-soft); border-radius: 16px; text-align: center; }
-.direct-contact p { margin: 0 0 6px; font-size: 13px; font-weight: 600; }
-.direct-contact a { font-family: var(--font-en); font-size: 21px; font-weight: 700; letter-spacing: .02em; color: var(--sky-ink); text-decoration: none; border-bottom: 1.5px solid currentColor; padding-bottom: 2px; }
 .confirm-list { margin: 0; }
 .confirm-list > div { display: grid; grid-template-columns: 200px 1fr; padding: 24px 6px; border-bottom: 1px solid var(--line); }
 .confirm-list > div:first-child { border-top: 1px solid var(--line); }
@@ -1404,7 +1401,6 @@ a.service-card:hover .art * { animation-play-state: running; }
   .form-section { padding-top: 56px; }
   .field { padding: 24px 0; }
   .form-actions { margin-top: 44px; }
-  .direct-contact { margin-top: 64px; }
   .confirm-list > div { grid-template-columns: 1fr; gap: 6px; }
   .meeting-date { grid-template-columns: 1fr; gap: 6px; }
   .confirm-list dt { font-size: 13px; color: var(--sky-deep); }

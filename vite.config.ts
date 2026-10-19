@@ -846,7 +846,7 @@ function coanaPageMeta(): Plugin {
             '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
         }
         if (pagePath === '/topics') return '<h1>トピックス</h1>' + topicList(sortedTopics)
-        if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro) + '<p>メール：' + esc(settings.email) + '</p>'
+        if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro)
         if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>' + mdToHtml(privacyBody)
         if (pagePath.startsWith('/services/')) {
           const sol = solutionList.find((item) => '/services/' + item.slug === pagePath)
