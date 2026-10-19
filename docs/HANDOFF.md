@@ -94,7 +94,7 @@
 - テスト済み：dove-overlap（1280・768・390）ALL OK、story-test 172 OK、fj-test 132 OK、wheel・fj-wheel・toggles・features ALL OK。
 - 次の一手：本番で起点の見え方と経理代行のスマホ図を目視確認（接続できる環境で）。
 
-### 8. 【進行中】リレー型の図（創業支援 JA/EN・バックオフィス代行・クラウド会計）：役割を「エリア」で示す
+### 8. 【完了（この PR のマージで反映）】リレー型の図（創業支援 JA/EN・バックオフィス代行・クラウド会計）：役割を「エリア」で示す
 - ブランチ：`claude/dreamy-hopper-idzvf4`。
 - 依頼：「起業する方がやること／COANA TOKYOがやること」が浮いた小さなラベルで、範囲も④の帰属も分かりづらい。スマホは役割表示なし。合格基準は「初めて見た人が3秒で『自分は相談するだけ、あとはCOANA TOKYOがやる』と分かる」。
 - 実装：
@@ -103,7 +103,8 @@
   - `nodes[].partner`：提携先など COANA TOKYO 以外は破線の枠（創業支援の「専門家の紹介・連携」、クラウド会計の「顧問税理士」「経営者・担当者」）。
   - CMS（config.yml）に todo・partner を追加。SEO 用の文章（relayFlow）も todo を使う。
   - スマホの高さ（390px）：創業支援 594→595、英語 601→629（英語の領域名の折り返し）、バックオフィス 579→581、クラウド会計 527→527。
-- 次の一手：テスト → Before/After → PR → チェック後マージ。
+- テスト済み：features・wheel ALL OK、story-test（リレー型4LP）76 OK、dove-overlap（リレー型、1280・768・390）ALL OK、contrast は変更による NG なし。PR 画像は `claude/pr-assets` の `relay-roles/`（コミット 388a31f）。
+- 次の一手：本番で4LPの図を目視確認（接続できる環境で）。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
