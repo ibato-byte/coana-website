@@ -82,6 +82,18 @@
 - GIF・Before/After：`claude/pr-assets` の `dove-finale/`・`relay/`（コミット 59b3c99）。
 - 次の一手：本番で各LPの HOW IT WORKS と /services の FLOW を目視確認（接続できる環境で）。
 
+### 7. 【完了（この PR のマージで反映）】鳩アニメーションの仕上げ（3点）
+- ブランチ：`claude/dreamy-hopper-idzvf4`。PR 画像は `claude/pr-assets` の `dove-polish/`（コミット 092c711）。
+- 依頼（オーナー評価「全体としてはいい感じ」）：
+  1. 起点の黄色い点を全LP・FLOWから削除。起点は鳩とカードの状態だけで示す（起点カードの控えめな点灯・待つ間に一度だけ小さな仕草・出発直前に進行方向を向く）。追加のマーク・バッジ・ドットは使わない。
+  2. 経理代行LPのスマホで図が画面より縦に長い（1188px）→ 1画面程度に。他のLPのスマホ図も高さを確認。
+  3. 再スタート前の間（約3秒）を全体で約1.5〜2秒に。
+- 実装：
+  - `src/doveCarrier.tsx`：`.dove-start` と markStart を削除、`preen()`（首をかしげて荷物を持ち直す）と `faceToward()`（出発前に向き直る）、時間 `T` を短縮（together 1.2・away 0.7・rest 0.15・gap 0.2・descend 0.85・againHold 0.9）。
+  - 経理代行のスマホ（≤980px）：カードは「アイコン＋工程名＋詳しく見る」の1行（説明は詳細を開いて読む）、担当が切り替わる工程にだけ札、受け渡しの注記は1行。1188px → 659px（390px幅）。他のLPのスマホ図は 527〜663px で1画面以内。
+- テスト済み：dove-overlap（1280・768・390）ALL OK、story-test 172 OK、fj-test 132 OK、wheel・fj-wheel・toggles・features ALL OK。
+- 次の一手：本番で起点の見え方と経理代行のスマホ図を目視確認（接続できる環境で）。
+
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
 - **使われていない画像の削除可否**：オーナー時代から未使用、または CMS のメディア。

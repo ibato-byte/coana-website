@@ -24,7 +24,7 @@ const snap = (p) => p.evaluate((R) => {
       await p.mouse.move(1, 1);
       // 初期表示：画面に入る前から、起点で鳩が待っていて起点だけ点灯。画面外では動かない
       const before = await snap(p); await p.waitForTimeout(2500); const before2 = await snap(p);
-      ok(`${dev} ${slug} 初期表示は起点で待機（起点だけ点灯・軌道の線なし・起点の印あり）・画面外では動かない`, before.chips === 1 && before.done === 1 && before.now === 1 && before.labels === before2.labels && before2.done === 1 && (await p.evaluate((R) => document.querySelector(R).querySelectorAll('.dove-route, .route-base').length === 0 && !!document.querySelector(R).querySelector('.dove-start'), ROOT)), JSON.stringify(before));
+      ok(`${dev} ${slug} 初期表示は起点で待機（起点だけ点灯・軌道の線なし・起点の点（追加の印）なし）・画面外では動かない`, before.chips === 1 && before.done === 1 && before.now === 1 && before.labels === before2.labels && before2.done === 1 && (await p.evaluate((R) => document.querySelector(R).querySelectorAll('.dove-route, .route-base').length === 0 && !document.querySelector(R).querySelector('.dove-start'), ROOT)), JSON.stringify(before));
       if (dev === 'スマホ') {
         // 起点が画面の上に外れていて、図の下のほうだけ見えている → 出発しない。起点が入ったら出発する
         await p.evaluate((R) => { const e = document.querySelector(R); const r = e.getBoundingClientRect(); scrollTo(0, r.bottom + scrollY - innerHeight + 40); }, ROOT);
@@ -71,8 +71,9 @@ const snap = (p) => p.evaluate((R) => {
         // バックオフィス代行は周ごとに5つの領域のうち1つへ届けるので、全工程は「経営者・チーム・領域1つ・報告・マニュアル」
         if (s.done >= (slug === 'backoffice-dx' ? keysTotal - 4 : keysTotal) && s.now === 0) all = true;
         if (all && s.chips === 0) gone = true;
-        if (gone && s.done === 0) reset = true;
-        else if (reset && s.done > 0) again = true;
+        // 点灯が消えてから起点が灯るまでは短い（約0.2秒）ので、「起点だけ点灯」もリセット後とみなす
+        if (gone && s.done <= 1) reset = true;
+        else if (reset && s.done >= 2) again = true;
       }
       ok(`${dev} ${slug} 終点で全工程がそろう→鳩が去る→点灯リセット→起点から再出発`, all && gone && reset && again, JSON.stringify({ all, gone, reset, again, keysTotal }));
       // スマホ：説明を開いている間は止まる（経理代行）

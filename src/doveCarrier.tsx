@@ -47,7 +47,8 @@ type Options = {
 
 /* 時間（ミリ秒） */
 // 止まっている時間 ＝ 着地 0.32 ＋ 荷物を置く 0.38 ＋ 間 0.5（この間に次の荷物に持ち替える）＝ 約1.2秒
-const T = { startHold: 1400, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, together: 1500, away: 900, rest: 700, gap: 700, descend: 1000 };
+// 終点 → 再スタート：そろう余韻 1.2 → 去る 0.7 → 点灯リセットと間 0.35 → 舞い降りる 0.85（去ってから降りるまでの「何もない時間」を短く）
+const T = { startHold: 1400, againHold: 900, preen: 720, turn: 260, crouch: 220, fly: 1000, land: 320, setDown: 380, dwell: 500, together: 1200, away: 700, rest: 150, gap: 200, descend: 850 };
 const EASE_FLY = "cubic-bezier(.45, 0, .25, 1)"; // 飛ぶ：ゆっくり出て、ゆっくり降りる
 const EASE_OUT = "cubic-bezier(.22, 1, .36, 1)";
 
@@ -85,7 +86,6 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     const cargoCard = q<HTMLSpanElement>(".cargo-card");
     const cargoPath = q<SVGPathElement>(".cargo-glyph");
     const fx = q<HTMLDivElement>(".dove-fx");
-    const startDot = q<HTMLSpanElement>(".dove-start");
     const vertical = window.matchMedia(opts.verticalQuery);
 
     let cancelled = false;
@@ -241,7 +241,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     ]);
 
     // ── 飛ぶ：予備動作 → 短い弧で移動（翼は CSS で羽ばたき、荷物は揺れる）→ 着地 → 荷物をそっと置く ──
-    const fly = async (to: Pt) => {
+    const fly = async (to: Pt, onLand?: () => void) => {
       const dir = to.x < pos.x - 4 ? -1 : 1;
       face(dir);
       textCache = null;
@@ -255,6 +255,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       place(to);
       dove.classList.remove("is-flying");
       await land();
+      // 着いたところでカードが点灯（荷物を置くのと同時に）
+      onLand?.();
       // 荷物をそっと置く：少しかがんで荷物が下につき、また顔を上げる。左を向いて着いたときは右へ向き直る（荷物が文字の側に下がらないように）
       const turn = facing < 0 ? anim(flip, [{ transform: "scaleX(-1)" }, { transform: "scaleX(1)" }], { duration: 260, easing: EASE_FLY }).then(() => { facing = 1; flip.style.transform = ""; }) : Promise.resolve();
       await Promise.all([
@@ -359,13 +361,30 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       wakeRef.current = check;
       check();
     });
-    // 起点の印：鳩が立つ小さな黄色の点。起点が画面に入ったとき、輪が2回だけそっと広がる
-    let startKey = "";
-    const markStart = (key: string) => {
-      startKey = key;
-      const p = perch(key);
-      if (p) startDot.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
-      watchStart(key);
+    // 起点は印（点・バッジ）を足さずに、「点灯した起点のカード」と「そこで待つ鳩」で示す。
+    // 待っている間に一度だけ、首をかしげて荷物を持ち直す小さな仕草で、視線を鳩＝起点へ導く
+    const preen = () => Promise.all([
+      anim(body, [{ transform: "none" }, { transform: "rotate(-8deg)", offset: 0.3 }, { transform: "rotate(-8deg)", offset: 0.5 }, { transform: "rotate(2deg)", offset: 0.75 }, { transform: "none" }], { duration: T.preen, easing: EASE_FLY }),
+      anim(cargoEl, [{ transform: "none" }, { transform: "translateY(-2.5px) rotate(-8deg)", offset: 0.4 }, { transform: "rotate(4deg)", offset: 0.72 }, { transform: "none" }], { duration: T.preen, easing: EASE_FLY }),
+    ]);
+    /** 出発の直前に、次の工程の方を向く（起点から ① の矢印へのつながりが読めるように） */
+    const faceToward = async (to: Pt | null) => {
+      if (!to) return;
+      const dir = to.x < pos.x - 4 ? -1 : 1;
+      if (dir === facing) return;
+      await anim(flip, [{ transform: dir < 0 ? "scaleX(1)" : "scaleX(-1)" }, { transform: dir < 0 ? "scaleX(-1)" : "scaleX(1)" }], { duration: T.turn, easing: EASE_FLY });
+      face(dir);
+    };
+    /** 起点で待つ：静止 → 一度だけ小さな仕草 → 静止 → 次の工程を向く */
+    const waitAtStart = async (hold: number, next: DoveStop | undefined) => {
+      const before = Math.min(350, hold * 0.3);
+      await wait(before);
+      if (cancelled) return;
+      await preen();
+      await wait(Math.max(0, hold - before - T.preen));
+      await startGate();
+      if (cancelled) return;
+      if (next && next.at !== curKey) { await faceToward(perch(next.at)); await wait(180); }
     };
 
     const run = async () => {
@@ -377,17 +396,17 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       place(p0);
       setCargo(list[0].cargo ?? "doc", !!list[0].gold);
       dove.style.opacity = "1";
-      markStart(list[0].at);
+      watchStart(list[0].at);
       setStep(list[0].at, [list[0].at]);
+      let hold = T.startHold;
       while (!cancelled) {
         const first = list[0];
         // 起点：起点が画面に入ってから、しばらく静止して出発する。
         // 静止と並行して、図そのものの表示アニメーション（現れる・線を引く）が終わるのを待つ（最大1.2秒）
         await startGate();
         if (cancelled) return;
-        replay(startDot, "is-hello");
         const appearing = (root.closest("section") ?? root).getAnimations({ subtree: true }).filter((a) => a.effect?.getTiming().iterations !== Infinity && !(a.effect instanceof KeyframeEffect && a.effect.target instanceof Element && a.effect.target.closest(".dove-layer")));
-        await Promise.all([wait(T.startHold), Promise.race([Promise.all(appearing.map((a) => a.finished.catch(() => undefined))), wait(1200)])]);
+        await Promise.all([waitAtStart(hold, list[1]), Promise.race([Promise.all(appearing.map((a) => a.finished.catch(() => undefined))), wait(1200)])]);
         await startGate();
         if (cancelled) return;
         if (first.event) await runEvent(first);
@@ -400,11 +419,12 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           const to = perch(stop.at);
           if (!to) continue;
           // 同じ工程で荷物が変わるだけ（例：商談 → 受注）のときは飛ばず、その場で荷物をそっと置き直す
-          if (stop.at === curKey) await anim(body, [{ transform: "none" }, { transform: "rotate(6deg)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY });
-          else await fly(to);
+          const sameStop = stop.at === curKey;
+          if (sameStop) await anim(body, [{ transform: "none" }, { transform: "rotate(6deg)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY });
+          const arrive = () => { if (!visited.includes(stop.at)) visited.push(stop.at); setStep(stop.at, [...visited]); };
+          if (!sameStop) await fly(to, arrive);
           if (cancelled) return;
-          if (!visited.includes(stop.at)) visited.push(stop.at);
-          setStep(stop.at, [...visited]);
+          arrive();
           if (stop.event) await runEvent(stop);
           const next = list[i + 2];
           // 止まっている間（画面外など）は持ち替えない。再開してから飛び立つ前に持ち替える
@@ -431,10 +451,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
         if (!p) return;
         setCargo(list[0].cargo ?? "doc", !!list[0].gold);
         cargoCard.classList.remove("show-check", "show-stamp");
-        markStart(list[0].at);
+        watchStart(list[0].at);
+        setStep(list[0].at, [list[0].at]);
         await descend(p);
         if (cancelled) return;
-        setStep(list[0].at, [list[0].at]);
+        hold = T.againHold;
       }
     };
 
@@ -455,7 +476,6 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       if (dove.classList.contains("is-flying")) return;
       const p = curKey ? perch(curKey) : null;
       if (p) place(p);
-      if (startKey) markStart(startKey);
     };
     const ro = new ResizeObserver(replace);
     ro.observe(root);
@@ -485,7 +505,6 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
 function DoveLayer({ layer }: { layer: RefObject<HTMLDivElement | null> }) {
   return (
     <div className="dove-layer" ref={layer} aria-hidden="true">
-      <span className="dove-start" />
       <div className="dove-fx">
         <span className="fx-bubble is-a"><svg viewBox="0 0 22 16"><path d="M3 1.5h16a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H9l-4 3v-3H3a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2z" /><circle cx="7" cy="7" r="1" /><circle cx="11" cy="7" r="1" /><circle cx="15" cy="7" r="1" /></svg></span>
         <span className="fx-bubble is-b"><svg viewBox="0 0 22 16"><path d="M19 1.5H3a2 2 0 0 0-2 2v6.5a2 2 0 0 0 2 2h10l4 3v-3h2a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2z" /><path className="ln" d="M6 6.5h10M6 9h6" /></svg></span>

@@ -572,7 +572,10 @@ function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
                   {scheme.rest}
                 </p>
               )}
-              <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
+              {/* スマホ：担当が切り替わる工程にだけ「御社／COANA TOKYO」の札（受け渡しの地点は注記が兼ねる） */}
+              {(i === 0 || nodes[i - 1].who !== n.who) && !(i === handoff && scheme.rest) && (
+                <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
+              )}
               {(() => {
                 const inner = (
                   <>
