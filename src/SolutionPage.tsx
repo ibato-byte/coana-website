@@ -76,7 +76,7 @@ const LABELS = {
   ja: {
     consult: "無料で相談する",
     consultLine: "LINEで気軽に相談",
-    heroNote: "相談・お見積もりは無料。全国オンライン対応。",
+    heroNote: "ご相談・お見積もりは無料。全国オンライン対応。",
     problems: "こんなお悩みはありませんか",
     bridge: ["そのお悩み、", "COANA TOKYO", "が仕組みから解決します。"],
     scheme: "支援の仕組み",
@@ -796,7 +796,7 @@ function Flow({ sol }: { sol: Solution }) {
         <SectionTitle en="Flow" center>{sol.steps_title || L.flow}</SectionTitle>
         <FlowLine
           steps={steps.map((st) => ({ name: st.name, text: st.text }))}
-          note={sol.flow_note && <><LpIcon name="clock" size={16} />{sol.flow_note}</>}
+          note={sol.flow_note && <><LpIcon name="clock" size={16} /><span>{sol.flow_note}</span></>}
         />
         {/* 相談のボタンは置かない：よくあるご質問のすぐ後に、ページ下部のお問い合わせの帯がある（PC はヘッダー、スマホは固定バーからもいつでも相談できる） */}
       </div>

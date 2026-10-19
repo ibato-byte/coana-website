@@ -790,7 +790,7 @@ function Contact() {
         <form className="container form-wrap" name="contact" onSubmit={submit} noValidate>
           {lineUrl && (
             <div className="line-notice">
-              <p>公式LINEからも、ご相談・お問い合わせいただけます。</p>
+              <p>LINE公式アカウントからも、ご相談・お問い合わせいただけます。</p>
               <LineButton place="contact_page" />
             </div>
           )}
@@ -835,7 +835,7 @@ function Contact() {
                 {(["date1", "date2", "date3"] as const).map((key, i) => (
                   <label key={key} className="meeting-date">
                     <span>第{i + 1}希望</span>
-                    <input value={data[key]} onChange={(e) => update(key, e.target.value)} placeholder="例）10月20日（月）14時〜" maxLength={60} />
+                    <input value={data[key]} onChange={(e) => update(key, e.target.value)} placeholder="例）10月20日 14時〜" maxLength={60} />
                   </label>
                 ))}
               </div>
