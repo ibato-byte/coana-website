@@ -112,6 +112,14 @@ if (/税|申告|社会保険|労務/.test(text) && !/(税理士|社労士|社会
 const quotes = body.split('\n').filter((l) => l.startsWith('>')).join('').length;
 if (quotes > 200) WARN(`引用が長い（${quotes}字）。転載にならないよう要約する`);
 
+// ── 表示の崩れ：Markdown が解釈されずに記号が残っていないか（「**」が日本語の括弧に接すると太字にならない） ──
+try {
+  const { marked } = await import('marked');
+  const html = marked.parse(body.replace(/<figure[\s\S]*?<\/figure>/g, ''));
+  const leftover = html.replace(/<[^>]+>/g, '').match(/.{0,12}(\*\*|__|\]\(|\[\s).{0,12}/);
+  if (leftover) NG(`Markdown の記号が表示に残る：「${leftover[0]}」（太字は括弧の内側で閉じる。例：「**語句**」）`);
+} catch (e) { WARN('marked を読み込めず、表示の崩れは未確認（npm ci のあとに再実行）'); }
+
 // ── キーワードの詰め込み ──
 for (const k of keywords) {
   const n = text.split(k).length - 1;

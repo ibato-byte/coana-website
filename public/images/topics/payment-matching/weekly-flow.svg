@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="700" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">入金確認の流れ（毎週）</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="80" y="84" width="440" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="124" cy="124" r="22" fill="#087fe5"/><text x="124" y="133" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="164" y="134">入金の明細を見る</text>
+    <rect x="80" y="204" width="440" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="124" cy="244" r="22" fill="#087fe5"/><text x="124" y="253" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="164" y="254">請求の一覧と照らす</text>
+    <rect x="80" y="324" width="440" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="124" cy="364" r="22" fill="#087fe5"/><text x="124" y="373" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="164" y="374">結べたら「入金済」</text>
+    <rect x="80" y="444" width="440" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="124" cy="484" r="22" fill="#087fe5"/><text x="124" y="493" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="164" y="494">ずれは理由を確認</text>
+    <rect x="80" y="564" width="440" height="80" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+    <circle cx="124" cy="604" r="22" fill="#16334d"/><text x="124" y="613" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+    <text x="164" y="614">期日過ぎは一報する</text>
+  </g>
+  <g stroke="#087fe5" stroke-width="4" fill="none">
+    <path d="M300 168 V198"/><path d="M292 190 l8 10 l8 -10"/>
+    <path d="M300 288 V318"/><path d="M292 310 l8 10 l8 -10"/>
+    <path d="M300 408 V438"/><path d="M292 430 l8 10 l8 -10"/>
+    <path d="M300 528 V558"/><path d="M292 550 l8 10 l8 -10"/>
+  </g>
+</svg>
