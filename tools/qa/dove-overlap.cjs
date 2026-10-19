@@ -1,4 +1,5 @@
-// 鳩（と荷物）が文字に重ならないか：HOW IT WORKS と FLOW、止まっている間も飛んでいる間も 100ms ごとに確認
+// 鳩（と荷物）が文字に重ならないか：HOW IT WORKS と FLOW、止まっている間も飛んでいる間も 100ms ごとに確認。
+// あわせて、図の小さなラベル同士の間隔（12px 以上）とカードの枠との重なりも確かめる
 // 使い方：node tools/qa/dove-overlap.cjs [幅]（省略すると 1280・390・768）
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const BASE = process.env.BASE || 'http://localhost:4173';
@@ -19,7 +20,31 @@ const WIDTHS = process.argv[2] ? [+process.argv[2]] : [1280, 390, 768];
       await p.addStyleTag({ content: 'html{scroll-behavior:auto!important} .dove-layer, .dove-layer *{pointer-events:auto!important}' });
       await p.evaluate((s) => { const e = document.querySelector(s); scrollTo(0, e.getBoundingClientRect().top + scrollY - 140); }, sel);
       await p.mouse.move(1, 1);
-      const hits = new Set(); let seen = 0, maxX = 0;
+      // ラベル同士の間隔：カードの外に置く小さなラベル（矢印の言葉・パネルの見出し・役割の札・受け渡しの注記など）が、
+      // ほかのラベルと 12px 以上離れ、カードの枠に重ならないこと（文字が詰まって読みづらくならないように）
+      const LABELS = '.relay-step > span, .relay-team-head, .lanes-handoff, .lanes-tag, .lanes-label span, .lanes-cycle-label';
+      const CARDS = '.relay-card, .relay-area, .lanes-card, .lp-scheme-flow li';
+      const gaps = await p.evaluate(([s, L, C]) => {
+        const root = document.querySelector(s);
+        const shown = (e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; };
+        // 文字そのものの箱（行の上下の余白は除く）
+        const textBox = (e) => { const range = document.createRange(); range.selectNodeContents(e); const rs = [...range.getClientRects()].filter((r) => r.width && r.height); if (!rs.length) return null; const fs = parseFloat(getComputedStyle(e).fontSize); const t = Math.min(...rs.map((r) => (r.top + r.bottom) / 2 - Math.min(r.height, fs) / 2)), b = Math.max(...rs.map((r) => (r.top + r.bottom) / 2 + Math.min(r.height, fs) / 2)); return { l: Math.min(...rs.map((r) => r.left)), r: Math.max(...rs.map((r) => r.right)), t, b }; };
+        const labels = [...root.querySelectorAll(L)].filter(shown).map((e) => ({ e, name: (e.className || e.parentElement.className).toString().split(' ')[0] + '「' + e.textContent.trim().slice(0, 12) + '」', box: textBox(e) })).filter((x) => x.box);
+        const cards = [...root.querySelectorAll(C)].filter(shown).map((e) => ({ e, box: (() => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom }; })() }));
+        const vgap = (a, b) => Math.max(a.t - b.b, b.t - a.b); const hov = (a, b) => a.l < b.r && b.l < a.r;
+        const out = [];
+        for (let i = 0; i < labels.length; i++) for (let j = i + 1; j < labels.length; j++) {
+          const a = labels[i], b = labels[j];
+          if (a.e.contains(b.e) || b.e.contains(a.e) || !hov(a.box, b.box)) continue;
+          const g = vgap(a.box, b.box); if (g < 12) out.push(`${a.name}↔${b.name} ${Math.round(g)}px`);
+        }
+        for (const a of labels) for (const c of cards) {
+          if (c.e.contains(a.e) || !hov(a.box, c.box)) continue;
+          const g = vgap(a.box, c.box); if (g < 4) out.push(`${a.name}↔カードの枠 ${Math.round(g)}px`);
+        }
+        return out;
+      }, [sel, LABELS, CARDS]);
+      const hits = new Set(gaps.map((g) => 'label-gap ' + g)); let seen = 0, maxX = 0;
       for (let i = 0; i < (+process.env.SAMPLES || 170); i++) {
         await p.waitForTimeout(100);
         const r = await p.evaluate(([s, dbg]) => {
