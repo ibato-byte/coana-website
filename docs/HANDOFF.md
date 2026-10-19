@@ -132,13 +132,12 @@
 - 本番での確認（オーナー実施）：外部リンク7件すべて到達可。内部リンク30件すべて 200。22ページ×4幅（320・390・768・1280）で崩れなし（料金プランの表の横スクロールは意図どおり）。
 - 本番確認後の追加対応：
   - PR #50：ファビコン（Google 検索結果が旧ロゴのまま）。新しいファイル名の正方形 PNG（`/favicon-v2-48.png`・`-96`・`-192`、manifest 用 `/icon-v2-512.png`）を全ページの head に明示、`/site.webmanifest` を追加、Organization の logo を `/favicon-v2-192.png` に。svg・ico は残す。マージ後、オーナーが Search Console でホームの再インデックスをリクエスト。
-    - 512px は 180px の apple-touch-icon からの拡大で少し甘い。ロゴの元データ（SVG か 512px 以上の PNG）があれば差し替える。
+    - その後、公式ロゴキット（Drive の「20261014_COANA TOKYO_カラーシンボル.png」2000px 透過）から作り直した画像に差し替え（favicon-v2-48/96/192/512・apple-touch-icon・favicon.ico。URL はそのまま中身だけ）。manifest の 512 と Organization の logo は `/favicon-v2-512.png`。拡大版の `/icon-v2-512.png` は削除。favicon.svg（128px の画像を埋め込んだ軽量版）は公式ロゴと形が一致することを確認済みのため据え置き。
     - www（www.coana.co.jp）でアイコンが 200 で返るかは本番で確認が必要。
   - Cloudflare の Email Obfuscation（Scrape Shield）が静的 HTML の mailto・メールアドレスを `/cdn-cgi/l/email-protection` に書き換え、クローラーには 404 になる件：ビルドで書き出す全ページと 404.html の `<html>` の中身を `<!--email_off-->`〜`<!--/email_off-->` で囲み、書き換えの対象外にした（vite.config.ts の `emailOff`）。表示・動作は変わらない。代わりにオーナーが Cloudflare の管理画面で Email Obfuscation をオフにしてもよい（要判断。オフにすれば、この囲みは不要だが残しても害はない）。
 - 要判断（オーナー）：
   - info@ の例外2つ（プライバシーポリシーの「お問い合わせ窓口」、フォーム送信失敗時のエラー文）は残している。
   - knowledge.md の住所だけ「三橋ビル3F」（ほかは「3F」）。どちらが正しいか確認。
-  - 経理代行LPだけ図の下に「無料で相談する」のリンクがある（scheme.cta）。途中の導線として残すか。
   - LP の期間の目安（2〜4週間・1〜2か月 など）がオーナー了承済みか。
 - 改善提案（今回は実装していない）：
   - Web フォントの自己ホスト（サブセット化）：Google Fonts の CSS が表示を止めていて、モバイルの LCP が伸びる。非同期読み込みも試したが、見出しの描き直しで LCP が縮まらず CLS も出たため見送り。
