@@ -1,4 +1,4 @@
-import re, json, urllib.request, html
+import os, re, json, urllib.request, html
 B='http://localhost:8789'
 class NoRedir(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,*a,**k): return None
