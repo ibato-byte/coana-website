@@ -71,8 +71,9 @@ const snap = (p) => p.evaluate((R) => {
         // バックオフィス代行は周ごとに5つの領域のうち1つへ届けるので、全工程は「経営者・チーム・領域1つ・報告・マニュアル」
         if (s.done >= (slug === 'backoffice-dx' ? keysTotal - 4 : keysTotal) && s.now === 0) all = true;
         if (all && s.chips === 0) gone = true;
-        if (gone && s.done === 0) reset = true;
-        else if (reset && s.done > 0) again = true;
+        // 点灯が消えてから起点が灯るまでは短い（約0.2秒）ので、「起点だけ点灯」もリセット後とみなす
+        if (gone && s.done <= 1) reset = true;
+        else if (reset && s.done >= 2) again = true;
       }
       ok(`${dev} ${slug} 終点で全工程がそろう→鳩が去る→点灯リセット→起点から再出発`, all && gone && reset && again, JSON.stringify({ all, gone, reset, again, keysTotal }));
       // スマホ：説明を開いている間は止まる（経理代行）
