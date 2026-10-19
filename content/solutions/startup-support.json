@@ -32,12 +32,11 @@
     "type": "relay",
     "title": "創業に必要なことを、一つの窓口で",
     "lead": "計画・お金・事務・集客を整理し、士業の業務は提携の専門家と連携します。",
-    "client_label": "起業する方がやること",
-    "team_label": "COANA TOKYOがやること",
+    "team_label": "COANA TOKYOが担当",
     "client": {
       "label": "起業する方",
-      "sub": "何から始めるか、まとめて相談",
-      "icon": "person"
+      "icon": "person",
+      "todo": "まとめて相談するだけ"
     },
     "center": {
       "label": "COANA TOKYO",
@@ -71,8 +70,9 @@
       },
       {
         "label": "専門家の紹介・連携",
-        "sub": "税理士・司法書士・行政書士・社労士・弁護士",
-        "icon": "handshake"
+        "sub": "提携先の税理士・司法書士・行政書士・社労士・弁護士",
+        "icon": "handshake",
+        "partner": true
       }
     ],
     "returns": [

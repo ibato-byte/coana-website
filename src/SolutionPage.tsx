@@ -103,6 +103,8 @@ const LABELS = {
     others: "そのほかのサービス",
     allServices: "サービス一覧を見る",
     sticky: "無料で相談する",
+    relayTodo: "やること",
+    relayGoal: "受け取るもの",
     scroll: "本文へスクロール",
     facts: "サービスの特徴",
   },
@@ -136,6 +138,8 @@ const LABELS = {
     others: "Other services (Japanese pages)",
     allServices: "See all services",
     sticky: "Free consultation",
+    relayTodo: "Your part",
+    relayGoal: "What you get",
     scroll: "Scroll to content",
     facts: "Key points",
   },
@@ -342,7 +346,7 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
 /** リレー型：御社 →（1）COANA TOKYO →（2）対応する領域 →（3）完了をご報告 →（4）手順をマニュアル化 → 御社へ戻る。
  *  PC は左から右へ一方向（戻りは下の段を右から左へ）、900px 以下は上から下の1列（スマホ専用の並び）。
  *  線は意味のある線だけ（矢印で順序が分かる）。鳩が通った線から色がつく。点線の道筋は出さない */
-function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
+function SchemeRelay({ scheme, story, labels }: { scheme: NonNullable<Solution["scheme"]>; story?: Story; labels: { todo: string; goal: string } }) {
   const areas = scheme.nodes ?? [];
   const returns = scheme.returns ?? [];
   const steps = scheme.steps ?? [];
@@ -351,8 +355,11 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
   const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 900px)");
   const lit = (k: string) => still || done.includes(k);
   const anyArea = areas.some((_, i) => lit("n" + i));
-  // 最後の矢印（御社へ戻る）は、一周の終わりに全工程がそろって完了したときに点灯（鳩は飛んで戻らない）
-  const backHome = still || (returns.length > 0 && lit("r" + (returns.length - 1)) && now === null);
+  void now;
+  // 役割は「エリア」で示す：COANA TOKYO が担当する範囲（中心・領域・最後の手前までの戻り）を薄いパネルで囲み、見出しを付ける。
+  // 最後の戻り（例：開業の土台が整う）は、御社が「受け取るもの」としてパネルの外・御社の側（暖色）に置く。鳩が最後に届ける先
+  const inner = returns.slice(0, -1);
+  const goal = returns.length ? returns[returns.length - 1] : null;
   // PC の線：カードの位置から引く（幅が変わったら・文字が読み込まれたら引き直す）
   const [geom, setGeom] = useState<{ k: string; d: string; arrow: boolean }[]>([]);
   useLayoutEffect(() => {
@@ -365,7 +372,7 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
       const r = (sel: string) => { const e = root.querySelector(sel); if (!e) return null; const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; };
       const client = r(".relay-client"), center = r(".relay-center"), list = r(".relay-areas");
       const items = [...root.querySelectorAll(".relay-area")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, cy: x.top - b.top + x.height / 2 }; });
-      const rets = [...root.querySelectorAll(".relay-return")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; });
+      const rets = [...root.querySelectorAll(".relay-return, .relay-goal")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; });
       if (!client || !center || !list || !items.length) return;
       const f = (n: number) => n.toFixed(1);
       const g: { k: string; d: string; arrow: boolean }[] = [];
@@ -379,9 +386,6 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
         const r0 = rets[0];
         g.push({ k: "r0", d: `M${f(r0.cx)} ${f(list.bt + 8)}V${f(r0.t - 10)}`, arrow: true });
         rets.slice(1).forEach((rt, i) => g.push({ k: "r" + (i + 1), d: `M${f(rets[i].l - 8)} ${f(rt.cy)}H${f(rt.r + 10)}`, arrow: true }));
-        const last = rets[rets.length - 1];
-        const rad = 14;
-        g.push({ k: "home", d: `M${f(last.l - 8)} ${f(last.cy)}H${f(client.cx + rad)}Q${f(client.cx)} ${f(last.cy)} ${f(client.cx)} ${f(last.cy - rad)}V${f(client.bt + 10)}`, arrow: true });
       }
       setGeom(g);
     };
@@ -391,7 +395,7 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
     void document.fonts?.ready.then(measure);
     return () => ro.disconnect();
   }, [areas.length, returns.length]);
-  const on = (k: string) => (k === "trunk" ? anyArea : k === "home" ? backHome : lit(k));
+  const on = (k: string) => (k === "trunk" ? anyArea : lit(k));
   const num = (i: number) => <b className="relay-num">{i}</b>;
   return (
     <div className="relay" ref={boxRef} data-reveal>
@@ -407,37 +411,55 @@ function SchemeRelay({ scheme, story }: { scheme: NonNullable<Solution["scheme"]
           </g>
         ))}
       </svg>
-      <p className="relay-side is-client"><span>{scheme.client_label || "御社がやること"}</span></p>
-      <p className="relay-side is-team"><span>{scheme.team_label || "COANA TOKYOがやること"}</span></p>
+      <div className="relay-panel" aria-hidden="true" />
       <div className={`relay-card relay-client${state("client")}`} data-story="client" data-perch="above-tr" data-perch-v="in-tr">
         <span className="relay-icon"><LpIcon name={scheme.client?.icon || "person"} size={24} /><StepCheck /></span>
         <strong>{scheme.client?.label}</strong>
-        {scheme.client?.sub && <span className="relay-sub">{scheme.client.sub}</span>}
+        {scheme.client?.todo ? (
+          <span className="relay-todo"><em>{labels.todo}</em>{scheme.client.todo}</span>
+        ) : scheme.client?.sub && <span className="relay-sub">{scheme.client.sub}</span>}
       </div>
       <p className={`relay-step is-1${lit("c") ? " is-on" : ""}`}>{num(1)}<span>{steps[0]}</span></p>
-      <div className={`relay-card relay-center${state("c")}`} data-story="c" data-perch="above-tr" data-perch-v="in-tr">
-        <span className="relay-icon"><LpIcon name={scheme.center?.icon || "users"} size={24} /><StepCheck /></span>
-        <strong>{scheme.center?.label || "COANA TOKYO"}</strong>
-        {scheme.center?.sub && <span className="relay-sub">{scheme.center.sub}</span>}
-      </div>
-      <p className={`relay-step is-2${anyArea ? " is-on" : ""}`}>{num(2)}<span>{steps[1]}</span></p>
-      <ul className={`relay-areas${anyArea ? " is-on" : ""}`}>
-        {areas.map((a, i) => (
-          <li key={a.label} className={`relay-area${state("n" + i)}`} data-story={"n" + i} data-perch="group-tr">
-            <span className="relay-icon"><LpIcon name={a.icon || "check"} size={20} /><StepCheck /></span>
-            <strong>{a.label}</strong>
-            {a.sub && <span className="relay-sub">{a.sub}</span>}
-          </li>
-        ))}
-      </ul>
-      {returns.map((rt, i) => (
-        <div key={rt.label} className={`relay-card relay-return is-r${i}${state("r" + i)}${lit("r" + i) ? " is-on" : ""}`} data-story={"r" + i} data-perch="above-tr" data-perch-v="in-tr">
-          <i className="relay-arrow" aria-hidden="true" />
-          <span className="relay-icon"><LpIcon name={rt.icon || "check"} size={22} /><StepCheck />{i === returns.length - 1 && <i className="relay-page" aria-hidden="true" />}</span>
-          <strong>{num(i + 3)}{rt.label}</strong>
-          {rt.sub && <span className="relay-sub">{rt.sub}</span>}
+      {/* COANA TOKYO が担当する範囲（PC は display: contents でグリッドに並べ、背景は .relay-panel。スマホはこの箱が背景のパネル） */}
+      <div className="relay-team">
+        <p className="relay-team-head">{scheme.team_label || "COANA TOKYOが担当"}</p>
+        <div className={`relay-card relay-center${state("c")}`} data-story="c" data-perch="above-tr" data-perch-v="in-tr">
+          <span className="relay-icon"><LpIcon name={scheme.center?.icon || "users"} size={24} /><StepCheck /></span>
+          <strong>{scheme.center?.label || "COANA TOKYO"}</strong>
+          {scheme.center?.sub && <span className="relay-sub">{scheme.center.sub}</span>}
         </div>
-      ))}
+        <p className={`relay-step is-2${anyArea ? " is-on" : ""}`}>{num(2)}<span>{steps[1]}</span></p>
+        <ul className={`relay-areas${anyArea ? " is-on" : ""}`}>
+          {areas.map((a, i) => (
+            // partner：提携先の専門家や御社など、COANA TOKYO 自身ではない相手（破線の枠）
+            <li key={a.label} className={`relay-area${a.partner ? " is-partner" : ""}${state("n" + i)}`} data-story={"n" + i} data-perch="group-tr">
+              <span className="relay-icon"><LpIcon name={a.icon || "check"} size={20} /><StepCheck /></span>
+              <strong>{a.label}</strong>
+              {a.sub && <span className="relay-sub">{a.sub}</span>}
+            </li>
+          ))}
+        </ul>
+        {inner.map((rt, i) => (
+          <div key={rt.label} className={`relay-card relay-return is-r${i}${state("r" + i)}${lit("r" + i) ? " is-on" : ""}`} data-story={"r" + i} data-perch="above-tr" data-perch-v="in-tr">
+            <i className="relay-arrow" aria-hidden="true" />
+            <span className="relay-icon"><LpIcon name={rt.icon || "check"} size={22} /><StepCheck /></span>
+            <strong>{num(i + 3)}{rt.label}</strong>
+            {rt.sub && <span className="relay-sub">{rt.sub}</span>}
+          </div>
+        ))}
+      </div>
+      {goal && (() => {
+        const k = "r" + inner.length;
+        return (
+          <div className={`relay-card relay-goal${state(k)}${lit(k) ? " is-on" : ""}`} data-story={k} data-perch="above-tr" data-perch-v="in-tr">
+            <i className="relay-arrow" aria-hidden="true" />
+            <span className="relay-goal-tag">{labels.goal}</span>
+            <span className="relay-icon"><LpIcon name={goal.icon || "check"} size={22} /><StepCheck /><i className="relay-page" aria-hidden="true" /></span>
+            <strong>{num(inner.length + 3)}{goal.label}</strong>
+            {goal.sub && <span className="relay-sub">{goal.sub}</span>}
+          </div>
+        );
+      })()}
       {layer}
     </div>
   );
@@ -629,7 +651,7 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
     <section className="section lp-scheme">
       <div className="container">
         <SectionTitle en="How it works" center lead={scheme.lead}>{scheme.title || L.scheme}</SectionTitle>
-        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : scheme.type === "relay" ? <SchemeRelay scheme={scheme} story={story} /> : <SchemeDiagram scheme={scheme} story={story} />}
+        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : scheme.type === "relay" ? <SchemeRelay scheme={scheme} story={story} labels={{ todo: L.relayTodo, goal: L.relayGoal }} /> : <SchemeDiagram scheme={scheme} story={story} />}
         {(scheme.points ?? []).length > 0 && (
           <ul className="lp-scheme-points">
             {(scheme.points ?? []).map((p) => (

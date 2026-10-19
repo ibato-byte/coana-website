@@ -131,12 +131,13 @@ export type Solution = {
     title?: string;
     lead?: string;
     center?: { label: string; sub?: string; icon?: string };
-    /** relay 型：起点（御社）、矢印に添える言葉（1・2）、戻りの流れ（3・4…） */
-    client?: { label: string; sub?: string; icon?: string };
+    /** relay 型：起点（御社。todo＝御社がやること「まとめて相談するだけ」など）、矢印に添える言葉（1・2）、戻りの流れ（3・4…。最後は御社が受け取るもの）。
+     *  team_label は COANA TOKYO が担当する範囲（パネル）の見出し。nodes の partner は提携先（破線の枠） */
+    client?: { label: string; sub?: string; icon?: string; todo?: string };
     steps?: string[];
     returns?: { label: string; sub?: string; icon?: string }[];
     /** who：lanes 型で、御社（client）か COANA TOKYO（team）か。detail：カーソルを当てる／タップで開く詳しい説明 */
-    nodes?: { label: string; sub?: string; icon?: string; who?: "client" | "team"; detail?: string }[];
+    nodes?: { label: string; sub?: string; icon?: string; who?: "client" | "team"; detail?: string; partner?: boolean }[];
     /** lanes 型：見出しラベル・御社の段の「あとはお任せ」・1か月の流れ・最後の一言（無料相談へ） */
     client_label?: string;
     team_label?: string;
