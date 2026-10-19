@@ -20,11 +20,16 @@ const WIDTHS = process.argv[2] ? [+process.argv[2]] : [1280, 390, 768];
       await p.addStyleTag({ content: 'html{scroll-behavior:auto!important} .dove-layer, .dove-layer *{pointer-events:auto!important}' });
       await p.evaluate((s) => { const e = document.querySelector(s); scrollTo(0, e.getBoundingClientRect().top + scrollY - 140); }, sel);
       await p.mouse.move(1, 1);
-      // ラベル同士の間隔：カードの外に置く小さなラベル（矢印の言葉・パネルの見出し・役割の札・受け渡しの注記など）が、
-      // ほかのラベルと 12px 以上離れ、カードの枠に重ならないこと（文字が詰まって読みづらくならないように）
+      // ラベル同士の間隔とパネルの枠線：カードの外に置く小さなラベル（①② の矢印の言葉・パネルの見出し・役割の札・受け渡しの注記など）が、
+      // - ほかのラベルと 12px 以上離れる
+      // - カードの枠に重ならない（4px 以上）
+      // - 役割のパネル（COANA TOKYO が担当）の枠線にかからない：パネルの内側なら縁から 12px 以上、外側ならパネルから 12px 以上
+      // 「受け取るもの」などカードの中の札は、自分のカードの枠線から 4px 以上内側にあること
       const LABELS = '.relay-step > span, .relay-team-head, .lanes-handoff, .lanes-tag, .lanes-label span, .lanes-cycle-label';
       const CARDS = '.relay-card, .relay-area, .lanes-card, .lp-scheme-flow li';
-      const gaps = await p.evaluate(([s, L, C]) => {
+      const PANELS = '.relay-panel, .relay-team';
+      const TAGS = '.relay-goal-tag, .relay-todo em';
+      const gaps = await p.evaluate(([s, L, C, P, T]) => {
         const root = document.querySelector(s);
         const shown = (e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; };
         // 文字そのものの箱（行の上下の余白は除く）
@@ -42,8 +47,24 @@ const WIDTHS = process.argv[2] ? [+process.argv[2]] : [1280, 390, 768];
           if (c.e.contains(a.e) || !hov(a.box, c.box)) continue;
           const g = vgap(a.box, c.box); if (g < 4) out.push(`${a.name}↔カードの枠 ${Math.round(g)}px`);
         }
+        const rect = (e) => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom }; };
+        for (const pe of [...root.querySelectorAll(P)].filter(shown)) {
+          const pb = rect(pe);
+          for (const a of labels) {
+            const b = a.box;
+            const inside = b.l >= pb.l && b.r <= pb.r && b.t >= pb.t && b.b <= pb.b;
+            if (inside) { const m = Math.min(b.l - pb.l, pb.r - b.r, b.t - pb.t, pb.b - b.b); if (m < 12) out.push(`${a.name}↔パネルの縁（内側）${Math.round(m)}px`); }
+            else { const d = Math.max(pb.l - b.r, b.l - pb.r, pb.t - b.b, b.t - pb.b); if (d < 12) out.push(`${a.name}↔パネルの枠線 ${d < 0 ? 'かかっている' : Math.round(d) + 'px'}`); }
+          }
+        }
+        for (const t of [...root.querySelectorAll(T)].filter(shown)) {
+          const card = t.closest(C); if (!card) continue;
+          const b = rect(t), cb = rect(card);
+          const m = Math.min(b.l - cb.l, cb.r - b.r, b.t - cb.t, cb.b - b.b);
+          if (m < 4) out.push(`札「${t.textContent.trim()}」↔カードの枠 ${Math.round(m)}px`);
+        }
         return out;
-      }, [sel, LABELS, CARDS]);
+      }, [sel, LABELS, CARDS, PANELS, TAGS]);
       const hits = new Set(gaps.map((g) => 'label-gap ' + g)); let seen = 0, maxX = 0;
       for (let i = 0; i < (+process.env.SAMPLES || 170); i++) {
         await p.waitForTimeout(100);
