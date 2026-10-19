@@ -11,6 +11,7 @@ COANA TOKYO合同会社のWebサイト（https://coana.co.jp）。オーナー�
 - 本番は Cloudflare Pages（main への push で自動デプロイ。PR ごとにプレビュー `*.coana-website.pages.dev`）。旧URLの転送は `public/_redirects`、ヘッダーは `public/_headers`。
 - サポートチャットの AI は Pages Functions（`functions/api/chat.ts`）＋ Workers AI（バインディング名 `AI`、無料枠内。任意で KV `CHAT_KV`）。AI が使えないときはサイト内検索の代替応答。
 - 予約投稿：`.github/workflows/scheduled-publish.yml`（毎朝6時）。
+- SEO の自動ブラッシュアップ：毎日の監視（GitHub Actions `.github/workflows/seo-monitor.yml`、本番に異常があれば Issue）＋毎週月曜の週次タスク（Claude のスケジュールタスク）。**SEO の作業は必ず [docs/SEO_PLAYBOOK.md](docs/SEO_PLAYBOOK.md) に従う**（技術面はテスト合格で自動マージ、文章は「要承認」の PR でオーナーがマージ）。ツールは `tools/seo/`、レポートは `docs/seo-reports/`。
 
 ## オーナーの確定方針（必ず守る）
 

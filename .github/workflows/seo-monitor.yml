@@ -1,0 +1,86 @@
+# SEO の監視（本番 https://coana.co.jp）
+# - 毎日 6:17（日本時間）：本番の点検（全ページの 200 応答・title／description・canonical・構造化データ・内部リンク切れ・
+#   画像・sitemap・robots・llms.txt・ファビコン など）。NG があれば「seo-alert」の Issue を立てる（解消したら自動で閉じる）。
+# - 毎週月曜 5:37（日本時間）：上に加えて外部リンクの生存確認、表示速度（Lighthouse・PageSpeed Insights）を測り、
+#   「seo-data」の Issue に JSON で残す。月曜 9 時ごろの週次タスク（Claude）がそれを読んで修正・提案・レポートを行う。
+# 自動修正はしない（週次タスクが担当）。手順と線引きは docs/SEO_PLAYBOOK.md。
+# 無料枠内：1回あたり数分（週次は Lighthouse を含めて 15 分程度）。PageSpeed Insights は無料の API キーを
+# リポジトリの Secrets（PSI_API_KEY）に入れると安定する（なくても動く。取れない週は Lighthouse の値だけ）。
+name: SEO の監視
+
+on:
+  schedule:
+    - cron: "17 21 * * *" # UTC 21:17 = 日本時間 6:17（毎日）
+    - cron: "37 20 * * 0" # UTC 日曜 20:37 = 日本時間 月曜 5:37（週次）
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "daily（軽い監視）または weekly（外部リンク・表示速度も測ってデータを残す）"
+        type: choice
+        options: [daily, weekly]
+        default: daily
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: seo-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || (github.event.schedule == '37 20 * * 0' && 'weekly' || 'daily') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: ラベルを用意（初回のみ作成）
+        run: |
+          gh label create seo-alert --color d73a4a --description "SEO の監視で本番に異常（自動）" 2>/dev/null || true
+          gh label create seo-data --color 0e8a16 --description "SEO の週次データ（自動）。閉じない" 2>/dev/null || true
+          gh label create 要承認 --color fbca04 --description "文章の変更。オーナーが確認してからマージ" 2>/dev/null || true
+          gh label create seo-auto --color 1d76db --description "SEO 週次タスクの技術面の自動修正" 2>/dev/null || true
+
+      - name: 本番の点検
+        run: |
+          extra=""
+          if [ "$MODE" = "weekly" ]; then extra="--external"; fi
+          node tools/seo/check-site.mjs --base https://coana.co.jp --prod $extra --out prod.json || true
+
+      - name: 表示速度（週次のみ）
+        if: env.MODE == 'weekly'
+        env:
+          PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
+        run: |
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium-browser || true)"
+          node tools/seo/perf.mjs --base https://coana.co.jp --out perf.json || true
+
+      - name: Issue に記録
+        run: |
+          if [ "$MODE" = "weekly" ]; then
+            node tools/seo/notify.mjs --prod prod.json --perf perf.json --weekly
+          else
+            node tools/seo/notify.mjs --prod prod.json
+          fi
+
+      - name: 結果を保存（30日）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-${{ env.MODE }}-${{ github.run_id }}
+          path: |
+            prod.json
+            perf.json
+          if-no-files-found: ignore
+          retention-days: 30
