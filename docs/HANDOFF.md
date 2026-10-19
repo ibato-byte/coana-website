@@ -11,9 +11,10 @@
   - 毎日 6:17：GitHub Actions「SEO の監視」が本番を点検し、異常があれば Issue（`seo-alert`）を立てる。
   - 毎週月曜 5:37：同じ Actions が外部リンクと表示速度も測り、Issue（`seo-data`）にデータを残す。
   - 毎週月曜 8:54：Claude のスケジュールタスク「COANA SEO 週次ブラッシュアップ」が修正・提案・レポートを行う。
-- スケジュールタスク：「COANA SEO 週次ブラッシュアップ」ID `trig_01D4YYnTC3ByPMkfBzQAkPuf`（毎週月曜 8:54 日本時間、毎回新しいセッション、完了通知はプッシュ＋メール）。プロンプトの変更・停止は claude.ai のスケジュールタスクの画面、またはセッションから update_trigger で。
+- スケジュールタスク：「COANA SEO 週次ブラッシュアップ」ID `trig_01RrZBY7DC79EtMXno9werew`（毎週月曜 8:54 日本時間。専用セッション `session_01HbxZBk1N9D7dtypAM8AM36` に毎週同じ指示が届く方式。毎回新しいセッションを作る方式はリポジトリが接続されないため使えない。通知はプッシュのみ）。プロンプトの変更・停止は claude.ai のスケジュールタスクの画面、またはセッションから update_trigger で。
 - オーナーにお願い（任意）：`PSI_API_KEY`（無料）を Actions の Secrets に／作業環境の Allowed domains に `coana.co.jp`。
 - 記録：
+  - 2026-10-19（初回の週次）：NG 0／注意 16（すべて title の長さ。重要語は先頭にあり、切れるのは会社名だけなので見送り）。表示速度はモバイル Performance 47・LCP 約 11 秒（初回の基準値。JS が 1 本で約 820KB）。A：`weekly.sh` が package-lock.json なしで `npm ci` に失敗する不具合を修正。B：なし。
   - 2026-10-19：仕組みを構築。
 
 ## 優先順の残タスク
