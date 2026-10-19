@@ -583,8 +583,13 @@ function coanaPageMeta(): Plugin {
       const faviconHref = String(settings.favicon || '/favicon.svg')
       const touchIconHref = String(settings.apple_touch_icon || '/apple-touch-icon.png')
       const faviconType = /\.svg$/i.test(faviconHref) ? 'image/svg+xml' : /\.png$/i.test(faviconHref) ? 'image/png' : /\.ico$/i.test(faviconHref) ? 'image/x-icon' : ''
-      let shell = builtShell.replace(/\s*<link\s+rel="(?:icon|apple-touch-icon)"[^>]*>/g, '')
-      shell = shell.replace('</head>', () => '    <link rel="icon" href="' + escapeAttr(faviconHref) + '"' + (faviconType ? ' type="' + faviconType + '"' : '') + ' />\n    ' + (faviconHref !== '/favicon.ico' ? '<link rel="icon" href="/favicon.ico" sizes="any" />\n    ' : '') + '<link rel="apple-touch-icon" href="' + escapeAttr(touchIconHref) + '" />\n  </head>')
+      let shell = builtShell.replace(/\s*<link\s+rel="(?:icon|apple-touch-icon|manifest)"[^>]*>/g, '')
+      shell = shell.replace('</head>', () => '    <link rel="icon" href="' + escapeAttr(faviconHref) + '"' + (faviconType ? ' type="' + faviconType + '"' : '') + ' />\n    ' + (faviconHref !== '/favicon.ico' ? '<link rel="icon" href="/favicon.ico" sizes="any" />\n    ' : '') + '<link rel="apple-touch-icon" href="' + escapeAttr(touchIconHref) + '" />\n    '
+        // Google 検索結果のファビコン用：48 の倍数の正方形 PNG（円形に切り抜かれても欠けない余白）。ファイル名を変えて再取得を促す
+        + '<link rel="icon" type="image/png" sizes="48x48" href="/favicon-v2-48.png" />\n    '
+        + '<link rel="icon" type="image/png" sizes="96x96" href="/favicon-v2-96.png" />\n    '
+        + '<link rel="icon" type="image/png" sizes="192x192" href="/favicon-v2-192.png" />\n    '
+        + '<link rel="manifest" href="/site.webmanifest" />\n  </head>')
 
       // 住所を都道府県・市区町村・それ以降に分ける（構造化データ用）
       const address: string = String(settings.address || '')
@@ -609,7 +614,7 @@ function coanaPageMeta(): Plugin {
         alternateName: 'COANA TOKYO',
         url: SITE,
         sameAs: settings.same_as || ['https://www.facebook.com/profile.php?id=61589876101798', 'https://maps.google.com/?cid=15984393387638365667'],
-        logo: SITE + '/apple-touch-icon.png',
+        logo: SITE + '/favicon-v2-192.png', // 新ロゴの正方形 PNG（192px。Google の推奨は 112px 以上）
         image: defaultImage,
         description: defaultDescription,
         email: settings.email,
