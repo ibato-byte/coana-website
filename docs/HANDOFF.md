@@ -128,8 +128,13 @@
 - 検査ツール：`tools/qa/full-check.cjs`（全体検査。README に説明）。そのほか story-test・fj-test・wheel・fj-wheel・toggles・features・a11y・kbd・entry・entry-pages・cls-real・patterns・dove-overlap・dove-perf・contrast・rmcheck・detect・seo.py・e2e-final（チャット）・steps（スマホのキーボード）・hidden-check・Lighthouse（npm の lighthouse を作業領域に入れて実行）。
 - できなかったこと：
   - WebKit（Safari 相当）・Firefox：作業環境のネットワーク設定で Playwright のブラウザの取得先（cdn.playwright.dev、playwright.download.prss.microsoft.com）が遮断されていて入れられない。Allowed domains に追加すれば `ENGINES=chromium,webkit,firefox node tools/qa/full-check.cjs` で実行できる。
-  - 外部リンク（LINE・国税庁・消費者庁・発教研・経道）の生存確認：外部への接続が遮断されているため未確認。
-  - 本番（coana.co.jp）の確認：接続できないため未確認。
+  - 外部リンク・本番の確認は作業環境から接続できないため、オーナーが本番で実施（下記）。
+- 本番での確認（オーナー実施）：外部リンク7件すべて到達可。内部リンク30件すべて 200。22ページ×4幅（320・390・768・1280）で崩れなし（料金プランの表の横スクロールは意図どおり）。
+- 本番確認後の追加対応：
+  - PR #50：ファビコン（Google 検索結果が旧ロゴのまま）。新しいファイル名の正方形 PNG（`/favicon-v2-48.png`・`-96`・`-192`、manifest 用 `/icon-v2-512.png`）を全ページの head に明示、`/site.webmanifest` を追加、Organization の logo を `/favicon-v2-192.png` に。svg・ico は残す。マージ後、オーナーが Search Console でホームの再インデックスをリクエスト。
+    - 512px は 180px の apple-touch-icon からの拡大で少し甘い。ロゴの元データ（SVG か 512px 以上の PNG）があれば差し替える。
+    - www（www.coana.co.jp）でアイコンが 200 で返るかは本番で確認が必要。
+  - Cloudflare の Email Obfuscation（Scrape Shield）が静的 HTML の mailto・メールアドレスを `/cdn-cgi/l/email-protection` に書き換え、クローラーには 404 になる件：ビルドで書き出す全ページと 404.html の `<html>` の中身を `<!--email_off-->`〜`<!--/email_off-->` で囲み、書き換えの対象外にした（vite.config.ts の `emailOff`）。表示・動作は変わらない。代わりにオーナーが Cloudflare の管理画面で Email Obfuscation をオフにしてもよい（要判断。オフにすれば、この囲みは不要だが残しても害はない）。
 - 要判断（オーナー）：
   - info@ の例外2つ（プライバシーポリシーの「お問い合わせ窓口」、フォーム送信失敗時のエラー文）は残している。
   - knowledge.md の住所だけ「三橋ビル3F」（ほかは「3F」）。どちらが正しいか確認。
