@@ -580,11 +580,11 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .relay-return strong, .relay-goal strong { font-size: 16px; }
   /* COANA TOKYO が担当する範囲（② 〜 ③）を薄いパネルで囲む。上の御社（相談するだけ）と下の「受け取るもの」で挟む。
      パネルは左右に少しはみ出して、中のカードと外のカードの左端（矢印の位置）をそろえる */
-  .relay-team { display: flex; flex-direction: column; margin: 0 -12px; padding: 8px 12px 10px; margin-top: 4px; border-radius: 20px; background: rgba(8, 127, 229, .05); border: 1px solid rgba(8, 127, 229, .16); }
+  .relay-team { display: flex; flex-direction: column; margin: 2px -12px 0; padding: 4px 12px 8px; border-radius: 20px; background: rgba(8, 127, 229, .05); border: 1px solid rgba(8, 127, 229, .16); }
   /* 見出しはパネルの上の縁に（① の矢印の右）。高さを増やさない */
   .relay-team-head { align-self: flex-start; margin: -20px 0 6px 40px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--white); box-shadow: inset 0 0 0 1px rgba(8, 127, 229, .22); font-size: 12.5px; }
   /* 矢印（上から下）：線と番号と言葉。通った区間から色がつく */
-  .relay-step { margin: 0; min-height: 32px; white-space: normal; justify-content: flex-start; padding: 0 0 0 54px; font-size: 13.5px; }
+  .relay-step { margin: 0; min-height: 30px; white-space: normal; justify-content: flex-start; padding: 0 0 0 54px; font-size: 13.5px; }
   .relay-step.is-2 { padding-right: 0; }
   .relay-step::before { content: ""; position: absolute; left: 35px; top: 5px; bottom: 9px; width: 2px; border-radius: 2px; background: rgba(8, 127, 229, .38); transition: background .45s; }
   .relay-step::after { content: ""; position: absolute; left: 31px; bottom: 6px; width: 8px; height: 8px; border-right: 2px solid rgba(8, 127, 229, .5); border-bottom: 2px solid rgba(8, 127, 229, .5); transform: rotate(45deg); transition: border-color .45s; }
@@ -599,11 +599,11 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .relay-area strong { font-size: 15px; line-height: 1.35; }
   .relay-area .relay-sub { display: none; }
   /* ③（パネルの中）と ④ 受け取るもの（パネルの外）は下へ続く：上に短い矢印 */
-  .relay-return, .relay-goal { width: auto; margin-top: 26px; }
+  .relay-return, .relay-goal { width: auto; margin-top: 24px; }
   .relay-goal-tag { left: 50px; }
-  .relay-return::after, .relay-goal::after { content: ""; position: absolute; left: 35px; top: -23px; height: 15px; width: 2px; border-radius: 2px; background: rgba(8, 127, 229, .38); transition: background .45s; }
-  .relay-goal::after { top: -25px; height: 16px; }
-  .relay-return > .relay-arrow, .relay-goal > .relay-arrow { display: block; position: absolute; left: 31px; top: -12px; width: 8px; height: 8px; border-right: 2px solid rgba(8, 127, 229, .5); border-bottom: 2px solid rgba(8, 127, 229, .5); transform: rotate(45deg); transition: border-color .45s; }
+  .relay-return::after, .relay-goal::after { content: ""; position: absolute; left: 35px; top: -21px; height: 13px; width: 2px; border-radius: 2px; background: rgba(8, 127, 229, .38); transition: background .45s; }
+  .relay-goal::after { top: -23px; height: 14px; }
+  .relay-return > .relay-arrow, .relay-goal > .relay-arrow { display: block; position: absolute; left: 31px; top: -11px; width: 8px; height: 8px; border-right: 2px solid rgba(8, 127, 229, .5); border-bottom: 2px solid rgba(8, 127, 229, .5); transform: rotate(45deg); transition: border-color .45s; }
   .relay-return.is-on::after, .relay-goal.is-on::after { background: var(--sky-deep); }
   .relay-return.is-on > .relay-arrow, .relay-goal.is-on > .relay-arrow { border-color: var(--sky-deep); }
 }
