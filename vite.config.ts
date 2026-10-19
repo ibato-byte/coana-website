@@ -928,17 +928,24 @@ function coanaPageMeta(): Plugin {
         '<div id="root"><div class="seo-fallback" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);border:0">' +
         fallbackHeader(lang) + '<main>' + fallbackMain(pagePath) + '</main>' + fallbackFooter(lang) + '</div></div>')
 
+      // Cloudflare の Email Obfuscation（Scrape Shield）は HTML 内の mailto やメールアドレスを
+      // /cdn-cgi/l/email-protection に書き換え、クローラーにはそのURLが 404 になる。
+      // email_off で囲んだ範囲は書き換えの対象外になる（表示・動作は変わらない）
+      const emailOff = (html: string) => html
+        .replace(/(<html\b[^>]*>)/, '$1<!--email_off-->')
+        .replace(/<\/html>\s*$/, '<!--/email_off--></html>\n')
+
       for (const page of pages) {
         const file = page.path === '/' ? shellPath : path.join(outDir, page.path.slice(1) + '.html')
         fs.mkdirSync(path.dirname(file), { recursive: true })
-        fs.writeFileSync(file, withFallback(render(shell, page, defaultDescription, defaultImage), page.path, page.lang === 'en' ? 'en' : 'ja'))
+        fs.writeFileSync(file, emailOff(withFallback(render(shell, page, defaultDescription, defaultImage), page.path, page.lang === 'en' ? 'en' : 'ja')))
       }
 
       // 存在しないURLは 404 を返す（画像の取り違えキャッシュ対策を兼ねる）
       const notFound = render(shell, { path: '/404', title: 'ページが見つかりません' + SUFFIX, description: 'お探しのページは見つかりませんでした。URLが変わったか、ページが削除された可能性があります。トップページやサービス一覧からお探しください。' }, defaultDescription, defaultImage)
         .replace(/\s*<link\s+rel="canonical"[^>]*>/, '')
         .replace(/<meta\s+name="robots"[^>]*>/, '<meta name="robots" content="noindex" />')
-      fs.writeFileSync(path.join(outDir, '404.html'), notFound)
+      fs.writeFileSync(path.join(outDir, '404.html'), emailOff(notFound))
 
       const sitemap = [
         '<?xml version="1.0" encoding="UTF-8"?>',
