@@ -241,7 +241,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     ]);
 
     // ── 飛ぶ：予備動作 → 短い弧で移動（翼は CSS で羽ばたき、荷物は揺れる）→ 着地 → 荷物をそっと置く ──
-    const fly = async (to: Pt) => {
+    const fly = async (to: Pt, onLand?: () => void) => {
       const dir = to.x < pos.x - 4 ? -1 : 1;
       face(dir);
       textCache = null;
@@ -255,6 +255,8 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
       place(to);
       dove.classList.remove("is-flying");
       await land();
+      // 着いたところでカードが点灯（荷物を置くのと同時に）
+      onLand?.();
       // 荷物をそっと置く：少しかがんで荷物が下につき、また顔を上げる。左を向いて着いたときは右へ向き直る（荷物が文字の側に下がらないように）
       const turn = facing < 0 ? anim(flip, [{ transform: "scaleX(-1)" }, { transform: "scaleX(1)" }], { duration: 260, easing: EASE_FLY }).then(() => { facing = 1; flip.style.transform = ""; }) : Promise.resolve();
       await Promise.all([
@@ -363,7 +365,7 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     // 待っている間に一度だけ、首をかしげて荷物を持ち直す小さな仕草で、視線を鳩＝起点へ導く
     const preen = () => Promise.all([
       anim(body, [{ transform: "none" }, { transform: "rotate(-8deg)", offset: 0.3 }, { transform: "rotate(-8deg)", offset: 0.5 }, { transform: "rotate(2deg)", offset: 0.75 }, { transform: "none" }], { duration: T.preen, easing: EASE_FLY }),
-      anim(cargoEl, [{ transform: "none" }, { transform: "translateY(-2.5px) rotate(-8deg)", offset: 0.4 }, { transform: "rotate(4deg)", offset: 0.72 }, { transform: "none" }], { duration: T.preen + 120, easing: EASE_FLY }),
+      anim(cargoEl, [{ transform: "none" }, { transform: "translateY(-2.5px) rotate(-8deg)", offset: 0.4 }, { transform: "rotate(4deg)", offset: 0.72 }, { transform: "none" }], { duration: T.preen, easing: EASE_FLY }),
     ]);
     /** 出発の直前に、次の工程の方を向く（起点から ① の矢印へのつながりが読めるように） */
     const faceToward = async (to: Pt | null) => {
@@ -375,10 +377,11 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
     };
     /** 起点で待つ：静止 → 一度だけ小さな仕草 → 静止 → 次の工程を向く */
     const waitAtStart = async (hold: number, next: DoveStop | undefined) => {
-      await wait(Math.min(450, hold * 0.35));
+      const before = Math.min(350, hold * 0.3);
+      await wait(before);
       if (cancelled) return;
       await preen();
-      await wait(Math.max(0, hold - Math.min(450, hold * 0.35) - T.preen));
+      await wait(Math.max(0, hold - before - T.preen));
       await startGate();
       if (cancelled) return;
       if (next && next.at !== curKey) { await faceToward(perch(next.at)); await wait(180); }
@@ -416,11 +419,12 @@ export function useDoveCarrier(box: RefObject<HTMLElement | null>, stops: ((loop
           const to = perch(stop.at);
           if (!to) continue;
           // 同じ工程で荷物が変わるだけ（例：商談 → 受注）のときは飛ばず、その場で荷物をそっと置き直す
-          if (stop.at === curKey) await anim(body, [{ transform: "none" }, { transform: "rotate(6deg)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY });
-          else await fly(to);
+          const sameStop = stop.at === curKey;
+          if (sameStop) await anim(body, [{ transform: "none" }, { transform: "rotate(6deg)", offset: 0.45 }, { transform: "none" }], { duration: T.setDown, easing: EASE_FLY });
+          const arrive = () => { if (!visited.includes(stop.at)) visited.push(stop.at); setStep(stop.at, [...visited]); };
+          if (!sameStop) await fly(to, arrive);
           if (cancelled) return;
-          if (!visited.includes(stop.at)) visited.push(stop.at);
-          setStep(stop.at, [...visited]);
+          arrive();
           if (stop.event) await runEvent(stop);
           const next = list[i + 2];
           // 止まっている間（画面外など）は持ち替えない。再開してから飛び立つ前に持ち替える
