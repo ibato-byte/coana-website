@@ -1,0 +1,45 @@
+# コラムの公開確認（オーナーへのメール）
+# 「コラム公開待ち」ラベルの PR ができたら（または記事が更新されたら）、チェックの合格を待って、
+# PR に「記事を読む」「公開する」「見送る」のリンク付きコメントを付ける。PR の作成者（オーナー）には
+# GitHub から通知メールが届く（ibato@coana.co.jp）。ボタンの先は https://coana.co.jp/column-approval（functions/column-approval.ts）。
+# 公開ボタンの署名には Secrets の COLUMN_APPROVAL_SECRET を使う（Cloudflare 側にも同じ値）。手順は docs/SEO_PLAYBOOK.md。
+name: コラムの公開確認
+
+on:
+  pull_request:
+    types: [opened, labeled, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR の番号（確認メールを出し直すとき）"
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: read
+
+concurrency:
+  group: column-approval-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  approval-mail:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'コラム公開待ち')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      # 署名する処理は、PR の中身ではなく main のものを使う
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 確認コメント（メール）を送る
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COLUMN_APPROVAL_SECRET: ${{ secrets.COLUMN_APPROVAL_SECRET }}
+          SELF_JOB: approval-mail
+        run: node tools/column/approval-comment.mjs --pr ${{ github.event.pull_request.number || inputs.pr }}

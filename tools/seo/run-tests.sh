@@ -26,5 +26,6 @@ run full-check '項目ごとの NG 件数' "${W_ARG[@]}" node tools/qa/full-chec
 run story-test ' OK / 0 NG' node tools/qa/story-test.cjs
 run wheel '^ALL OK' node tools/qa/wheel.cjs
 run a11y '^ALL OK' node tools/qa/a11y.cjs
+run column-approval ' OK / 0 NG' node tools/column/approval.test.mjs
 if [ "$fail" = 0 ]; then echo "全テスト合格"; else echo "不合格あり：マージしない"; fi
 exit "$fail"

@@ -15,6 +15,7 @@ coana.co.jp を「いつも最良の SEO の状態」に保つための、毎週
 | 毎日 6:17（日本時間） | GitHub Actions「SEO の監視」（`.github/workflows/seo-monitor.yml`） | 本番を点検（全ページの 200・title／description・canonical・構造化データ・内部リンク切れ・画像・sitemap・robots・llms.txt・ファビコン）。NG があれば Issue（ラベル `seo-alert`）を立てる。解消したら自動で閉じる。**直さない** |
 | 毎週月曜 5:37 | 同上（週次） | 上に加えて外部リンクの生存確認と表示速度（Lighthouse・PageSpeed Insights、モバイル）。結果を Issue（ラベル `seo-data`）に JSON で残す |
 | 毎週月曜 8:54 | Claude の週次タスク（スケジュールタスク「COANA SEO 週次ブラッシュアップ」`trig_01RrZBY7DC79EtMXno9werew`。専用セッション `session_01HbxZBk1N9D7dtypAM8AM36` に毎週届く。通知はプッシュのみ） | この文書の「2. 毎週の手順」。技術面は直して自動マージ、文章は「要承認」の PR、レポートを残してオーナーに要約を通知 |
+| 2週に1回（週次タスクの中で） | 同上 | コラムを1本書き、品質ゲートに合格したら「コラム公開待ち」の PR を作る。オーナーに確認メールが届き、ボタンで公開／見送り（「8. コラムの自動作成」） |
 
 - クラウドの作業環境からは本番（coana.co.jp）に直接つながらない。本番の数値は GitHub Actions が Issue に残したものを `tools/seo/fetch-prod-data.mjs` で受け取る。
 - Search Console のデータ（検索クエリ・表示回数・インデックス状況）は使えない前提。必要ならオーナーが確認する。
@@ -120,3 +121,48 @@ Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌�
 - PageSpeed Insights の無料 API キー（Google Cloud で作成。課金の設定は不要）を、GitHub のリポジトリの Settings → Secrets and variables → Actions に `PSI_API_KEY` として登録すると、実際の利用者のデータ（Chrome UX Report）が毎週安定して取れる。なくても Lighthouse の値で動く。
 - クラウドの作業環境の Network access（Allowed domains）に `coana.co.jp` を追加すると、週次タスクが本番を直接確かめられる（今は GitHub Actions 経由）。
 - 「要承認」の PR は、内容を確認してマージ（または閉じる）。放置されている間は、同じ提案を重ねて出さない。
+
+## 8. コラムの自動作成（2週に1本・公開はオーナーがメールのボタンで）
+
+### 流れ
+
+1. **週次タスクが書く**（2週に1本）：[seo-content-plan.md](seo-content-plan.md) の「記録」で最後に作った日から **14日以上** たち、「コラム公開待ち」の PR が開いていなければ、テーマ一覧から1つ選んで書く。書き方は [column-guide.md](column-guide.md) と既存のコラムと同じ型（導入・結論・本文・図解2〜4点・チェックリスト・よくある失敗・まとめ・CTA・著者欄）。
+   - ファイル：`content/topics/<作成日YYYYMMDD>-<slug>.md`、`date` は作成日（日本時間）。オーナーが「公開する」を押した時点で表示される。
+   - 図解：`public/images/topics/<slug>/*.svg`（column-guide.md「4. 図解の作り方」）。PNG に描画して、はみ出し・重なりを目で確かめる。
+   - 見出し画像：`node tools/column/thumbnail.mjs --file <記事> --line1 … --line2 … --sub …`（既存と同じ型の 1200×675）。
+   - 構造化データ（Article）・sitemap・feed・llms.txt・チャットの知識は、ビルド時に記事から自動で作られる（追加の作業なし）。
+2. **品質ゲート**（1つでも不合格なら、その回は出さない。レポートに理由を書き、次回に回す）
+   - ① **事実の確認**：法制度・補助金・税・期限・相場などは、一次情報（国税庁・各省庁・自治体・公的機関・製品の公式ヘルプ）で確かめ、本文に出典リンクと「〇年〇月時点」を書く。作業環境から官公庁のサイトは開けないことがあるので、WebSearch（公式ドメインに絞る）で本文を確かめる。**確かめられない事実は書かない**（言い切れないなら、その段落ごと削る）。
+   - ② **禁止事項**：実績・数字・お客様の声の捏造、「月70時間削減」のような根拠のない数字、電話番号、士業の独占業務に当たる具体的な判断（「節税になります」「申告は不要です」等）、他社批判、キーワードの詰め込み、AI っぽい定型文（「いかがでしたか」等）、著作物の転載（引用は必要最小限で出典つき）。
+   - ③ **機械チェック**：`node tools/column/check-column.mjs <記事> --keyword "<狙う検索語>"` が合格。
+   - ④ **別のレビュー担当**：執筆とは別のサブエージェント（Agent ツール）に、記事・出典・このゲートを渡して厳しくレビューさせる（事実と出典の一致、禁止事項、読者に役立つか、読みやすさ、既存記事との重複、サイトのサービス内容との食い違い）。指摘はすべて直し、重大な指摘が残るなら出さない。
+   - ⑤ **全テスト合格**：`bash tools/seo/run-tests.sh`（ローカル点検 NG 0、full-check、story-test、wheel、a11y）。
+3. **PR を作る**（マージしない）：ブランチ `claude/column-YYYYMMDD-<slug>`、タイトル `【コラム公開待ち】<記事タイトル>`、ラベル **`コラム公開待ち`**。本文に次の見出しを必ず入れる（確認メールにそのまま載る）：
+   - `## 要約`（3〜5行：誰向けに・何が分かるか）
+   - `## 出典`（一次情報のリンクと、確認した日・時点）
+   - `## レビュー結果`（レビュー担当の指摘と対応、品質ゲートの結果）
+   - あわせて seo-content-plan.md の「状態」と「記録」を更新する。
+4. **確認メール**：GitHub Actions「コラムの公開確認」（`.github/workflows/column-approval.yml`）が、Cloudflare Pages のチェック合格を待ってから、PR に @ibato-byte 宛てのコメントを付ける。PR の作成者であるオーナーに GitHub から通知メールが届く（ibato@coana.co.jp。2026-10-19 に、PR のコメントの通知がこのアドレスに届いていることを確認済み）。メールには、タイトル・要約・出典・レビュー結果・「記事を読む（プレビュー）」・「▶ 公開する」・「見送る」が載る。
+5. **オーナーがボタンを押す**：リンクの先（`https://coana.co.jp/column-approval`、`functions/column-approval.ts`）は確認画面。そこでもう一度ボタンを押すと実行される（メールソフトのリンク先読みでは実行されない）。
+   - 公開する → PR をマージ（main に入り、本番に自動で公開。数分）。完了画面に「公開しました」。
+   - 見送る → PR をクローズ（公開しない）。完了画面に「見送りました」。
+   - 安全のしくみ：署名付き（HMAC）・期限14日・PR ごと・コミットごと（記事が更新されると古いリンクは無効、新しいメールが届く）・一度だけ（実行後は PR が閉じる）・「コラム公開待ち」ラベルの PR だけ・main へのマージだけ・チェックがすべて合格しているときだけ。テスト：`node tools/column/approval.test.mjs`。
+
+### オーナーの設定（最初に1回）
+
+| # | どこで | 何をする |
+| --- | --- | --- |
+| 1 | パスワード管理アプリなど | 長いランダムな文字列（40文字以上）を1つ作る。これが「公開ボタンの合言葉」（COANA TOKYO 以外に教えない） |
+| 2 | GitHub → 右上のアイコン → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token | 名前「coana-column-approval」、有効期限 1年、Repository access「Only select repositories」で `ibato-byte/coana-website` だけ。Permissions（Repository）：**Pull requests：Read and write**、**Contents：Read and write**、**Checks：Read-only**（一覧にない場合は不要。Metadata は自動）。作成したトークンを控える |
+| 3 | Cloudflare ダッシュボード → Workers & Pages → coana-website → Settings → Variables and Secrets（**Production**） | 「Add」で種類を **Secret** にして2つ登録：`COLUMN_APPROVAL_SECRET`＝1の文字列、`GITHUB_COLUMN_TOKEN`＝2のトークン。保存後、次のデプロイ（main への次のマージ、またはダッシュボードの「Retry deployment」）から有効 |
+| 4 | GitHub → リポジトリ coana-website → Settings → Secrets and variables → Actions → New repository secret | `COLUMN_APPROVAL_SECRET`＝1と同じ文字列 |
+| 5 | GitHub → Settings → Notifications | 「Default notifications email」が ibato@coana.co.jp、「Participating, @mentions and custom」で Email にチェック（確認済み。変えた場合だけ見直す） |
+
+- 設定がまだのときも、確認メール（プレビューのリンクつき）は届く。その場合は GitHub でその PR をマージすれば公開、クローズすれば見送り。設定したあとに Actions「コラムの公開確認」を PR 番号で手動実行すると、ボタン付きのメールが改めて届く。
+- トークンの期限が切れたら、2 で作り直して 3 の `GITHUB_COLUMN_TOKEN` を差し替える（確認画面に「GitHub に接続できませんでした」と出る）。
+
+### 取り下げ
+
+- **公開前**：メールの「見送る」、または GitHub でその PR をクローズする。
+- **公開後**：GitHub の PR 画面の「Revert」で取り消しの PR を作ってマージする（記事・画像が消える）。または、`content/topics/<記事>.md` の `draft: false` を `true` にしてマージ（CMS の /admin からも変更できる）。どちらも数分で本番から消える。検索結果から早く消したいときは Search Console の「削除」も使う。
+- **仕組みごと止める**：週次タスクのプロンプトから「コラム」の手順を外す（スケジュールタスクの画面で編集）か、`docs/seo-content-plan.md` のテーマをすべて「保留」にする。公開ボタンを無効にするときは、Cloudflare の `COLUMN_APPROVAL_SECRET` を削除する。
