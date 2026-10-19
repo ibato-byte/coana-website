@@ -1,0 +1,122 @@
+# SEO プレイブック（毎週の自動ブラッシュアップ）
+
+coana.co.jp を「いつも最良の SEO の状態」に保つための、毎週の点検と改善の決まりごと。
+毎週月曜の朝に Claude の週次タスクがこの文書に従って動く。人が手で行うときも同じ手順でよい。
+
+**大前提：CLAUDE.md の方針をすべて引き継ぐ。** SEO のためにこれを曲げることはしない。
+迷ったら「変えない」。何も直すものがない週は、無理に変えずにレポートだけ残す。
+
+---
+
+## 1. 仕組みの全体
+
+| いつ | だれが | 何をする |
+| --- | --- | --- |
+| 毎日 6:17（日本時間） | GitHub Actions「SEO の監視」（`.github/workflows/seo-monitor.yml`） | 本番を点検（全ページの 200・title／description・canonical・構造化データ・内部リンク切れ・画像・sitemap・robots・llms.txt・ファビコン）。NG があれば Issue（ラベル `seo-alert`）を立てる。解消したら自動で閉じる。**直さない** |
+| 毎週月曜 5:37 | 同上（週次） | 上に加えて外部リンクの生存確認と表示速度（Lighthouse・PageSpeed Insights、モバイル）。結果を Issue（ラベル `seo-data`）に JSON で残す |
+| 毎週月曜 8:54 | Claude の週次タスク（スケジュールタスク「COANA SEO 週次ブラッシュアップ」） | この文書の「2. 毎週の手順」。技術面は直して自動マージ、文章は「要承認」の PR、レポートを残してオーナーに要約を通知 |
+
+- クラウドの作業環境からは本番（coana.co.jp）に直接つながらない。本番の数値は GitHub Actions が Issue に残したものを `tools/seo/fetch-prod-data.mjs` で受け取る。
+- Search Console のデータ（検索クエリ・表示回数・インデックス状況）は使えない前提。必要ならオーナーが確認する。
+- 費用：すべて無料枠（GitHub Actions の無料枠、Lighthouse、PageSpeed Insights の無料 API）。有料の API キーや追加課金が出る方法は使わない。
+
+## 2. 毎週の手順（週次タスク）
+
+1. **読む**：`CLAUDE.md` → `docs/HANDOFF.md` → この文書 → 前回のレポート（`docs/seo-reports/` の最新）。
+2. **点検**：`bash tools/seo/weekly.sh`（ビルド → ローカル点検 → 本番データの取得 → レポートの下書き `docs/seo-reports/YYYY-MM-DD.md`）。
+   - あわせて確認：開いている Issue（`seo-alert`）、前回の「要承認」PR の状態（マージ済み／放置）。
+3. **仕分け**：見つかったものを「3. 線引き」で A（自動で直す）／B（要承認）／C（見送り）に分ける。
+4. **A：技術面を直す**（小さな PR を1本。関係のない修正を混ぜない。多くても1回に5件程度まで）
+   - ブランチ `claude/seo-auto-YYYYMMDD` → 修正 → `NO_REPORT=1 bash tools/seo/weekly.sh` で再点検 → **`bash tools/seo/run-tests.sh` が「全テスト合格」**。
+   - PR（ラベル `seo-auto`）→ Cloudflare Pages のチェックが成功 → マージ（squash）。
+   - **1つでも不合格ならマージしない**。PR は開いたまま、レポートと要約に理由を書く（直せる範囲なら直して再テスト）。
+5. **B：文章の改善案**は別の PR（ブランチ `claude/seo-proposal-YYYYMMDD`、ラベル **`要承認`**）。**マージしない**。
+   - PR の本文に「なぜ（点検の根拠）」「変更前 → 変更後」「CLAUDE.md の方針に反しない理由」を書く。テストは通しておく。
+   - 前回の「要承認」PR がまだ開いていれば、同じ内容を重ねて出さない（必要なら同じ PR に追記）。1週に1本まで。
+6. **レポート**：`docs/seo-reports/YYYY-MM-DD.md` の「今回の対応」に、A（PR とマージの結果）・B（PR）・C（理由）を書く。
+   レポートは A の PR に入れる（A がない週はレポートだけの PR を作り、同じ条件でマージしてよい：文書だけの変更）。
+7. **HANDOFF**：`docs/HANDOFF.md` の「SEO の週次」に、日付・結果・残っていること を1〜3行で追記。
+8. **要約**：オーナー向けに日本語で短く（5〜10行）：直したもの／承認してほしいもの（PR のリンク）／気になる数値の変化／オーナーにしかできないこと。
+
+## 3. 線引き：自動で直してよいもの／承認が必要なもの
+
+### A. 自動で直してマージしてよい（技術面。テストがすべて合格したときだけ）
+
+人が読む文章を変えないもの。表示（デザイン・アニメーション）も変えないもの。
+
+- メタ情報の**仕組み**：canonical の欠け・誤り、og:url・og:image・twitter:card の欠け、hreflang、`<html lang>`、noindex の誤り（例：sitemap にあるのに noindex）
+- 構造化データ（JSON-LD）の構文エラー、欠けている必須項目、BreadcrumbList の追加、サイトの内容と一致している事実だけを使った項目の補完（**新しい主張・数字・評価（星）は足さない**）
+- sitemap.xml（重複・漏れ・lastmod）、robots.txt、llms.txt、feed.xml、site.webmanifest、ファビコン の不備
+- 内部リンクのリンク切れ・転送を挟むリンク → 正しい URL に（リンクの文言は変えない）。旧 URL の転送（`public/_redirects`）の追加
+- 画像：alt の欠け（画像の内容をそのまま説明する短い alt。キーワードを詰めない）、width／height の欠け、大きすぎる画像の圧縮・適切なサイズ（見た目を変えない）
+- 表示速度：見た目と動きを変えない最適化（画像の圧縮、読み込みの優先度、preload／preconnect、キャッシュのヘッダー、未使用のファイルの整理 など）。CLS を増やさないこと
+- アクセシビリティの技術的な修正（aria 属性、ラベルの関連付け、見出しの階層の誤り）で、見た目と文言を変えないもの
+- ビルド（`vite.config.ts`）の書き出しの不具合（クローラー向け本文 `.seo-fallback`・構造化データ・sitemap などの生成）
+- 点検ツール（`tools/seo`）自体の誤検出の修正
+
+### B. 承認が必要（「要承認」ラベルの PR。マージしない）
+
+人が読む表現・意味が変わるもの。
+
+- title・description・見出し・本文・ボタンなどの**文言**（長さの調整も含む）
+- サービス説明、FAQ の追加・変更、コラム記事の案（記事は `docs/column-guide.md` に従う。公開日は未来の日付で予約にしておく）
+- 構造化データで新しい種類の情報を出すこと（例：Service の詳しい説明、FAQ の追加）
+- 画像の差し替え・追加、ページの追加・削除・URL の変更
+- デザインやレイアウトに少しでも影響する変更
+- A か B か迷うもの（→ B にする）
+
+### C. やらない（見送り、またはオーナーに相談）
+
+- デザイン・アニメーション・ヒーロー・ページ構成の変更（オーナーが決めたもの）
+- 外部サービスの追加、有料のツール、Search Console など設定画面での操作（必要ならオーナーへの依頼としてレポートに書く）
+- 下の「4. 守ること」に反するもの
+
+## 4. 守ること
+
+### CLAUDE.md の方針（すべて引き継ぐ）
+- 見やすさ・分かりやすさが最優先。読みやすさ・上品さを損なわない。WCAG AA。
+- **数字・実績を捏造しない**（サイトにない数字は使わない。「月70時間削減」のような根拠のない数字は NG）。
+- **電話番号は載せない**。メールアドレス（info@）はフッター1か所のみ（例外：プライバシーポリシーのお問い合わせ窓口、フォーム送信失敗時のエラー文）。
+- **税理士・社労士などの士業の独占業務を COANA TOKYO が行うように見せない**（提携の専門家を紹介する立場）。
+- 代表の紹介は会社概要ページだけ。相談の導線を重複させない。
+- **デザイン・アニメーションは変えない**（docs/motion-rules.md）。オーナーが決めた文言は勝手に変えない（変えるなら B）。
+
+### Google のガイドラインに反することはしない
+- [スパムに関するポリシー](https://developers.google.com/search/docs/essentials/spam-policies)：キーワードの詰め込み、隠しテキスト・隠しリンク、クローキング（クローラーと人で違う内容）、誘導ページ、自動生成の薄いページ、リンクの売買・相互リンク集、偽のレビュー・評価の構造化データ — どれもしない。
+  - クローラー向け本文（`.seo-fallback`）は**画面に表示されている内容と同じもの**だけにする（追加のキーワードを入れない）。
+- [ユーザーを第一に考えた、役に立つコンテンツ](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)：検索エンジンのためでなく、初めての中小企業の経営者のために書く。経験・専門性・信頼性（E-E-A-T）を、事実だけで示す。
+- [構造化データのガイドライン](https://developers.google.com/search/docs/appearance/structured-data/sd-policies)：ページに表示されている内容と一致することだけを書く。
+- 文章の改善でも、同じ言葉を不自然にくり返さない。title は「ページの内容が分かる」ことを優先し、会社名は後ろに。
+
+## 5. 点検の項目と目安（`tools/seo/check-site.mjs`）
+
+| 項目 | NG（直す） | 注意（確認・提案） |
+| --- | --- | --- |
+| 応答 | sitemap の URL が 200 でない、存在しない URL が 404 を返さない | 内部リンクが転送を挟む |
+| title | ない、重複 | 全角換算 40 文字超（検索結果で切れる）、10 文字未満 → 文言なので B |
+| description | ない、重複 | 50 文字未満・160 文字超 → B |
+| canonical | ない、別の URL、coana.co.jp でない | og:url と違う |
+| robots | sitemap のページに noindex、robots.txt で全体を拒否、Sitemap 行がない | 404 ページに noindex がない |
+| OGP | og:title・og:description・og:image がない、画像が 200 でない | twitter:card がない |
+| 構造化データ | JSON-LD の構文エラー | ない、BreadcrumbList がない |
+| 見出し | h1 が1つでない（クローラー向け本文） | — |
+| リンク | 内部リンク切れ、外部リンクが 404／410 | 外部リンクにつながらない（一時的なことが多い） |
+| 画像 | 実在しない、alt がない | 400KB 超 |
+| 内容 | 電話番号、Cloudflare のメール書き換え（`/cdn-cgi/l/email-protection`） | llms.txt に漏れているページ |
+| 本番のみ | http→https の転送がない | www の扱い、ヘッダー |
+| 表示速度（Lighthouse・モバイル） | — | Performance・LCP・CLS が前回より悪化、SEO・Accessibility が 100 未満 |
+
+表示速度の目安（Core Web Vitals、モバイル）：LCP 2.5 秒以内、INP 200ms 以内、CLS 0.1 以内（実際の利用者の p75）。
+Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌てず、2週続けて悪化したら原因を調べる。
+
+## 6. テスト（自動マージの条件）
+
+`bash tools/seo/run-tests.sh` の「全テスト合格」と、PR の Cloudflare Pages のチェック成功の両方。
+中身：`tools/seo/check-site.mjs`（ローカル、NG 0）、`tools/qa/full-check.cjs`（全ページ × 8幅＋横向き）、`story-test`、`wheel`、`a11y`。
+重いテストは同時に走らせない。テストを飛ばす・弱める・書き換えて通すことはしない（点検ツールの誤検出を直すときは、その理由を PR に書く）。
+
+## 7. オーナーにお願いすること（任意）
+
+- PageSpeed Insights の無料 API キー（Google Cloud で作成。課金の設定は不要）を、GitHub のリポジトリの Settings → Secrets and variables → Actions に `PSI_API_KEY` として登録すると、実際の利用者のデータ（Chrome UX Report）が毎週安定して取れる。なくても Lighthouse の値で動く。
+- クラウドの作業環境の Network access（Allowed domains）に `coana.co.jp` を追加すると、週次タスクが本番を直接確かめられる（今は GitHub Actions 経由）。
+- 「要承認」の PR は、内容を確認してマージ（または閉じる）。放置されている間は、同じ提案を重ねて出さない。

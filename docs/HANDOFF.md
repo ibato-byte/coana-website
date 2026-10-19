@@ -1,7 +1,20 @@
 # 引き継ぎメモ（HANDOFF）
 
-最終更新：2026-10-18（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
+最終更新：2026-10-19（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
+
+## SEO の週次（自動ブラッシュアップ）
+
+手順と線引きは [docs/SEO_PLAYBOOK.md](SEO_PLAYBOOK.md)。週次タスクは毎回ここに1〜3行で結果を追記する（新しいものを上に）。
+
+- 仕組み：
+  - 毎日 6:17：GitHub Actions「SEO の監視」が本番を点検し、異常があれば Issue（`seo-alert`）を立てる。
+  - 毎週月曜 5:37：同じ Actions が外部リンクと表示速度も測り、Issue（`seo-data`）にデータを残す。
+  - 毎週月曜 8:54：Claude のスケジュールタスク「COANA SEO 週次ブラッシュアップ」が修正・提案・レポートを行う。
+- スケジュールタスク：「COANA SEO 週次ブラッシュアップ」ID `trig_01D4YYnTC3ByPMkfBzQAkPuf`（毎週月曜 8:54 日本時間、毎回新しいセッション、完了通知はプッシュ＋メール）。プロンプトの変更・停止は claude.ai のスケジュールタスクの画面、またはセッションから update_trigger で。
+- オーナーにお願い（任意）：`PSI_API_KEY`（無料）を Actions の Secrets に／作業環境の Allowed domains に `coana.co.jp`。
+- 記録：
+  - 2026-10-19：仕組みを構築。
 
 ## 優先順の残タスク
 
