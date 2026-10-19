@@ -122,8 +122,9 @@ collections:
             required: false
             fields:
               - { label: ラベル, name: label, widget: string, required: false }
-              - { label: 補足, name: sub, widget: string, required: false }
+              - { label: 補足（「やること」がないときに表示）, name: sub, widget: string, required: false }
               - { label: アイコン, name: icon, widget: string, required: false }
+              - { label: やること（例：まとめて相談するだけ。カードの中に「やること」として表示）, name: todo, widget: string, required: false }
           - label: 中心（ハブ型・リレー型）
             name: center
             widget: object
@@ -133,7 +134,7 @@ collections:
               - { label: 補足, name: sub, widget: string, required: false }
               - { label: アイコン（リレー型）, name: icon, widget: string, required: false }
           - { label: リレー型｜矢印に添える言葉（1：起点→中心、2：中心→領域）, name: steps, widget: list, required: false }
-          - label: リレー型｜戻りの流れ（3・4。領域から起点へ戻る順）
+          - label: リレー型｜戻りの流れ（3・4。最後の1つは御社が「受け取るもの」として御社の側に表示）
             name: returns
             widget: list
             required: false
@@ -153,8 +154,9 @@ collections:
               - { label: アイコン（フロー型・レーン型・リレー型）, name: icon, widget: string, required: false }
               - { label: 担当（レーン型のみ）, name: who, widget: select, options: [{ label: 御社, value: client }, { label: COANA TOKYO, value: team }], required: false }
               - { label: 詳しい説明（レーン型：カーソルを当てる／タップで表示）, name: detail, widget: text, required: false }
-          - { label: レーン型・リレー型｜御社の見出し, name: client_label, widget: string, required: false }
-          - { label: レーン型・リレー型｜COANA TOKYOの見出し, name: team_label, widget: string, required: false }
+              - { label: 提携先など COANA TOKYO 以外（リレー型：破線の枠で表示）, name: partner, widget: boolean, required: false }
+          - { label: レーン型｜御社の見出し, name: client_label, widget: string, required: false }
+          - { label: レーン型・リレー型｜COANA TOKYOの見出し（リレー型：担当する範囲のパネルの見出し。例：COANA TOKYOが担当）, name: team_label, widget: string, required: false }
           - { label: レーン型｜受け渡しの注記（御社の最初の工程から COANA TOKYO の工程へ降りる線の横に表示。例：ここから先は COANA TOKYO が対応します）, name: rest, widget: string, required: false }
           - label: レーン型｜1か月の流れ
             name: cycle

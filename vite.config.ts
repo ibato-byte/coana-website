@@ -457,13 +457,16 @@ function coanaRemoteImages(): Plugin {
  * 会社情報・サービス名・FAQ は content/ の JSON（CMSで編集する内容）から読み込む。
  */
 /** リレー型の図（御社 → COANA TOKYO → 領域 → 戻り）を、順番の文章にする（クローラー・llms.txt・チャットの知識用） */
-function relayFlow(scheme?: { type?: string; client?: { label?: string; sub?: string }; center?: { label?: string; sub?: string }; steps?: string[]; nodes?: { label: string }[]; returns?: { label: string; sub?: string }[] }): string[] {
+function relayFlow(scheme?: { type?: string; team_label?: string; client?: { label?: string; sub?: string; todo?: string }; center?: { label?: string; sub?: string }; steps?: string[]; nodes?: { label: string; partner?: boolean }[]; returns?: { label: string; sub?: string }[] }): string[] {
   if (!scheme || scheme.type !== 'relay') return []
   const part = (x?: { label?: string; sub?: string }) => (x?.label ? x.label + (x.sub ? '（' + x.sub + '）' : '') : '')
+  const client = scheme.client?.todo ? { label: scheme.client.label, sub: scheme.client.todo } : scheme.client
+  const returns = scheme.returns ?? []
   const out = [
-    [scheme.steps?.[0], part(scheme.client) + ' → ' + part(scheme.center)].filter(Boolean).join('：'),
+    [scheme.steps?.[0], part(client) + ' → ' + part(scheme.center)].filter(Boolean).join('：'),
     [scheme.steps?.[1], (scheme.nodes ?? []).map((n) => n.label).join('・')].filter(Boolean).join('：'),
-    ...(scheme.returns ?? []).map((r) => part(r)),
+    // 最後の戻りは御社が受け取るもの。それより前は COANA TOKYO が担当する範囲
+    ...returns.map((r, i) => (i === returns.length - 1 && returns.length > 1 ? '→ ' : '') + part(r)),
   ]
   return out.filter(Boolean)
 }

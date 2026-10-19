@@ -41,12 +41,11 @@
     "type": "relay",
     "title": "御社の「バックオフィスチーム」として",
     "lead": "チャットで依頼するだけ。任せるほど、業務の仕組みが整っていきます。",
-    "client_label": "御社がやること",
-    "team_label": "COANA TOKYOがやること",
+    "team_label": "COANA TOKYOが担当",
     "client": {
       "label": "経営者（御社）",
-      "sub": "社内のスタッフに頼む感覚で",
-      "icon": "person"
+      "icon": "person",
+      "todo": "チャットで依頼するだけ"
     },
     "center": {
       "label": "COANA TOKYO チーム",

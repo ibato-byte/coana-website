@@ -36,12 +36,11 @@
     "type": "relay",
     "title": "One bilingual point of contact",
     "lead": "We organize your plan, funds, and back office, and bring in licensed professionals.",
-    "client_label": "What you do",
-    "team_label": "What COANA TOKYO does",
+    "team_label": "COANA TOKYO handles",
     "client": {
       "label": "You",
-      "sub": "Ask anything, in English",
-      "icon": "person"
+      "icon": "person",
+      "todo": "Just ask us, in English"
     },
     "center": {
       "label": "COANA TOKYO",
@@ -75,8 +74,9 @@
       },
       {
         "label": "Licensed professionals",
-        "sub": "Scriveners, tax and labor professionals",
-        "icon": "handshake"
+        "sub": "Partner scriveners, tax and labor professionals",
+        "icon": "handshake",
+        "partner": true
       }
     ],
     "returns": [

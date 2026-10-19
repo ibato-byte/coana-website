@@ -63,9 +63,19 @@ const shapesDrawn = (sel) => [...document.querySelectorAll(sel)].every((s) => { 
   ok(`${tag} PROBLEMS：カード表示・アイコンと線が描かれ・矢印が降りている`, pr.cards && pr.icons && pr.funnel && pr.arrow === '1', JSON.stringify(pr));
   await p.evaluate(() => document.querySelector('.lp-scheme').scrollIntoView({ block: 'start' })); await p.waitForTimeout(2600);
   // HOW IT WORKS（リレー型）：番号付きの意味のある線（PC は矢印の線、スマホは上から下の1列）
-  const rl = await p.evaluate(() => ({ lines: document.querySelectorAll('.relay-lines .relay-line').length, arrows: document.querySelectorAll('.relay-lines [marker-end]').length, steps: [...document.querySelectorAll('.relay-step .relay-num, .relay-return .relay-num')].map((n) => n.textContent).join(','), areas: document.querySelectorAll('.relay-area').length, startLit: document.querySelector('.relay-client').classList.contains('is-now'), column: getComputedStyle(document.querySelector('.relay')).display }));
-  if (!mobile) ok('PC HOW IT WORKS（リレー型）：左→右の線と矢印・番号 1〜4・起点だけ点灯', rl.lines >= 9 && rl.arrows >= 8 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'grid', JSON.stringify(rl));
-  else ok('スマホ HOW IT WORKS（リレー型）：上から下の1列・番号 1〜4・起点だけ点灯', rl.lines === 0 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'flex', JSON.stringify(rl));
+  // 役割はエリアで示す：COANA TOKYO が担当する範囲（中心・領域・③）が見出し付きのパネルの中、御社のカード（やること）と ④ 受け取るもの はパネルの外
+  const rl = await p.evaluate(() => {
+    const vis = (e) => !!e && e.getBoundingClientRect().height > 0 && getComputedStyle(e).display !== 'none';
+    const inside = (sel, box) => { const a = document.querySelector(sel).getBoundingClientRect(); return a.left >= box.left - 1 && a.right <= box.right + 1 && a.top >= box.top - 1 && a.bottom <= box.bottom + 1; };
+    const panel = [...document.querySelectorAll('.relay-panel, .relay-team')].find(vis);
+    const box = panel.getBoundingClientRect();
+    return { lines: document.querySelectorAll('.relay-lines .relay-line').length, arrows: document.querySelectorAll('.relay-lines [marker-end]').length, steps: [...document.querySelectorAll('.relay-step .relay-num, .relay-return .relay-num, .relay-goal .relay-num')].map((n) => n.textContent).join(','), areas: document.querySelectorAll('.relay-area').length, startLit: document.querySelector('.relay-client').classList.contains('is-now'), column: getComputedStyle(document.querySelector('.relay')).display,
+      head: document.querySelector('.relay-team-head')?.textContent, todo: document.querySelector('.relay-client .relay-todo')?.textContent, goalTag: document.querySelector('.relay-goal-tag')?.textContent,
+      teamIn: inside('.relay-center', box) && inside('.relay-areas', box) && inside('.relay-return', box), clientOut: !inside('.relay-client', box) && !inside('.relay-goal', box), side: document.querySelectorAll('.relay-side').length };
+  });
+  const roles = rl.head === 'COANA TOKYOが担当' && /やること.*だけ/.test(rl.todo || '') && rl.goalTag === '受け取るもの' && rl.teamIn && rl.clientOut && rl.side === 0;
+  if (!mobile) ok('PC HOW IT WORKS（リレー型）：左→右の線と矢印・番号 1〜4・起点だけ点灯・役割はパネル（エリア）で示す', rl.lines >= 8 && rl.arrows >= 8 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'grid' && roles, JSON.stringify(rl));
+  else ok('スマホ HOW IT WORKS（リレー型）：上から下の1列・番号 1〜4・起点だけ点灯・役割はパネル（エリア）で示す', rl.lines === 0 && rl.steps === '1,2,3,4' && rl.areas === 5 && rl.startLit && rl.column === 'flex' && roles, JSON.stringify(rl));
   // FLOW（静止画＋PC のホバー）
   await p.evaluate(() => document.querySelector('.lp-flow').scrollIntoView({ block: 'start' })); await p.waitForTimeout(800);
   const fl = await p.evaluate(() => ({ progress: !!document.querySelector('[data-progress]'), steps: [...document.querySelectorAll('.lp-flow .flowx-step')].filter((s) => s.getBoundingClientRect().height > 0 && getComputedStyle(s.querySelector('h3')).opacity === '1').length, nums: [...document.querySelectorAll('.lp-flow .flowx-num')].map((n) => n.textContent).join(','), cta: document.querySelectorAll('.lp-flow .flowx-cta a').length, lead: document.querySelector('.lp-flow .flowx-lead')?.textContent }));

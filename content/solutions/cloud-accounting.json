@@ -42,7 +42,6 @@
     "type": "relay",
     "title": "クラウド会計を「回る仕組み」にする",
     "lead": "銀行・カード・請求書・税理士とのつながりまで設計し、入力を減らします。",
-    "client_label": "御社のいつもの取引",
     "team_label": "COANA TOKYOが整える仕組み",
     "client": {
       "label": "日々の取引",
@@ -67,12 +66,14 @@
       {
         "label": "顧問税理士",
         "sub": "データをそのまま共有",
-        "icon": "handshake"
+        "icon": "handshake",
+        "partner": true
       },
       {
         "label": "経営者・担当者",
         "sub": "翌月早々に数字を把握",
-        "icon": "chart"
+        "icon": "chart",
+        "partner": true
       }
     ],
     "returns": [
