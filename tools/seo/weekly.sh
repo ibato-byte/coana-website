@@ -10,7 +10,10 @@ cd "$(dirname "$0")/../.."
 OUT=/tmp/seo
 mkdir -p "$OUT"
 rm -f "$OUT/local.json" "$OUT/prod.json" "$OUT/perf.json"
-[ -d node_modules ] || npm ci --no-audit --no-fund
+# package-lock.json はリポジトリにないので、そのときは npm install（npm ci はロックファイルが必須）
+if [ ! -d node_modules ]; then
+  if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund --no-package-lock; fi
+fi
 npm run build >"$OUT/build.log" 2>&1 || { echo "ビルド失敗（$OUT/build.log）"; tail -20 "$OUT/build.log"; exit 1; }
 
 # サーバー：4173（vite preview、tools/qa 用）と 8789（wrangler pages dev、_redirects・404 を本番と同じに再現）

@@ -14,7 +14,7 @@ coana.co.jp を「いつも最良の SEO の状態」に保つための、毎週
 | --- | --- | --- |
 | 毎日 6:17（日本時間） | GitHub Actions「SEO の監視」（`.github/workflows/seo-monitor.yml`） | 本番を点検（全ページの 200・title／description・canonical・構造化データ・内部リンク切れ・画像・sitemap・robots・llms.txt・ファビコン）。NG があれば Issue（ラベル `seo-alert`）を立てる。解消したら自動で閉じる。**直さない** |
 | 毎週月曜 5:37 | 同上（週次） | 上に加えて外部リンクの生存確認と表示速度（Lighthouse・PageSpeed Insights、モバイル）。結果を Issue（ラベル `seo-data`）に JSON で残す |
-| 毎週月曜 8:54 | Claude の週次タスク（スケジュールタスク「COANA SEO 週次ブラッシュアップ」） | この文書の「2. 毎週の手順」。技術面は直して自動マージ、文章は「要承認」の PR、レポートを残してオーナーに要約を通知 |
+| 毎週月曜 8:54 | Claude の週次タスク（スケジュールタスク「COANA SEO 週次ブラッシュアップ」`trig_01RrZBY7DC79EtMXno9werew`。専用セッション `session_01HbxZBk1N9D7dtypAM8AM36` に毎週届く。通知はプッシュのみ） | この文書の「2. 毎週の手順」。技術面は直して自動マージ、文章は「要承認」の PR、レポートを残してオーナーに要約を通知 |
 
 - クラウドの作業環境からは本番（coana.co.jp）に直接つながらない。本番の数値は GitHub Actions が Issue に残したものを `tools/seo/fetch-prod-data.mjs` で受け取る。
 - Search Console のデータ（検索クエリ・表示回数・インデックス状況）は使えない前提。必要ならオーナーが確認する。
