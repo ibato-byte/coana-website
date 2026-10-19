@@ -10,8 +10,8 @@
 - 仕組み：
   - 毎日 6:17：GitHub Actions「SEO の監視」が本番を点検し、異常があれば Issue（`seo-alert`）を立てる。
   - 毎週月曜 5:37：同じ Actions が外部リンクと表示速度も測り、Issue（`seo-data`）にデータを残す。
-  - 毎週月曜 8:4x：Claude のスケジュールタスク「COANA SEO 週次ブラッシュアップ」（ID は下）が修正・提案・レポートを行う。
-- スケジュールタスク：（作成後に記入）
+  - 毎週月曜 8:54：Claude のスケジュールタスク「COANA SEO 週次ブラッシュアップ」が修正・提案・レポートを行う。
+- スケジュールタスク：「COANA SEO 週次ブラッシュアップ」ID `trig_01D4YYnTC3ByPMkfBzQAkPuf`（毎週月曜 8:54 日本時間、毎回新しいセッション、完了通知はプッシュ＋メール）。プロンプトの変更・停止は claude.ai のスケジュールタスクの画面、またはセッションから update_trigger で。
 - オーナーにお願い（任意）：`PSI_API_KEY`（無料）を Actions の Secrets に／作業環境の Allowed domains に `coana.co.jp`。
 - 記録：
   - 2026-10-19：仕組みを構築。
