@@ -614,7 +614,7 @@ function coanaPageMeta(): Plugin {
         alternateName: 'COANA TOKYO',
         url: SITE,
         sameAs: settings.same_as || ['https://www.facebook.com/profile.php?id=61589876101798', 'https://maps.google.com/?cid=15984393387638365667'],
-        logo: SITE + '/favicon-v2-192.png', // 新ロゴの正方形 PNG（192px。Google の推奨は 112px 以上）
+        logo: SITE + '/favicon-v2-512.png', // 公式ロゴキットから作った正方形 PNG（512px。Google の推奨は 112px 以上）
         image: defaultImage,
         description: defaultDescription,
         email: settings.email,
