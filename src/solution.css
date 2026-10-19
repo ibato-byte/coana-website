@@ -168,7 +168,7 @@ a.lp-hero-english:hover { border-color: var(--sky); }
 .lp-scheme-list { display: none; }
 
 /* レーン型（SchemeLanes）：上の段＝御社がやること、下の段＝COANA TOKYO がやること。スマホは縦に1本 */
-.lanes { position: relative; margin: 44px auto 0; max-width: 1080px; display: grid; grid-template-columns: 150px repeat(var(--cols, 4), minmax(0, 1fr)); grid-auto-rows: auto; column-gap: 16px; row-gap: 44px; }
+.lanes { position: relative; margin: 44px auto 0; max-width: 1080px; display: grid; grid-template-columns: 150px repeat(var(--cols, 4), minmax(0, 1fr)); grid-auto-rows: auto; column-gap: 16px; row-gap: 60px; } /* PC：2段のあいだに受け渡しの注記（2行）が、上下のカードの枠に触れずに入る高さ */
 .lanes-list { display: contents; list-style: none; }
 .lanes-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .lanes-line { fill: none; stroke: rgba(6, 112, 203, .3); stroke-width: 2; stroke-linejoin: round; }
@@ -504,7 +504,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 }
 /* COANA TOKYO が担当する範囲：中心・領域・③ を薄いパネルで囲み、左上に見出し。御社の側（起点と「受け取るもの」）はパネルの外 */
 .relay-team { display: contents; }
-.relay-panel { grid-row: 1 / 4; grid-column: 3 / 6; align-self: stretch; margin: -18px -22px -22px -26px; border-radius: 26px; background: rgba(8, 127, 229, .045); border: 1px solid rgba(8, 127, 229, .16); pointer-events: none; }
+.relay-panel { grid-row: 1 / 4; grid-column: 3 / 6; align-self: stretch; margin: -18px -22px -22px -14px; border-radius: 26px; background: rgba(8, 127, 229, .045); border: 1px solid rgba(8, 127, 229, .16); pointer-events: none; }
 .relay-team-head { grid-area: head; justify-self: start; margin: 0 0 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; line-height: 1.4; color: var(--sky-ink); }
 .relay-team-head::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--sky-deep); }
 /* 御社がやること：暖色のカードの中に明記 */
@@ -512,12 +512,14 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 .relay-todo em { font-style: normal; padding: 1px 9px; border-radius: 999px; background: var(--yellow-soft); box-shadow: inset 0 0 0 1px rgba(242, 165, 22, .45); font-size: 12px; font-weight: 800; }
 /* 受け取るもの（最後の戻り）：御社の側に、暖色で */
 .relay-goal { grid-area: goal; justify-self: start; width: max-content; max-width: 100%; margin-top: 30px; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; padding: 14px 18px; background: #fff8e3; border: 1.5px solid rgba(242, 165, 22, .6); }
-.relay-goal .relay-icon { grid-row: span 2; width: 38px; height: 38px; background: var(--yellow-soft); color: var(--navy-ink); }
+.relay-card.relay-goal .relay-icon { grid-row: 1 / span 3; grid-column: 1; width: 38px; height: 38px; background: var(--yellow-soft); color: var(--navy-ink); }
 .relay-goal strong { margin-top: 0; font-size: 17px; }
 .relay-goal .relay-sub { font-size: 13.5px; }
 .relay-goal::before { box-shadow: 0 0 0 4px rgba(252, 201, 52, .55); }
 .relay-goal.is-on .relay-icon { background: var(--yellow); }
-.relay-goal-tag { position: absolute; left: 16px; top: -11px; padding: 1px 10px; border-radius: 999px; background: var(--yellow); color: var(--navy-ink); font-size: 12px; font-weight: 800; line-height: 1.6; }
+/* 「受け取るもの」の札はカードの内側（工程名の上）に。枠線にかけない */
+.relay-goal > strong, .relay-goal > .relay-sub, .relay-goal-tag { grid-column: 2; }
+.relay-goal-tag { justify-self: start; margin-bottom: 2px; padding: 1px 10px; border-radius: 999px; background: var(--yellow); color: var(--navy-ink); font-size: 12px; font-weight: 800; line-height: 1.6; }
 /* 提携先（士業の専門家など）：COANA TOKYO 自身ではないことを、破線の枠でさりげなく */
 .relay-area.is-partner { border: 1.5px dashed rgba(8, 127, 229, .45); background: rgba(255, 255, 255, .7); box-shadow: none; }
 .relay-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
@@ -544,7 +546,9 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 .relay-card.is-now::before, .relay-area.is-now::before { opacity: 1; }
 /* 矢印に添える番号と言葉（1・2） */
 .relay-step { position: relative; z-index: 1; margin: 0 0 54px; display: flex; white-space: nowrap; align-items: center; justify-content: center; gap: 7px; font-size: 14px; font-weight: 800; line-height: 1.4; color: var(--navy-ink); text-align: center; }
-.relay-step.is-1 { grid-area: s1; }
+/* ① の言葉はパネルの外（左の余白）に収め、パネルの縁（列の右端から 14px 手前）から 12px 以上離す。長いときは2行に */
+.relay-step.is-1 { grid-area: s1; padding-right: 26px; }
+.relay-step.is-1 > span { white-space: normal; text-align: left; }
 .relay-step.is-2 { grid-area: s2; padding-right: 24px; }
 .relay-num { flex: none; width: 24px; height: 24px; display: inline-grid; place-items: center; border-radius: 50%; background: var(--navy); color: var(--white); font-family: var(--font-en); font-size: 13px; font-weight: 700; line-height: 1; }
 .relay-step.is-on .relay-num, .relay-return.is-on .relay-num { background: var(--sky-deep); }
@@ -580,9 +584,9 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .relay-return strong, .relay-goal strong { font-size: 16px; }
   /* COANA TOKYO が担当する範囲（② 〜 ③）を薄いパネルで囲む。上の御社（相談するだけ）と下の「受け取るもの」で挟む。
      パネルは左右に少しはみ出して、中のカードと外のカードの左端（矢印の位置）をそろえる */
-  .relay-team { display: flex; flex-direction: column; margin: 2px -12px 0; padding: 4px 12px 8px; border-radius: 20px; background: rgba(8, 127, 229, .05); border: 1px solid rgba(8, 127, 229, .16); }
-  /* 見出しはパネルの上の縁に（① の矢印の右）。高さを増やさない */
-  .relay-team-head { align-self: flex-start; margin: -20px 0 6px 40px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--white); box-shadow: inset 0 0 0 1px rgba(8, 127, 229, .22); font-size: 12.5px; }
+  .relay-team { display: flex; flex-direction: column; margin: 8px -12px 0; padding: 12px 12px 8px; border-radius: 20px; background: rgba(8, 127, 229, .05); border: 1px solid rgba(8, 127, 229, .16); }
+  /* 見出しはパネルの内側の上に。① の矢印の言葉とパネルの上端・見出しのあいだに十分な余白（約12〜16px） */
+  .relay-team-head { align-self: flex-start; margin: 0 0 10px 4px; font-size: 13px; }
   /* 矢印（上から下）：線と番号と言葉。通った区間から色がつく */
   .relay-step { margin: 0; min-height: 30px; white-space: normal; justify-content: flex-start; padding: 0 0 0 54px; font-size: 13.5px; }
   .relay-step.is-2 { padding-right: 0; }
@@ -600,7 +604,6 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .relay-area .relay-sub { display: none; }
   /* ③（パネルの中）と ④ 受け取るもの（パネルの外）は下へ続く：上に短い矢印 */
   .relay-return, .relay-goal { width: auto; margin-top: 24px; }
-  .relay-goal-tag { left: 50px; }
   .relay-return::after, .relay-goal::after { content: ""; position: absolute; left: 35px; top: -21px; height: 13px; width: 2px; border-radius: 2px; background: rgba(8, 127, 229, .38); transition: background .45s; }
   .relay-goal::after { top: -23px; height: 14px; }
   .relay-return > .relay-arrow, .relay-goal > .relay-arrow { display: block; position: absolute; left: 31px; top: -11px; width: 8px; height: 8px; border-right: 2px solid rgba(8, 127, 229, .5); border-bottom: 2px solid rgba(8, 127, 229, .5); transform: rotate(45deg); transition: border-color .45s; }
@@ -626,5 +629,5 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 }
 @media (min-width: 981px) {
   /* 受け渡しの注記：縦の線の左（見出しの列の空き）に2行で。鳩の止まる位置・飛ぶ道を空ける */
-  .lanes-handoff { left: auto; right: calc(100% - 26px); bottom: calc(100% + 2px); width: max-content; flex-direction: row-reverse; padding: 3px 10px; white-space: pre-line; text-wrap: nowrap; text-align: right; border-radius: 12px; }
+  .lanes-handoff { left: auto; right: calc(100% - 26px); bottom: calc(100% + 8px); width: max-content; flex-direction: row-reverse; padding: 3px 10px; white-space: pre-line; text-wrap: nowrap; text-align: right; border-radius: 12px; }
 }
