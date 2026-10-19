@@ -25,7 +25,8 @@ const pages = ['/', '/about', '/services', '/contact', '/topics', '/privacy', '/
         if (!f.ring || !f.inView || f.hidden || !f.size) bad.push(f.name + ` ring=${f.ring} view=${f.inView} hidden=${f.hidden} size=${f.size}`);
       }
       if (bad.length) ng++;
-      const launcher = seen.some((k) => k.includes('chat-launcher')) || u.startsWith('/services/') && w < 500;
+      // スマホでは、LP は固定バーのチャット、お問い合わせページはフォームが主役なのでチャットのボタンを出さない（設計どおり）
+      const launcher = seen.some((k) => k.includes('chat-launcher')) || (u.startsWith('/services/') || u === '/contact') && w < 500;
       if (!launcher) { ng++; bad.push('chat-launcher unreachable'); }
       console.log(w, u, 'stops=' + seen.length, bad.length ? 'NG ' + bad.slice(0, 4).join(' | ') : 'ok');
     }

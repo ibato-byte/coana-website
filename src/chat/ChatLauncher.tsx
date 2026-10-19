@@ -39,9 +39,9 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
     window.addEventListener("scroll", check, { passive: true });
     return () => window.removeEventListener("scroll", check);
   }, [shown, page]);
-  // フッターの最下部（著作権表示・プライバシーポリシー）が見えている間は、重ならないよう隠す
+  // フッターが見えている間は、フッターのリンクや著作権表示に重ならないよう隠す（画面の高い PC でも、フッターの右の列を覆わない）
   useEffect(() => {
-    const target = document.querySelector(".footer-bottom");
+    const target = document.querySelector(".site-footer");
     if (!target || !("IntersectionObserver" in window)) return;
     const io = new IntersectionObserver(([entry]) => setAtFooter(entry.isIntersecting));
     io.observe(target);
