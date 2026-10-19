@@ -135,6 +135,7 @@
     - その後、公式ロゴキット（Drive の「20261014_COANA TOKYO_カラーシンボル.png」2000px 透過）から作り直した画像に差し替え（favicon-v2-48/96/192/512・apple-touch-icon・favicon.ico。URL はそのまま中身だけ）。manifest の 512 と Organization の logo は `/favicon-v2-512.png`。拡大版の `/icon-v2-512.png` は削除。favicon.svg（128px の画像を埋め込んだ軽量版）は公式ロゴと形が一致することを確認済みのため据え置き。
     - www（www.coana.co.jp）でアイコンが 200 で返るかは本番で確認が必要。
   - Cloudflare の Email Obfuscation（Scrape Shield）が静的 HTML の mailto・メールアドレスを `/cdn-cgi/l/email-protection` に書き換え、クローラーには 404 になる件：ビルドで書き出す全ページと 404.html の `<html>` の中身を `<!--email_off-->`〜`<!--/email_off-->` で囲み、書き換えの対象外にした（vite.config.ts の `emailOff`）。表示・動作は変わらない。代わりにオーナーが Cloudflare の管理画面で Email Obfuscation をオフにしてもよい（要判断。オフにすれば、この囲みは不要だが残しても害はない）。
+  - 経理代行LPの図のすぐ下の「この仕組みを自社に合わせるには？…無料で相談する」を削除（オーナー回答「ない方がよさそうなら消して」）。ほかのLPにはなく、このあと料金プラン → ご利用までの流れ → FAQ → お問い合わせの帯と続くので相談の導線が重複するため。`scheme.cta` の欄（CMS）と表示の仕組みは残してある。
 - 要判断（オーナー）：
   - info@ の例外2つ（プライバシーポリシーの「お問い合わせ窓口」、フォーム送信失敗時のエラー文）は残している。
   - knowledge.md の住所だけ「三橋ビル3F」（ほかは「3F」）。どちらが正しいか確認。
