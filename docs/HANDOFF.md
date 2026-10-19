@@ -82,7 +82,7 @@
 - GIF・Before/After：`claude/pr-assets` の `dove-finale/`・`relay/`（コミット 59b3c99）。
 - 次の一手：本番で各LPの HOW IT WORKS と /services の FLOW を目視確認（接続できる環境で）。
 
-### 7. 【完了（この PR のマージで反映）】鳩アニメーションの仕上げ（3点）
+### 7. 【完了：PR #43 マージ済み】鳩アニメーションの仕上げ（3点）
 - ブランチ：`claude/dreamy-hopper-idzvf4`。PR 画像は `claude/pr-assets` の `dove-polish/`（コミット 092c711）。
 - 依頼（オーナー評価「全体としてはいい感じ」）：
   1. 起点の黄色い点を全LP・FLOWから削除。起点は鳩とカードの状態だけで示す（起点カードの控えめな点灯・待つ間に一度だけ小さな仕草・出発直前に進行方向を向く）。追加のマーク・バッジ・ドットは使わない。
@@ -93,6 +93,17 @@
   - 経理代行のスマホ（≤980px）：カードは「アイコン＋工程名＋詳しく見る」の1行（説明は詳細を開いて読む）、担当が切り替わる工程にだけ札、受け渡しの注記は1行。1188px → 659px（390px幅）。他のLPのスマホ図は 527〜663px で1画面以内。
 - テスト済み：dove-overlap（1280・768・390）ALL OK、story-test 172 OK、fj-test 132 OK、wheel・fj-wheel・toggles・features ALL OK。
 - 次の一手：本番で起点の見え方と経理代行のスマホ図を目視確認（接続できる環境で）。
+
+### 8. 【進行中】リレー型の図（創業支援 JA/EN・バックオフィス代行・クラウド会計）：役割を「エリア」で示す
+- ブランチ：`claude/dreamy-hopper-idzvf4`。
+- 依頼：「起業する方がやること／COANA TOKYOがやること」が浮いた小さなラベルで、範囲も④の帰属も分かりづらい。スマホは役割表示なし。合格基準は「初めて見た人が3秒で『自分は相談するだけ、あとはCOANA TOKYOがやる』と分かる」。
+- 実装：
+  - `SchemeRelay`（src/SolutionPage.tsx）：浮いたラベル（`.relay-side`）と御社へ戻る矢印を廃止。COANA TOKYO が担当する範囲（中心・領域・③）を `.relay-team`（PC は display: contents、背景は `.relay-panel`。スマホはこの箱がパネル）で囲み、見出し `team_label`。
+  - 御社のカードに `client.todo`（「やること：まとめて相談するだけ」）。最後の戻りは `.relay-goal`（「受け取るもの」・暖色・御社の側）で、鳩が最後に届ける先。
+  - `nodes[].partner`：提携先など COANA TOKYO 以外は破線の枠（創業支援の「専門家の紹介・連携」、クラウド会計の「顧問税理士」「経営者・担当者」）。
+  - CMS（config.yml）に todo・partner を追加。SEO 用の文章（relayFlow）も todo を使う。
+  - スマホの高さ（390px）：創業支援 594→595、英語 601→629（英語の領域名の折り返し）、バックオフィス 579→581、クラウド会計 527→527。
+- 次の一手：テスト → Before/After → PR → チェック後マージ。
 
 ### 4. 【保留・オーナー判断待ち】
 - **本番（coana.co.jp）の確認**：クラウドの作業環境からは接続できない（Allowed domains に `coana.co.jp` と `coana-website.pages.dev` の追加が必要）。
