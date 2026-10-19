@@ -846,7 +846,7 @@ function coanaPageMeta(): Plugin {
             '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
         }
         if (pagePath === '/topics') return '<h1>トピックス</h1>' + topicList(sortedTopics)
-        if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro) + '<p>メール：' + esc(settings.email) + '</p>'
+        if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro)
         if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>' + mdToHtml(privacyBody)
         if (pagePath.startsWith('/services/')) {
           const sol = solutionList.find((item) => '/services/' + item.slug === pagePath)
@@ -930,7 +930,7 @@ function coanaPageMeta(): Plugin {
       }
 
       // 存在しないURLは 404 を返す（画像の取り違えキャッシュ対策を兼ねる）
-      const notFound = render(shell, { path: '/404', title: 'ページが見つかりません' + SUFFIX, description: '' }, defaultDescription, defaultImage)
+      const notFound = render(shell, { path: '/404', title: 'ページが見つかりません' + SUFFIX, description: 'お探しのページは見つかりませんでした。URLが変わったか、ページが削除された可能性があります。トップページやサービス一覧からお探しください。' }, defaultDescription, defaultImage)
         .replace(/\s*<link\s+rel="canonical"[^>]*>/, '')
         .replace(/<meta\s+name="robots"[^>]*>/, '<meta name="robots" content="noindex" />')
       fs.writeFileSync(path.join(outDir, '404.html'), notFound)

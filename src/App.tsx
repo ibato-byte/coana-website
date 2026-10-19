@@ -849,10 +849,6 @@ function Contact() {
           {errors.consent && <p className="field-error consent-error">{errors.consent}</p>}
           <div className="center-button"><button className="button button-large" type="submit">入力内容を確認する <Icon name="arrow" size={19} /></button></div>
         </form>
-        <div className="direct-contact">
-          <p>メールでのお問い合わせ</p>
-          <a href={`mailto:${settings.email}`}>{settings.email}</a>
-        </div>
       </section>
     </main>
   );
