@@ -1428,6 +1428,7 @@ a.service-card:hover .art * { animation-play-state: running; }
 /* 幅 360px 以下（iPhone SE 第1世代など）：長い語が途中で折れないよう、見出しと小さな注記を少しだけ小さく */
 @media (max-width: 360px) {
   .page-hero h1 { font-size: 30px; }
+  .topic-card strong { font-size: 14.5px; }
   .flowx-note { font-size: 12.5px; padding: 3px 12px; }
   .flowx-rail { padding-left: calc(var(--node) + 12px); }
   .flowx-lead::before { left: calc(-1 * (var(--node) / 2 + 12px) - 4px); }

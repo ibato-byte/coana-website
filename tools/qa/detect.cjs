@@ -59,7 +59,7 @@ const PUNCT = /^[、。，．・！？：；）」』】〕〉》"'.,!?:;)\]\s�
         const raw = blk.raw;
         // 文節境界（BudouX）。空白・改行の位置も境界とみなす
         const bounds = new Set([0]); let acc = 0;
-        for (const seg of raw.split(/(\s+)/)) { if (!seg) continue; if (/^\s+$/.test(seg)) { acc += seg.length; bounds.add(acc); continue; } let a2 = acc; for (const ph of parser.parse(seg).flatMap((x) => (x.length >= 8 ? x.split(/(?<=[\u30a0-\u30ffー])(?=[\u4e00-\u9fff])|(?<=問い合わせ)(?=[\u4e00-\u9fff])/g) : [x]))) { a2 += ph.length; bounds.add(a2); } bounds.add(acc); acc += seg.length; }
+        for (const seg of raw.split(/(\s+)/)) { if (!seg) continue; if (/^\s+$/.test(seg)) { acc += seg.length; bounds.add(acc); continue; } let a2 = acc; for (const ph of parser.parse(seg).flatMap((x) => (x.length >= 8 ? x.split(/(?<=[\u30a0-\u30ffー])(?=[\u4e00-\u9fff])|(?<=問い合わせ)(?=[\u4e00-\u9fff])/g) : [x]).flatMap((x) => (x.length >= 12 ? x.split(/(?<=[0-9０-９]年度)(?=[\u30a0-\u30ff])/g) : [x])))) { a2 += ph.length; bounds.add(a2); } bounds.add(acc); acc += seg.length; }
         for (const st of blk.lineStarts) {
           // 改行直前・直後が英数字同士（英単語の途中）は英語の改行ルールに任せる
           if (bounds.has(st)) continue;

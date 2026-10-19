@@ -533,7 +533,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 /* カード */
 .relay-card { position: relative; z-index: 1; display: grid; justify-items: start; gap: 4px; padding: 18px 18px 17px; border-radius: 18px; border: 1px solid var(--line); background: var(--white); color: var(--navy-ink); box-shadow: var(--shadow-sm); }
 .relay-card strong { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 20px; font-weight: 800; line-height: 1.45; }
-.relay-sub { font-size: 14px; line-height: 1.6; color: var(--navy-soft); }
+.relay-sub { font-size: 14px; line-height: 1.6; color: var(--navy-soft); text-wrap: pretty; } /* 最終行が1〜2文字だけにならないように */
 .relay-icon { position: relative; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: var(--sky-soft); color: var(--sky-deep); }
 .relay-client { grid-area: client; background: #fffdf6; border-color: rgba(242, 165, 22, .45); }
 .relay-client .relay-icon { background: var(--yellow); color: var(--navy-ink); }
@@ -630,4 +630,17 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 @media (min-width: 981px) {
   /* 受け渡しの注記：縦の線の左（見出しの列の空き）に2行で。鳩の止まる位置・飛ぶ道を空ける */
   .lanes-handoff { left: auto; right: calc(100% - 26px); bottom: calc(100% + 8px); width: max-content; flex-direction: row-reverse; padding: 3px 10px; white-space: pre-line; text-wrap: nowrap; text-align: right; border-radius: 12px; }
+}
+
+/* 幅 360px 以下（iPhone SE 第1世代など）：2列だと見出しの語が途中で折れるので、リレー型の領域のタグと「特徴」のカードは1列に。
+   （≤900px・≤980px の指定より後ろに置く） */
+@media (max-width: 360px) {
+  .relay-areas { grid-template-columns: 1fr; gap: 6px; }
+  .relay-area { padding: 6px 10px; }
+  .lp-feature-grid { grid-template-columns: 1fr; }
+}
+/* 幅 340px 以下：ヒーローの「特徴」3つは余白を詰め、「全国オンライン」などが1行に収まるように */
+@media (max-width: 340px) {
+  .lp-hero-facts { gap: 5px; }
+  .lp-hero-facts li { padding: 10px 4px; }
 }

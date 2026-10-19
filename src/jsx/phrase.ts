@@ -24,9 +24,13 @@ const SUB_BREAK = /(?<=[゠-ヿー])(?=[一-鿿])|(?<=問い合わせ)(?=[一-�
 /** 行頭に来ると不自然な文字（区切りのスラッシュ・閉じかっこ・句読点など）で始まる文節は、前の文節につなげる */
 const NO_LINE_START = /^[／/）」』】〕〉》、。，．・：；！？ー]/;
 
+/** 「〇〇年度」のあとにカタカナが続く長い文節（12文字以上）は、その境目でも分ける（「2026年度｜ゴールドスポンサーに」） */
+const LONG_BREAK = /(?<=[0-9０-９]年度)(?=[゠-ヿ])/g;
+
 function refine(phrases: string[]) {
   const out: string[] = [];
-  for (const p of phrases.flatMap((p) => (p.length >= 8 ? p.split(SUB_BREAK) : [p]))) {
+  const pieces = phrases.flatMap((p) => (p.length >= 8 ? p.split(SUB_BREAK) : [p])).flatMap((p) => (p.length >= 12 ? p.split(LONG_BREAK) : [p]));
+  for (const p of pieces) {
     if (out.length && NO_LINE_START.test(p)) out[out.length - 1] += p;
     else out.push(p);
   }
