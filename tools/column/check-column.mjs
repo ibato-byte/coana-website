@@ -90,7 +90,7 @@ for (const l of topicLinks) {
 const ext = links.filter((l) => /^https?:/.test(l));
 const OFFICIAL = /^https:\/\/([a-z0-9-]+\.)*(go\.jp|lg\.jp|e-gov\.go\.jp|nta\.go\.jp|jfc\.go\.jp|smrj\.go\.jp|jpo\.go\.jp|ipa\.go\.jp|support\.google\.com|developers\.google\.com|biz\.moneyforward\.com|support\.freee\.co\.jp|freee\.co\.jp|moneyforward\.com)(\/|$)/;
 // 一次情報が必要な記述：具体的な数字（金額・割合・期間）や、名前のある制度・法令
-const factual = /(補助金|助成金|インボイス|電子帳簿保存法|法人税|消費税|所得税|源泉徴収|控除|罰則|義務化|施行|改正|相場|\d+(\.\d+)?\s*(%|％|万円|円|年間|か月|日以内|年以内|年間保存))/.test(text);
+const factual = /(補助金|助成金|インボイス|電子帳簿保存法|法人税|消費税|所得税|源泉徴収|控除|罰則|義務化|施行|改正|相場|\d[\d,.]*\s*(%|％|万円|円)|\d+\s*(年|か月|日|営業日)以内|\d+\s*年間(の)?保存)/.test(text);
 if (factual && !ext.some((l) => OFFICIAL.test(l))) NG('法制度・金額などに触れているのに、一次情報（公的機関・公式サポート）の出典リンクがない');
 for (const l of ext) if (!l.startsWith('https://')) NG(`https でない外部リンク ${l}`);
 if (factual && !/(\d{4}年\d{1,2}月(\d{1,2}日)?)(時点|現在)/.test(body)) NG('制度・数字の「時点」（例：2026年10月時点）が書かれていない');
