@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { articles, home, solutions, type Article, type Solution } from "./content";
+import { articles, home, inquiryTypeOf, solutions, type Article, type Solution } from "./content";
 import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
@@ -146,8 +146,6 @@ const LABELS = {
 };
 type Lang = keyof typeof LABELS;
 const langOf = (sol: Solution): Lang => (sol.lang === "en" ? "en" : "ja");
-/** お問い合わせフォームの「ご相談内容の種別」に引き継ぐ名称（App.tsx の INQUIRY_TYPES と対応） */
-const inquiryTypeOf = (sol: Solution) => (sol.lang === "en" ? "Startup support (English)" : sol.nav_label || sol.title);
 /** お問い合わせへ遷移する前に相談種別を記録する navigate */
 const withInquiry = (sol: Solution, navigate: Nav): Nav => (...args) => {
   if (args[0] === "contact") setInquiryPreset(inquiryTypeOf(sol));

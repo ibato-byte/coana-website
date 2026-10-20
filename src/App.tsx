@@ -1,6 +1,6 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { about, articles, CATEGORIES, home, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
+import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
 import { ChatLauncher } from "./chat/ChatLauncher";
@@ -628,6 +628,15 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
   }
   const prev = articles[index + 1];
   const next = articles[index - 1];
+  // つなぐサービス：記事からお問い合わせへ進んだとき、フォームの「ご相談内容」をそのサービスにしておく（サービスLPと同じ。お客さまが変更できる）
+  const service = articleService(article);
+  const presetInquiry = () => { if (service) setInquiryPreset(inquiryTypeOf(service)); };
+  const onBodyClick = (e: { target: EventTarget }) => {
+    const link = (e.target as Element).closest?.("a");
+    if (link && new URL(link.href, location.href).pathname === "/contact") presetInquiry();
+  };
+  const navigateFromArticle: Nav = (...args) => { if (args[0] === "contact") presetInquiry(); navigate(...args); };
+  const en = service?.lang === "en";
   return (
     <main>
       <article className="article-page">
@@ -638,9 +647,19 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
           {article.thumbnail
             ? <img className="article-thumb" src={article.thumbnail} alt={article.title} fetchPriority="high" />
             : <div className="article-visual"><Icon name="spark" size={42} /><span>TOPICS</span></div>}
-          <div className="article-body">
+          <div className="article-body" onClick={onBodyClick}>
             <div dangerouslySetInnerHTML={{ __html: article.html }} />
           </div>
+          {service && (
+            <aside className="article-service" aria-labelledby="article-service-title">
+              <p id="article-service-title" className="article-service-label">{en ? "Related service" : "この記事に関連するサービス"}</p>
+              <GoLink className="article-service-card" go={navigate} args={["solution", undefined, service.slug]}>
+                <ServiceArt slug={service.slug} className="article-service-art" />
+                <span className="article-service-name">{service.nav_label}</span>
+                <span className="article-service-more">{en ? "See the service" : "サービスの詳細を見る"}<Icon name="arrow" size={18} /></span>
+              </GoLink>
+            </aside>
+          )}
           <nav className="article-nav" aria-label="前後の記事">
             {prev ? (
               <GoLink go={navigate} args={["article", undefined, prev.slug]}>
@@ -656,7 +675,7 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
           <GoLink className="back-link bottom" go={navigate} args={["topics"]}>← トピックス一覧に戻る</GoLink>
         </div>
       </article>
-      <ContactBand navigate={navigate} />
+      <ContactBand navigate={navigateFromArticle} />
     </main>
   );
 }

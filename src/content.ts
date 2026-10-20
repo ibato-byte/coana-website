@@ -190,3 +190,13 @@ export const solutions: Solution[] = Object.values(solutionFiles)
   .filter((s) => s && s.slug)
   .map((s) => localizeImages(s))
   .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+
+/** お問い合わせフォームの「ご相談内容の種別」に引き継ぐ名称（App.tsx の INQUIRY_TYPES と対応） */
+export const inquiryTypeOf = (sol: Solution) => (sol.lang === "en" ? "Startup support (English)" : sol.nav_label || sol.title);
+
+/** 記事の「つなぐサービス」：本文で最後に出てくるサービスLPへのリンク（記事末尾の CTA の節）。なければ undefined */
+export function articleService(article: Article): Solution | undefined {
+  const slugs = [...article.html.matchAll(/href="\/services\/([a-z0-9-]+)/g)].map((m) => m[1]);
+  const slug = slugs[slugs.length - 1];
+  return slug ? solutions.find((s) => s.slug === slug) : undefined;
+}
