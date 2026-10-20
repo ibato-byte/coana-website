@@ -3,6 +3,12 @@
 最終更新：2026-10-19（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
 
+## Automation Hub（自動の一覧・指示）
+
+- Claude の自動（SEO 週次・SEO 毎日監視・コラム自動作成 など）を1か所で見て、指示を送るダッシュボード：https://automation-hub.pages.dev（Cloudflare Access でオーナーだけ）。
+- 台帳・ログ・指示（Issue）・約束ごとは非公開リポジトリ `ibato-byte/automation-hub`（docs/HUB_PROTOCOL.md。新しい自動を作るときは必ずこれに従って登録・連携する）。
+- このリポジトリからの連携：週次タスクのプロンプトの H1・H2（docs/weekly-task-prompt.md）、「SEO の監視」の最後のステップ（`tools/seo/hub-report.mjs`。Actions の Secrets `HUB_TOKEN` がなければ何もしない）。
+
 ## SEO の週次（自動ブラッシュアップ）
 
 手順と線引きは [docs/SEO_PLAYBOOK.md](SEO_PLAYBOOK.md)。週次タスクは毎回ここに1〜3行で結果を追記する（新しいものを上に）。
