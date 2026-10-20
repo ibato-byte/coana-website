@@ -142,6 +142,7 @@ Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌�
    - `## 出典`（一次情報のリンクと、確認した日・時点）
    - `## レビュー結果`（レビュー担当の指摘と対応、品質ゲートの結果）
    - あわせて seo-content-plan.md の「状態」と「記録」を更新する。
+   - PR 本文の出典は「- [名前](URL)」で行を終え、説明は次の行に書く（URL の直後に文字を続けると、作業環境から GitHub に書き込むときにリンクが崩れることがある）。本文の最後は「## その他」などの見出しにして、確認メールに載る3つの節の範囲をはっきりさせる。
 4. **確認メール**：GitHub Actions「コラムの公開確認」（`.github/workflows/column-approval.yml`）が、Cloudflare Pages のチェック合格を待ってから、PR に @ibato-byte 宛てのコメントを付ける。PR の作成者であるオーナーに GitHub から通知メールが届く（ibato@coana.co.jp。2026-10-19 に、PR のコメントの通知がこのアドレスに届いていることを確認済み）。メールには、タイトル・要約・出典・レビュー結果・「記事を読む（プレビュー）」・「▶ 公開する」・「見送る」が載る。
 5. **オーナーがボタンを押す**：リンクの先（`https://coana.co.jp/column-approval`、`functions/column-approval.ts`）は確認画面。そこでもう一度ボタンを押すと実行される（メールソフトのリンク先読みでは実行されない）。
    - 公開する → PR をマージ（main に入り、本番に自動で公開。数分）。完了画面に「公開しました」。
@@ -156,6 +157,8 @@ Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌�
 | 2 | GitHub → 右上のアイコン → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token | 名前「coana-column-approval」、有効期限 1年、Repository access「Only select repositories」で `ibato-byte/coana-website` だけ。Permissions（Repository）：**Pull requests：Read and write**、**Contents：Read and write**、**Checks：Read-only**（一覧にない場合は不要。Metadata は自動）。作成したトークンを控える |
 | 3 | Cloudflare ダッシュボード → Workers & Pages → coana-website → Settings → Variables and Secrets（**Production**） | 「Add」で種類を **Secret** にして2つ登録：`COLUMN_APPROVAL_SECRET`＝1の文字列、`GITHUB_COLUMN_TOKEN`＝2のトークン。保存後、次のデプロイ（main への次のマージ、またはダッシュボードの「Retry deployment」）から有効 |
 | 4 | GitHub → リポジトリ coana-website → Settings → Secrets and variables → Actions → New repository secret | `COLUMN_APPROVAL_SECRET`＝1と同じ文字列 |
+
+- 確認メールを送る前に、Actions が本番の公開ボタン（確認画面）を開いて動作を確かめ、結果をメールに書く。毎日の監視（SEO の監視）も、本番に設定があるか（でたらめな署名に 400 を返すか）を確かめる。
 | 5 | GitHub → Settings → Notifications | 「Default notifications email」が ibato@coana.co.jp、「Participating, @mentions and custom」で Email にチェック（確認済み。変えた場合だけ見直す） |
 
 - 設定がまだのときも、確認メール（プレビューのリンクつき）は届く。その場合は GitHub でその PR をマージすれば公開、クローズすれば見送り。設定したあとに Actions「コラムの公開確認」を PR 番号で手動実行すると、ボタン付きのメールが改めて届く。

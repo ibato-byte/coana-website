@@ -81,7 +81,8 @@ const articleUrl = `${preview}/topics/${slug}${date > today ? `?preview=${date}`
 
 // 3. PR 本文の要約・出典・レビュー結果
 const section = (name) => {
-  const m = (pr.body || '').match(new RegExp(`^##\\s*${name}\\s*\\n([\\s\\S]*?)(?=^##\\s|$(?![\\s\\S]))`, 'm'));
+  // 次の見出し（##）か区切り線（---、PR 本文の末尾の署名の前）で止める
+  const m = (pr.body || '').match(new RegExp(`^##\\s*${name}\\s*\\n([\\s\\S]*?)(?=^##\\s|^---\\s*$|$(?![\\s\\S]))`, 'm'));
   return m ? m[1].trim().slice(0, 2500) : '（PR 本文に記載なし）';
 };
 const title = pr.title.replace(/^【コラム公開待ち】/, '');
@@ -93,7 +94,21 @@ let buttons;
 if (SECRET) {
   const publish = await buildLink(SITE, SECRET, { pr: PR, sha, action: 'publish', exp, preview: articleUrl });
   const decline = await buildLink(SITE, SECRET, { pr: PR, sha, action: 'decline', exp, preview: articleUrl });
-  buttons = `### [▶ 公開する](${publish})　　[見送る](${decline})\n\nボタンを押すと確認画面が開き、そこでもう一度ボタンを押したときに実行されます（リンクを開いただけでは公開されません）。リンクの期限：${expDate}。記事が更新されるとこのリンクは無効になり、新しいメールが届きます。`;
+  // 本番の公開ボタンが動くかを、送る前に確かめる（確認画面を開くだけ。GET なので公開はしない）。
+  // 署名の検証（Cloudflare の COLUMN_APPROVAL_SECRET）と、GitHub のトークン（GITHUB_COLUMN_TOKEN）での PR の読み取りが通れば、確認画面が出る
+  let selfCheck;
+  try {
+    const r = await fetch(publish, { redirect: 'manual', headers: { 'user-agent': 'coana-column-approval-selfcheck' } });
+    const html = await r.text();
+    selfCheck = r.status === 200 && html.includes('このコラムを公開しますか')
+      ? '公開ボタンの動作確認：本番（coana.co.jp）で確認画面が開けることを確かめました（このとき公開はしていません）。'
+      : `⚠ 公開ボタンの動作確認に失敗しました（${r.status}：${(html.match(/<h1[^>]*>([^<]*)/) || [])[1] || '内容を読めず'}）。ボタンが使えない場合は、GitHub でこの PR をマージすると公開、クローズすると見送りになります。`;
+    if (!selfCheck.startsWith('公開ボタンの動作確認：')) process.exitCode = 1;
+  } catch (e) {
+    selfCheck = `⚠ 公開ボタンの動作確認ができませんでした（${e.message}）。ボタンが使えない場合は、GitHub でこの PR をマージすると公開、クローズすると見送りになります。`;
+    process.exitCode = 1;
+  }
+  buttons = `### [▶ 公開する](${publish})　　[見送る](${decline})\n\nボタンを押すと確認画面が開き、そこでもう一度ボタンを押したときに実行されます（リンクを開いただけでは公開されません）。リンクの期限：${expDate}。記事が更新されるとこのリンクは無効になり、新しいメールが届きます。\n\n${selfCheck}`;
 } else {
   buttons = '**公開ボタンは未設定です**（GitHub の Secrets に COLUMN_APPROVAL_SECRET がありません）。設定後に Actions の「コラムの公開確認」を、この PR の番号で手動実行するとボタン付きのメールが届きます。いまは GitHub でこの PR をマージすると公開、クローズすると見送りになります。';
 }
