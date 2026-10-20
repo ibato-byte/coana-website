@@ -8,6 +8,7 @@
 - Claude の自動（SEO 週次・SEO 毎日監視・コラム自動作成 など）を1か所で見て、指示を送るダッシュボード：https://automation-hub-8lm.pages.dev（Cloudflare Access でオーナーだけ）。
 - 台帳・ログ・指示（Issue）・約束ごとは非公開リポジトリ `ibato-byte/automation-hub`（docs/HUB_PROTOCOL.md。新しい自動を作るときは必ずこれに従って登録・連携する）。
 - 進み具合（2026-10-20）：リポジトリ・トークン・Pages（本番デプロイ済み）・coana-website の `HUB_TOKEN` は完了。**残り**：Cloudflare Access が本番の pages.dev をまだ守っていない（Pages の「Access policy」から作り直す手順は automation-hub の docs/SETUP.md 4-3）、Pages の変数 `ACCESS_TEAM_DOMAIN`・`ACCESS_AUD` が未登録（Cloudflare Zero Trust の障害の復旧待ち）。それまでダッシュボードは「ログインの設定がまだです」でデータを出さない（fail closed）。オーナーの設定後に Claude が本番を確認する。
+- 2026-10-20：GitHub Actions の4つ（SEO の監視・予約投稿の公開・コラムの公開確認・コラムの自動公開）は、最初に Hub の一時停止を確認（停止中は本来の処理をしない）、最後に結果を Hub に記録する（`automation-hub/scripts/gha.sh`。Secrets の `HUB_TOKEN` がなければ Hub は使わない）。
 - このリポジトリからの連携：週次タスクのプロンプトの H1・H2（docs/weekly-task-prompt.md）、「SEO の監視」の最後のステップ（`tools/seo/hub-report.mjs`。Actions の Secrets `HUB_TOKEN` がなければ何もしない）。
 
 ## SEO の週次（自動ブラッシュアップ）
