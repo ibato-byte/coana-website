@@ -174,7 +174,7 @@ Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌�
 
 ## 9. Automation Hub への記録
 
-- 週次タスク（台帳 `seo-weekly`・`column-auto`）と「SEO の監視」（台帳 `seo-monitor`）は、実行ごとに Automation Hub（https://automation-hub.pages.dev、リポジトリ `ibato-byte/automation-hub`）に結果を記録し、オーナーからの指示（Issue）を開始時に読む。約束ごとは automation-hub の docs/HUB_PROTOCOL.md。
+- 週次タスク（台帳 `seo-weekly`・`column-auto`）と「SEO の監視」（台帳 `seo-monitor`）は、実行ごとに Automation Hub（https://automation-hub-8lm.pages.dev、リポジトリ `ibato-byte/automation-hub`）に結果を記録し、オーナーからの指示（Issue）を開始時に読む。約束ごとは automation-hub の docs/HUB_PROTOCOL.md。
 - 週次タスク：プロンプトの H1（開始時：inbox。一時停止中なら何もしない）と H2（終了時：report・done）。docs/weekly-task-prompt.md。
 - 「SEO の監視」：最後のステップで `tools/seo/hub-report.mjs` が NG・注意・ページ数を記録（Actions の Secrets `HUB_TOKEN` がなければ何もしない。記録に失敗しても監視の結果は変えない）。
 - Hub の指示でも、この文書の線引き（技術面だけ自動マージ・文章は要承認・コラムはオーナーの公開ボタン）と CLAUDE.md の方針は変わらない。
