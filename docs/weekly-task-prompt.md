@@ -16,7 +16,7 @@ H1. 開始時（Automation Hub）：ibato-byte/automation-hub をこのセッシ
 
 1. 読む：CLAUDE.md → docs/HANDOFF.md → docs/SEO_PLAYBOOK.md → docs/seo-reports/ の最新のレポート。以降は SEO_PLAYBOOK.md の「2. 毎週の手順」「3. 線引き」「4. 守ること」「8. コラムの自動作成」に厳密に従う。CLAUDE.md の方針（数字・実績の捏造禁止、根拠のない数字の禁止、電話番号を載せない、士業の独占業務をやるように見せない、読みやすさ・上品さ、デザインとアニメーションは変えない）と Google のガイドライン（スパムポリシー、helpful content。キーワードの詰め込み禁止）を必ず守る。
 
-2. 点検：bash tools/seo/weekly.sh（ビルド → ローカル点検 → GitHub Actions が Issue「seo-data」に残した本番データの取得 → レポートの下書き docs/seo-reports/YYYY-MM-DD.md）。あわせて、開いている Issue（ラベル seo-alert）、前回までの「要承認」PR と「コラム公開待ち」PR の状態を確認する。本番には作業環境から直接つながらないので、本番の情報は Issue のデータを使う（取れなければレポートに「本番：未取得」と書いて続ける）。
+2. 点検：bash tools/seo/weekly.sh（ビルド → ローカル点検 → GitHub Actions が Issue「seo-data」に残した本番データの取得 → レポートの下書き docs/seo-reports/YYYY-MM-DD.md）。あわせて、開いている Issue（ラベル seo-alert）、前回までの「要承認」PR と「コラム公開待ち」PR の状態を確認する。さらに、問い合わせまでの導線（記事 → サービスLP → 問い合わせ）を SEO_PLAYBOOK.md「2. 毎週の手順」の 2 に従って点検する（本文中の関連サービスへの内部リンク、記事末尾の CTA の位置と文言、関連記事どうしのリンクと LP の関連記事）。内部リンクの追加など技術面は A、CTA や見出しなど人が読む文言は B。オーナーが決めた文言・デザイン・アニメーションは変えない。本番には作業環境から直接つながらないので、本番の情報は Issue のデータを使う（取れなければレポートに「本番：未取得」と書いて続ける）。
 
 3. 仕分け：見つかったものをプレイブックの線引きで A（技術面：自動で直す）／B（文章：要承認）／C（見送り）に分ける。迷ったら B か C。何も直すものがなければ無理に変えない。
 
@@ -24,7 +24,7 @@ H1. 開始時（Automation Hub）：ibato-byte/automation-hub をこのセッシ
 
 5. B（文章の改善案：title・description・見出し・本文・FAQ など人が読む表現）：ブランチ claude/seo-proposal-YYYYMMDD で別の PR を作り、ラベル「要承認」を付ける。マージしない。本文に根拠・変更前→変更後・方針に反しない理由を書く。前回の「要承認」PR が開いたままなら、同じ提案を重ねて出さない。1週に1本まで。
 
-6. コラム（2週に1本）：docs/seo-content-plan.md の「記録」で最後に作った日から14日以上たち、「コラム公開待ち」の PR が開いていなければ、SEO_PLAYBOOK.md「8. コラムの自動作成」と docs/column-guide.md に従って1本書く（テーマは seo-content-plan.md から。既存記事と重複させない。図解2〜4点、見出し画像は tools/column/thumbnail.mjs）。品質ゲートをすべて通す：①法制度・補助金・税・期限・相場・製品の機能は一次情報（公的機関・公式ヘルプ）を WebSearch（公式ドメインに絞る）で確かめ、出典リンクと「〇年〇月時点」を書く。確かめられない事実は書かない ②禁止事項（捏造、根拠のない数字、電話番号、士業の独占業務に当たる判断、他社批判、キーワードの詰め込み、AI っぽい定型文、転載）③ node tools/column/check-column.mjs が合格 ④執筆とは別のサブエージェント（Agent ツール）に厳しくレビューさせ、指摘をすべて直す（重大な指摘が残れば出さない）⑤ bash tools/seo/run-tests.sh が全テスト合格。1つでも落ちたら、その回はコラムを出さず、理由をレポートに書く。合格したら、ブランチ claude/column-YYYYMMDD-<slug>、タイトル「【コラム公開待ち】<記事タイトル>」、ラベル「コラム公開待ち」の PR を作る（マージしない。本文に「## 要約」「## 出典」「## レビュー結果」を必ず入れる。seo-content-plan.md の状態と記録も更新）。オーナーへの確認メールは GitHub Actions が自動で送る。
+6. コラム（毎週1本）：docs/seo-content-plan.md の「記録」で最後に作った日から7日以上たち、「コラム公開待ち」の PR が開いていなければ、SEO_PLAYBOOK.md「8. コラムの自動作成」と docs/column-guide.md に従って1本書く（テーマは seo-content-plan.md から。依頼を検討している段階の人が検索するテーマを優先し、各テーマの「つなぐLP」へ本文の途中と末尾の CTA で導く。毎週、テーマ一覧の並び順と不足を見直す（COANA のサービス内容に合うものだけ）。数字・料金・実績は根拠があるものだけ。既存記事と重複させない。図解2〜4点、見出し画像は tools/column/thumbnail.mjs）。品質ゲートをすべて通す：①法制度・補助金・税・期限・相場・製品の機能は一次情報（公的機関・公式ヘルプ）を WebSearch（公式ドメインに絞る）で確かめ、出典リンクと「〇年〇月時点」を書く。確かめられない事実は書かない ②禁止事項（捏造、根拠のない数字、電話番号、士業の独占業務に当たる判断、他社批判、キーワードの詰め込み、AI っぽい定型文、転載）③ node tools/column/check-column.mjs が合格 ④執筆とは別のサブエージェント（Agent ツール）に厳しくレビューさせ、指摘をすべて直す（重大な指摘が残れば出さない）⑤ bash tools/seo/run-tests.sh が全テスト合格。1つでも落ちたら、その回はコラムを出さず、理由をレポートに書く。合格したら、ブランチ claude/column-YYYYMMDD-<slug>、タイトル「【コラム公開待ち】<記事タイトル>」、ラベル「コラム公開待ち」の PR を作る（自分ではマージしない。チェックがすべて合格すると Actions「コラムの自動公開」が自動でマージ＝公開するので、PR を作る前の品質ゲートが実質的な最後の関門。ゲートは一切ゆるめない。本文に「## 要約」「## 出典」「## レビュー結果」を必ず入れる。seo-content-plan.md の状態と記録も更新）。オーナーへの確認メールは GitHub Actions が自動で送る。
 
 7. レポート：docs/seo-reports/YYYY-MM-DD.md の「今回の対応」に、A（PR とマージ結果）・B（PR）・コラム（PR または見送りの理由）・C（理由）を書き、docs/HANDOFF.md の「SEO の週次」の記録に1〜3行を追記する。これらは A の PR に含める。A がない週は、レポートと HANDOFF だけの PR を作り、tools/seo/check-site.mjs のローカル点検が NG 0 で Cloudflare Pages のチェックが成功したらマージする。
 
@@ -32,7 +32,7 @@ H1. 開始時（Automation Hub）：ibato-byte/automation-hub をこのセッシ
 
 H2. 終了時（Automation Hub。失敗しても必ず。automation-hub の clone 先で実行）：
 - node scripts/hub.mjs report --id seo-weekly --result <success|failure|partial> --summary "<今回の要約 1〜3文>" --next-run-at <来週月曜 8:54 日本時間を UTC で。例 2026-11-01T23:54:00Z> --report-url <今回のレポートの GitHub の URL> --kpi "本番 NG=<数>" --kpi "注意=<数>" --kpi "モバイル Performance=<数>"（測れた数字だけ）--owner-action <オーナーにしかできないこと（「要承認」PR の確認など。URL を含める）を1件ずつ、なければ none>
-- コラムを作った回・見送った回は node scripts/hub.mjs report --id column-auto --result <success|skipped|failure> --summary "<作った記事と PR、または見送りの理由>" --next-run-at <次にコラムを作る予定の週の月曜 8:54 を UTC で> --kpi "公開待ち=<「コラム公開待ち」の開いている PR の数>" --kpi "公開済み（自動作成）=<数>" --owner-action <「コラム公開待ち」PR の公開確認（URL）、なければ none>。2週に1本の対象外の週も --result skipped --summary "対象外の週（前回作成から14日未満）" で記録する。
+- コラムを作った回・見送った回は node scripts/hub.mjs report --id column-auto --result <success|skipped|failure> --summary "<作った記事と PR、または見送りの理由>" --next-run-at <来週月曜 8:54 日本時間を UTC で> --kpi "公開待ち=<「コラム公開待ち」の開いている PR の数>" --kpi "公開済み（自動作成）=<数>" --owner-action <「コラム公開待ち」PR の公開確認（URL）、なければ none>。対象外の週も --result skipped --summary "対象外の週（前回作成から7日未満）" で記録する。
 - 反映した指示は node scripts/hub.mjs done --issue <番号> --comment "反映しました：<内容と PR の URL>"、反映しなかった指示は node scripts/hub.mjs comment --issue <番号> --comment "<理由と代案>"。
 - Hub への記録に失敗しても 0〜8 の結果は変えず、最終メッセージにその旨を書く。
 ```
