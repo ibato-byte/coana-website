@@ -18,7 +18,7 @@
   - 毎週月曜 5:37：同じ Actions が外部リンクと表示速度も測り、Issue（`seo-data`）にデータを残す。
   - 毎週月曜 8:54：Claude のスケジュールタスク「COANA SEO 週次ブラッシュアップ」が修正・提案・レポートを行う。
 - スケジュールタスク（プロンプトの正本は docs/weekly-task-prompt.md）：「COANA SEO 週次ブラッシュアップ」ID `trig_01RrZBY7DC79EtMXno9werew`（毎週月曜 8:54 日本時間。専用セッション `session_01HbxZBk1N9D7dtypAM8AM36` に毎週同じ指示が届く方式。毎回新しいセッションを作る方式はリポジトリが接続されないため使えない。通知はプッシュのみ）。プロンプトの変更・停止は claude.ai のスケジュールタスクの画面、またはセッションから update_trigger で。
-- コラムの自動作成（2026-10-19 構築）：週次タスクが2週に1本書き、品質ゲート合格で「コラム公開待ち」の PR → GitHub の通知メールでオーナーに確認依頼 → メールの「公開する」ボタン（`functions/column-approval.ts`）でマージ＝公開。手順・オーナーの設定・取り下げは SEO_PLAYBOOK.md「8.」、テーマと記録は `docs/seo-content-plan.md`。
+- コラムの自動作成（2026-10-19 構築）：週次タスクが2週に1本書き、品質ゲート合格で「コラム公開待ち」の PR → チェックがすべて合格すると Actions「コラムの自動公開」（`.github/workflows/column-auto-publish.yml`、2026-10-20 にオーナーが追加）が自動でマージ＝公開（確認メールも届く）。初回「入金確認（入金消込）のやり方」は 2026-10-20 に自動公開（PR #58）。手順・オーナーの設定・取り下げは SEO_PLAYBOOK.md「8.」、テーマと記録は `docs/seo-content-plan.md`。
 - オーナーにお願い（任意）：`PSI_API_KEY`（無料）を Actions の Secrets に／作業環境の Allowed domains に `coana.co.jp`。
 - 記録：
   - 2026-10-19（初回の週次）：NG 0／注意 16（すべて title の長さ。重要語は先頭にあり、切れるのは会社名だけなので見送り）。表示速度はモバイル Performance 47・LCP 約 11 秒（初回の基準値。JS が 1 本で約 820KB）。A：`weekly.sh` が package-lock.json なしで `npm ci` に失敗する不具合を修正。B：なし。
