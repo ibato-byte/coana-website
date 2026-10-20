@@ -25,6 +25,8 @@ export type Article = {
   summary: string;
   thumbnail?: string;
   html: string;
+  /** つなぐサービス（CMS の「つなぐサービス」。content/solutions の slug、または "none"＝出さない）。空なら本文から判定（articleService） */
+  service?: string;
 };
 
 const files = import.meta.glob("../content/topics/*.md", {
@@ -93,6 +95,7 @@ export const articles: Article[] = Object.entries(files)
       category: fm.category ?? "お知らせ",
       summary: fm.summary ?? "",
       thumbnail: fm.thumbnail || undefined,
+      service: typeof fm.service === "string" && fm.service ? fm.service : undefined,
       // チェックリスト（- [ ]）の四角は飾り（本文の文が内容）。読み上げでは「ラベルのない入力欄」にならないよう隠す
       html: (marked.parse(body, { async: false }) as string).replace(/<input ([^>]*type="checkbox"[^>]*)>/g, '<input $1 aria-hidden="true" tabindex="-1">'),
     } as Article;
@@ -194,9 +197,18 @@ export const solutions: Solution[] = Object.values(solutionFiles)
 /** お問い合わせフォームの「ご相談内容の種別」に引き継ぐ名称（App.tsx の INQUIRY_TYPES と対応） */
 export const inquiryTypeOf = (sol: Solution) => (sol.lang === "en" ? "Startup support (English)" : sol.nav_label || sol.title);
 
-/** 記事の「つなぐサービス」：本文で最後に出てくるサービスLPへのリンク（記事末尾の CTA の節）。なければ undefined */
+/** 記事の「つなぐサービス」。なければ undefined
+ *  1. CMS の「つなぐサービス」（front matter の service）。"none" なら出さない
+ *  2. 空なら本文の締めくくり：サービスLPへのリンクがある最後の見出し（h2）の節で、最初に案内しているサービスLP */
 export function articleService(article: Article): Solution | undefined {
-  const slugs = [...article.html.matchAll(/href="\/services\/([a-z0-9-]+)/g)].map((m) => m[1]);
-  const slug = slugs[slugs.length - 1];
+  if (article.service === "none") return undefined;
+  const slug = article.service || closingServiceSlug(article.html);
   return slug ? solutions.find((s) => s.slug === slug) : undefined;
+}
+function closingServiceSlug(html: string) {
+  for (const section of html.split(/<h2[\s>]/).reverse()) {
+    const m = section.match(/href="\/services\/([a-z0-9-]+)/);
+    if (m) return m[1];
+  }
+  return undefined;
 }
