@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 620" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="620" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">ずれやすい入金と対処</text>
+  <rect x="24" y="80" width="268" height="56" rx="10" fill="#16334d"/>
+  <text x="158" y="118" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">起きること</text>
+  <rect x="308" y="80" width="268" height="56" rx="10" fill="#087fe5"/>
+  <text x="442" y="118" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">対処</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="24" y="150" width="268" height="100" rx="10" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="44" y="192">振込名義が</text><text x="44" y="228">社名と違う</text>
+    <rect x="308" y="150" width="268" height="100" rx="10" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="328" y="192">名義の対応表を</text><text x="328" y="228">作っておく</text>
+    <rect x="24" y="264" width="268" height="100" rx="10" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="44" y="306">複数の請求を</text><text x="44" y="342">まとめて入金</text>
+    <rect x="308" y="264" width="268" height="100" rx="10" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="328" y="306">内訳を聞いて</text><text x="328" y="342">1件ずつ結ぶ</text>
+    <rect x="24" y="378" width="268" height="100" rx="10" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="44" y="420">手数料を引いて</text><text x="44" y="456">少なく入金</text>
+    <rect x="308" y="378" width="268" height="100" rx="10" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="328" y="420">差額の扱いを</text><text x="328" y="456">先に決める</text>
+    <rect x="24" y="492" width="268" height="100" rx="10" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="44" y="534">一部だけ</text><text x="44" y="570">入金</text>
+    <rect x="308" y="492" width="268" height="100" rx="10" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="328" y="534">残りを未入金</text><text x="328" y="570">として残す</text>
+  </g>
+</svg>

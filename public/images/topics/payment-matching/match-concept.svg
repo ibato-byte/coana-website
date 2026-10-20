@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 560" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="560" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">請求と入金を1件ずつ結ぶ</text>
+  <text x="140" y="112" font-size="26" font-weight="700" fill="#4a667d" text-anchor="middle">請求の一覧</text>
+  <text x="460" y="112" font-size="26" font-weight="700" fill="#4a667d" text-anchor="middle">通帳の入金</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="30" y="140" width="220" height="80" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="140" y="190" text-anchor="middle">A社 10万円</text>
+    <rect x="350" y="140" width="220" height="80" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="460" y="190" text-anchor="middle">A社 10万円</text>
+    <rect x="30" y="250" width="220" height="80" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="140" y="300" text-anchor="middle">B社 5万円</text>
+    <rect x="350" y="250" width="220" height="80" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="460" y="300" text-anchor="middle">B社 5万円</text>
+    <rect x="30" y="360" width="220" height="80" rx="12" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+    <text x="140" y="410" text-anchor="middle">C社 8万円</text>
+    <rect x="350" y="360" width="220" height="80" rx="12" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="460" y="410" text-anchor="middle" fill="#4a667d">入金なし</text>
+  </g>
+  <g stroke="#087fe5" stroke-width="4" fill="none">
+    <path d="M258 180 H340"/><path d="M330 172 l10 8 l-10 8"/>
+    <path d="M258 290 H340"/><path d="M330 282 l10 8 l-10 8"/>
+  </g>
+  <text x="300" y="500" font-size="26" fill="#16334d" text-anchor="middle">結べない請求が「未入金」</text>
+  <text x="300" y="536" font-size="26" fill="#4a667d" text-anchor="middle">（金額は説明のための例）</text>
+</svg>
