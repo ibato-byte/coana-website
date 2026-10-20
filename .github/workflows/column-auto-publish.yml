@@ -1,0 +1,71 @@
+# コラムの自動公開
+# 「コラム公開待ち」ラベルの PR（オーナーが作成・このリポジトリのブランチ）について、
+# ほかのチェック（Cloudflare Pages など）がすべて合格したら自動でマージ＝公開する。
+# 1つでも失敗したらマージしない（PR はそのまま残り、オーナーが確認できる）。
+name: コラムの自動公開
+
+on:
+  pull_request:
+    types: [opened, labeled, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR の番号（手動で自動公開をやり直すとき）"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+  statuses: read
+
+concurrency:
+  group: column-auto-publish-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  auto-publish:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (contains(github.event.pull_request.labels.*.name, 'コラム公開待ち') &&
+       github.event.pull_request.user.login == 'ibato-byte' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      PR: ${{ github.event.pull_request.number || inputs.pr }}
+    steps:
+      - name: PR の条件を確認
+        run: |
+          info=$(gh pr view "$PR" -R "$REPO" --json state,author,labels,headRefOid,isCrossRepository)
+          echo "$info"
+          [ "$(jq -r .state <<<"$info")" = "OPEN" ] || { echo "PR が開いていません"; exit 1; }
+          [ "$(jq -r .author.login <<<"$info")" = "ibato-byte" ] || { echo "作成者が違います"; exit 1; }
+          [ "$(jq -r .isCrossRepository <<<"$info")" = "false" ] || { echo "外部のブランチです"; exit 1; }
+          jq -e '.labels | map(.name) | index("コラム公開待ち")' <<<"$info" >/dev/null || { echo "ラベルがありません"; exit 1; }
+          echo "SHA=$(jq -r .headRefOid <<<"$info")" >> "$GITHUB_ENV"
+
+      - name: ほかのチェックの合格を待つ
+        run: |
+          for i in $(seq 1 100); do
+            runs=$(gh api "repos/$REPO/commits/$SHA/check-runs?per_page=100" \
+              --jq '[.check_runs[] | select(.name != "auto-publish")]')
+            statuses=$(gh api "repos/$REPO/commits/$SHA/status" --jq '.statuses')
+            total=$(( $(jq length <<<"$runs") + $(jq length <<<"$statuses") ))
+            pending=$(( $(jq '[.[] | select(.status != "completed")] | length' <<<"$runs") \
+                      + $(jq '[.[] | select(.state == "pending")] | length' <<<"$statuses") ))
+            failed=$(( $(jq '[.[] | select(.status == "completed" and (.conclusion | IN("success","neutral","skipped") | not))] | length' <<<"$runs") \
+                     + $(jq '[.[] | select(.state == "failure" or .state == "error")] | length' <<<"$statuses") ))
+            echo "[$i] チェック $total 件 / 待ち $pending / 失敗 $failed"
+            if [ "$failed" -gt 0 ]; then echo "失敗したチェックがあるため公開しません"; exit 1; fi
+            if [ "$total" -gt 0 ] && [ "$pending" -eq 0 ] && [ "$i" -ge 3 ]; then exit 0; fi
+            sleep 30
+          done
+          echo "時間内にチェックが終わりませんでした"; exit 1
+
+      - name: マージして公開
+        run: |
+          gh pr merge "$PR" -R "$REPO" --squash --delete-branch --match-head-commit "$SHA"
+          gh pr comment "$PR" -R "$REPO" --body "チェックがすべて合格したため、自動で公開しました（コラムの自動公開）。"
