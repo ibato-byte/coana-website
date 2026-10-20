@@ -1,7 +1,7 @@
 # 週次タスクのプロンプト（スケジュールタスク「COANA SEO 週次ブラッシュアップ」）
 
 スケジュールタスク `trig_01RrZBY7DC79EtMXno9werew` が毎週月曜 8:54 に専用セッション `session_01HbxZBk1N9D7dtypAM8AM36` へ送る指示の正本。
-Automation Hub（https://automation-hub.pages.dev、台帳 `seo-weekly`・`column-auto`）との連携は H1・H2（約束ごとは ibato-byte/automation-hub の docs/HUB_PROTOCOL.md）。
+Automation Hub（https://automation-hub-8lm.pages.dev、台帳 `seo-weekly`・`column-auto`）との連携は H1・H2（約束ごとは ibato-byte/automation-hub の docs/HUB_PROTOCOL.md）。
 変えるときはこのファイルを直し、**専用セッションの中で** update_trigger を使って同じ文に差し替える（ほかのセッションからは変更できない）。
 
 ---
