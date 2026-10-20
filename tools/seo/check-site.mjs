@@ -224,6 +224,11 @@ async function main() {
     else if (!(www.status >= 300 && www.status < 400) && www.status !== 0) err('www', 'https://www.coana.co.jp/', `status ${www.status}`);
     const wicon = await get('https://www.coana.co.jp/favicon-v2-192.png', { body: false, redirect: 'follow' });
     if (wicon.status !== 200) warn('www', 'https://www.coana.co.jp/favicon-v2-192.png', `status ${wicon.status}`);
+    // コラムの公開ボタン（functions/column-approval.ts）：設定（Cloudflare の秘密の値）があれば、でたらめな署名には 400 を返す。503 は設定がない
+    const ca = await get(`${SITE}/column-approval?pr=1&sha=${'0'.repeat(40)}&action=publish&exp=9999999999&sig=x`);
+    metrics.columnApproval = ca.status;
+    if (ca.status === 503) err('column-approval', '/column-approval', '公開ボタンの設定（Cloudflare の COLUMN_APPROVAL_SECRET・GITHUB_COLUMN_TOKEN）が本番にない');
+    else if (ca.status !== 400) err('column-approval', '/column-approval', `でたらめな署名に 400 でなく ${ca.status} を返す`);
     const home = await get(SITE + '/', { body: false });
     metrics.headers = Object.fromEntries(['strict-transport-security', 'x-content-type-options', 'content-security-policy', 'cache-control', 'server'].map((k) => [k, home.headers.get(k)]));
   }
