@@ -2,6 +2,7 @@
 # 毎朝6時（日本時間）に content/topics を確認し、今日が公開日の記事があれば
 # 公開用のコミットを main に入れて Cloudflare Pages のビルドを起動する。
 # 公開日の記事がない日は何もしない（コミットも作らない）。
+# Automation Hub（台帳 scheduled-publish）：最初に一時停止を確認し（停止中は何もしない）、最後に結果を記録する。Secrets の HUB_TOKEN がなければ Hub は使わない。
 name: 予約投稿の公開
 
 on:
@@ -24,8 +25,19 @@ jobs:
         with:
           ref: main
 
+      - name: Automation Hub：一時停止の確認
+        id: hub
+        env:
+          HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+        run: |
+          if [ -z "$HUB_TOKEN" ] || ! git clone -q --depth 1 "https://x-access-token:${HUB_TOKEN}@github.com/ibato-byte/automation-hub.git" "$RUNNER_TEMP/hub"; then
+            echo "paused=false" >> "$GITHUB_OUTPUT"; echo "Automation Hub を使わずに続ける"; exit 0
+          fi
+          bash "$RUNNER_TEMP/hub/scripts/gha.sh" check scheduled-publish
+
       - name: 今日が公開日の記事を探す
         id: find
+        if: steps.hub.outputs.paused != 'true'
         run: |
           today=$(TZ=Asia/Tokyo date +%Y-%m-%d)
           echo "today=$today" >> "$GITHUB_OUTPUT"
@@ -41,7 +53,7 @@ jobs:
           if [ -n "$titles" ]; then echo "found=true" >> "$GITHUB_OUTPUT"; else echo "found=false" >> "$GITHUB_OUTPUT"; fi
 
       - name: 公開用のコミットを入れてビルドを起動
-        if: steps.find.outputs.found == 'true'
+        if: steps.find.outputs.found == 'true' && steps.hub.outputs.paused != 'true'
         env:
           TODAY: ${{ steps.find.outputs.today }}
           TITLES: ${{ steps.find.outputs.titles }}
@@ -52,7 +64,21 @@ jobs:
           git push origin main
 
       - name: 公開日の記事なし
-        if: steps.find.outputs.found != 'true'
+        if: steps.find.outputs.found != 'true' && steps.hub.outputs.paused != 'true'
         env:
           TODAY: ${{ steps.find.outputs.today }}
         run: echo "${TODAY} が公開日の記事はありません。"
+
+      - name: Automation Hub に記録
+        if: always()
+        env:
+          HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          PAUSED: ${{ steps.hub.outputs.paused }}
+          TODAY: ${{ steps.find.outputs.today }}
+          TITLES: ${{ steps.find.outputs.titles }}
+        run: |
+          [ -d "$RUNNER_TEMP/hub" ] || exit 0
+          if [ -n "$TITLES" ]; then summary="${TODAY}：公開日の記事を公開（${TITLES}）。本番のビルドを起動"; published=1; else summary="${TODAY}：公開日の記事なし（何もしない日）"; published=0; fi
+          bash "$RUNNER_TEMP/hub/scripts/gha.sh" report scheduled-publish "$JOB_STATUS" "$PAUSED" "$summary" \
+            --next-run-at "$(bash "$RUNNER_TEMP/hub/scripts/gha.sh" next-daily 21:00)" --kpi "今日公開した記事=${published}"

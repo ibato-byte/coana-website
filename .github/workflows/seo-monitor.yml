@@ -4,7 +4,7 @@
 # - 毎週月曜 5:37（日本時間）：上に加えて外部リンクの生存確認、表示速度（Lighthouse・PageSpeed Insights）を測り、
 #   「seo-data」の Issue に JSON で残す。月曜 8:54 の週次タスク（Claude）がそれを読んで修正・提案・レポートを行う。
 # 自動修正はしない（週次タスクが担当）。手順と線引きは docs/SEO_PLAYBOOK.md。
-# 最後に Automation Hub（ibato-byte/automation-hub の台帳 seo-monitor）へ結果を記録する。Secrets の HUB_TOKEN がなければ何もしない。
+# Automation Hub（ibato-byte/automation-hub の台帳 seo-monitor）：最初に一時停止を確認し（停止中は点検しない）、最後に結果を記録する。Secrets の HUB_TOKEN がなければ Hub は使わない。
 # 無料枠内：1回あたり数分（週次は Lighthouse を含めて 15 分程度）。PageSpeed Insights は無料の API キーを
 # リポジトリの Secrets（PSI_API_KEY）に入れると安定する（なくても動く。取れない週は Lighthouse の値だけ）。
 name: SEO の監視
@@ -46,7 +46,18 @@ jobs:
         with:
           node-version: 22
 
+      - name: Automation Hub：一時停止の確認
+        id: hub
+        env:
+          HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+        run: |
+          if [ -z "$HUB_TOKEN" ] || ! git clone -q --depth 1 "https://x-access-token:${HUB_TOKEN}@github.com/ibato-byte/automation-hub.git" "$RUNNER_TEMP/hub"; then
+            echo "paused=false" >> "$GITHUB_OUTPUT"; echo "Automation Hub を使わずに続ける"; exit 0
+          fi
+          bash "$RUNNER_TEMP/hub/scripts/gha.sh" check seo-monitor
+
       - name: ラベルを用意（初回のみ作成）
+        if: steps.hub.outputs.paused != 'true'
         run: |
           gh label create seo-alert --color d73a4a --description "SEO の監視で本番に異常（自動）" 2>/dev/null || true
           gh label create seo-data --color 0e8a16 --description "SEO の週次データ（自動）。閉じない" 2>/dev/null || true
@@ -54,13 +65,14 @@ jobs:
           gh label create seo-auto --color 1d76db --description "SEO 週次タスクの技術面の自動修正" 2>/dev/null || true
 
       - name: 本番の点検
+        if: steps.hub.outputs.paused != 'true'
         run: |
           extra=""
           if [ "$MODE" = "weekly" ]; then extra="--external"; fi
           node tools/seo/check-site.mjs --base https://coana.co.jp --prod $extra --out prod.json || true
 
       - name: 表示速度（週次のみ）
-        if: env.MODE == 'weekly'
+        if: env.MODE == 'weekly' && steps.hub.outputs.paused != 'true'
         env:
           PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
         run: |
@@ -68,6 +80,7 @@ jobs:
           node tools/seo/perf.mjs --base https://coana.co.jp --out perf.json || true
 
       - name: Issue に記録
+        if: steps.hub.outputs.paused != 'true'
         run: |
           if [ "$MODE" = "weekly" ]; then
             node tools/seo/notify.mjs --prod prod.json --perf perf.json --weekly
@@ -80,10 +93,13 @@ jobs:
         env:
           HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
           JOB_STATUS: ${{ job.status }}
+          PAUSED: ${{ steps.hub.outputs.paused }}
         run: |
-          if [ -z "$HUB_TOKEN" ]; then echo "HUB_TOKEN がないので Automation Hub への記録はしない"; exit 0; fi
-          git clone -q --depth 1 "https://x-access-token:${HUB_TOKEN}@github.com/ibato-byte/automation-hub.git" "$RUNNER_TEMP/hub" \
-            || { echo "automation-hub を取得できない（記録はしない。監視の結果には影響しない）"; exit 0; }
+          [ -d "$RUNNER_TEMP/hub" ] || { echo "Automation Hub を使わない（HUB_TOKEN がない、または取得できない）"; exit 0; }
+          if [ "$PAUSED" = "true" ]; then
+            bash "$RUNNER_TEMP/hub/scripts/gha.sh" report seo-monitor "$JOB_STATUS" true "" --next-run-at "$(bash "$RUNNER_TEMP/hub/scripts/gha.sh" next-daily 21:17)"
+            exit 0
+          fi
           node tools/seo/hub-report.mjs --prod prod.json --mode "$MODE" --job-status "$JOB_STATUS" --hub "$RUNNER_TEMP/hub"
 
       - name: 結果を保存（30日）

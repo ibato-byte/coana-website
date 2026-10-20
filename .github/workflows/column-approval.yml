@@ -3,6 +3,7 @@
 # PR に「記事を読む」「公開する」「見送る」のリンク付きコメントを付ける。PR の作成者（オーナー）には
 # GitHub から通知メールが届く（ibato@coana.co.jp）。ボタンの先は https://coana.co.jp/column-approval（functions/column-approval.ts）。
 # 公開ボタンの署名には Secrets の COLUMN_APPROVAL_SECRET を使う（Cloudflare 側にも同じ値）。手順は docs/SEO_PLAYBOOK.md。
+# Automation Hub（台帳 column-publish）：一時停止中は確認メールを送らない。最後に結果を記録する（HUB_TOKEN がなければ Hub は使わない）。
 name: コラムの公開確認
 
 on:
@@ -37,9 +38,29 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Automation Hub：一時停止の確認
+        id: hub
+        env:
+          HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+        run: |
+          if [ -z "$HUB_TOKEN" ] || ! git clone -q --depth 1 "https://x-access-token:${HUB_TOKEN}@github.com/ibato-byte/automation-hub.git" "$RUNNER_TEMP/hub"; then
+            echo "paused=false" >> "$GITHUB_OUTPUT"; echo "Automation Hub を使わずに続ける"; exit 0
+          fi
+          bash "$RUNNER_TEMP/hub/scripts/gha.sh" check column-publish
       - name: 確認コメント（メール）を送る
+        if: steps.hub.outputs.paused != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           COLUMN_APPROVAL_SECRET: ${{ secrets.COLUMN_APPROVAL_SECRET }}
           SELF_JOB: approval-mail
         run: node tools/column/approval-comment.mjs --pr ${{ github.event.pull_request.number || inputs.pr }}
+      - name: Automation Hub に記録
+        if: always()
+        env:
+          HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          PAUSED: ${{ steps.hub.outputs.paused }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+        run: |
+          [ -d "$RUNNER_TEMP/hub" ] || exit 0
+          bash "$RUNNER_TEMP/hub/scripts/gha.sh" report column-publish "$JOB_STATUS" "$PAUSED" "PR #${PR}：コラムの公開確認メール（公開・見送るボタン付き）を処理" --next-run-at none
