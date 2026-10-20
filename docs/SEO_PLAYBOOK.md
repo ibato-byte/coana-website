@@ -132,6 +132,7 @@ Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌�
 
 1. **週次タスクが書く**（毎週1本。2026-10-20 オーナー決定、それまでは2週に1本）：[seo-content-plan.md](seo-content-plan.md) の「記録」で最後に作った日から **7日以上** たち、「コラム公開待ち」の PR が開いていなければ、テーマ一覧から1つ選んで書く。書き方は [column-guide.md](column-guide.md) と既存のコラムと同じ型（導入・結論・本文・図解2〜4点・チェックリスト・よくある失敗・まとめ・CTA・著者欄）。
    - ファイル：`content/topics/<作成日YYYYMMDD>-<slug>.md`、`date` は作成日（日本時間）。PR がマージされた時点で表示される。
+   - つなぐサービス：記事の末尾に「この記事に関連するサービス」の案内が出て、記事からお問い合わせへ進むとフォームの「ご相談内容の種別」がそのサービスに選ばれる。決め方は、front matter の `service: <LP の slug>`（CMS の「つなぐサービス」）、空なら本文の締めくくり（サービスLPへのリンクがある最後の見出しの節）で最初に案内しているLP。CTA の節では、いちばんつなぎたいLPを最初に書く（迷う記事は `service` を書く。出したくない記事は `service: none`）。
    - 図解：`public/images/topics/<slug>/*.svg`（column-guide.md「4. 図解の作り方」）。PNG に描画して、はみ出し・重なりを目で確かめる。
    - 見出し画像：`node tools/column/thumbnail.mjs --file <記事> --line1 … --line2 … --sub …`（既存と同じ型の 1200×675）。
    - 構造化データ（Article）・sitemap・feed・llms.txt・チャットの知識は、ビルド時に記事から自動で作られる（追加の作業なし）。

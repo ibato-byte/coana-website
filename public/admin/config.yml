@@ -44,6 +44,22 @@ collections:
       - { label: カテゴリー, name: category, widget: select, options: [お知らせ, サービス, イベント, 実績・事例], default: お知らせ }
       - { label: 概要（SNS共有・検索結果の説明文に使用）, name: summary, widget: text, required: false }
       - { label: アイキャッチ画像, name: thumbnail, widget: image, required: false, hint: "記事一覧・記事ページ・SNS共有時に表示されます。横長（16:9）がおすすめです。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
+      - label: つなぐサービス
+        name: service
+        widget: select
+        required: false
+        hint: "記事の末尾に出す「この記事に関連するサービス」と、この記事からお問い合わせへ進んだときに選んでおく「ご相談内容の種別」です。空欄なら、本文の締めくくり（最後の見出しの節）で最初に案内しているサービスのページを自動で使います。お知らせなどで出したくないときは「出さない」を選びます。"
+        options:
+          - { label: 経理代行・経理業務の改善, value: bookkeeping }
+          - { label: クラウド会計・ITツール導入支援, value: cloud-accounting }
+          - { label: バックオフィス代行・DX支援, value: backoffice-dx }
+          - { label: 創業支援, value: startup-support }
+          - { label: 営業・販路開拓支援, value: sales-support }
+          - { label: セミナー・イベント開催支援, value: seminar-event }
+          - { label: SNS運用支援・運用代行, value: sns-management }
+          - { label: Webサイト制作, value: web-production }
+          - { label: Startup Support (English), value: startup-support-en }
+          - { label: 出さない, value: none }
       - { label: 下書き（チェックすると非公開）, name: draft, widget: boolean, default: false, required: false }
       - { label: 本文, name: body, widget: markdown }
 
