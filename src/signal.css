@@ -850,3 +850,11 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .sky-hero-pin.is-pin .sky-card-text { font-size: 14px; line-height: 1.75; }
 .sky-hero-pin.is-pin .sky-card-links a.go-link { padding-top: 8px; }
 .sky-hero-pin.is-pin .sky-hero-top { padding-bottom: 12px; }
+/* ピン留めが終わるとき、斜めの帯（右側ほど高い）がボタンに重ならないよう、下の余白をとる */
+.sky-hero-pin.is-pin > .sky-hero { padding-bottom: 60px; }
+.sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 440px) / 3.15)); }
+.sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 440px) / 34)); }
+
+/* ヒーローと斜めの帯のあいだ（左側）に白いすき間が出ないよう、帯の上側をヒーローの色で埋める */
+.sky-tape-wrap::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: calc(22px + 2.8vw); background: linear-gradient(90deg, #4aa5e8 0%, #2389da 40%, #1580d6 100%); clip-path: polygon(0 0, 100% 0, 100% 18px, 0 100%); pointer-events: none; }
+.sky-tape { position: relative; }
