@@ -262,6 +262,132 @@ function Problems({ sol }: { sol: Solution }) {
   );
 }
 
+/* ───────────────────────── 新デザイン（Signal Sky）のLP専用パーツ ───────────────────────── */
+
+/** 導入前／導入後の切り替え。画面に入って少し読んだら（約1.6秒）自動で「導入後」へ切り替わる（ページに入るたびに同じ）。
+ *  スイッチでいつでも見比べられる。導入後は、左の取引（銀行・カードなど）からクラウド会計へ線がつながり、右の税理士とも共有される。
+ *  動かすのは opacity・transform と線の描画だけ。「動きを減らす」設定では最初から導入後を表示（スイッチは使える） */
+function BeforeAfter({ sol }: { sol: Solution }) {
+  const ba = sol.before_after;
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [after, setAfter] = useState(false);
+  const touched = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { setAfter(true); return; }
+    let timer = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      timer = window.setTimeout(() => { if (!touched.current) setAfter(true); }, 1600);
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => { io.disconnect(); window.clearTimeout(timer); };
+  }, []);
+  if (!ba || !(ba.items ?? []).length) return null;
+  const sources = (ba.sources ?? []).slice(0, 4);
+  const ys = sources.map((_, i) => ((i + 0.5) / Math.max(1, sources.length)) * 100);
+  const toggle = () => { touched.current = true; setAfter((a) => !a); };
+  return (
+    <section className="section lp-ba-section">
+      <div className="container">
+        <div data-reveal>
+        <div className={after ? "lp-ba is-after" : "lp-ba"} ref={ref}>
+          <div className="lp-ba-copy">
+            <span className="eyebrow" lang="en">Before / After</span>
+            <h2><Lines text={ba.title || "導入すると、\nこう変わる。"} /></h2>
+            {ba.lead && <p>{ba.lead}</p>}
+            <div className="lp-ba-switch">
+              <span className={after ? undefined : "on"} aria-hidden="true">導入前</span>
+              <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label="導入後の状態を表示する" onClick={toggle} />
+              <span className={after ? "on" : undefined} aria-hidden="true">導入後</span>
+            </div>
+          </div>
+          <div className="lp-ba-board" aria-live="polite">
+            {sources.length > 0 && (
+              <div className="lp-ba-map">
+                <svg className="lp-ba-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  {ys.map((y, i) => (
+                    <path key={i} className="lp-ba-line" style={{ ["--i" as string]: i }} d={`M34 ${y}C38 ${y} 37 50 41 50`} pathLength={1} vectorEffect="non-scaling-stroke" />
+                  ))}
+                  {ba.partner && <path className="lp-ba-line is-share" style={{ ["--i" as string]: sources.length }} d="M63 50H71" pathLength={1} vectorEffect="non-scaling-stroke" />}
+                </svg>
+                <ul className="lp-ba-sources">
+                  {sources.map((s) => <li key={s}>{s}</li>)}
+                </ul>
+                <div className="lp-ba-center">
+                  <span className="lp-ba-center-before">{ba.center_before || "手作業"}</span>
+                  <span className="lp-ba-center-after"><Icon name="check" size={14} />{ba.center_after || "自動化"}</span>
+                </div>
+                {ba.partner && <div className="lp-ba-partner">{ba.partner}</div>}
+              </div>
+            )}
+            <ul className="lp-ba-grid">
+              {(ba.items ?? []).map((it, i) => (
+                <li key={it.label} style={{ ["--i" as string]: i }}>
+                  <p className="lp-ba-head"><span>{it.label}</span><b className="lp-ba-status"><span className="b">{it.before_status || "要対応"}</span><span className="a">{it.after_status || "完了"}</span></b></p>
+                  <p className="lp-ba-val"><span className="b">{it.before}</span><span className="a">{it.after}</span></p>
+                </li>
+              ))}
+            </ul>
+            {ba.note && <p className="lp-ba-note">{ba.note}</p>}
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** お悩み（新デザイン）：大きな番号つきのタイル。最後に「仕組みから解決」へつなぐ */
+function SignalProblems({ sol }: { sol: Solution }) {
+  const L = LABELS[langOf(sol)];
+  if (!sol.problems.length) return null;
+  return (
+    <section id="lp-problems" className="section lp-problems lp-sig-problems">
+      <div className="container">
+        <SectionTitle en="Problems">{sol.problems_title || L.problems}</SectionTitle>
+        <ol className="lp-sig-problem-grid">
+          {sol.problems.map((p, i) => (
+            <li key={p} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+              <span className="lp-sig-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="lp-sig-bridge" data-reveal>{L.bridge[0]}<strong>{L.bridge[1]}</strong>{L.bridge[2]}</p>
+      </div>
+    </section>
+  );
+}
+
+/** ご利用イメージ（新デザイン）：Before → After を1枚のカードで */
+function SignalScenarios({ sol }: { sol: Solution }) {
+  const L = LABELS[langOf(sol)];
+  const sc = sol.scenarios;
+  if (!sc || !(sc.items ?? []).length) return null;
+  return (
+    <section className="section lp-scenarios lp-sig-scenarios">
+      <div className="container">
+        <SectionTitle en="Use cases" lead={sc.lead}>{sc.title || L.scenarios}</SectionTitle>
+        <div className="lp-sig-scenario-grid">
+          {(sc.items ?? []).map((it) => (
+            <article key={it.name} className="lp-sig-scenario" data-reveal>
+              {it.tag && <span className="lp-sig-tag">{it.tag}</span>}
+              <h3>{it.name}</h3>
+              {it.before && <p className="lp-sig-before"><b>{L.before}</b>{it.before}</p>}
+              <p className="lp-sig-after"><b>{L.after}</b>{it.text}</p>
+            </article>
+          ))}
+        </div>
+        {sc.note && <p className="lp-note">{sc.note}</p>}
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── 3. 仕組みの図解 ───────────────────────── */
 
 /** 中心円型：線が中心から周りへ広がり（一度だけ）、その後は線の上を光の粒がゆっくり流れる（PC・画面内のときだけ）。
@@ -881,13 +1007,15 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
     .map((r) => articles.find((a) => a.slug === r))
     .filter((a): a is Article => Boolean(a));
   const others = solutions.filter((s) => s.slug !== sol.slug && !s.hidden);
+  // 新デザイン（Signal Sky）で組み直したLP（CMS の「ページのデザイン」= signal）
+  const signal = sol.design === "signal";
   return (
-    <main className={`solution-page lp lp-lang-${langOf(sol)}`}>
+    <main className={`solution-page lp lp-lang-${langOf(sol)}${signal ? " lp-signal" : ""}`}>
       <Hero sol={sol} navigate={navigate} />
-      <Problems sol={sol} />
+      {signal ? <><BeforeAfter sol={sol} /><SignalProblems sol={sol} /></> : <Problems sol={sol} />}
       <Scheme sol={sol} navigate={navigate} />
       <Support sol={sol} />
-      <Scenarios sol={sol} />
+      {signal ? <SignalScenarios sol={sol} /> : <Scenarios sol={sol} />}
       <Flow sol={sol} />
       {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || L.faq} />}
       <CtaBand sol={sol} navigate={navigate} />
