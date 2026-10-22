@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { home, settings, type Article } from "./content";
 import { ARROW_PATHS } from "./bird";
 import { useFlowJourney } from "./flowJourney";
@@ -355,11 +355,35 @@ export function LineButton({ place, label = "LINEで気軽に相談する", tabI
 }
 
 export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: boolean }) {
+  // 大きな「相談する。」は、帯が画面を通り過ぎる間にゆっくり右から左へ流れる（デザイン案どおり。2026-10-23 オーナー決定の、スクロール連動の例外）。
+  // 帯が画面に入っている間だけ計算し、動かすのは transform だけ。「動きを減らす」設定では動かさない
+  const bigRef = useRef<HTMLParagraphElement | null>(null);
+  useEffect(() => {
+    const el = bigRef.current;
+    const band = el?.closest("section");
+    if (!el || !band || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let on = false;
+    const update = () => {
+      raf = 0;
+      const r = band.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      el.style.transform = `translate3d(${(10 - 24 * p).toFixed(2)}%, 0, 0)`;
+    };
+    const onScroll = () => { if (on && !raf) raf = requestAnimationFrame(update); };
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) onScroll(); });
+    io.observe(band);
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+  }, [big]);
   return (
     <section className={big ? "contact-band is-big" : "contact-band"} data-live>
       <Feathers count={14} />
       <div className="container contact-band-inner" data-reveal>
-        {big && <p className="contact-band-big" aria-hidden="true">相談する。</p>}
+        {big && <p className="contact-band-big" aria-hidden="true" ref={bigRef}>相談する。</p>}
         <div className="contact-band-grid">
           <div>
             <span className="eyebrow" lang="en">Contact</span>
@@ -384,6 +408,7 @@ export function PageHero({ en, title, intro, image, imagePosition }: { en: strin
       style={image ? { backgroundImage: `url("${image}")`, ...(imagePosition ? { backgroundPosition: imagePosition } : {}) } : undefined}
     >
       <div className="container">
+        <nav className="sky-crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a><span aria-hidden="true">/</span><span>{title}</span></nav>
         <p className="page-hero-en" lang="en">{en}</p>
         <h1>{title}</h1>
         {intro && <div className="page-intro">{intro}</div>}

@@ -74,28 +74,24 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     ["about", "会社概要", "About"],
     ["topics", "トピックス", "Topics"],
   ];
-  // PC のナビ（デザイン案どおり）：サービス／診断／進め方／会社概要／トピックス。診断・進め方はトップの各セクションへ
+  // PC のナビ（全ページ共通）：サービス／会社概要／トピックス＋相談する（オーナー指示：診断・進め方は入れない）。英語ページへのリンクはヘッダーに置かない（オーナー指示：英語表記は英語版の創業支援だけ）
   const navItems: [Page, string, string | undefined][] = [
     ["services", "サービス", undefined],
-    ["home", "診断", "finder"],
-    ["home", "進め方", "style"],
     ["about", "会社概要", undefined],
     ["topics", "トピックス", undefined],
   ];
-  // 下層ページのナビ（案どおり）：サービス／会社概要／トピックス／English
-  const subNavItems: [Page, string, string | undefined][] = navItems.filter(([, , hash]) => !hash);
+
   const go = (target: Page) => {
     setOpen(false);
     navigate(target);
   };
-  const en = solutions.find((sol) => sol.lang === "en");
   return (
     // ヘッダー・フッターは日本語。英語ページ（<html lang="en">）でも言語を正しく伝えるため lang="ja" を明示する
     <header lang="ja" className={scrolled ? "site-header is-scrolled" : "site-header"}>
       <div className="header-inner">
         <Logo navigate={navigate} />
         <nav className="desktop-nav" aria-label="メインナビゲーション">
-          {(page === "home" ? navItems : subNavItems).map(([target, label, hash]) => (
+          {navItems.map(([target, label, hash]) => (
             <GoLink
               key={label}
               className={!hash && (page === target || (page === "article" && target === "topics") || (page === "solution" && target === "services")) ? "nav-link active" : "nav-link"}
@@ -105,7 +101,6 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
               {label}
             </GoLink>
           ))}
-          {page !== "home" && en && <GoLink className="nav-link" go={navigate} args={["solution", undefined, en.slug]}><span lang="en">English</span></GoLink>}
           <GoLink className="button button-small button-fly" go={go} args={["contact"]}>
             相談する
             <BirdArrow size={17} />
@@ -123,16 +118,11 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
       </div>
       {open && (
         <nav className="mobile-nav" id="mobile-nav" aria-label="モバイルナビゲーション">
-          {([["home", "ホーム", "Top"], links[0], ["home", "1分診断", "Finder", "finder"], links[1], links[2]] as [Page, string, string, string?][]).map(([target, label, en2, hash], i) => (
+          {([["home", "ホーム", "Top"], ...links] as [Page, string, string, string?][]).map(([target, label, en2, hash], i) => (
             <GoLink key={label} style={{ animationDelay: `${i * 0.05}s` }} go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}>
               <span>{label}</span><small lang="en">{en2}</small>
             </GoLink>
           ))}
-          {en && (
-            <GoLink style={{ animationDelay: "0.2s" }} go={(...a) => { setOpen(false); navigate(...a); }} args={["solution", undefined, en.slug]}>
-              <span lang="en">English</span><small lang="en">Startup support</small>
-            </GoLink>
-          )}
           <GoLink className="mobile-nav-cta" style={{ animationDelay: "0.25s" }} go={go} args={["contact"]}>
             <span>無料で相談する</span>
           </GoLink>
@@ -942,6 +932,7 @@ function Contact() {
         <PageHero en="Contact" title="入力内容の確認" intro="以下の内容でよろしければ「送信する」を押してください。" />
         <section className="section form-section">
           <div className="container form-wrap">
+            <FormSteps current={1} />
             <dl className="confirm-list">
               <div><dt>会社名</dt><dd>{data.company || "未入力"}</dd></div>
               <div><dt>お名前</dt><dd>{data.name}</dd></div>
@@ -965,7 +956,8 @@ function Contact() {
     <main>
       <PageHero en="Contact" title="お問い合わせ" intro={settings.contact_intro} />
       <section className="section form-section">
-        <form className="container form-wrap" name="contact" onSubmit={submit} noValidate>
+        <div className="container contact-layout">
+        <aside className="contact-side" aria-label="フォーム以外のご相談方法">
           {lineUrl && (
             <div className="line-notice">
               <p>LINE公式アカウントからも、ご相談・お問い合わせいただけます。</p>
@@ -985,6 +977,14 @@ function Contact() {
               <span className="tel-number__digits">050-5367-5192</span>
             </a>
           </div>
+          <div className="line-notice chat-notice">
+            <p>まずはチャットで<small>サービスの違いや進め方など、気軽に質問できます。</small></p>
+            <button type="button" className="button button-outline button-small" onClick={() => openChat("menu")}>チャットで質問する</button>
+          </div>
+          <p className="form-lang-note">English inquiries are welcome. Please write your message in English and we will reply in English.</p>
+        </aside>
+        <form className="form-wrap contact-form-card" name="contact" onSubmit={submit} noValidate>
+          <FormSteps current={0} />
           <p className="form-note"><span>必須</span>の項目は必ずご入力ください。</p>
           <Field label="会社名" optional error={errors.company}>
             <input value={data.company} onChange={(e) => update("company", e.target.value)} placeholder="例）COANA TOKYO合同会社" />
@@ -1030,12 +1030,23 @@ function Contact() {
             <input type="checkbox" checked={data.consent} onChange={(e) => update("consent", e.target.checked)} />
             <span><a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意する <b>必須</b></span>
           </label>
-          <p className="form-lang-note">English inquiries are welcome. Please write your message in English and we will reply in English.</p>
           {errors.consent && <p className="field-error consent-error">{errors.consent}</p>}
           <div className="center-button"><button className="button button-large" type="submit">入力内容を確認する <Icon name="arrow" size={19} /></button></div>
         </form>
+        </div>
       </section>
     </main>
+  );
+}
+
+/** お問い合わせフォームの進み具合（01 入力 → 02 確認 → 03 完了。デザイン案どおり） */
+function FormSteps({ current }: { current: number }) {
+  return (
+    <ol className="form-steps" aria-label="お問い合わせの手順">
+      {["入力", "確認", "完了"].map((label, i) => (
+        <li key={label} className={i <= current ? "is-on" : undefined} aria-current={i === current ? "step" : undefined}><span lang="en">0{i + 1}</span>{label}</li>
+      ))}
+    </ol>
   );
 }
 

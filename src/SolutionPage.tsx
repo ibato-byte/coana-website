@@ -188,6 +188,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
     <section className="lp-hero">
       <div className="container lp-hero-inner">
         <div className="lp-hero-head">
+          <nav className="sky-crumbs" aria-label="パンくずリスト"><GoLink go={navigate} args={["home"]}>ホーム</GoLink><span aria-hidden="true">/</span><GoLink go={navigate} args={["services"]}>サービス</GoLink><span aria-hidden="true">/</span><span>{sol.nav_label}</span></nav>
           <p className="lp-hero-kicker">
             <span className="lp-hero-en">{sol.en || "Service"}</span>
             <span className="lp-hero-label">{sol.nav_label}</span>
