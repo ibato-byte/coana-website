@@ -347,6 +347,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         </div>
         <div className="button-row">
           <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
+          <button type="button" className="button button-outline" onClick={() => openChat("diagnosis")}>1分で診断</button>
         </div>
       </div>
     </section>
