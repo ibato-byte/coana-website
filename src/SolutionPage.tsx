@@ -306,16 +306,24 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             </div>
           </div>
           <div className="lp-ba-board" aria-live="polite">
+            {/* 背景の大きな文字（BEFORE → AFTER）と、切り替えの瞬間に左から右へ走る光 */}
+            <span className="lp-ba-word" aria-hidden="true"><span className="b">BEFORE</span><span className="a">AFTER</span></span>
+            <span className="lp-ba-sweep" key={after ? "a" : "b"} aria-hidden="true" />
             {sources.length > 0 && (
-              <div className="lp-ba-map">
+              <div className="lp-ba-map" data-live>
                 <svg className="lp-ba-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                   {ys.map((y, i) => (
                     <path key={i} className="lp-ba-line" style={{ ["--i" as string]: i }} d={`M34 ${y}C38 ${y} 37 50 41 50`} pathLength={1} vectorEffect="non-scaling-stroke" />
                   ))}
                   {ba.partner && <path className="lp-ba-line is-share" style={{ ["--i" as string]: sources.length }} d="M63 50H71" pathLength={1} vectorEffect="non-scaling-stroke" />}
+                  {/* 導入後：線の上をデータの粒が流れ続ける（画面内のときだけ） */}
+                  {ys.map((y, i) => (
+                    <path key={"p" + i} className="lp-ba-packet" style={{ ["--i" as string]: i }} d={`M34 ${y}C38 ${y} 37 50 41 50`} pathLength={1} vectorEffect="non-scaling-stroke" />
+                  ))}
+                  {ba.partner && <path className="lp-ba-packet is-share" style={{ ["--i" as string]: sources.length }} d="M63 50H71" pathLength={1} vectorEffect="non-scaling-stroke" />}
                 </svg>
                 <ul className="lp-ba-sources">
-                  {sources.map((s) => <li key={s}>{s}</li>)}
+                  {sources.map((s, i) => <li key={s} style={{ ["--i" as string]: i }}>{s}</li>)}
                 </ul>
                 <div className="lp-ba-center">
                   <span className="lp-ba-center-before">{ba.center_before || "手作業"}</span>

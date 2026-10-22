@@ -1002,3 +1002,59 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 @media (max-width: 360px) {
   .lp-ba-map { grid-template-columns: 33% 34% 28%; }
 }
+
+/* ── 導入前／導入後：より大胆な切り替え（2026-10-23 オーナー依頼「もう少し派手に」） ──
+ * 導入前：取引の札が散らかって小さく揺れ、中央は灰色、状態は赤。
+ * 切り替えの瞬間：左から右へ空色の光が走り、札が勢いよく整列（少し行き過ぎて戻る）、線が順につながり、中央がはじけて点灯、状態の札が回転して緑に。
+ * 導入後：線の上をデータの粒が流れ続ける（画面内だけ）。背景の大きな文字が BEFORE → AFTER に入れ替わる。
+ * 動かすのは transform・opacity・線の描画だけ。「動きを減らす」設定ではすべて止め、導入後の完成形を表示 */
+.lp-ba-board { position: relative; }
+.lp-ba-word { position: absolute; right: -6px; top: -28px; z-index: 0; display: grid; font: 900 clamp(56px, 7vw, 112px) / 1 var(--font-en); letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 2px var(--sky-s); pointer-events: none; }
+.lp-ba-word > span { grid-area: 1 / 1; text-align: right; transition: opacity .5s, transform .8s cubic-bezier(.22, 1, .36, 1); }
+.lp-ba-word .b { -webkit-text-stroke-color: #f6d6d3; }
+.lp-ba-word .a { opacity: 0; transform: translateY(30px); }
+.is-after .lp-ba-word .b { opacity: 0; transform: translateY(-30px); }
+.is-after .lp-ba-word .a { opacity: 1; transform: none; }
+.lp-ba-board > :not(.lp-ba-word):not(.lp-ba-sweep) { position: relative; z-index: 1; }
+.lp-ba-sweep { position: absolute; inset: -8px; z-index: 2; border-radius: 20px; pointer-events: none; opacity: 0; background: linear-gradient(100deg, transparent 0%, rgba(85, 184, 243, 0) 30%, rgba(85, 184, 243, .38) 48%, rgba(255, 255, 255, .6) 52%, rgba(85, 184, 243, 0) 70%, transparent 100%); background-size: 260% 100%; }
+.is-after .lp-ba-sweep { animation: lp-ba-sweep 1.1s cubic-bezier(.65, 0, .35, 1) both; }
+@keyframes lp-ba-sweep { 0% { opacity: 1; background-position: 110% 0; } 85% { opacity: 1; } 100% { opacity: 0; background-position: -60% 0; } }
+
+/* 札：導入前は散らかって揺れる → 導入後は整列 */
+.lp-ba-sources li { transition: transform .8s cubic-bezier(.34, 1.56, .64, 1) calc(var(--i) * .07s + .1s), border-color .5s, box-shadow .5s; }
+.lp-ba:not(.is-after) .lp-ba-sources li { border-style: dashed; color: var(--ink-2); }
+.lp-ba:not(.is-after) .lp-ba-sources li:nth-child(1) { transform: translate(-6px, -4px) rotate(-6deg); }
+.lp-ba:not(.is-after) .lp-ba-sources li:nth-child(2) { transform: translate(10px, 2px) rotate(4deg); }
+.lp-ba:not(.is-after) .lp-ba-sources li:nth-child(3) { transform: translate(-10px, 3px) rotate(-3deg); }
+.lp-ba:not(.is-after) .lp-ba-sources li:nth-child(4) { transform: translate(8px, 0) rotate(7deg); }
+.motion-ready .lp-ba:not(.is-after) .lp-ba-map.is-live .lp-ba-sources li { animation: lp-ba-jitter 1.8s ease-in-out calc(var(--i) * -.45s) infinite; }
+@keyframes lp-ba-jitter { 50% { translate: 0 -3px; rotate: 2deg; } }
+.is-after .lp-ba-sources li { transform: none; border-style: solid; box-shadow: 4px 4px 0 var(--sky-s); }
+/* 中央：はじけて点灯＋輪が広がる */
+.lp-ba-center::after { content: ""; position: absolute; inset: -2px; border-radius: 16px; border: 2px solid var(--sky-d); opacity: 0; pointer-events: none; }
+.is-after .lp-ba-center { animation: lp-ba-pop .7s cubic-bezier(.34, 1.56, .64, 1) .55s both; }
+.is-after .lp-ba-center::after { animation: lp-ba-ring 1.1s ease-out .75s both; }
+@keyframes lp-ba-pop { 0% { transform: scale(.92); } 60% { transform: scale(1.07); } 100% { transform: scale(1); } }
+@keyframes lp-ba-ring { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(1.35); } }
+/* データの粒（導入後・画面内だけ流れる） */
+.lp-ba-packet { fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; stroke-dasharray: .001 .999; stroke-dashoffset: 1; opacity: 0; }
+.is-after .lp-ba-packet { opacity: 1; filter: drop-shadow(0 0 2px var(--sky-d)); animation: lp-ba-flow 1.8s linear calc(1.4s + var(--i) * .35s) infinite; animation-play-state: paused; }
+.is-after .lp-ba-map.is-live .lp-ba-packet { animation-play-state: running; }
+.lp-ba-packet { stroke: var(--sky-d); }
+@keyframes lp-ba-flow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+/* 状態の札：回転して入れ替わる */
+.is-after .lp-ba-status { animation: lp-ba-flip .6s cubic-bezier(.22, 1, .36, 1) calc(var(--i) * .1s + .4s) both; }
+@keyframes lp-ba-flip { 0% { transform: rotateX(0); } 50% { transform: rotateX(90deg); } 100% { transform: rotateX(0); } }
+/* 項目カード：順に少し浮き上がる */
+.is-after .lp-ba-grid li { animation: lp-ba-lift .7s cubic-bezier(.22, 1, .36, 1) calc(var(--i) * .1s + .3s) both; }
+@keyframes lp-ba-lift { 0% { transform: translateY(0); box-shadow: 0 0 0 transparent; } 45% { transform: translateY(-6px); box-shadow: 6px 10px 0 var(--sky-s); } 100% { transform: none; box-shadow: 4px 4px 0 var(--sky-s); } }
+.is-after .lp-ba-grid li { box-shadow: 4px 4px 0 var(--sky-s); }
+@media (max-width: 600px) {
+  .lp-ba-word { top: -18px; font-size: 48px; }
+  .lp-ba:not(.is-after) .lp-ba-sources li:nth-child(n) { transform: rotate(var(--r2, -3deg)); }
+  .lp-ba:not(.is-after) .lp-ba-sources li:nth-child(even) { --r2: 3deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-ba-sweep, .lp-ba-packet { display: none; }
+  .lp-ba *, .lp-ba *::after { animation: none !important; }
+}
