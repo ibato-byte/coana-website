@@ -9,7 +9,6 @@ import { Feathers } from "./feathers";
 // 診断の1問目（トップの「迷ったら」）。チャットのデータ全体ではなく diagnosis だけを読み込む
 import { diagnosis } from "../content/chat.json";
 import { ChatLauncher } from "./chat/ChatLauncher";
-import { HeroDove } from "./heroDove";
 
 declare global {
   interface Window {
@@ -75,6 +74,16 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     ["about", "会社概要", "About"],
     ["topics", "トピックス", "Topics"],
   ];
+  // PC のナビ（デザイン案どおり）：サービス／診断／進め方／会社概要／トピックス。診断・進め方はトップの各セクションへ
+  const navItems: [Page, string, string | undefined][] = [
+    ["services", "サービス", undefined],
+    ["home", "診断", "finder"],
+    ["home", "進め方", "style"],
+    ["about", "会社概要", undefined],
+    ["topics", "トピックス", undefined],
+  ];
+  // 下層ページのナビ（案どおり）：サービス／会社概要／トピックス／English
+  const subNavItems: [Page, string, string | undefined][] = navItems.filter(([, , hash]) => !hash);
   const go = (target: Page) => {
     setOpen(false);
     navigate(target);
@@ -86,19 +95,19 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
       <div className="header-inner">
         <Logo navigate={navigate} />
         <nav className="desktop-nav" aria-label="メインナビゲーション">
-          {links.map(([target, label]) => (
+          {(page === "home" ? navItems : subNavItems).map(([target, label, hash]) => (
             <GoLink
-              key={target}
-              className={page === target || (page === "article" && target === "topics") || (page === "solution" && target === "services") ? "nav-link active" : "nav-link"}
-              go={go} args={[target]}
-              aria-current={page === target ? "page" : undefined}
+              key={label}
+              className={!hash && (page === target || (page === "article" && target === "topics") || (page === "solution" && target === "services")) ? "nav-link active" : "nav-link"}
+              go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}
+              aria-current={!hash && page === target ? "page" : undefined}
             >
               {label}
             </GoLink>
           ))}
-          {en && <GoLink className="nav-link" go={navigate} args={["solution", undefined, en.slug]}><span lang="en">English</span></GoLink>}
+          {page !== "home" && en && <GoLink className="nav-link" go={navigate} args={["solution", undefined, en.slug]}><span lang="en">English</span></GoLink>}
           <GoLink className="button button-small button-fly" go={go} args={["contact"]}>
-            お問い合わせ
+            相談する
             <BirdArrow size={17} />
           </GoLink>
         </nav>
@@ -114,8 +123,8 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
       </div>
       {open && (
         <nav className="mobile-nav" id="mobile-nav" aria-label="モバイルナビゲーション">
-          {([["home", "ホーム", "Top"], ...links] as [Page, string, string][]).map(([target, label, en2], i) => (
-            <GoLink key={target} style={{ animationDelay: `${i * 0.05}s` }} go={go} args={[target]}>
+          {([["home", "ホーム", "Top"], links[0], ["home", "1分診断", "Finder", "finder"], links[1], links[2]] as [Page, string, string, string?][]).map(([target, label, en2, hash], i) => (
+            <GoLink key={label} style={{ animationDelay: `${i * 0.05}s` }} go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}>
               <span>{label}</span><small lang="en">{en2}</small>
             </GoLink>
           ))}
@@ -205,13 +214,19 @@ const VERB_FIRST_MS = 4200;
 
 function HeroSection({ navigate }: { navigate: Nav }) {
   const [reduce] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const [dove] = useState(() => !reduce);
   const [cur, setCur] = useState(0);
   const curRef = useRef(0);
   const [swap, setSwap] = useState(false);
   const [shown, setShown] = useState(0);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const heroRef = useRef<HTMLElement | null>(null);
+  const pinRef = useRef<HTMLDivElement | null>(null);
+  // PC（幅1101px以上・高さ700px以上）ではデザイン案どおり、ヒーローを画面に固定し、スクロール量で言葉とカードを切り替える
+  //（2026-10-23 オーナー決定。CLAUDE.md・docs/motion-rules.md の「ピン留め禁止」の例外）。それ以外の画面では自動で切り替える
+  const PIN_MQ = "(min-width: 1101px) and (min-height: 700px)";
+  const [pinMode, setPinMode] = useState(() => !reduce && window.matchMedia(PIN_MQ).matches);
+  const pinModeRef = useRef(pinMode);
+  const [pinning, setPinning] = useState(false);
   // ブラウザの「戻る・進む」でページが保存された状態のまま戻ったとき（別サイトから戻ったときなど）も、鳩を最初から
   const [replay, setReplay] = useState(0);
   useEffect(() => {
@@ -230,6 +245,46 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   };
   useEffect(() => {
     if (reduce) return;
+    const mq = window.matchMedia(PIN_MQ);
+    const onMq = () => { pinModeRef.current = mq.matches; setPinMode(mq.matches); };
+    mq.addEventListener("change", onMq);
+    return () => mq.removeEventListener("change", onMq);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduce]);
+  // ピン留めの間：進み具合（0〜1）を3つに分けて、言葉とカードを切り替える。1度でもスクロールしたら、選ばれていない言葉は輪郭に
+  useEffect(() => {
+    if (!pinMode) { setPinning(false); return; }
+    const wrap = pinRef.current;
+    if (!wrap) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const top = wrap.getBoundingClientRect().top + window.scrollY;
+      const span = wrap.offsetHeight - window.innerHeight;
+      const p = span > 0 ? Math.min(1, Math.max(0, (window.scrollY - top) / span)) : 0;
+      setPinning(p > 0);
+      select(Math.min(2, Math.floor(p * 3)));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pinMode]);
+  /** 言葉を押したとき：ピン留め中はその言葉の位置までスクロール、それ以外はその場で切り替え */
+  const choose = (i: number) => {
+    const wrap = pinRef.current;
+    if (pinModeRef.current && wrap) {
+      const top = wrap.getBoundingClientRect().top + window.scrollY;
+      const span = wrap.offsetHeight - window.innerHeight;
+      window.scrollTo({ top: top + span * ((i + 0.5) / 3), behavior: "smooth" });
+      return;
+    }
+    select(i);
+  };
+  useEffect(() => {
+    if (reduce) return;
     const hero = heroRef.current;
     const card = cardRef.current;
     if (!hero || !card) return;
@@ -238,14 +293,12 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     let timer = 0;
     let started = false;
     const tick = () => {
-      if (visible && !document.hidden && Date.now() > readUntil) select((curRef.current + 1) % VERBS.length);
+      if (!pinModeRef.current && visible && !document.hidden && Date.now() > readUntil) select((curRef.current + 1) % VERBS.length);
       timer = window.setTimeout(tick, VERB_INTERVAL_MS);
     };
     const begin = (wait: number) => { if (started) return; started = true; timer = window.setTimeout(tick, wait); };
-    // 下線の鳩が飛び去ってから切り替え始める（どの入り方でも同じ順番）
-    const onDove = () => begin(2600);
-    window.addEventListener("coana:dove-done", onDove);
-    const fallback = window.setTimeout(() => begin(VERB_FIRST_MS), 2400);
+    // 見出しを読む時間をとってから切り替え始める（どの入り方でも同じ）
+    const fallback = window.setTimeout(() => begin(0), VERB_FIRST_MS + 1800);
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
     io.observe(hero);
     // 読んでいる間だけ止める（カードの上でカーソルを動かした・フォーカスした。約2.5秒で再開。readingPause.ts と同じ考え方）
@@ -254,20 +307,20 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     const onMove = (e: PointerEvent) => { if (Math.abs(e.clientX - last.x) + Math.abs(e.clientY - last.y) > 2) hold(); last = { x: e.clientX, y: e.clientY }; };
     card.addEventListener("pointermove", onMove);
     card.addEventListener("focusin", hold);
-    return () => { window.clearTimeout(timer); window.clearTimeout(fallback); window.removeEventListener("coana:dove-done", onDove); io.disconnect(); card.removeEventListener("pointermove", onMove); card.removeEventListener("focusin", hold); };
+    return () => { window.clearTimeout(timer); window.clearTimeout(fallback); io.disconnect(); card.removeEventListener("pointermove", onMove); card.removeEventListener("focusin", hold); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduce, replay]);
   const v = VERBS[shown];
   const nameOf = (slug: string) => solutions.find((s) => s.slug === slug)?.nav_label || slug;
   return (
-    <section className="hero sky-hero" ref={heroRef}>
+    <div className={pinMode ? "sky-hero-pin is-pin" : "sky-hero-pin"} ref={pinRef}>
+    <section className={pinning ? "hero sky-hero is-pinning" : "hero sky-hero"} ref={heroRef}>
       <Feathers />
       <div className="container sky-hero-top">
         <h1 className="sky-hero-title">
           <span className="hero-line">{home.hero_line1}、</span>
           <span className="hero-line">
-            {/* 下線は、ヒーローが表示されるたびに鳩が引いて飛び去る（heroDove.tsx）。動きを減らす設定では最初から引かれた状態 */}
-            <span key={replay} className={dove ? "title-underline is-dove" : "title-underline"}>{home.hero_line2}{dove && <HeroDove />}</span>。
+            {home.hero_line2}。
           </span>
         </h1>
         <p className="sky-kicker" lang="en">{home.hero_kicker}</p>
@@ -276,7 +329,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         <ul className="sky-verbs" aria-label="COANA TOKYOの支援">
           {VERBS.map((item, i) => (
             <li key={item.verb}>
-              <button type="button" className={i === cur ? "sky-verb is-on" : "sky-verb"} aria-pressed={i === cur} onClick={() => select(i)} onMouseEnter={() => !reduce && window.matchMedia("(hover: hover)").matches && select(i)}>
+              <button type="button" className={i === cur ? "sky-verb is-on" : "sky-verb"} aria-pressed={i === cur} onClick={() => choose(i)}>
                 <small lang="en">{item.no} {item.en}</small>{item.verb}。
               </button>
             </li>
@@ -297,16 +350,17 @@ function HeroSection({ navigate }: { navigate: Nav }) {
       <div className="container sky-hero-bottom">
         <div>
           <p className="hero-lead">{home.hero_lead}</p>
-          <ul className="hero-badges">
-            {home.hero_badges.map((b) => <li key={b}><Icon name="check" size={14} />{b}</li>)}
+          <ul className="sky-chk">
+            {home.hero_badges.map((b) => <li key={b}>{b}</li>)}
           </ul>
         </div>
         <div className="button-row">
           <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
-          <button type="button" className="button button-outline" onClick={() => openChat("diagnosis")}>約1分で診断する<Icon name="arrow" size={19} /></button>
+          <button type="button" className="button button-outline" onClick={() => openChat("diagnosis")}>1分で診断</button>
         </div>
       </div>
     </section>
+    </div>
   );
 }
 
@@ -365,13 +419,46 @@ function ServiceGroupHead({ n, data, level = 3 }: { n: string; data: { en: strin
   );
 }
 
+/** 一覧の行の上で、カーソルについてくる黄色い丸「詳しく見る」（PC・マウスのみ。「動きを減らす」設定とタッチ端末では出さない）。
+ *  行の上にいる間だけ追いかける（離れたら止める）。transform と位置だけを動かす */
+function FollowLabel({ areaRef }: { areaRef: { current: HTMLElement | null } }) {
+  const labelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const area = areaRef.current;
+    const el = labelRef.current;
+    if (!area || !el) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let x = 0, y = 0, cx = 0, cy = 0, raf = 0, on = false;
+    const loop = () => {
+      cx += (x - cx) * 0.18; cy += (y - cy) * 0.18;
+      el.style.left = `${cx}px`; el.style.top = `${cy}px`;
+      raf = on || Math.abs(x - cx) + Math.abs(y - cy) > 0.5 ? requestAnimationFrame(loop) : 0;
+    };
+    const onMove = (e: PointerEvent) => {
+      x = e.clientX; y = e.clientY;
+      const hit = !!(e.target as Element | null)?.closest?.(".svc-row a");
+      if (hit && !on) { if (!raf) { cx = x; cy = y; } }
+      on = hit;
+      el.classList.toggle("on", hit);
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+    const onLeave = () => { on = false; el.classList.remove("on"); };
+    area.addEventListener("pointermove", onMove);
+    area.addEventListener("pointerleave", onLeave);
+    window.addEventListener("scroll", onLeave, { passive: true });
+    return () => { cancelAnimationFrame(raf); area.removeEventListener("pointermove", onMove); area.removeEventListener("pointerleave", onLeave); window.removeEventListener("scroll", onLeave); };
+  }, [areaRef]);
+  return <div className="follow-label" ref={labelRef} aria-hidden="true">詳しく<br />見る</div>;
+}
+
 function ServicesHome({ navigate }: { navigate: Nav }) {
   const items = serviceGroups.flatMap(({ data }) => data.items as ServiceItem[]);
+  const rowsRef = useRef<HTMLUListElement | null>(null);
   return (
     <section className="section sky-section services-home" id="services">
       <div className="container">
         <NumHead n="01" title={home.services_title} side={<p>{home.services_lead}</p>} />
-        <ul className="svc-rows">
+        <ul className="svc-rows" ref={rowsRef}>
           {items.map((item, i) => {
             const linked = item.page && solutions.some((sol) => sol.slug === item.page);
             const inner = (
@@ -389,6 +476,7 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
             );
           })}
         </ul>
+        <FollowLabel areaRef={rowsRef} />
         <p className="svc-rows-more"><GoLink className="text-link" go={navigate} args={["services"]}>サービス一覧を見る<Icon name="arrow" size={18} /></GoLink></p>
       </div>
     </section>
@@ -469,8 +557,8 @@ function ToolBand() {
         <ul className="tool-pills">
           {home.tools.map((t) => (
             <li key={t.name} title={t.category}>
-              {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
-              {t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span>{t.name}</span>}
+              {/* デザイン案どおり、ツール名は文字で表示（CMS のロゴ画像は使わない） */}
+              <span>{t.name}</span>
             </li>
           ))}
         </ul>

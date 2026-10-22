@@ -357,7 +357,7 @@ export function LineButton({ place, label = "LINEで気軽に相談する", tabI
 export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: boolean }) {
   return (
     <section className={big ? "contact-band is-big" : "contact-band"} data-live>
-      <Feathers count={big ? 9 : 6} />
+      <Feathers count={14} />
       <div className="container contact-band-inner" data-reveal>
         {big && <p className="contact-band-big" aria-hidden="true">相談する。</p>}
         <div className="contact-band-grid">
@@ -367,9 +367,9 @@ export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: bo
             <p><Lines text={settings.contact_band.text} /></p>
           </div>
           <div className="contact-band-action">
-            <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
-            <LineButton place="contact_band" />
-            <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断<Icon name="chat" size={18} /></button>
+            <LinkButton go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
+            <LineButton place="contact_band" label="LINEで気軽に相談" />
+            <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断</button>
           </div>
         </div>
       </div>
@@ -396,13 +396,15 @@ export function PageHero({ en, title, intro, image, imagePosition }: { en: strin
 export const faqItems: { q: string; a: string }[] = home.faqs ?? [];
 
 export function FaqSection({ items = faqItems, title = home.faq_title, numbered }: { items?: { q: string; a: string }[]; title?: string; numbered?: string } = {}) {
-  const [openIndex, setOpenIndex] = useState(0); // 最初の質問だけ開いた状態。どれも閉じられる（-1）
+  const [openIndex, setOpenIndex] = useState(numbered ? -1 : 0); // トップ（番号つき）はすべて閉じた状態、ほかは最初の質問だけ開く。どれも閉じられる（-1）
   return (
     <section className={numbered ? "section faq-section is-numbered" : "section faq-section"}>
       <div className={numbered ? "container" : "container narrow"}>
         {numbered
-          ? <NumHead n={numbered} title={title} side={<p>ここにない質問は、<button type="button" className="text-button" onClick={() => openChat("menu")}>チャット</button>でいつでもどうぞ。</p>} />
+          ? <NumHead n={numbered} title={title} side={<p>ここにない質問は、チャットでいつでもどうぞ。</p>} />
           : <SectionTitle en="FAQ" center>{title}</SectionTitle>}
+        <div className={numbered ? "faq-columns" : undefined}>
+        {numbered && <div><button type="button" className="button button-outline button-small" onClick={() => openChat("menu")}>チャットで質問する</button></div>}
         <div className="faq-list">
           {items.map((item, i) => {
             const open = openIndex === i;
@@ -426,6 +428,7 @@ export function FaqSection({ items = faqItems, title = home.faq_title, numbered 
               </div>
             );
           })}
+        </div>
         </div>
       </div>
     </section>

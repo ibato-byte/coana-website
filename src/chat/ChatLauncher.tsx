@@ -30,6 +30,16 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [shown, setShown] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
+  // トップではヒーローのボタンに重ならないよう、ヒーローが見えている間は隠す（上に戻ったときも同じ）
+  const [heroTop, setHeroTop] = useState(false);
+  useEffect(() => {
+    if (page !== "home") { setHeroTop(false); return; }
+    // ヒーロー（PCではピン留めの間も）の下端が画面の55%より下にある間＝ヒーローのボタンが見えている間は隠す
+    const f = () => { const h = document.querySelector(".sky-hero-pin"); setHeroTop(h ? h.getBoundingClientRect().bottom > window.innerHeight * 0.55 : window.scrollY < window.innerHeight * 0.45); };
+    f();
+    window.addEventListener("scroll", f, { passive: true });
+    return () => window.removeEventListener("scroll", f);
+  }, [page]);
   // 少しスクロールしたら出す（一度出したら、上に戻っても消さない）。スクロールできないほど短いページでは最初から出す
   useEffect(() => {
     if (shown) return;
@@ -95,7 +105,7 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
       <button
         ref={buttonRef}
         type="button"
-        className={["chat-launcher", open && "is-open", (shown || open) && !atFooter && "is-shown", page === "contact" && "is-quiet"].filter(Boolean).join(" ")}
+        className={["chat-launcher", open && "is-open", (shown || open) && !atFooter && (!heroTop || open) && "is-shown", page === "contact" && "is-quiet"].filter(Boolean).join(" ")}
         aria-expanded={open}
         aria-controls="chat-panel"
         aria-label={open ? "チャットを閉じる" : LAUNCHER_LABEL + "（チャットを開く）"}
