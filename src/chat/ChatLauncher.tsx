@@ -25,6 +25,7 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"menu" | "diagnosis">("menu");
   const [request, setRequest] = useState(0); // 開いたまま「診断から」を押されたときに、パネルへ伝える
+  const [preset, setPreset] = useState<number | undefined>(undefined); // 診断の1問目の答え（トップの「迷ったら」から）
   const [Panel, setPanel] = useState<ComponentType<ChatPanelProps> | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [shown, setShown] = useState(false);
@@ -49,15 +50,16 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
   }, [page]);
 
   const load = () => import("./ChatPanel").then((m) => setPanel(() => m.ChatPanel));
-  const show = (next: "menu" | "diagnosis") => {
+  const show = (next: "menu" | "diagnosis", answer?: number) => {
     setMode(next);
+    setPreset(typeof answer === "number" ? answer : undefined);
     setRequest((n) => n + 1);
     setOpen(true);
     void load();
     window.gtag?.("event", "chat_open", { chat_mode: next });
   };
   useEffect(() => {
-    const onOpen = (e: Event) => show(((e as CustomEvent).detail?.mode as "menu" | "diagnosis") || "menu");
+    const onOpen = (e: Event) => { const d = (e as CustomEvent).detail; show((d?.mode as "menu" | "diagnosis") || "menu", d?.answer); };
     window.addEventListener("coana:chat", onOpen);
     return () => window.removeEventListener("coana:chat", onOpen);
   }, []);
@@ -104,7 +106,7 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
         <span className="chat-launcher-mark"><img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" /></span>
         <span className="chat-launcher-text" aria-hidden="true">チャットで相談・診断</span>
       </button>
-      {open && Panel && <Panel navigate={navigate} mode={mode} request={request} onClose={close} />}
+      {open && Panel && <Panel navigate={navigate} mode={mode} request={request} preset={preset} onClose={close} />}
     </>
   );
 }

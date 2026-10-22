@@ -2,6 +2,7 @@ import React, { ReactNode, useRef, useState } from "react";
 import { home, settings, type Article } from "./content";
 import { ARROW_PATHS } from "./bird";
 import { useFlowJourney } from "./flowJourney";
+import { Feathers } from "./feathers";
 
 /* ───────────────────────── 共通パーツ（App.tsx と SolutionPage.tsx から利用） ───────────────────────── */
 
@@ -69,8 +70,20 @@ export function DiagnoseBanner({ className = "" }: { className?: string }) {
 }
 
 /** サポートチャットを開く（mode: "diagnosis" で診断から始める）。ChatLauncher が受け取る */
-export function openChat(mode: "menu" | "diagnosis" = "menu") {
-  window.dispatchEvent(new CustomEvent("coana:chat", { detail: { mode } }));
+export function openChat(mode: "menu" | "diagnosis" = "menu", answer?: number) {
+  // answer：診断の1問目の答え（トップの「迷ったら」で選んだもの）。チャットはその続きから始まる
+  window.dispatchEvent(new CustomEvent("coana:chat", { detail: { mode, answer } }));
+}
+
+/** 番号つきのセクション見出し（01〜05。トップ・各ページ共通） */
+export function NumHead({ n, title, side, id }: { n: string; title: ReactNode; side?: ReactNode; id?: string }) {
+  return (
+    <div className="num-head" data-reveal id={id}>
+      <span className="num-head-no" aria-hidden="true">{n}</span>
+      <h2>{title}</h2>
+      {side && <div className="num-head-side">{side}</div>}
+    </div>
+  );
 }
 
 export const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, string> = {
@@ -341,26 +354,28 @@ export function LineButton({ place, label = "LINEで気軽に相談する", tabI
   );
 }
 
-export function ContactBand({ navigate }: { navigate: Nav }) {
+export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: boolean }) {
   return (
-    <section className="contact-band" data-live>
-      <div className="contact-orbit orbit-one" aria-hidden="true" />
-      <div className="contact-orbit orbit-two" aria-hidden="true" />
+    <section className={big ? "contact-band is-big" : "contact-band"} data-live>
+      <Feathers count={big ? 9 : 6} />
       <div className="container contact-band-inner" data-reveal>
-        <div>
-          <span className="eyebrow">Contact</span>
-          <h2>{settings.contact_band.heading}</h2>
-          <p><Lines text={settings.contact_band.text} /></p>
-        </div>
-        <div className="contact-band-action">
-          <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
-          <LineButton place="contact_band" />
+        {big && <p className="contact-band-big" aria-hidden="true">相談する。</p>}
+        <div className="contact-band-grid">
+          <div>
+            <span className="eyebrow" lang="en">Contact</span>
+            <h2>{settings.contact_band.heading}</h2>
+            <p><Lines text={settings.contact_band.text} /></p>
+          </div>
+          <div className="contact-band-action">
+            <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
+            <LineButton place="contact_band" />
+            <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断<Icon name="chat" size={18} /></button>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-
 /** ページ上部の見出し。imagePosition で写真の見える位置だけを変えられる（見た目はどのページも共通） */
 export function PageHero({ en, title, intro, image, imagePosition }: { en: string; title: string; intro?: string; image?: string; imagePosition?: string }) {
   return (
@@ -369,22 +384,25 @@ export function PageHero({ en, title, intro, image, imagePosition }: { en: strin
       style={image ? { backgroundImage: `url("${image}")`, ...(imagePosition ? { backgroundPosition: imagePosition } : {}) } : undefined}
     >
       <div className="container">
-        <p className="page-hero-en">{en}</p>
+        <p className="page-hero-en" lang="en">{en}</p>
         <h1>{title}</h1>
         {intro && <div className="page-intro">{intro}</div>}
       </div>
+      <span className="page-hero-big" aria-hidden="true" lang="en">{en.toUpperCase()}</span>
     </section>
   );
 }
 
 export const faqItems: { q: string; a: string }[] = home.faqs ?? [];
 
-export function FaqSection({ items = faqItems, title = home.faq_title }: { items?: { q: string; a: string }[]; title?: string } = {}) {
+export function FaqSection({ items = faqItems, title = home.faq_title, numbered }: { items?: { q: string; a: string }[]; title?: string; numbered?: string } = {}) {
   const [openIndex, setOpenIndex] = useState(0); // 最初の質問だけ開いた状態。どれも閉じられる（-1）
   return (
-    <section className="section faq-section">
-      <div className="container narrow">
-        <SectionTitle en="FAQ" center>{title}</SectionTitle>
+    <section className={numbered ? "section faq-section is-numbered" : "section faq-section"}>
+      <div className={numbered ? "container" : "container narrow"}>
+        {numbered
+          ? <NumHead n={numbered} title={title} side={<p>ここにない質問は、<button type="button" className="text-button" onClick={() => openChat("menu")}>チャット</button>でいつでもどうぞ。</p>} />
+          : <SectionTitle en="FAQ" center>{title}</SectionTitle>}
         <div className="faq-list">
           {items.map((item, i) => {
             const open = openIndex === i;

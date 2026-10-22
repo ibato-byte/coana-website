@@ -62,12 +62,17 @@
       "category": "ERP（統合業務システム）"
     },
     {
+      "name": "KING OF TIME",
+      "logo": "",
+      "category": "勤怠管理"
+    },
+    {
       "name": "Google Workspace",
       "logo": "",
       "category": "グループウェア"
     }
   ],
-  "tools_note": "上記以外のツールについても、業務内容に合わせて選定からご相談いただけます。",
+  "tools_note": "ここにないツールも、業務内容に合わせて選定からご相談いただけます。",
   "topics_title": "トピックス",
   "topics_lead": "セミナー登壇やメディア掲載など、最近の活動をお知らせしています。",
   "faq_title": "よくあるご質問",

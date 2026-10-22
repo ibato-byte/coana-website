@@ -222,6 +222,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
         </div>
       </div>
       <a className="lp-hero-scroll" href="#lp-problems" aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
+      <span className="page-hero-big lp-hero-big" aria-hidden="true" lang="en">{(sol.en || "Service").toUpperCase()}</span>
     </section>
   );
 }

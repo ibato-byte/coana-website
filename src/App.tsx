@@ -1,9 +1,13 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { RenjillPage } from "./RenjillPage";
-import { HeroScene, HeroVideo, MiniIcon, ServiceArt } from "./illustrations";
+import { MiniIcon, ServiceArt } from "./illustrations";
+import { LogoMark } from "./logo";
+import { Feathers } from "./feathers";
+// 診断の1問目（トップの「迷ったら」）。チャットのデータ全体ではなく diagnosis だけを読み込む
+import { diagnosis } from "../content/chat.json";
 import { ChatLauncher } from "./chat/ChatLauncher";
 import { HeroDove } from "./heroDove";
 
@@ -37,17 +41,10 @@ function slugFromPath() {
 }
 
 
-function Logo({ navigate }: { navigate: Nav }) {
+function Logo({ navigate, white = false }: { navigate: Nav; white?: boolean }) {
   return (
-    <GoLink className="wordmark" go={navigate} args={["home"]} aria-label="ホームへ">
-      <span className="logo-img logo-img-color">
-        <img src="/images/logo-color-base.png" alt="COANA TOKYO LLC." width={198} height={34} />
-        <img className="logo-feather" src="/images/logo-color-feather.png" alt="" aria-hidden="true" width={198} height={34} />
-      </span>
-      <span className="logo-img logo-img-white">
-        <img src="/images/logo-white-base.png" alt="COANA TOKYO LLC." width={198} height={34} />
-        <img className="logo-feather" src="/images/logo-white-feather.png" alt="" aria-hidden="true" width={198} height={34} />
-      </span>
+    <GoLink className="wordmark" go={navigate} args={["home"]} aria-label="COANA TOKYO ホームへ">
+      <LogoMark white={white} />
     </GoLink>
   );
 }
@@ -57,14 +54,8 @@ function Logo({ navigate }: { navigate: Nav }) {
 function Header({ page, navigate }: { page: Page; navigate: Nav }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const progressRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 24);
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
-    };
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -80,19 +71,18 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     return () => document.documentElement.classList.remove("menu-open");
   }, [open]);
   const links: [Page, string, string][] = [
-    ["home", "ホーム", "Top"],
-    ["about", "会社概要", "About"],
     ["services", "サービス", "Services"],
+    ["about", "会社概要", "About"],
     ["topics", "トピックス", "Topics"],
   ];
   const go = (target: Page) => {
     setOpen(false);
     navigate(target);
   };
+  const en = solutions.find((sol) => sol.lang === "en");
   return (
     // ヘッダー・フッターは日本語。英語ページ（<html lang="en">）でも言語を正しく伝えるため lang="ja" を明示する
     <header lang="ja" className={scrolled ? "site-header is-scrolled" : "site-header"}>
-      <div className="scroll-progress" ref={progressRef} aria-hidden="true" />
       <div className="header-inner">
         <Logo navigate={navigate} />
         <nav className="desktop-nav" aria-label="メインナビゲーション">
@@ -101,10 +91,12 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
               key={target}
               className={page === target || (page === "article" && target === "topics") || (page === "solution" && target === "services") ? "nav-link active" : "nav-link"}
               go={go} args={[target]}
+              aria-current={page === target ? "page" : undefined}
             >
               {label}
             </GoLink>
           ))}
+          {en && <GoLink className="nav-link" go={navigate} args={["solution", undefined, en.slug]}><span lang="en">English</span></GoLink>}
           <GoLink className="button button-small button-fly" go={go} args={["contact"]}>
             お問い合わせ
             <BirdArrow size={17} />
@@ -114,20 +106,26 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
           className="menu-button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
+          aria-controls="mobile-nav"
           aria-label={open ? "メニューを閉じる" : "メニューを開く"}
         >
-          <Icon name={open ? "close" : "menu"} />
+          <span className="menu-button-bars" aria-hidden="true" />
         </button>
       </div>
       {open && (
-        <nav className="mobile-nav" aria-label="モバイルナビゲーション">
-          {links.map(([target, label, en], i) => (
+        <nav className="mobile-nav" id="mobile-nav" aria-label="モバイルナビゲーション">
+          {([["home", "ホーム", "Top"], ...links] as [Page, string, string][]).map(([target, label, en2], i) => (
             <GoLink key={target} style={{ animationDelay: `${i * 0.05}s` }} go={go} args={[target]}>
-              <span><small>{en}</small>{label}</span><Icon name="arrow" size={18} />
+              <span>{label}</span><small lang="en">{en2}</small>
             </GoLink>
           ))}
-          <GoLink style={{ animationDelay: "0.2s" }} go={go} args={["contact"]}>
-            <span><small>Contact</small>お問い合わせ</span><Icon name="arrow" size={18} />
+          {en && (
+            <GoLink style={{ animationDelay: "0.2s" }} go={(...a) => { setOpen(false); navigate(...a); }} args={["solution", undefined, en.slug]}>
+              <span lang="en">English</span><small lang="en">Startup support</small>
+            </GoLink>
+          )}
+          <GoLink className="mobile-nav-cta" style={{ animationDelay: "0.25s" }} go={go} args={["contact"]}>
+            <span>無料で相談する</span>
           </GoLink>
           <p className="mobile-nav-foot">{settings.company_name}</p>
         </nav>
@@ -141,24 +139,23 @@ function Footer({ navigate }: { navigate: Nav }) {
     <footer lang="ja" className="site-footer">
       <div className="container footer-grid">
         <div className="footer-company">
-          <Logo navigate={navigate} />
+          <Logo navigate={navigate} white />
           <p className="footer-tagline">{settings.footer_tagline}</p>
           <p className="footer-address">{settings.company_name}<br />{settings.postal_code} {settings.address}</p>
+          {/* メールアドレスはフッターのここだけに掲載する（CLAUDE.md） */}
           <a className="footer-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
         <nav className="footer-links" aria-label="フッターナビゲーション">
           <div>
-            <p className="footer-links-title">Menu</p>
+            <p className="footer-links-title" lang="en">Menu</p>
             <GoLink go={navigate} args={["home"]}>ホーム</GoLink>
             <GoLink go={navigate} args={["about"]}>会社概要</GoLink>
             <GoLink go={navigate} args={["services"]}>サービス</GoLink>
             <GoLink go={navigate} args={["topics"]}>トピックス</GoLink>
             <GoLink go={navigate} args={["contact"]}>お問い合わせ</GoLink>
           </div>
-          <div>
-            <p className="footer-links-title">Services</p>
-            <GoLink go={navigate} args={["services", "backoffice"]}>バックオフィス支援</GoLink>
-            <GoLink go={navigate} args={["services", "marketing"]}>マーケティング支援</GoLink>
+          <div className="footer-links-services">
+            <p className="footer-links-title" lang="en">Services</p>
             {solutions.filter((sol) => !sol.hidden).map((sol) => (
               <GoLink key={sol.slug} go={navigate} args={["solution", undefined, sol.slug]}>{sol.nav_label}</GoLink>
             ))}
@@ -171,123 +168,163 @@ function Footer({ navigate }: { navigate: Nav }) {
       </div>
       <div className="container footer-bottom">
         <small className="footer-trademark">記載されている会社名・製品名・サービス名は、各社の商標または登録商標です。</small>
-        <small>{settings.copyright}</small>
         <GoLink className="footer-privacy" go={navigate} args={["renjill"]}>レンとジル</GoLink>
         <GoLink className="footer-privacy" go={navigate} args={["privacy"]}>プライバシーポリシー</GoLink>
+        <small>{settings.copyright}</small>
       </div>
     </footer>
   );
 }
 
 
-/* ───────────────────────── Home: Hero ───────────────────────── */
+/* ───────────────────────── Home（Signal Sky） ─────────────────────────
+ * 構成：ヒーロー（整える。任せる。伸ばす。）→ 帯 → 01 できること → 02 診断 → 03 支援スタイルと流れ → ツール → 04 トピックス → 05 FAQ → お問い合わせ
+ * 動きの決まりは docs/motion-rules.md：スクロールに連動させない（ピン留めなし）。ヒーローのカードは画面に入っている間だけ約7秒ごとに切り替え、
+ * カードの上でカーソルを動かしている・フォーカスしている間は止める。「動きを減らす」設定では切り替えない（言葉を押すと切り替わる）。
+ */
 
-/** ヒーローの回転ワード：最初の切り替えまでの時間（見出し→下線が引き終わってから）と、切り替えの間隔 */
-const SOLVE_FIRST_MS = 3000;
-const SOLVE_AFTER_DOVE_MS = 1000;
-const SOLVE_INTERVAL_MS = 2600;
+/** サービスの性格（ヒーローの3つの言葉と、一覧の右端の札） */
+const VERB_OF: Record<string, string> = {
+  "startup-support": "整える",
+  "cloud-accounting": "整える",
+  "backoffice-dx": "任せる",
+  bookkeeping: "任せる",
+  "sns-management": "任せる",
+  "sales-support": "伸ばす",
+  "seminar-event": "伸ばす",
+  "web-production": "伸ばす",
+};
 
-/** 「〇〇の悩みを、仕組みで解決。」のキーワード。古い語が上へ抜け、新しい語が下からマスク内に入る。
- *  紺のチップの幅は新しい語の幅へ同時に伸縮させ、後ろの文字が跳ねないようにする */
-function SolveWords({ words, rest, dove }: { words: string[]; rest: string; dove: boolean }) {
-  const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const [state, setState] = useState({ cur: 0, prev: -1, tick: 0 });
-  const [widths, setWidths] = useState<number[]>([]);
-  const measureRef = useRef<HTMLSpanElement | null>(null);
-  // 各語のチップ幅を、同じ見た目の隠し要素で測る（フォント読み込み後・画面幅の変更時にも測り直す）
-  useLayoutEffect(() => {
-    const measure = () => {
-      const el = measureRef.current;
-      if (el) setWidths(Array.from(el.children).map((c) => Math.ceil((c as HTMLElement).getBoundingClientRect().width)));
-    };
-    measure();
-    document.fonts?.ready.then(measure);
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [words]);
-  useEffect(() => {
-    if (reduceMotion || words.length < 2) return;
-    let id = 0;
-    const next = () => setState((s) => ({ cur: (s.cur + 1) % words.length, prev: s.cur, tick: s.tick + 1 }));
-    // 下線の鳩がいるときは、このヒーローの鳩が飛び去ってから切り替え始める（どの入り方でも同じ順番）。
-    // 鳩がいないとき（動きを減らす設定以外では基本ない）は SOLVE_FIRST_MS 後
-    let first = 0;
-    const begin = (wait: number) => {
-      if (id) return; // もう切り替え始めている
-      window.clearTimeout(first);
-      first = window.setTimeout(() => { next(); id = window.setInterval(next, SOLVE_INTERVAL_MS); }, wait);
-    };
-    const hero = measureRef.current?.closest(".hero");
-    const onDove = (e: Event) => {
-      const line = (e as CustomEvent<Element | undefined>).detail;
-      if (!line || hero?.contains(line)) begin(SOLVE_AFTER_DOVE_MS);
-    };
-    if (!dove) begin(SOLVE_FIRST_MS);
-    window.addEventListener("coana:dove-done", onDove);
-    return () => { window.clearTimeout(first); window.clearInterval(id); window.removeEventListener("coana:dove-done", onDove); };
-  }, [reduceMotion, words.length, dove]);
-  const { cur, prev, tick } = state;
-  return (
-    <p className="hero-solve">
-      {/* 読み上げ用：すべてのキーワードを並べる（見た目の切り替え部分は読み上げない） */}
-      <span className="visually-hidden">{words.join("、")}{rest}</span>
-      <span className="solve-line" aria-hidden="true">
-        <span className="solve-box" style={widths[cur] ? { width: widths[cur] } : undefined}>
-          {prev >= 0 && <span key={"out" + tick} className="solve-word is-out">{words[prev]}</span>}
-          <span key={"in" + tick} className={tick ? "solve-word is-in" : "solve-word"}>{words[cur]}</span>
-        </span>
-        <span className="solve-rest">{rest}</span>
-      </span>
-      <span className="solve-measure" ref={measureRef} aria-hidden="true">
-        {words.map((w) => <span key={w} className="solve-word">{w}</span>)}
-      </span>
-    </p>
-  );
-}
+const VERBS = [
+  { no: "01", en: "Systemize", verb: "整える", kicker: "仕組みをつくる", head: ["業務の流れを見直し、", "ツールで整える。"], text: "経理や事務のやり方、使っているツールを棚卸しし、少人数でも回る仕組みに。創業期の体制づくりから支援します。", slugs: ["cloud-accounting", "startup-support"] },
+  { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。担当を固定し、仕組みごと代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
+  { no: "03", en: "Grow", verb: "伸ばす", kicker: "成長につなげる", head: ["生まれた時間を、", "問い合わせと売上へ。"], text: "営業の進め方、セミナー、Webサイト。商品・サービスの魅力をお客様に届け、売上につながる仕組みをつくります。", slugs: ["sales-support", "seminar-event", "web-production"] },
+];
+const VERB_INTERVAL_MS = 7000;
+const VERB_FIRST_MS = 4200;
 
 function HeroSection({ navigate }: { navigate: Nav }) {
-  const words: string[] = home.hero_words ?? ["経理", "業務フロー", "ツール導入", "営業・集客"];
-  const [dove] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  // ブラウザの「戻る・進む」でページが保存された状態のまま戻ったとき（別サイトから戻ったときなど）も、鳩と回転ワードを最初から
+  const [reduce] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [dove] = useState(() => !reduce);
+  const [cur, setCur] = useState(0);
+  const curRef = useRef(0);
+  const [swap, setSwap] = useState(false);
+  const [shown, setShown] = useState(0);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
+  // ブラウザの「戻る・進む」でページが保存された状態のまま戻ったとき（別サイトから戻ったときなど）も、鳩を最初から
   const [replay, setReplay] = useState(0);
   useEffect(() => {
     const onShow = (e: PageTransitionEvent) => { if (e.persisted) setReplay((n) => n + 1); };
     window.addEventListener("pageshow", onShow);
     return () => window.removeEventListener("pageshow", onShow);
   }, []);
+  // カードの中身は、いったん薄くしてから入れ替える（文字は 0.3 秒ほどで読める状態に戻る）
+  const select = (i: number) => {
+    if (i === curRef.current) return;
+    curRef.current = i;
+    setCur(i);
+    if (reduce) { setShown(i); return; }
+    setSwap(true);
+    window.setTimeout(() => { setShown(i); setSwap(false); }, 220);
+  };
+  useEffect(() => {
+    if (reduce) return;
+    const hero = heroRef.current;
+    const card = cardRef.current;
+    if (!hero || !card) return;
+    let visible = true;
+    let readUntil = 0;
+    let timer = 0;
+    let started = false;
+    const tick = () => {
+      if (visible && !document.hidden && Date.now() > readUntil) select((curRef.current + 1) % VERBS.length);
+      timer = window.setTimeout(tick, VERB_INTERVAL_MS);
+    };
+    const begin = (wait: number) => { if (started) return; started = true; timer = window.setTimeout(tick, wait); };
+    // 下線の鳩が飛び去ってから切り替え始める（どの入り方でも同じ順番）
+    const onDove = () => begin(2600);
+    window.addEventListener("coana:dove-done", onDove);
+    const fallback = window.setTimeout(() => begin(VERB_FIRST_MS), 2400);
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
+    io.observe(hero);
+    // 読んでいる間だけ止める（カードの上でカーソルを動かした・フォーカスした。約2.5秒で再開。readingPause.ts と同じ考え方）
+    const hold = () => { readUntil = Date.now() + 2500; };
+    let last = { x: -1, y: -1 };
+    const onMove = (e: PointerEvent) => { if (Math.abs(e.clientX - last.x) + Math.abs(e.clientY - last.y) > 2) hold(); last = { x: e.clientX, y: e.clientY }; };
+    card.addEventListener("pointermove", onMove);
+    card.addEventListener("focusin", hold);
+    return () => { window.clearTimeout(timer); window.clearTimeout(fallback); window.removeEventListener("coana:dove-done", onDove); io.disconnect(); card.removeEventListener("pointermove", onMove); card.removeEventListener("focusin", hold); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduce, replay]);
+  const v = VERBS[shown];
+  const nameOf = (slug: string) => solutions.find((s) => s.slug === slug)?.nav_label || slug;
   return (
-    <section className="hero">
-      <div className="container hero-grid">
-        <div className="hero-copy">
-          <p className="hero-kicker hero-anim"><span />{home.hero_kicker}</p>
-          <h1>
-            <span className="hero-line">{home.hero_line1}</span>
-            <span className="hero-line">
-              {/* 下線は、ヒーローが表示されるたびに鳩が引いて飛び去る（heroDove.tsx）。動きを減らす設定では最初から引かれた状態 */}
-              <span key={replay} className={dove ? "title-underline is-dove" : "title-underline"}>{home.hero_line2}{dove && <HeroDove />}</span>
-            </span>
-          </h1>
-          <SolveWords key={replay} words={words} rest={home.hero_solve_text} dove={dove} />
+    <section className="hero sky-hero" ref={heroRef}>
+      <Feathers />
+      <div className="container sky-hero-top">
+        <h1 className="sky-hero-title">
+          <span className="hero-line">{home.hero_line1}、</span>
+          <span className="hero-line">
+            {/* 下線は、ヒーローが表示されるたびに鳩が引いて飛び去る（heroDove.tsx）。動きを減らす設定では最初から引かれた状態 */}
+            <span key={replay} className={dove ? "title-underline is-dove" : "title-underline"}>{home.hero_line2}{dove && <HeroDove />}</span>。
+          </span>
+        </h1>
+        <p className="sky-kicker" lang="en">{home.hero_kicker}</p>
+      </div>
+      <div className="container sky-hero-mid">
+        <ul className="sky-verbs" aria-label="COANA TOKYOの支援">
+          {VERBS.map((item, i) => (
+            <li key={item.verb}>
+              <button type="button" className={i === cur ? "sky-verb is-on" : "sky-verb"} aria-pressed={i === cur} onClick={() => select(i)} onMouseEnter={() => !reduce && window.matchMedia("(hover: hover)").matches && select(i)}>
+                <small lang="en">{item.no} {item.en}</small>{item.verb}。
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className={swap ? "sky-card is-swap" : "sky-card"} ref={cardRef} aria-live="polite">
+          <div className="sky-card-prog" aria-hidden="true">{VERBS.map((_, i) => <i key={i} className={i <= cur ? "on" : ""} />)}</div>
+          <p className="sky-card-kicker">{v.no} — {v.kicker}</p>
+          <h2 className="sky-card-title">{v.head[0]}<br />{v.head[1]}</h2>
+          <p className="sky-card-text">{v.text}</p>
+          <ul className="sky-card-links">
+            {v.slugs.filter((slug) => solutions.some((s) => s.slug === slug)).map((slug) => (
+              <li key={slug}><GoLink go={navigate} args={["solution", undefined, slug]}>{nameOf(slug)}<Icon name="arrow" size={16} /></GoLink></li>
+            ))}
+          </ul>
         </div>
-        <div className="hero-visual hero-anim">
-          <HeroVideo src={home.hero_video} fallback={<HeroScene />} />
-        </div>
-        <div className="hero-body hero-anim">
+      </div>
+      <div className="container sky-hero-bottom">
+        <div>
           <p className="hero-lead">{home.hero_lead}</p>
-          <div className="button-row">
-            <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
-            <LinkButton secondary go={navigate} args={["services"]}>{home.hero_button_secondary}</LinkButton>
-          </div>
           <ul className="hero-badges">
             {home.hero_badges.map((b) => <li key={b}><Icon name="check" size={14} />{b}</li>)}
           </ul>
+        </div>
+        <div className="button-row">
+          <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
+          <button type="button" className="button button-outline" onClick={() => openChat("diagnosis")}>約1分で診断する<Icon name="arrow" size={19} /></button>
         </div>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── サービスカード（トップ・サービス一覧で共通） ───────────────────────── */
+/** ヒーローの下の帯（できることの見出し語）。画面に入っている間だけゆっくり流れ、スマホと「動きを減らす」設定では止まる */
+function SkyTape() {
+  const words = ["経理・請求", "ツール導入", "SNS・Web", "営業・集客", "創業支援", "セミナー"];
+  return (
+    <div className="sky-tape-wrap" aria-hidden="true">
+      <div className="sky-tape" data-live>
+        <div className="sky-tape-track">
+          {[...words, ...words].map((w, i) => <span key={i}>{w}</span>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── サービスカード（サービス一覧ページで使用） ───────────────────────── */
 
 type ServiceItem = { name: string; text: string; short?: string; tags?: string[]; page?: string };
 const serviceGroups = [
@@ -329,109 +366,137 @@ function ServiceGroupHead({ n, data, level = 3 }: { n: string; data: { en: strin
 }
 
 function ServicesHome({ navigate }: { navigate: Nav }) {
+  const items = serviceGroups.flatMap(({ data }) => data.items as ServiceItem[]);
   return (
-    <section className="section services-home" id="services">
+    <section className="section sky-section services-home" id="services">
       <div className="container">
-        <SectionTitle en="Services" center lead={home.services_lead}>{home.services_title}</SectionTitle>
-        {serviceGroups.map(({ key, n, data }) => (
-          <div className="service-group" key={key}>
-            <ServiceGroupHead n={n} data={data} />
-            <div className="service-card-grid">
-              {(data.items as ServiceItem[]).map((item) => <ServiceCard key={item.name} item={item} navigate={navigate} />)}
-            </div>
-          </div>
-        ))}
-        {/* 01・02 を一通り見たあとに「迷ったら診断」 */}
-        <DiagnoseBanner className="is-home" />
+        <NumHead n="01" title={home.services_title} side={<p>{home.services_lead}</p>} />
+        <ul className="svc-rows">
+          {items.map((item, i) => {
+            const linked = item.page && solutions.some((sol) => sol.slug === item.page);
+            const inner = (
+              <>
+                <span className="svc-row-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <span className="svc-row-name">{item.name}</span>
+                <span className="svc-row-text">{item.short || item.text}{item.tags?.map((t) => <em key={t}>{t}</em>)}</span>
+                {item.page && VERB_OF[item.page] && <span className="svc-row-verb" aria-hidden="true">{VERB_OF[item.page]}。</span>}
+              </>
+            );
+            return (
+              <li key={item.name} className="svc-row" data-reveal style={{ ["--d" as string]: `${(i * 0.04).toFixed(2)}s` }}>
+                {linked ? <GoLink go={navigate} args={["solution", undefined, item.page]}>{inner}</GoLink> : <div>{inner}</div>}
+              </li>
+            );
+          })}
+        </ul>
+        <p className="svc-rows-more"><GoLink className="text-link" go={navigate} args={["services"]}>サービス一覧を見る<Icon name="arrow" size={18} /></GoLink></p>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── Home: 支援スタイル（選ばれる理由・ツール・ミッションを統合） ───────────────────────── */
-
-function StyleSection() {
-  // 見出しは行ごとに現れる。背景にロゴの羽の線（一度だけ描く）と、画面内のときだけゆっくり動く光。
-  // カードは順に立ち上がり、アイコンが線で描かれる。PC ではカーソルに合わせてわずかに傾き、光が追従する（motion.ts）
-  const mission = (about.message_heading || "").split("\n");
-  const delay = (i: number) => ({ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` });
+/** 02 迷ったら診断：サポートチャットの診断（content/chat.json）の1問目をここで答えられる。答えると、チャットがその続きから開く */
+function FinderSection() {
+  const q = diagnosis.questions[0];
+  const total = diagnosis.questions.length;
   return (
-    <section className="section style-section" data-live>
-      <div className="style-bg" aria-hidden="true">
-        <span className="style-glow" />
-        <svg className="style-wing" viewBox="0 0 240 340" data-draw data-reveal>
-          <path d="M52 322C18 250 34 170 104 116c44-34 82-64 108-106 18 66 4 134-44 186-38 42-80 72-116 126Z" />
-          <path d="M70 296c30-62 76-110 132-156" />
-        </svg>
-      </div>
+    <section className="section sky-section sky-dark finder-section" id="finder">
       <div className="container">
-        <div className="style-head">
-          <span className="eyebrow" data-reveal>Our style</span>
-          <p className="style-mission">
-            {mission.map((line, i) => <span key={i} className="style-mission-line" data-reveal style={delay(i + 1)}>{line}</span>)}
-          </p>
-          <h2 className="style-title" data-reveal style={delay(mission.length + 1)}>{home.strengths_title}</h2>
+        <NumHead n="02" title={<>どれが合うか<br />迷ったら</>} side={<p>{total}つの質問に答えるだけで、合いそうなサービスをご案内します。約1分・個人情報の入力は不要です。</p>} />
+        <div className="finder-grid">
+          <p className="finder-big" data-reveal>答えるだけで、<br />道が決まる。<small>選んだ答えは、そのままチャットで続きから診断できます。</small></p>
+          <div className="finder-card" data-reveal>
+            <div className="finder-card-top"><span lang="en">Service finder</span><span>Q1 / {total}</span></div>
+            <h3>{q.text}</h3>
+            <div className="finder-options">
+              {q.options.map((o, i) => (
+                <button key={o.label} type="button" onClick={() => openChat("diagnosis", i)}>{o.label}<b aria-hidden="true">{String.fromCharCode(65 + i)}</b></button>
+              ))}
+            </div>
+          </div>
         </div>
-        <ul className="style-grid">
-          {home.strengths.map((s, i) => (
-            <li key={s.title} data-reveal style={delay(i)}>
-              <div className="style-card" data-tilt>
-                <span className="style-icon" data-draw style={{ ["--draw-d" as string]: `${(0.2 + i * 0.06).toFixed(2)}s` }}><MiniIcon name={s.icon} size={30} /></span>
+      </div>
+    </section>
+  );
+}
+
+/** 03 支援スタイル：大きな一文（会社概要のメッセージ見出し）＋4つの強み＋ご利用までの流れ */
+const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["実", "Expertise"], team: ["伴", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
+const FLOW_TEXT = ["フォームまたはLINE公式アカウントから、ご相談内容をお送りください。", "担当者からご連絡し、現状の業務や課題を伺います。", "課題と優先順位を整理し、必要な範囲に絞ってご提案します。", "ご納得いただけてからご契約し、支援を始めます。"];
+function StyleSection() {
+  const mission = (about.message_heading || "").split("\n").filter(Boolean);
+  return (
+    <section className="section sky-section style-section" id="style">
+      <div className="container">
+        <NumHead n="03" title={<>{mission.map((line, i) => <span key={i} className="num-head-line">{line}</span>)}</>} side={<p>{home.strengths_title}</p>} />
+        <ul className="poster-grid">
+          {home.strengths.map((s, i) => {
+            const [k, en] = STYLE_KANJI[s.icon] || ["", ""];
+            return (
+              <li key={s.title} className="poster-card" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+                {k && <span className="poster-kanji" aria-hidden="true">{k}</span>}
+                {en && <span className="poster-en" lang="en">{en}</span>}
                 <h3>{s.title}</h3>
                 <p>{s.text}</p>
-              </div>
+              </li>
+            );
+          })}
+        </ul>
+        <h3 className="visually-hidden">{services.flow_title}</h3>
+        <ol className="step-poster">
+          {services.flow.map((name, i) => (
+            <li key={name} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+              <span className="step-poster-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <b>{name}</b>
+              {FLOW_TEXT[i] && <p>{FLOW_TEXT[i]}</p>}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function ToolBand() {
+  return (
+    <section className="tool-band">
+      <div className="container tool-band-inner" data-reveal>
+        <div>
+          <p className="sky-mono" lang="en">Cloud tools</p>
+          <h2>{home.tools_title}</h2>
+          {home.tools_note && <p>{home.tools_note}</p>}
+        </div>
+        <ul className="tool-pills">
+          {home.tools.map((t) => (
+            <li key={t.name} title={t.category}>
+              {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
+              {t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span>{t.name}</span>}
             </li>
           ))}
         </ul>
-        <div className="style-tools" data-reveal>
-          <p className="style-tools-title">{home.tools_title}</p>
-          {/* ツールどうしを1本の線でつなぐ（線は飾り。ロゴは最初から表示） */}
-          <div className="style-tools-row">
-            <span className="style-tools-line" aria-hidden="true" />
-            <ul>
-              {home.tools.map((t) => (
-                <li key={t.name} title={t.category}>
-                  {/* ロゴは各社のブランド規約で第三者の掲載が認められているものだけ設定する。未設定のツールは名称を文字で表示 */}
-                  {t.logo ? <img src={t.logo} alt={t.name} loading="lazy" /> : <span>{t.name}</span>}
-                </li>
-              ))}
-            </ul>
-          </div>
-          {home.tools_note && <small>{home.tools_note}</small>}
-        </div>
       </div>
     </section>
   );
 }
-
-/* ───────────────────────── Home: Topics ───────────────────────── */
 
 function TopicsHome({ navigate }: { navigate: Nav }) {
   const latest = articles.slice(0, 3);
   return (
-    <section className="section topics-home">
+    <section className="section sky-section topics-home">
       <div className="container">
-        <div className="title-with-link">
-          <SectionTitle en="Topics" lead={home.topics_lead}>{home.topics_title}</SectionTitle>
-          <GoLink className="text-link" go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={19} /></GoLink>
-        </div>
+        <NumHead n="04" title={home.topics_title} side={<GoLink className="text-link" go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={18} /></GoLink>} />
         {latest.length ? (
-          <div className="topics-card-grid">
+          <ul className="topic-tiles">
             {latest.map((a) => (
-              <GoLink key={a.slug} className="topic-card" go={navigate} args={["article", undefined, a.slug]}>
-                <span className="topic-card-thumb">
-                  {a.thumbnail
-                    ? <img src={a.thumbnail} alt={a.title} loading="lazy" />
-                    : <span className="topic-card-fallback"><Icon name="spark" size={30} /></span>}
-                </span>
-                <span className="topic-card-body">
-                  <span className="article-meta"><time dateTime={a.sortKey.slice(0, 10)}>{a.date}</time><i>{a.category}</i></span>
+              <li key={a.slug} data-reveal>
+                <GoLink className="topic-tile" go={navigate} args={["article", undefined, a.slug]}>
+                  <span className="topic-tile-meta"><i>{a.category}</i><time dateTime={a.sortKey.slice(0, 10)}>{a.date}</time></span>
                   <strong>{a.title}</strong>
-                  <span className="topic-card-more">読む<Icon name="arrow" size={15} /></span>
-                </span>
-              </GoLink>
+                  <span className="topic-tile-more" lang="en">READ<Icon name="arrow" size={15} /></span>
+                </GoLink>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           <div className="empty-topics">
             <span className="empty-icon"><Icon name="spark" /></span>
@@ -445,13 +510,16 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
 
 function Home({ navigate }: { navigate: Nav }) {
   return (
-    <main>
+    <main className="home-page">
       <HeroSection navigate={navigate} />
+      <SkyTape />
       <ServicesHome navigate={navigate} />
+      <FinderSection />
       <StyleSection />
+      <ToolBand />
       <TopicsHome navigate={navigate} />
-      <FaqSection />
-      <ContactBand navigate={navigate} />
+      <FaqSection numbered="05" />
+      <ContactBand navigate={navigate} big />
     </main>
   );
 }
