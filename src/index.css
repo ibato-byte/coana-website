@@ -1561,10 +1561,14 @@ a.line-button svg { flex: none; color: #06c755; }
 .tel-notice { background: #f1f6fb; border-color: #d5e3f0; }
 .tel-notice small { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 400; color: var(--navy-soft); }
 a.tel-number { display: flex; align-items: baseline; justify-content: center; gap: 10px; color: var(--navy-ink); text-decoration: none; }
-.tel-number__label { font-size: 12px; font-weight: 700; letter-spacing: .2em; color: var(--navy-soft); }
+.tel-number__label { font-size: 12px; font-weight: 700; letter-spacing: .2em; color: var(--navy-soft); white-space: nowrap; }
 .tel-number__digits { font-size: 24px; font-weight: 800; line-height: 1.2; letter-spacing: .04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 a.tel-number:hover .tel-number__digits { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; }
 @media (max-width: 640px) {
   a.tel-number { padding: 11px 20px; background: #fff; border: 1.5px solid var(--navy); border-radius: 999px; }
   .tel-number__digits { font-size: 20px; }
+}
+@media (max-width: 360px) {
+  a.tel-number { gap: 8px; padding: 11px 14px; }
+  .tel-number__digits { font-size: 18px; }
 }
