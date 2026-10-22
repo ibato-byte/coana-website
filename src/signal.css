@@ -968,3 +968,14 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .lp-ba-center { font-size: 11px; }
   .lp-ba-center svg { display: none; }
 }
+
+/* ピン留め中（PC）は画面の高さ1枚に必ず収める：言葉の大きさを画面の高さでも上限を決め、カードと余白を詰める（下の文章・ボタンが隠れない） */
+.sky-hero-pin.is-pin > .sky-hero { padding-top: calc(96px + env(safe-area-inset-top, 0px)); padding-bottom: 24px; }
+.sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 400px) / 3.15)); }
+.sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 400px) / 34)); }
+.sky-hero-pin.is-pin .sky-hero-mid { padding: 14px 0; min-height: 0; }
+.sky-hero-pin.is-pin .sky-card { min-height: 0; gap: 10px; padding: clamp(18px, 2.2vw, 30px); }
+.sky-hero-pin.is-pin .sky-card-title { font-size: min(clamp(24px, 2.4vw, 34px), calc((100vh - 300px) / 16)); }
+.sky-hero-pin.is-pin .sky-card-text { font-size: 14px; line-height: 1.75; }
+.sky-hero-pin.is-pin .sky-card-links a.go-link { padding-top: 8px; }
+.sky-hero-pin.is-pin .sky-hero-top { padding-bottom: 12px; }

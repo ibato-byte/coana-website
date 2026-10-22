@@ -1,4 +1,7 @@
 import { useEffect, useRef } from "react";
+import { FEATHER_PATH } from "./logo";
+
+const FEATHER = typeof Path2D !== "undefined" ? new Path2D(FEATHER_PATH) : null;
 
 /* 空に浮かぶ白い羽（ロゴの羽のモチーフ。飾り）。デザイン案と同じ動き：
  * 羽はゆらゆら左右に揺れながら、ゆっくり舞い上がり、上に抜けたら下からまた現れる（canvas に描く）。
@@ -25,8 +28,8 @@ export function Feathers({ count, mobileCount = 8 }: { count?: number; mobileCou
     };
     size();
     const fs: Feather[] = Array.from({ length: n }, () => ({
-      x: Math.random() * W, y: Math.random() * H, s: 10 + Math.random() * 16, a: Math.random() * 6.28,
-      vy: -0.15 - Math.random() * 0.3, ph: Math.random() * 6.28, o: 0.3 + Math.random() * 0.4,
+      x: Math.random() * W, y: Math.random() * H, s: 12 + Math.random() * 14, a: Math.random() * 6.28,
+      vy: -0.15 - Math.random() * 0.3, ph: Math.random() * 6.28, o: 0.35 + Math.random() * 0.4,
     }));
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
@@ -36,17 +39,19 @@ export function Feathers({ count, mobileCount = 8 }: { count?: number; mobileCou
         ctx.rotate(f.a + Math.sin(f.ph) * 0.4);
         ctx.globalAlpha = f.o;
         const s = f.s;
-        ctx.beginPath();
-        ctx.moveTo(0, s);
-        ctx.bezierCurveTo(s * 0.55, s * 0.2, s * 0.45, -s * 0.6, 0, -s);
-        ctx.bezierCurveTo(-s * 0.45, -s * 0.6, -s * 0.55, s * 0.2, 0, s);
+        // 羽は、ロゴの羽と同じ形（白）。中心をそろえて、高さが約 2s になるよう縮める
+        const k = (s * 2) / 103;
+        ctx.scale(k, k);
+        ctx.translate(-85.7, -51.5);
         ctx.fillStyle = "#fff";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(6,112,203,.28)";
-        ctx.lineWidth = 1;
+        if (FEATHER) ctx.fill(FEATHER, "evenodd");
+        // 羽軸（根元から先へ通る細い芯）。これで葉ではなく羽に見える
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(0, s * 1.2);
-        ctx.lineTo(0, -s * 0.8);
+        ctx.moveTo(46, 114);
+        ctx.quadraticCurveTo(64, 84, 100, 40);
         ctx.stroke();
         ctx.restore();
       }
