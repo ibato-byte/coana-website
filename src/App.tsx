@@ -1,6 +1,6 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
-import { ArticleRow, ContactBand, BirdArrow, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
+import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { RenjillPage } from "./RenjillPage";
 import { MiniIcon, ServiceArt } from "./illustrations";
@@ -101,9 +101,9 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
               {label}
             </GoLink>
           ))}
-          <GoLink className="button button-small button-fly" go={go} args={["contact"]}>
+          <GoLink className="button button-small" go={go} args={["contact"]}>
             相談する
-            <BirdArrow size={17} />
+            <Icon name="arrow" size={17} />
           </GoLink>
         </nav>
         <button
@@ -944,7 +944,7 @@ function Contact() {
             </dl>
             <div className="button-row form-actions">
               <LinkButton secondary onClick={() => setStep("input")}>入力内容を修正する</LinkButton>
-              <button className="button button-fly" onClick={send} disabled={sending}>{sending ? "送信中…" : "送信する"}<BirdArrow /></button>
+              <button className="button" onClick={send} disabled={sending}>{sending ? "送信中…" : "送信する"}<Icon name="arrow" size={19} /></button>
             </div>
             {sendError && <p className="field-error" role="alert" style={{ textAlign: "center", marginTop: 20 }}>{sendError}</p>}
           </div>

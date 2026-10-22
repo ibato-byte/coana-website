@@ -805,3 +805,11 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .contact-layout { grid-template-columns: 1fr; }
   .contact-layout .contact-side { order: 0; position: static; }
 }
+
+/* ボタンの矢印：ホバーで少し右へ（案どおり。鳩にはしない） */
+.button svg { transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
+.button:hover svg, .button:focus-visible svg { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) { .button:hover svg { transform: none; } }
+.desktop-nav .button-small { background: var(--ink); border-color: var(--ink); color: #fff; }
+.desktop-nav .button-small:hover { background: var(--ink-d); border-color: var(--ink-d); color: #fff; }
+.sky-hero .button:not(.button-outline):hover, .contact-band .button:not(.button-outline):not(.on-sky):hover, .lp-button-primary:hover { background: var(--ink); border-color: var(--ink); color: #fff; }

@@ -315,8 +315,8 @@ export function LinkButton({
   secondary?: boolean;
   large?: boolean;
 }) {
-  // お問い合わせへの主ボタンだけ、矢印が鳥になる演出にする（副ボタンは矢印が少し動くだけ）
-  const fly = !secondary && !!args && args[0] === "contact";
+  // ボタンの矢印は鳩にしない（2026-10-23 オーナー指示。デザイン案どおり、ホバーで矢印が少し右へ動くだけ）
+  const fly = false;
   const cls = ["button", secondary ? "button-outline" : "", large ? "button-large" : "", fly ? "button-fly" : ""].filter(Boolean).join(" ");
   if (go && args) {
     return (
@@ -372,7 +372,7 @@ export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: bo
       el.style.transform = `translate3d(${(10 - 24 * p).toFixed(2)}%, 0, 0)`;
     };
     const onScroll = () => { if (on && !raf) raf = requestAnimationFrame(update); };
-    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) onScroll(); });
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) update(); }, { rootMargin: "200px 0px" });
     io.observe(band);
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
