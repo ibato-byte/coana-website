@@ -494,4 +494,5 @@ collections:
               - { label: 見出し, name: heading, widget: string }
               - { label: 本文（改行可）, name: text, widget: text }
           - { label: トピックス一覧ページ上部の画像, name: topics_hero_image, widget: image, hint: "トピックス一覧ページ（/topics）の一番上の背景に薄く表示される画像です。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
+          - { label: トピックス一覧ページの導入文, name: topics_intro, widget: text, required: false }
           - { label: お問い合わせページの導入文, name: contact_intro, widget: text }
