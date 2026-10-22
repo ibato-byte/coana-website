@@ -209,3 +209,4 @@
   - チャット：`npx wrangler pages dev dist --port 8788 --binding CHAT_MOCK_AI=1`（AI の代わり）／`--port 8789`（AI なし）
 - **PR 用の画像**：`claude/pr-assets` ブランチ（サイトのコードは含まない、画像だけの独立したブランチ）に置き、`https://github.com/ibato-byte/coana-website/blob/<SHA>/<path>?raw=true` を `<img>` で。
 - **force push は使わない**（通常の push で）。
+- 2026-10-22（依頼 #40）：/renjill の「見られる場所」に X を追加。YouTube・Threads・Bluesky は URL が確定したら renjill-media の episodes.json（renjill-auto の schedule.json の defaults.site）に入れると自動で並ぶ。

@@ -219,7 +219,7 @@ import renjillJson from "../content/renjill/episodes.json";
 export type RenjillEpisode = { no: number; ep: string; title: string; caption_ja: string; caption_en: string; date: string; series: string | null; youtube_id: string | null };
 export type RenjillData = {
   updated: string;
-  channels: Partial<Record<"instagram" | "tiktok" | "youtube" | "facebook" | "threads", string | null>>;
+  channels: Partial<Record<"youtube" | "instagram" | "tiktok" | "x" | "facebook" | "threads" | "bluesky", string | null>>;
   series: { id: string; title: string }[];
   episodes: RenjillEpisode[];
 };

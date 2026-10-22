@@ -2,7 +2,8 @@ import { useState } from "react";
 import { renjill, renjillPublished, type RenjillEpisode } from "./content";
 import { GoLink, PageHero, SectionTitle, type Nav } from "./shared";
 
-const CHANNEL_NAMES: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", facebook: "Facebook", threads: "Threads" };
+const CHANNEL_NAMES: Record<string, string> = { youtube: "YouTube", instagram: "Instagram", tiktok: "TikTok", x: "X", facebook: "Facebook", threads: "Threads", bluesky: "Bluesky" };
+const CHANNEL_ORDER = Object.keys(CHANNEL_NAMES);
 
 /** YouTube は押したときに初めて読み込む（表示速度を落とさない）。IDがない回は埋め込みを出さない */
 function Player({ id, title }: { id: string; title: string }) {
@@ -38,7 +39,7 @@ function Episode({ e }: { e: RenjillEpisode }) {
 
 export function RenjillPage({ navigate }: { navigate: Nav }) {
   const eps = renjillPublished();
-  const links = Object.entries(renjill.channels).filter(([, url]) => url) as [string, string][];
+  const links = (Object.entries(renjill.channels).filter(([, url]) => url) as [string, string][]).sort((a, b) => CHANNEL_ORDER.indexOf(a[0]) - CHANNEL_ORDER.indexOf(b[0]));
   const groups = [
     ...renjill.series.map((s) => ({ id: s.id, title: s.title, items: eps.filter((e) => e.series === s.id) })).filter((g) => g.items.length),
     { id: "", title: "すべてのエピソード", items: eps },
