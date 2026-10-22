@@ -26,5 +26,8 @@
     "oxfmt": "^0.2.0",
     "typescript": "^5.7.0",
     "vite": "^8.0.5"
+  },
+  "overrides": {
+    "linkedom": "0.18.13"
   }
 }
