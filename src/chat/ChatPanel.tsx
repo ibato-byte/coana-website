@@ -17,7 +17,7 @@ import "./chat.css";
  * スマホでは全画面のシート。高さは実際の表示領域（visualViewport）に合わせ、キーボードが出ても入力欄がそのすぐ上に来る。
  */
 
-export type ChatPanelProps = { navigate: Nav; mode: "menu" | "diagnosis"; request: number; onClose: () => void };
+export type ChatPanelProps = { navigate: Nav; mode: "menu" | "diagnosis"; request: number; preset?: number; onClose: () => void };
 
 type Link = { t: string; u: string };
 type Msg = {
@@ -65,7 +65,7 @@ let knowledgePromise: Promise<Knowledge | null> | null = null;
 const loadKnowledge = () =>
   (knowledgePromise ??= fetch("/chat-knowledge.json").then((r) => (r.ok ? r.json() : null)).catch(() => null));
 
-export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) {
+export function ChatPanel({ navigate, mode, request, preset, onClose }: ChatPanelProps) {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -85,7 +85,7 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
 
   // 開いたとき・「診断から」を押されたとき
   useEffect(() => {
-    if (mode === "diagnosis") startDiagnosis(msgs.length === 0);
+    if (mode === "diagnosis") startDiagnosis(msgs.length === 0, preset);
     else if (msgs.length === 0) push({ from: "bot", text: chat.greeting, note: chat.note, menu: true });
     void loadKnowledge();
     // スマホ（タッチ操作）では入力欄に自動でフォーカスしない（いきなりキーボードが開かないように）。パネル自体にフォーカスを移す
@@ -163,10 +163,17 @@ export function ChatPanel({ navigate, mode, request, onClose }: ChatPanelProps) 
   };
 
   /* ── 診断 ── */
-  function startDiagnosis(fresh = false) {
-    setAnswers([]);
+  function startDiagnosis(fresh = false, first?: number) {
     setDiagDone(null);
     const intro: Omit<Msg, "id">[] = fresh ? [{ from: "bot", text: chat.greeting, note: chat.note }] : [];
+    // トップの「迷ったら」で1問目に答えてから開いたときは、その答えを入れて2問目から
+    const opt = typeof first === "number" ? DIAG.questions[0]?.options[first] : undefined;
+    if (opt && DIAG.questions.length > 1) {
+      setAnswers([first as number]);
+      push(...intro, { from: "bot", text: DIAG.intro }, { from: "bot", diagStep: 0 }, { from: "user", text: opt.label }, { from: "bot", diagStep: 1 });
+      return;
+    }
+    setAnswers([]);
     push(...intro, { from: "bot", text: DIAG.intro }, { from: "bot", diagStep: 0 });
   }
   const answer = (step: number, option: number) => {

@@ -1,7 +1,8 @@
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { home, settings, type Article } from "./content";
 import { ARROW_PATHS } from "./bird";
 import { useFlowJourney } from "./flowJourney";
+import { Feathers } from "./feathers";
 
 /* ───────────────────────── 共通パーツ（App.tsx と SolutionPage.tsx から利用） ───────────────────────── */
 
@@ -69,8 +70,20 @@ export function DiagnoseBanner({ className = "" }: { className?: string }) {
 }
 
 /** サポートチャットを開く（mode: "diagnosis" で診断から始める）。ChatLauncher が受け取る */
-export function openChat(mode: "menu" | "diagnosis" = "menu") {
-  window.dispatchEvent(new CustomEvent("coana:chat", { detail: { mode } }));
+export function openChat(mode: "menu" | "diagnosis" = "menu", answer?: number) {
+  // answer：診断の1問目の答え（トップの「迷ったら」で選んだもの）。チャットはその続きから始まる
+  window.dispatchEvent(new CustomEvent("coana:chat", { detail: { mode, answer } }));
+}
+
+/** 番号つきのセクション見出し（01〜05。トップ・各ページ共通） */
+export function NumHead({ n, title, side, id }: { n: string; title: ReactNode; side?: ReactNode; id?: string }) {
+  return (
+    <div className="num-head" data-reveal id={id}>
+      <span className="num-head-no" aria-hidden="true">{n}</span>
+      <h2>{title}</h2>
+      {side && <div className="num-head-side">{side}</div>}
+    </div>
+  );
 }
 
 export const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, string> = {
@@ -302,8 +315,8 @@ export function LinkButton({
   secondary?: boolean;
   large?: boolean;
 }) {
-  // お問い合わせへの主ボタンだけ、矢印が鳥になる演出にする（副ボタンは矢印が少し動くだけ）
-  const fly = !secondary && !!args && args[0] === "contact";
+  // ボタンの矢印は鳩にしない（2026-10-23 オーナー指示。デザイン案どおり、ホバーで矢印が少し右へ動くだけ）
+  const fly = false;
   const cls = ["button", secondary ? "button-outline" : "", large ? "button-large" : "", fly ? "button-fly" : ""].filter(Boolean).join(" ");
   if (go && args) {
     return (
@@ -341,26 +354,52 @@ export function LineButton({ place, label = "LINEで気軽に相談する", tabI
   );
 }
 
-export function ContactBand({ navigate }: { navigate: Nav }) {
+export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: boolean }) {
+  // 大きな「相談する。」は、帯が画面を通り過ぎる間にゆっくり右から左へ流れる（デザイン案どおり。2026-10-23 オーナー決定の、スクロール連動の例外）。
+  // 帯が画面に入っている間だけ計算し、動かすのは transform だけ。「動きを減らす」設定では動かさない
+  const bigRef = useRef<HTMLParagraphElement | null>(null);
+  useEffect(() => {
+    const el = bigRef.current;
+    const band = el?.closest("section");
+    if (!el || !band || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let on = false;
+    const update = () => {
+      raf = 0;
+      const r = band.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      el.style.transform = `translate3d(${(10 - 24 * p).toFixed(2)}%, 0, 0)`;
+    };
+    const onScroll = () => { if (on && !raf) raf = requestAnimationFrame(update); };
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) update(); }, { rootMargin: "200px 0px" });
+    io.observe(band);
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+  }, [big]);
   return (
-    <section className="contact-band" data-live>
-      <div className="contact-orbit orbit-one" aria-hidden="true" />
-      <div className="contact-orbit orbit-two" aria-hidden="true" />
+    <section className={big ? "contact-band is-big" : "contact-band"} data-live>
+      <Feathers count={14} />
       <div className="container contact-band-inner" data-reveal>
-        <div>
-          <span className="eyebrow">Contact</span>
-          <h2>{settings.contact_band.heading}</h2>
-          <p><Lines text={settings.contact_band.text} /></p>
-        </div>
-        <div className="contact-band-action">
-          <LinkButton large go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
-          <LineButton place="contact_band" />
+        {big && <p className="contact-band-big" aria-hidden="true" ref={bigRef}>相談する。</p>}
+        <div className="contact-band-grid">
+          <div>
+            <span className="eyebrow" lang="en">Contact</span>
+            <h2>{settings.contact_band.heading}</h2>
+            <p><Lines text={settings.contact_band.text} /></p>
+          </div>
+          <div className="contact-band-action">
+            <LinkButton go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
+            <LineButton place="contact_band" label="LINEで気軽に相談" />
+            <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断</button>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-
 /** ページ上部の見出し。imagePosition で写真の見える位置だけを変えられる（見た目はどのページも共通） */
 export function PageHero({ en, title, intro, image, imagePosition }: { en: string; title: string; intro?: string; image?: string; imagePosition?: string }) {
   return (
@@ -369,22 +408,28 @@ export function PageHero({ en, title, intro, image, imagePosition }: { en: strin
       style={image ? { backgroundImage: `url("${image}")`, ...(imagePosition ? { backgroundPosition: imagePosition } : {}) } : undefined}
     >
       <div className="container">
-        <p className="page-hero-en">{en}</p>
+        <nav className="sky-crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a><span aria-hidden="true">/</span><span>{title}</span></nav>
+        <p className="page-hero-en" lang="en">{en}</p>
         <h1>{title}</h1>
         {intro && <div className="page-intro">{intro}</div>}
       </div>
+      <span className="page-hero-big" aria-hidden="true" lang="en">{en.toUpperCase()}</span>
     </section>
   );
 }
 
 export const faqItems: { q: string; a: string }[] = home.faqs ?? [];
 
-export function FaqSection({ items = faqItems, title = home.faq_title }: { items?: { q: string; a: string }[]; title?: string } = {}) {
-  const [openIndex, setOpenIndex] = useState(0); // 最初の質問だけ開いた状態。どれも閉じられる（-1）
+export function FaqSection({ items = faqItems, title = home.faq_title, numbered }: { items?: { q: string; a: string }[]; title?: string; numbered?: string } = {}) {
+  const [openIndex, setOpenIndex] = useState(numbered ? -1 : 0); // トップ（番号つき）はすべて閉じた状態、ほかは最初の質問だけ開く。どれも閉じられる（-1）
   return (
-    <section className="section faq-section">
-      <div className="container narrow">
-        <SectionTitle en="FAQ" center>{title}</SectionTitle>
+    <section className={numbered ? "section faq-section is-numbered" : "section faq-section"}>
+      <div className={numbered ? "container" : "container narrow"}>
+        {numbered
+          ? <NumHead n={numbered} title={title} side={<p>ここにない質問は、チャットでいつでもどうぞ。</p>} />
+          : <SectionTitle en="FAQ" center>{title}</SectionTitle>}
+        <div className={numbered ? "faq-columns" : undefined}>
+        {numbered && <div><button type="button" className="button button-outline button-small" onClick={() => openChat("menu")}>チャットで質問する</button></div>}
         <div className="faq-list">
           {items.map((item, i) => {
             const open = openIndex === i;
@@ -408,6 +453,7 @@ export function FaqSection({ items = faqItems, title = home.faq_title }: { items
               </div>
             );
           })}
+        </div>
         </div>
       </div>
     </section>

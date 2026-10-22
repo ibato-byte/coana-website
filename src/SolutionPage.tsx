@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { articles, home, inquiryTypeOf, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, BirdArrow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import { STORIES, useSchemeStory, type Story } from "./schemeStory";
@@ -188,6 +188,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
     <section className="lp-hero">
       <div className="container lp-hero-inner">
         <div className="lp-hero-head">
+          <nav className="sky-crumbs" aria-label="パンくずリスト"><GoLink go={navigate} args={["home"]}>{langOf(sol) === "en" ? "Home" : "ホーム"}</GoLink><span aria-hidden="true">/</span><GoLink go={navigate} args={["services"]}>{langOf(sol) === "en" ? "Services" : "サービス"}</GoLink><span aria-hidden="true">/</span><span>{sol.nav_label}</span></nav>
           <p className="lp-hero-kicker">
             <span className="lp-hero-en">{sol.en || "Service"}</span>
             <span className="lp-hero-label">{sol.nav_label}</span>
@@ -208,8 +209,8 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
             </ul>
           )}
           <div className="lp-hero-actions">
-            <GoLink className="button button-large button-fly lp-button-primary" go={navigate} args={["contact"]}>
-              {L.consult}<BirdArrow />
+            <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
+              {L.consult}<Icon name="arrow" size={19} />
             </GoLink>
             <LineButton place="solution_hero" label={L.consultLine} />
           </div>
@@ -222,6 +223,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
         </div>
       </div>
       <a className="lp-hero-scroll" href="#lp-problems" aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
+      <span className="page-hero-big lp-hero-big" aria-hidden="true" lang="en">{(sol.en || "Service").toUpperCase()}</span>
     </section>
   );
 }
@@ -815,8 +817,8 @@ function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           <h2>{sol.cta_title || L.ctaTitle}</h2>
           <p><Lines text={sol.cta_text || L.ctaText} /></p>
           <div className="lp-cta-actions">
-            <GoLink className="button button-large button-fly" go={navigate} args={["contact"]}>
-              {L.ctaButton}<BirdArrow />
+            <GoLink className="button button-large" go={navigate} args={["contact"]}>
+              {L.ctaButton}<Icon name="arrow" size={19} />
             </GoLink>
             <LineButton place="solution_cta" label={L.consultLine} />
           </div>

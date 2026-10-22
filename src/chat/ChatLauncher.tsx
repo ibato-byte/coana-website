@@ -25,10 +25,21 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"menu" | "diagnosis">("menu");
   const [request, setRequest] = useState(0); // 開いたまま「診断から」を押されたときに、パネルへ伝える
+  const [preset, setPreset] = useState<number | undefined>(undefined); // 診断の1問目の答え（トップの「迷ったら」から）
   const [Panel, setPanel] = useState<ComponentType<ChatPanelProps> | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [shown, setShown] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
+  // トップではヒーローのボタンに重ならないよう、ヒーローが見えている間は隠す（上に戻ったときも同じ）
+  const [heroTop, setHeroTop] = useState(false);
+  useEffect(() => {
+    if (page !== "home") { setHeroTop(false); return; }
+    // ヒーロー（PCではピン留めの間も）の下端が画面の55%より下にある間＝ヒーローのボタンが見えている間は隠す
+    const f = () => { const h = document.querySelector(".sky-hero-pin"); setHeroTop(h ? h.getBoundingClientRect().bottom > window.innerHeight * 0.55 : window.scrollY < window.innerHeight * 0.45); };
+    f();
+    window.addEventListener("scroll", f, { passive: true });
+    return () => window.removeEventListener("scroll", f);
+  }, [page]);
   // 少しスクロールしたら出す（一度出したら、上に戻っても消さない）。スクロールできないほど短いページでは最初から出す
   useEffect(() => {
     if (shown) return;
@@ -49,15 +60,16 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
   }, [page]);
 
   const load = () => import("./ChatPanel").then((m) => setPanel(() => m.ChatPanel));
-  const show = (next: "menu" | "diagnosis") => {
+  const show = (next: "menu" | "diagnosis", answer?: number) => {
     setMode(next);
+    setPreset(typeof answer === "number" ? answer : undefined);
     setRequest((n) => n + 1);
     setOpen(true);
     void load();
     window.gtag?.("event", "chat_open", { chat_mode: next });
   };
   useEffect(() => {
-    const onOpen = (e: Event) => show(((e as CustomEvent).detail?.mode as "menu" | "diagnosis") || "menu");
+    const onOpen = (e: Event) => { const d = (e as CustomEvent).detail; show((d?.mode as "menu" | "diagnosis") || "menu", d?.answer); };
     window.addEventListener("coana:chat", onOpen);
     return () => window.removeEventListener("coana:chat", onOpen);
   }, []);
@@ -93,7 +105,7 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
       <button
         ref={buttonRef}
         type="button"
-        className={["chat-launcher", open && "is-open", (shown || open) && !atFooter && "is-shown", page === "contact" && "is-quiet"].filter(Boolean).join(" ")}
+        className={["chat-launcher", open && "is-open", (shown || open) && !atFooter && (!heroTop || open) && "is-shown", page === "contact" && "is-quiet"].filter(Boolean).join(" ")}
         aria-expanded={open}
         aria-controls="chat-panel"
         aria-label={open ? "チャットを閉じる" : LAUNCHER_LABEL + "（チャットを開く）"}
@@ -104,7 +116,7 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
         <span className="chat-launcher-mark"><img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" /></span>
         <span className="chat-launcher-text" aria-hidden="true">チャットで相談・診断</span>
       </button>
-      {open && Panel && <Panel navigate={navigate} mode={mode} request={request} onClose={close} />}
+      {open && Panel && <Panel navigate={navigate} mode={mode} request={request} preset={preset} onClose={close} />}
     </>
   );
 }
