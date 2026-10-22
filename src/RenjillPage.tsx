@@ -2,7 +2,7 @@ import { useState } from "react";
 import { renjill, renjillPublished, type RenjillEpisode } from "./content";
 import { GoLink, PageHero, SectionTitle, type Nav } from "./shared";
 
-const CHANNEL_NAMES: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", facebook: "Facebook", threads: "Threads" };
+const CHANNEL_NAMES: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", facebook: "Facebook", x: "X", threads: "Threads", bluesky: "Bluesky" };
 
 /** YouTube は押したときに初めて読み込む（表示速度を落とさない）。IDがない回は埋め込みを出さない */
 function Player({ id, title }: { id: string; title: string }) {
