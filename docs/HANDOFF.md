@@ -3,6 +3,12 @@
 最終更新：2026-10-19（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
 
+## レンとジル公式ページ（2026-10-22、Automation Hub 依頼 #38）
+
+- ブランチ `claude/vigilant-cerf-pl8b7o`（PR 未作成）。ページ `/renjill`（`src/RenjillPage.tsx`）、データ `content/renjill/episodes.json`、SEO は `vite.config.ts`（タイトル・VideoObject・sitemap・クローラー向け本文）。フッター下段に「レンとジル」のリンク。
+- データは Actions「レンとジルの更新」（`.github/workflows/renjill-sync.yml`、毎日 6:17）が公開リポジトリ `renjill-media` の `episodes.json` から取り込む。公開日（日本時間）前の回は出さない。YouTube は押したときだけ読み込む。
+- 未確認：実機の見た目（PC・390px）、本番での動作。YouTube の ID が入るまで VideoObject は出ない。
+
 ## Automation Hub（自動の一覧・指示）
 
 - Claude の自動（SEO 週次・SEO 毎日監視・コラム自動作成 など）を1か所で見て、指示を送るダッシュボード：https://automation-hub-8lm.pages.dev（Cloudflare Access でオーナーだけ）。

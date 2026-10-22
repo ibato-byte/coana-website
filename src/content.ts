@@ -212,3 +212,20 @@ function closingServiceSlug(html: string) {
   }
   return undefined;
 }
+
+/* ───────── レンとジル（公式ページ。content/renjill/episodes.json は Actions「レンとジルの更新」が自動で更新する） ───────── */
+import renjillJson from "../content/renjill/episodes.json";
+
+export type RenjillEpisode = { no: number; ep: string; title: string; caption_ja: string; caption_en: string; date: string; series: string | null; youtube_id: string | null };
+export type RenjillData = {
+  updated: string;
+  channels: Partial<Record<"instagram" | "tiktok" | "youtube" | "facebook" | "threads", string | null>>;
+  series: { id: string; title: string }[];
+  episodes: RenjillEpisode[];
+};
+export const renjill = renjillJson as RenjillData;
+
+/** 公開日（日本時間）を過ぎた回だけを新しい順に返す（予約中の回は出さない） */
+export function renjillPublished(data: RenjillData = renjill, today: string = todayJst()) {
+  return data.episodes.filter((e) => e.date <= today).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.no - a.no));
+}
