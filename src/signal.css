@@ -960,3 +960,11 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .lp-sig-after { background: #e4f6ef; color: #12432f; }
 .lp-sig-after b { color: #0e7a57; }
 .lp-ba-line { stroke-width: 2.5; }
+/* 導入前／導入後の図：狭いスマホでは文字を文節で折り返し、少し小さく */
+.lp-ba-sources li, .lp-ba-center, .lp-ba-partner { word-break: auto-phrase; overflow-wrap: anywhere; }
+@media (max-width: 360px) {
+  .lp-ba-map { grid-template-columns: 35% 31% 28%; }
+  .lp-ba-sources li, .lp-ba-partner { font-size: 10.5px; padding-inline: 3px; }
+  .lp-ba-center { font-size: 11px; }
+  .lp-ba-center svg { display: none; }
+}
