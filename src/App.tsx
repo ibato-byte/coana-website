@@ -820,10 +820,10 @@ function Contact() {
             </div>
           )}
           <div className="line-notice tel-notice">
-            <p>お電話でもご相談いただけます。<small>AI受付がご用件をお伺いし、担当者より折り返しご連絡いたします。</small></p>
-            <a className="button button-outline tel-button" href="tel:050-5367-5192" aria-label="050-5367-5192に電話をかける" onClick={() => window.gtag?.("event", "phone_click", { place: "contact_page" })}>
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z" /></svg>
-              050-5367-5192
+            <p>お電話でのお問い合わせ<small>AIによる自動受付ののち、担当者より折り返しご連絡いたします。</small></p>
+            <a className="tel-number" href="tel:050-5367-5192" aria-label="050-5367-5192に電話をかける" onClick={() => window.gtag?.("event", "phone_click", { place: "contact_page" })}>
+              <span className="tel-number__label">TEL</span>
+              <span className="tel-number__digits">050-5367-5192</span>
             </a>
           </div>
           <p className="form-note"><span>必須</span>の項目は必ずご入力ください。</p>
