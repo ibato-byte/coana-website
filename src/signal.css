@@ -827,3 +827,9 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 }
 @media (max-width: 1100px) and (min-width: 421px) { .sky-verb small { font-size: 9px; letter-spacing: .06em; } }
 .sky-verb, .sky-verb.is-on { white-space: nowrap; }
+
+/* スマホ・タブレット：選ばれている言葉を分かりやすく（輪郭はPCより少し太く、切り替えは色がふわっと変わる） */
+@media (max-width: 1100px) {
+  .sky-hero.is-pinning .sky-verb { -webkit-text-stroke-width: 1.5px; }
+  .sky-hero.is-pinning .sky-verb.is-on { -webkit-text-stroke-width: 1.5px; }
+}
