@@ -318,5 +318,50 @@
   ],
   "related": [
     "20270427-bookkeeping-in-english-japan"
-  ]
+  ],
+  "design": "signal",
+  "before_after": {
+    "title": "With support,\nstarting up looks like this.",
+    "lead": "Flip the switch to compare before and after.",
+    "sources": [
+      "Plan",
+      "Funding",
+      "Setup",
+      "Accounting"
+    ],
+    "center_before": "On your own",
+    "center_after": "COANA TOKYO",
+    "partner": "Experts",
+    "items": [
+      {
+        "label": "Who does what",
+        "before_status": "Unclear",
+        "before": "Not sure who handles incorporation, visas, and taxes",
+        "after_status": "Clear",
+        "after": "We map the steps and introduce the right licensed experts"
+      },
+      {
+        "label": "Language",
+        "before_status": "Japanese only",
+        "before": "Banks and offices work mostly in Japanese",
+        "after_status": "In English",
+        "after": "One bilingual point of contact for the whole process"
+      },
+      {
+        "label": "Business plan",
+        "before_status": "Blank",
+        "before": "Unsure what Japanese lenders expect in a plan",
+        "after_status": "Ready",
+        "after": "Plan and projections prepared in a format lenders know"
+      },
+      {
+        "label": "Business customs",
+        "before_status": "Confusing",
+        "before": "Invoices, hanko, and payment terms feel unfamiliar",
+        "after_status": "Set up",
+        "after": "Invoicing and bookkeeping set up, with customs explained"
+      }
+    ],
+    "note": "* Illustrative example based on common inquiries."
+  }
 }

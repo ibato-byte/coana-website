@@ -92,6 +92,10 @@ const LABELS = {
     plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
     bestFor: "こんな方に",
     scenarios: "ご利用イメージ",
+    baBefore: "導入前",
+    baAfter: "導入後",
+    baAria: "導入後の状態を表示する",
+    baTitle: "導入すると、\nこう変わる。",
     before: "Before",
     after: "After",
     flow: "ご利用までの流れ",
@@ -127,6 +131,10 @@ const LABELS = {
     plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
     bestFor: "Best for",
     scenarios: "Example situations",
+    baBefore: "Before",
+    baAfter: "After",
+    baAria: "Show the after state",
+    baTitle: "Here is\nthe difference.",
     before: "Before",
     after: "After",
     flow: "How to get started",
@@ -269,6 +277,7 @@ function Problems({ sol }: { sol: Solution }) {
  *  動かすのは opacity・transform と線の描画だけ。「動きを減らす」設定では最初から導入後を表示（スイッチは使える） */
 function BeforeAfter({ sol }: { sol: Solution }) {
   const ba = sol.before_after;
+  const L = LABELS[langOf(sol)];
   const ref = useRef<HTMLDivElement | null>(null);
   const [after, setAfter] = useState(false);
   const touched = useRef(false);
@@ -297,12 +306,12 @@ function BeforeAfter({ sol }: { sol: Solution }) {
         <div className={after ? "lp-ba is-after" : "lp-ba"} ref={ref}>
           <div className="lp-ba-copy">
             <span className="eyebrow" lang="en">Before / After</span>
-            <h2><Lines text={ba.title || "導入すると、\nこう変わる。"} /></h2>
+            <h2><Lines text={ba.title || L.baTitle} /></h2>
             {ba.lead && <p>{ba.lead}</p>}
             <div className="lp-ba-switch">
-              <span className={after ? undefined : "on"} aria-hidden="true">導入前</span>
-              <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label="導入後の状態を表示する" onClick={toggle} />
-              <span className={after ? "on" : undefined} aria-hidden="true">導入後</span>
+              <span className={after ? undefined : "on"} aria-hidden="true">{L.baBefore}</span>
+              <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label={L.baAria} onClick={toggle} />
+              <span className={after ? "on" : undefined} aria-hidden="true">{L.baAfter}</span>
             </div>
           </div>
           <div className="lp-ba-board" aria-live="polite">
@@ -335,7 +344,7 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             <ul className="lp-ba-grid">
               {(ba.items ?? []).map((it, i) => (
                 <li key={it.label} style={{ ["--i" as string]: i }}>
-                  <p className="lp-ba-head"><span>{it.label}</span><b className="lp-ba-status"><span className="b">{it.before_status || "要対応"}</span><span className="a">{it.after_status || "完了"}</span></b></p>
+                  <p className="lp-ba-head"><span>{it.label}</span><b className="lp-ba-status"><span className="b">{it.before_status || "—"}</span><span className="a">{it.after_status || "✓"}</span></b></p>
                   <p className="lp-ba-val"><span className="b">{it.before}</span><span className="a">{it.after}</span></p>
                 </li>
               ))}

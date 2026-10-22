@@ -1058,3 +1058,12 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .lp-ba-sweep, .lp-ba-packet { display: none; }
   .lp-ba *, .lp-ba *::after { animation: none !important; }
 }
+/* 導入前／導入後の図：狭いスマホでは右の枠を少し広げ、英語は単語の途中で折らない */
+@media (max-width: 360px) { .lp-ba-map { grid-template-columns: 33% 34% 28%; } }
+.lp-lang-en .lp-ba-sources li, .lp-lang-en .lp-ba-center, .lp-lang-en .lp-ba-partner { overflow-wrap: normal; word-break: normal; }
+
+/* スマホのヒーロー：見出しと「BACK OFFICE × MARKETING」の間を詰める */
+@media (max-width: 600px) {
+  .sky-hero-top { gap: 8px 20px; }
+  .sky-kicker { margin-top: 0; }
+}
