@@ -1556,3 +1556,12 @@ a.line-button svg { flex: none; color: #06c755; }
   .line-notice { flex-direction: column; align-items: stretch; text-align: center; }
   .line-notice a.line-button { width: 100%; }
 }
+
+/* お問い合わせページ：電話での相談（LINE案内と同じ枠で、色だけネイビー系に） */
+.tel-notice { background: #f1f6fb; border-color: #d5e3f0; }
+.tel-notice small { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 400; color: var(--navy-soft); }
+a.tel-button { gap: 10px; letter-spacing: .04em; white-space: nowrap; }
+a.tel-button svg { flex: none; }
+@media (max-width: 640px) {
+  .line-notice a.tel-button { width: 100%; justify-content: center; }
+}
