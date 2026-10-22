@@ -979,3 +979,9 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .sky-hero-pin.is-pin .sky-card-text { font-size: 14px; line-height: 1.75; }
 .sky-hero-pin.is-pin .sky-card-links a.go-link { padding-top: 8px; }
 .sky-hero-pin.is-pin .sky-hero-top { padding-bottom: 12px; }
+/* スマホ：図の中央「クラウド会計」が1行に入るよう、中央の箱を少し広く・文字を詰める */
+@media (max-width: 600px) {
+  .lp-ba-map { grid-template-columns: 33% 34% 26%; }
+  .lp-ba-center { padding: 6px 2px; font-size: 11.5px; letter-spacing: -.04em; }
+  .lp-ba-center svg { display: none; }
+}
