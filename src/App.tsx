@@ -1088,7 +1088,8 @@ function Privacy() {
 function BackToTop() {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 700);
+    // トップではヒーロー（PCはピン留めの間も）のボタンが見えている間は出さない（右下のボタンに重なるため）
+    const onScroll = () => { const h = document.querySelector(".sky-hero-pin"); setShow(window.scrollY > 700 && !(h && h.getBoundingClientRect().bottom > window.innerHeight * 0.55)); };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
