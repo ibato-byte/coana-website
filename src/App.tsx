@@ -216,7 +216,8 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const PIN_MQ = "(min-width: 1101px) and (min-height: 700px)";
   const [pinMode, setPinMode] = useState(() => !reduce && window.matchMedia(PIN_MQ).matches);
   const pinModeRef = useRef(pinMode);
-  const [pinning, setPinning] = useState(false);
+  // 選ばれている言葉だけ白、ほかは輪郭。PC（ピン留め）だけでなくスマホ・タブレット（自動切り替え）でも同じ見せ方にして、いまどれかが分かるように（2026-10-23 オーナー指示）
+  const [pinning, setPinning] = useState(true);
   // ブラウザの「戻る・進む」でページが保存された状態のまま戻ったとき（別サイトから戻ったときなど）も、鳩を最初から
   const [replay, setReplay] = useState(0);
   useEffect(() => {
@@ -243,7 +244,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   }, [reduce]);
   // ピン留めの間：進み具合（0〜1）を3つに分けて、言葉とカードを切り替える。選ばれていない言葉は最初から輪郭
   useEffect(() => {
-    if (!pinMode) { setPinning(false); return; }
+    if (!pinMode) { setPinning(true); return; }
     const wrap = pinRef.current;
     if (!wrap) return;
     let raf = 0;
