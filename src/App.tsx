@@ -722,7 +722,7 @@ function Topics({ navigate }: { navigate: Nav }) {
   const shown = filtered.slice((pageNo - 1) * PER, pageNo * PER);
   return (
     <main>
-      <PageHero en="Topics" title="トピックス" image={settings.topics_hero_image} />
+      <PageHero en="Topics" title="トピックス" intro={(settings as { topics_intro?: string }).topics_intro} image={settings.topics_hero_image} />
       <section className="section topics-page">
         <div className="container">
           <div className="filter-row" aria-label="カテゴリーで絞り込む" data-reveal>
