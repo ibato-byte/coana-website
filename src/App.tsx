@@ -722,7 +722,7 @@ function Topics({ navigate }: { navigate: Nav }) {
   const shown = filtered.slice((pageNo - 1) * PER, pageNo * PER);
   return (
     <main>
-      <PageHero en="Topics" title="トピックス" image={settings.topics_hero_image} />
+      <PageHero en="Topics" title="トピックス" intro={(settings as { topics_intro?: string }).topics_intro} image={settings.topics_hero_image} />
       <section className="section topics-page">
         <div className="container">
           <div className="filter-row" aria-label="カテゴリーで絞り込む" data-reveal>
@@ -1088,7 +1088,8 @@ function Privacy() {
 function BackToTop() {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 700);
+    // トップではヒーロー（PCはピン留めの間も）のボタンが見えている間は出さない（右下のボタンに重なるため）
+    const onScroll = () => { const h = document.querySelector(".sky-hero-pin"); setShow(window.scrollY > 700 && !(h && h.getBoundingClientRect().bottom > window.innerHeight * 0.55)); };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

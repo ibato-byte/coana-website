@@ -863,7 +863,7 @@ function coanaPageMeta(): Plugin {
             '<section><h2>' + esc(services.flow_title) + '</h2><ol>' + flow.map((step) => '<li>' + esc(typeof step === 'string' ? step : Object.values(step as object).join(' ')) + '</li>').join('') + '</ol></section>' +
             '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
         }
-        if (pagePath === '/topics') return '<h1>トピックス</h1>' + topicList(sortedTopics)
+        if (pagePath === '/topics') return '<h1>トピックス</h1>' + paras(settings.topics_intro) + topicList(sortedTopics)
         if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro)
         if (pagePath === '/renjill') {
           return '<h1>レンとジル</h1><p>うさぎの課長レンと、しっかり者の部下ジル。セリフのない、オフィスコメディです。</p>' +
