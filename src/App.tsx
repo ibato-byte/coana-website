@@ -251,7 +251,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     return () => mq.removeEventListener("change", onMq);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduce]);
-  // ピン留めの間：進み具合（0〜1）を3つに分けて、言葉とカードを切り替える。1度でもスクロールしたら、選ばれていない言葉は輪郭に
+  // ピン留めの間：進み具合（0〜1）を3つに分けて、言葉とカードを切り替える。選ばれていない言葉は最初から輪郭
   useEffect(() => {
     if (!pinMode) { setPinning(false); return; }
     const wrap = pinRef.current;
@@ -262,7 +262,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
       const top = wrap.getBoundingClientRect().top + window.scrollY;
       const span = wrap.offsetHeight - window.innerHeight;
       const p = span > 0 ? Math.min(1, Math.max(0, (window.scrollY - top) / span)) : 0;
-      setPinning(p > 0);
+      setPinning(true); // 案どおり、ピン留めの画面では最初から「選ばれている言葉だけ白、ほかは輪郭」
       select(Math.min(2, Math.floor(p * 3)));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
