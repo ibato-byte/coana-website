@@ -1067,3 +1067,11 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .sky-hero-top { gap: 8px 20px; }
   .sky-kicker { margin-top: 0; }
 }
+
+/* 斜めの帯の端（広い画面ほど上下にはみ出す角）が切れないよう、横だけ切って縦は見せる */
+@supports (overflow: clip) {
+  .sky-tape-wrap { overflow-x: clip; overflow-y: visible; }
+}
+@supports not (overflow: clip) {
+  .sky-tape-wrap { padding-block: calc(14px + 1.3vw); margin-top: calc(-24px - 3.8vw); }
+}
