@@ -645,24 +645,3 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-hero-facts li { padding: 10px 4px; }
 }
 
-/* ───── レンとジル公式ページ（/renjill） ───── */
-.rj-section { padding: 72px 0 96px; }
-.rj-links { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; padding: 0; margin: 24px 0 8px; }
-.rj-links a { display: inline-block; padding: 12px 22px; border: 2px solid var(--sky-deep); border-radius: 999px; color: var(--sky-deep); font-weight: 700; text-decoration: none; background: var(--white); }
-.rj-links a:hover, .rj-links a:focus-visible { background: var(--sky-soft); }
-.rj-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.rj-group { margin-top: 56px; }
-.rj-group-title { font-size: 1.5rem; margin: 0 0 20px; color: var(--navy); }
-.rj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
-.rj-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
-.rj-player { display: block; position: relative; width: 100%; aspect-ratio: 4 / 3; background: var(--navy-ink); border: 0; padding: 0; cursor: pointer; }
-.rj-player img, .rj-player iframe { width: 100%; height: 100%; border: 0; object-fit: cover; display: block; }
-.rj-play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border-radius: 50%; background: var(--yellow); color: var(--navy-ink); display: grid; place-items: center; font-size: 1.4rem; }
-.rj-body { padding: 18px 20px 22px; }
-.rj-body h3 { margin: 4px 0 8px; font-size: 1.15rem; color: var(--navy); }
-.rj-body p { margin: 0 0 6px; line-height: 1.8; }
-.rj-meta { color: var(--navy-soft); font-size: .9rem; }
-.rj-en { color: var(--navy-soft); }
-.rj-note { margin-top: 56px; color: var(--navy-soft); }
-.rj-note a { color: var(--sky-deep); }
-@media (max-width: 560px) { .rj-section { padding: 48px 0 72px; } }

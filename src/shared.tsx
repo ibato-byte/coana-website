@@ -17,7 +17,6 @@ export type Page =
   | "solution"
   | "contact"
   | "privacy"
-  | "renjill"
   | "notfound";
 
 // サービス別ページの「無料で相談する」→ お問い合わせフォームへ、相談種別を引き継ぐ
@@ -93,7 +92,6 @@ export const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, s
   topics: "/topics",
   contact: "/contact",
   privacy: "/privacy",
-  renjill: "/renjill",
 };
 
 export type NavArgs = [Page, string?, string?];

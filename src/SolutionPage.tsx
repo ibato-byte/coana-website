@@ -866,13 +866,13 @@ function Support({ sol }: { sol: Solution }) {
                   <h4>{p.name}</h4>
                   {p.text && <p className="lp-plan-text">{p.text}</p>}
                   {(p.includes ?? []).length > 0 && (
-                    <ul>{(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} />{it}</li>)}</ul>
+                    <ul>{(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} /><span>{it}</span></li>)}</ul>
                   )}
                   {p.best_for && <p className="lp-plan-for"><span>{L.bestFor}</span>{p.best_for}</p>}
                 </article>
               ))}
             </div>
-            <p className="lp-note lp-plan-note"><LpIcon name="yen" size={16} />{sol.plans?.note || L.plansNote}</p>
+            <p className="lp-note lp-plan-note"><LpIcon name="yen" size={16} /><span>{sol.plans?.note || L.plansNote}</span></p>
           </>
         )}
 

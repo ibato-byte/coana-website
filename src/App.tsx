@@ -2,7 +2,6 @@ import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } fr
 import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
 import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
-import { RenjillPage } from "./RenjillPage";
 import { MiniIcon, ServiceArt } from "./illustrations";
 import { LogoMark } from "./logo";
 import { Feathers } from "./feathers";
@@ -30,7 +29,6 @@ function pageFromPath(): Page {
   if (path === "/topics") return "topics";
   if (path === "/contact") return "contact";
   if (path === "/privacy") return "privacy";
-  if (path === "/renjill") return "renjill";
   if (path === "/" || path === "/index.html") return "home";
   return "notfound";
 }
@@ -167,7 +165,6 @@ function Footer({ navigate }: { navigate: Nav }) {
       </div>
       <div className="container footer-bottom">
         <small className="footer-trademark">記載されている会社名・製品名・サービス名は、各社の商標または登録商標です。</small>
-        <GoLink className="footer-privacy" go={navigate} args={["renjill"]}>レンとジル</GoLink>
         <GoLink className="footer-privacy" go={navigate} args={["privacy"]}>プライバシーポリシー</GoLink>
         <small>{settings.copyright}</small>
       </div>
@@ -305,6 +302,8 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const nameOf = (slug: string) => solutions.find((s) => s.slug === slug)?.nav_label || slug;
   return (
     <div className={pinMode ? "sky-hero-pin is-pin" : "sky-hero-pin"} ref={pinRef}>
+    {/* 固定（PC）の間も、ヒーローと帯をひとかたまりで止める（帯だけが先に動いて「グイッ」と上がらないように） */}
+    <div className="sky-hero-stick">
     <section className={pinning ? "hero sky-hero is-pinning" : "hero sky-hero"} ref={heroRef}>
       <Feathers />
       <div className="container sky-hero-top">
@@ -351,6 +350,8 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         </div>
       </div>
     </section>
+    <SkyTape />
+    </div>
     </div>
   );
 }
@@ -591,7 +592,6 @@ function Home({ navigate }: { navigate: Nav }) {
   return (
     <main className="home-page">
       <HeroSection navigate={navigate} />
-      <SkyTape />
       <ServicesHome navigate={navigate} />
       <FinderSection />
       <StyleSection />
@@ -1111,7 +1111,7 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
-    const titles: Record<Page, string> = { home: "", about: "会社概要・代表メッセージ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", renjill: "レンとジル｜うさぎのオフィスコメディ", notfound: "ページが見つかりません" };
+    const titles: Record<Page, string> = { home: "", about: "会社概要・代表メッセージ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
     const base = "中小企業のバックオフィス・マーケティング支援 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
@@ -1162,7 +1162,6 @@ export default function App() {
   else if (page === "solution") content = <SolutionPage key={routeKey} navigate={navigate} />;
   else if (page === "contact") content = <Contact />;
   else if (page === "privacy") content = <Privacy />;
-  else if (page === "renjill") content = <RenjillPage navigate={navigate} />;
   else if (page === "notfound") content = <NotFound navigate={navigate} />;
   else content = <Home navigate={navigate} />;
   return (

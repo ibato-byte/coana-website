@@ -25,13 +25,21 @@ const SUB_BREAK = /(?<=[゠-ヿー])(?=[一-鿿])|(?<=問い合わせ)(?=[一-�
 const NO_LINE_START = /^[／/）」』】〕〉》、。，．・：；！？ー]/;
 
 /** 「〇〇年度」のあとにカタカナが続く長い文節（12文字以上）は、その境目でも分ける（「2026年度｜ゴールドスポンサーに」） */
-const LONG_BREAK = /(?<=[0-9０-９]年度)(?=[゠-ヿ])/g;
+const LONG_BREAK = /(?<=[0-9０-９]年度)(?=[゠-ヿ])|(?<=法人)(?=[^\s、。の])|(?<=[一-鿿])(?=(?:研究会|協会|学会|連合会)の?$)/g;
+
+/** 境目で切ってはいけない語（BudouX が「3か｜月」「発達教｜育」のように語の途中で分けることがある） */
+const KEEP_WORDS = ["か月", "ヶ月", "カ月", "週間", "時間", "年間", "日間", "教育", "研究会"];
+/** 前の文節の終わりと次の文節の始まりで、守る語が分かれていないか */
+function splitsWord(prev: string, next: string) {
+  if (/[〜~～]$/.test(prev)) return true; // 「1〜｜2か月」：範囲の途中では改行しない
+  return KEEP_WORDS.some((w) => { for (let k = 1; k < w.length; k++) if (prev.endsWith(w.slice(0, k)) && next.startsWith(w.slice(k))) return true; return false; });
+}
 
 function refine(phrases: string[]) {
   const out: string[] = [];
   const pieces = phrases.flatMap((p) => (p.length >= 8 ? p.split(SUB_BREAK) : [p])).flatMap((p) => (p.length >= 12 ? p.split(LONG_BREAK) : [p]));
   for (const p of pieces) {
-    if (out.length && NO_LINE_START.test(p)) out[out.length - 1] += p;
+    if (out.length && (NO_LINE_START.test(p) || splitsWord(out[out.length - 1], p))) out[out.length - 1] += p;
     else out.push(p);
   }
   return out;
@@ -51,7 +59,8 @@ function phraseNodes(text: string): ReactNode[] | null {
     phrases.forEach((phrase, i) => {
       if (i) list.push(jsx("wbr", {}, "w" + i));
       // 全角スラッシュはブラウザが前後で改行してしまうため、その文節だけ折り返さない（「税理士／社内」）
-      list.push(phrase.includes("／") ? jsx("span", { style: { whiteSpace: "nowrap" }, children: phrase }, "p" + i) : phrase);
+      // 「1.5〜3か月」のような範囲も途中で改行させない
+      list.push(phrase.includes("／") || /[0-9０-９][〜~～][0-9０-９]/.test(phrase) ? jsx("span", { style: { whiteSpace: "nowrap" }, children: phrase }, "p" + i) : phrase);
     });
     nodes = list;
   }
