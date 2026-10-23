@@ -368,7 +368,8 @@ export function ContactBand({ navigate, big = false, title, text, bigText = "相
       const r = band.getBoundingClientRect();
       const vh = window.innerHeight;
       const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
-      el.style.transform = `translate3d(${(10 - 24 * p).toFixed(2)}%, 0, 0)`;
+      // 右から流れてきて、帯が画面の中ほどまで来たら左端（読みやすい位置）で止まる。それ以上は左へ流さない（2026-10-24 オーナー指示）
+      el.style.transform = `translate3d(${(10 * (1 - Math.min(1, p / 0.5))).toFixed(2)}%, 0, 0)`;
     };
     const onScroll = () => { if (on && !raf) raf = requestAnimationFrame(update); };
     const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) update(); }, { rootMargin: "200px 0px" });
