@@ -667,7 +667,7 @@ function coanaPageMeta(): Plugin {
         slug: string; order?: number; nav_label?: string; title: string; seo_title?: string; description?: string; lead?: string; catch?: string
         lang?: 'ja' | 'en'; hidden?: boolean; english?: { slug?: string }
         hero_facts?: { value: string; label: string }[]
-        problems_title?: string; problems?: string[]
+        problems_title?: string; problems?: string[]; design?: string; before_after?: { title?: string; items?: { label: string; before: string; after: string }[] }
         scheme?: { type?: string; title?: string; lead?: string; center?: { label?: string; sub?: string }; client?: { label?: string; sub?: string }; steps?: string[]; returns?: { label: string; sub?: string }[]; nodes?: { label: string; sub?: string; who?: string; detail?: string }[]; points?: Named[]; note?: string }
         features_title?: string; features_lead?: string; features?: Named[]; tools?: string[]; tools_note?: string
         scope?: { title?: string; groups?: { name: string; items?: string[] }[]; note?: string }
@@ -898,7 +898,10 @@ function coanaPageMeta(): Plugin {
         const supportTitle = sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support
         return (sol.catch ? '<h1>' + esc(catchText(sol.catch)) + '</h1><p>' + esc(sol.title) + '</p>' : '<h1>' + esc(sol.title) + '</h1>') + paras(sol.lead) +
           ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
-          section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
+          // 新デザイン（design: signal）のLPは「お悩み」を出さず、導入前／導入後を表示する（画面と同じ内容をクローラーにも）
+          (sol.design === 'signal'
+            ? section(catchText(sol.before_after?.title || '') || T.before + ' / ' + T.after, (sol.before_after?.items ?? []).length ? '<ul>' + (sol.before_after?.items ?? []).map((it) => '<li><strong>' + esc(it.label) + '</strong>：' + esc(T.before) + '　' + esc(it.before) + '／' + esc(T.after) + '　' + esc(it.after) + '</li>').join('') + '</ul>' : '')
+            : section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '')) +
           section(sol.scheme?.title || T.scheme, (sol.scheme ? paras(sol.scheme.lead) +
             (relayFlow(sol.scheme).length ? '<ol>' + relayFlow(sol.scheme).map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>' : '') +
             ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + (n.who === 'client' ? '【御社】' : n.who === 'team' ? '【COANA TOKYO】' : '') + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + '</li>').join('') + '</ul>' : '') +

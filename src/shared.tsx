@@ -354,7 +354,8 @@ export function LineButton({ place, label = "LINEで気軽に相談する", tabI
   );
 }
 
-export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: boolean }) {
+/** お問い合わせの帯。LP では見出し・本文・ボタンの文言を差し替えて使う（未指定ならサイト共通の文言） */
+export function ContactBand({ navigate, big = false, title, text, bigText = "相談する。", primary = "お問い合わせ", line = "LINEで気軽に相談", place = "contact_band", chat = true, lang }: { navigate: Nav; big?: boolean; title?: string; text?: string; bigText?: string; primary?: string; line?: string; place?: string; chat?: boolean; lang?: string }) {
   // 大きな「相談する。」は、帯が画面を通り過ぎる間にゆっくり右から左へ流れる（デザイン案どおり。2026-10-23 オーナー決定の、スクロール連動の例外）。
   // 帯が画面に入っている間だけ計算し、動かすのは transform だけ。「動きを減らす」設定では動かさない
   const bigRef = useRef<HTMLParagraphElement | null>(null);
@@ -383,17 +384,17 @@ export function ContactBand({ navigate, big = false }: { navigate: Nav; big?: bo
     <section className={big ? "contact-band is-big" : "contact-band"} data-live>
       <Feathers count={14} />
       <div className="container contact-band-inner" data-reveal>
-        {big && <p className="contact-band-big" aria-hidden="true" ref={bigRef}>相談する。</p>}
+        {big && <p className="contact-band-big" aria-hidden="true" ref={bigRef} lang={lang}>{bigText}</p>}
         <div className="contact-band-grid">
           <div>
             <span className="eyebrow" lang="en">Contact</span>
-            <h2>{settings.contact_band.heading}</h2>
-            <p><Lines text={settings.contact_band.text} /></p>
+            <h2>{title || settings.contact_band.heading}</h2>
+            <p><Lines text={text || settings.contact_band.text} /></p>
           </div>
           <div className="contact-band-action">
-            <LinkButton go={navigate} args={["contact"]}>お問い合わせ</LinkButton>
-            <LineButton place="contact_band" label="LINEで気軽に相談" />
-            <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断</button>
+            <LinkButton go={navigate} args={["contact"]}>{primary}</LinkButton>
+            <LineButton place={place} label={line} />
+            {chat && <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断</button>}
           </div>
         </div>
       </div>

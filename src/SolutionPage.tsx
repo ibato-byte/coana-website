@@ -1,9 +1,10 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { articles, home, inquiryTypeOf, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
+import { ArticleRow, ContactBand, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import { STORIES, useSchemeStory, type Story } from "./schemeStory";
+import { Feathers } from "./feathers";
 import "./solution.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
@@ -95,6 +96,9 @@ const LABELS = {
     baBefore: "導入前",
     baAfter: "導入後",
     baAria: "導入後の状態を表示する",
+    bigCta: "相談する。",
+    baMeterBefore: (n: number) => `${n}つの困りごとを抱えた状態`,
+    baMeterAfter: (n: number) => `${n}つの困りごとが、すべて改善`,
     baTitle: "導入すると、\nこう変わる。",
     before: "Before",
     after: "After",
@@ -134,6 +138,9 @@ const LABELS = {
     baBefore: "Before",
     baAfter: "After",
     baAria: "Show the after state",
+    bigCta: "Let’s talk.",
+    baMeterBefore: (n: number) => `${n} pain points`,
+    baMeterAfter: (n: number) => `All ${n} areas improved`,
     baTitle: "Here is\nthe difference.",
     before: "Before",
     after: "After",
@@ -192,8 +199,10 @@ function CatchLines({ text }: { text: string }) {
 function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const L = LABELS[langOf(sol)];
   const facts = sol.hero_facts ?? [];
+  const signal = sol.design === "signal";
   return (
-    <section className="lp-hero">
+    <section className={signal ? "lp-hero lp-sig-hero" : "lp-hero"}>
+      {signal && <Feathers count={12} />}
       <div className="container lp-hero-inner">
         <div className="lp-hero-head">
           <nav className="sky-crumbs" aria-label="パンくずリスト"><GoLink go={navigate} args={["home"]}>{langOf(sol) === "en" ? "Home" : "ホーム"}</GoLink><span aria-hidden="true">/</span><GoLink go={navigate} args={["services"]}>{langOf(sol) === "en" ? "Services" : "サービス"}</GoLink><span aria-hidden="true">/</span><span>{sol.nav_label}</span></nav>
@@ -230,7 +239,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           )}
         </div>
       </div>
-      <a className="lp-hero-scroll" href="#lp-problems" aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
+      <a className="lp-hero-scroll" href={signal ? "#lp-ba" : "#lp-problems"} aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
       <span className="page-hero-big lp-hero-big" aria-hidden="true" lang="en">{(sol.en || "Service").toUpperCase()}</span>
     </section>
   );
@@ -300,7 +309,7 @@ function BeforeAfter({ sol }: { sol: Solution }) {
   const ys = sources.map((_, i) => ((i + 0.5) / Math.max(1, sources.length)) * 100);
   const toggle = () => { touched.current = true; setAfter((a) => !a); };
   return (
-    <section className="section lp-ba-section">
+    <section className="section lp-ba-section" id="lp-ba">
       <div className="container">
         <div data-reveal>
         <div className={after ? "lp-ba is-after" : "lp-ba"} ref={ref}>
@@ -315,9 +324,9 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             </div>
           </div>
           <div className="lp-ba-board" aria-live="polite">
-            {/* 背景の大きな文字（BEFORE → AFTER）と、切り替えの瞬間に左から右へ走る光 */}
+            {/* 背景の大きな文字（BEFORE → AFTER）と、導入後に差し込む空の光 */}
+            <span className="lp-ba-light" aria-hidden="true" />
             <span className="lp-ba-word" aria-hidden="true"><span className="b">BEFORE</span><span className="a">AFTER</span></span>
-            <span className="lp-ba-sweep" key={after ? "a" : "b"} aria-hidden="true" />
             {sources.length > 0 && (
               <div className="lp-ba-map" data-live>
                 <svg className="lp-ba-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -344,37 +353,20 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             <ul className="lp-ba-grid">
               {(ba.items ?? []).map((it, i) => (
                 <li key={it.label} style={{ ["--i" as string]: i }}>
+                  <span className="lp-ba-check" aria-hidden="true"><Icon name="check" size={14} /></span>
                   <p className="lp-ba-head"><span>{it.label}</span><b className="lp-ba-status"><span className="b">{it.before_status || "—"}</span><span className="a">{it.after_status || "✓"}</span></b></p>
                   <p className="lp-ba-val"><span className="b">{it.before}</span><span className="a">{it.after}</span></p>
                 </li>
               ))}
             </ul>
+            <div className="lp-ba-meter" aria-hidden="true">
+              <span className="lp-ba-meter-bar">{(ba.items ?? []).map((_, i) => <i key={i} style={{ ["--i" as string]: i }} />)}</span>
+              <span className="lp-ba-meter-label"><span className="b">{L.baMeterBefore((ba.items ?? []).length)}</span><span className="a">{L.baMeterAfter((ba.items ?? []).length)}</span></span>
+            </div>
             {ba.note && <p className="lp-ba-note">{ba.note}</p>}
           </div>
         </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-/** お悩み（新デザイン）：大きな番号つきのタイル。最後に「仕組みから解決」へつなぐ */
-function SignalProblems({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  if (!sol.problems.length) return null;
-  return (
-    <section id="lp-problems" className="section lp-problems lp-sig-problems">
-      <div className="container">
-        <SectionTitle en="Problems">{sol.problems_title || L.problems}</SectionTitle>
-        <ol className="lp-sig-problem-grid">
-          {sol.problems.map((p, i) => (
-            <li key={p} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
-              <span className="lp-sig-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-              <span>{p}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="lp-sig-bridge" data-reveal>{L.bridge[0]}<strong>{L.bridge[1]}</strong>{L.bridge[2]}</p>
       </div>
     </section>
   );
@@ -1029,13 +1021,15 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
   return (
     <main className={`solution-page lp lp-lang-${langOf(sol)}${signal ? " lp-signal" : ""}`}>
       <Hero sol={sol} navigate={navigate} />
-      {signal ? <><BeforeAfter sol={sol} /><SignalProblems sol={sol} /></> : <Problems sol={sol} />}
+      {signal ? <BeforeAfter sol={sol} /> : <Problems sol={sol} />}
       <Scheme sol={sol} navigate={navigate} />
       <Support sol={sol} />
       {signal ? <SignalScenarios sol={sol} /> : <Scenarios sol={sol} />}
       <Flow sol={sol} />
       {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || L.faq} />}
-      <CtaBand sol={sol} navigate={navigate} />
+      {signal
+        ? <ContactBand navigate={navigate} big title={sol.cta_title || L.ctaTitle} text={sol.cta_text || L.ctaText} bigText={L.bigCta} primary={L.ctaButton} line={L.consultLine} place="solution_cta" chat={langOf(sol) === "ja"} lang={langOf(sol)} />
+        : <CtaBand sol={sol} navigate={navigate} />}
       <section className="section solution-more">
         <div className="container solution-more-grid">
           {related.length > 0 && (
