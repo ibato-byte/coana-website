@@ -1075,3 +1075,6 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 @supports not (overflow: clip) {
   .sky-tape-wrap { padding-block: calc(14px + 1.3vw); margin-top: calc(-24px - 3.8vw); }
 }
+
+/* 導入前／導入後のスイッチ：選ばれていない側の文字も読みやすく（白地で 4.5:1 以上） */
+.lp-ba-switch > span { color: #5a6e80; }
