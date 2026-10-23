@@ -131,30 +131,41 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
   );
 }
 
-function Footer({ navigate }: { navigate: Nav }) {
+/** フッターの英語表記（英語ページのときだけ。リンク先の各ページは日本語なので、その旨を見出しに添える） */
+const FOOTER_EN = {
+  tagline: "A partner for building the systems that help small businesses grow.",
+  company: "COANA TOKYO LLC.",
+  address: "3F, 1-3-3 Kita-Aoyama, Minato-ku, Tokyo 107-0061, Japan",
+  menuTitle: "Menu (in Japanese)",
+  menu: ["Home", "About us", "Services", "Topics", "Contact"],
+  servicesTitle: "Services (in Japanese)",
+  trademark: "Company, product and service names mentioned on this site are trademarks or registered trademarks of their respective owners.",
+  privacy: "Privacy policy (in Japanese)",
+};
+
+function Footer({ navigate, en = false }: { navigate: Nav; en?: boolean }) {
+  const E = FOOTER_EN;
   return (
-    <footer lang="ja" className="site-footer">
+    <footer lang={en ? "en" : "ja"} className="site-footer">
       <div className="container footer-grid">
         <div className="footer-company">
           <Logo navigate={navigate} white />
-          <p className="footer-tagline">{settings.footer_tagline}</p>
-          <p className="footer-address">{settings.company_name}<br />{settings.postal_code} {settings.address}</p>
+          <p className="footer-tagline">{en ? E.tagline : settings.footer_tagline}</p>
+          <p className="footer-address">{en ? E.company : settings.company_name}<br />{en ? E.address : <>{settings.postal_code} {settings.address}</>}</p>
           {/* メールアドレスはフッターのここだけに掲載する（CLAUDE.md） */}
           <a className="footer-mail" href={`mailto:${settings.email}`}><Icon name="mail" size={16} />{settings.email}</a>
         </div>
-        <nav className="footer-links" aria-label="フッターナビゲーション">
+        <nav className="footer-links" aria-label={en ? "Footer navigation" : "フッターナビゲーション"}>
           <div>
-            <p className="footer-links-title" lang="en">Menu</p>
-            <GoLink go={navigate} args={["home"]}>ホーム</GoLink>
-            <GoLink go={navigate} args={["about"]}>会社概要</GoLink>
-            <GoLink go={navigate} args={["services"]}>サービス</GoLink>
-            <GoLink go={navigate} args={["topics"]}>トピックス</GoLink>
-            <GoLink go={navigate} args={["contact"]}>お問い合わせ</GoLink>
+            <p className="footer-links-title" lang="en">{en ? E.menuTitle : "Menu"}</p>
+            {(["home", "about", "services", "topics", "contact"] as const).map((t, i) => (
+              <GoLink key={t} go={navigate} args={[t]}>{en ? E.menu[i] : ["ホーム", "会社概要", "サービス", "トピックス", "お問い合わせ"][i]}</GoLink>
+            ))}
           </div>
           <div className="footer-links-services">
-            <p className="footer-links-title" lang="en">Services</p>
+            <p className="footer-links-title" lang="en">{en ? E.servicesTitle : "Services"}</p>
             {solutions.filter((sol) => !sol.hidden).map((sol) => (
-              <GoLink key={sol.slug} go={navigate} args={["solution", undefined, sol.slug]}>{sol.nav_label}</GoLink>
+              <GoLink key={sol.slug} go={navigate} args={["solution", undefined, sol.slug]}><span lang="ja">{sol.nav_label}</span></GoLink>
             ))}
             {/* 英語版の創業支援ページ（一覧には出さないが、全ページから辿れるようにする） */}
             {solutions.filter((sol) => sol.lang === "en").map((sol) => (
@@ -164,8 +175,8 @@ function Footer({ navigate }: { navigate: Nav }) {
         </nav>
       </div>
       <div className="container footer-bottom">
-        <small className="footer-trademark">記載されている会社名・製品名・サービス名は、各社の商標または登録商標です。</small>
-        <GoLink className="footer-privacy" go={navigate} args={["privacy"]}>プライバシーポリシー</GoLink>
+        <small className="footer-trademark">{en ? E.trademark : "記載されている会社名・製品名・サービス名は、各社の商標または登録商標です。"}</small>
+        <GoLink className="footer-privacy" go={navigate} args={["privacy"]}>{en ? E.privacy : "プライバシーポリシー"}</GoLink>
         <small>{settings.copyright}</small>
       </div>
     </footer>
@@ -1168,7 +1179,7 @@ export default function App() {
     <div className="app-shell">
       <Header page={page} navigate={navigate} />
       <div key={`${page}-${routeKey}`} className="page-fade">{content}</div>
-      <Footer navigate={navigate} />
+      <Footer navigate={navigate} en={page === "solution" && solutions.some((sol) => sol.lang === "en" && window.location.pathname.replace(/\/+$/, "") === "/services/" + sol.slug)} />
       <BackToTop />
       <ChatLauncher navigate={navigate} page={page} />
     </div>

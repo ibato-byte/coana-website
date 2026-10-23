@@ -1268,3 +1268,17 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .contact-band :is(h2, .contact-band-big):lang(en), .lp-cta-band h2:lang(en) { letter-spacing: -.03em; }
 /* 下層ページのお問い合わせの帯の見出し（2行）：行どうしがくっつかないよう少し広げる */
 .contact-band:not(.is-big) h2 { line-height: 1.16; }
+
+/* プランのカード（PC）：見出し・説明・項目・「こんな方に」の段を、横のカードとそろえる（subgrid） */
+@media (min-width: 901px) {
+  @supports (grid-template-rows: subgrid) {
+    .lp-signal .lp-plan-grid { grid-auto-rows: auto; }
+    .lp-signal .lp-plan { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+    .lp-signal .lp-plan-for { margin: 0; align-self: start; }
+  }
+}
+
+/* ヘッダーの「相談する」：カーソルへ引き寄せる動きをなくす（固定ヘッダーの端で、ボタンが動いて当たり判定が出入りし、点滅して見えることがあるため）。
+   Safari で角丸＋はみ出し隠し＋移動の組み合わせがちらつく問題も避ける */
+.site-header .button-fly { transform: none !important; transition: border-color .35s, color .3s; isolation: isolate; }
+.nav-link { transition: background-color .2s, color .2s; }
