@@ -1250,7 +1250,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 
 /* トップのヒーロー：デザイン案と同じく、上の一文（＋右の英字）と下のリード文（＋ボタン）を中身の幅にして中央に寄せる
    （2026-10-24 オーナー指示。大きな動詞とカードの段は今のまま全幅） */
-@media (min-width: 901px) {
+@media (min-width: 1101px) {
   .home-page .sky-hero-top, .home-page .sky-hero-bottom { width: fit-content; max-width: min(100%, 1400px); margin-inline: auto; justify-content: center; }
   .home-page .sky-hero-top { column-gap: clamp(60px, 9vw, 160px); }
   .home-page .sky-hero-bottom { column-gap: clamp(28px, 3vw, 48px); }
@@ -1282,3 +1282,31 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
    Safari で角丸＋はみ出し隠し＋移動の組み合わせがちらつく問題も避ける */
 .site-header .button-fly { transform: none !important; transition: border-color .35s, color .3s; isolation: isolate; }
 .nav-link { transition: background-color .2s, color .2s; }
+
+/* トップの「05 よくあるご質問」：左の列を、チャットへの案内のカードにする（小さなボタンだけが浮いて見えないように） */
+.faq-ask { position: sticky; top: 110px; display: grid; gap: 14px; padding: clamp(24px, 2.6vw, 34px); border: var(--ss-line); border-radius: var(--ss-radius); background: var(--sky-s); }
+.faq-ask-title { margin: 0; font-family: var(--font-jp); font-size: clamp(20px, 1.9vw, 26px); font-weight: 900; line-height: 1.45; letter-spacing: -.02em; color: var(--ink); }
+.faq-ask-text { margin: 0; font-size: 14px; line-height: 1.85; color: var(--ink-2, #3d5568); }
+.faq-columns .faq-ask .faq-ask-button { justify-self: start; display: inline-flex; align-items: center; gap: 10px; min-height: 60px; padding: 0 28px; font-size: 16px; background: var(--ink); color: #fff; border: 2px solid var(--ink); }
+.faq-columns .faq-ask .faq-ask-button:hover { background: var(--ink-d, #0b2236); }
+@media (max-width: 1100px) {
+  .faq-ask { position: static; order: 2; }
+  .faq-columns .faq-ask .faq-ask-button { justify-self: stretch; justify-content: center; }
+}
+
+/* PC（固定するヒーロー）：大きな動詞が画面の高さに合わせて小さくなると、右のカードとの間が広く空く。
+   動詞とカードをひとかたまりにして中央に寄せ、間を一定にする（上の一文・下のリード文と同じ中央寄せ）。
+   高さ800px未満では、中央に寄せたカード（2・3枚目は高い）が下のリード文に重なるため、寄せずに今までどおり右に置く */
+@media (min-height: 800px) {
+  .home-page .sky-hero-pin.is-pin .sky-hero-mid { grid-template-columns: auto minmax(400px, 560px); justify-content: center; column-gap: clamp(56px, 6vw, 112px); }
+}
+/* 低い画面（高さ760px以下）：ヒーローの下の余白を増やした分、2・3枚目のカードが下のボタンに近づくので、カードの内側の余白を少し詰める */
+@media (max-height: 760px) {
+  .home-page .sky-hero-pin.is-pin .sky-card { gap: 6px; padding-block: 20px; }
+}
+
+/* ヒーローの下の帯：上（ボタンと帯の間）を少し広く。ヒーローの下の余白だけを増やし、帯の重なり（margin-top）は変えないので、帯の上にすき間はできない */
+.sky-hero { padding-bottom: calc(76px + 3.3vw); }
+.sky-hero-pin.is-pin .sky-hero { padding-bottom: calc(82px + 3.3vw); }
+.sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 464px - 3.3vw) / 3.15)); }
+.sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 464px - 3.3vw) / 34)); }
