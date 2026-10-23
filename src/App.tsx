@@ -495,7 +495,7 @@ function FinderSection() {
       <div className="container">
         <NumHead n="02" title={<>どれが合うか<br />迷ったら</>} side={<p>{total}つの質問に答えるだけで、合いそうなサービスをご案内します。約1分・個人情報の入力は不要です。</p>} />
         <div className="finder-grid">
-          <p className="finder-big" data-reveal>答えるだけで、<br />道が決まる。<small>選んだ答えは、そのままチャットで続きから診断できます。</small></p>
+          <p className="finder-big" data-reveal>1分で、<br />合うサービスが<wbr />見つかる。<small>1問目を選ぶとチャットが開き、残りの質問にそのまま進めます。</small></p>
           <div className="finder-card" data-reveal>
             <div className="finder-card-top"><span lang="en">Service finder</span><span>Q1 / {total}</span></div>
             <h3>{q.text}</h3>
