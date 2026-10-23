@@ -230,6 +230,31 @@ collections:
               - { label: こんな方に, name: best_for, widget: string, required: false }
               - { label: おすすめとして強調する, name: featured, widget: boolean, default: false, required: false }
           - { label: 料金の注記, name: note, widget: text, required: false }
+      - { label: "ページのデザイン（signal＝トップと同じ新デザイン：番号つき見出し・導入前／導入後の切り替え）", name: design, widget: select, options: ["", "signal"], required: false }
+      - label: 導入前／導入後の切り替え（新デザインのページで表示）
+        name: before_after
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: 見出し（改行で2行に）, name: title, widget: text, required: false }
+          - { label: リード文, name: lead, widget: text, required: false }
+          - { label: 左に並ぶもの（銀行口座・カードなど。4つまで）, name: sources, widget: list, required: false }
+          - { label: 中央（導入前）, name: center_before, widget: string, required: false }
+          - { label: 中央（導入後）, name: center_after, widget: string, required: false }
+          - { label: 右（連携先。破線の枠）, name: partner, widget: string, required: false }
+          - label: 項目
+            name: items
+            widget: list
+            required: false
+            summary: "{{fields.label}}"
+            fields:
+              - { label: 項目名, name: label, widget: string }
+              - { label: 導入前の状態（短く）, name: before_status, widget: string, required: false }
+              - { label: 導入前, name: before, widget: text }
+              - { label: 導入後の状態（短く）, name: after_status, widget: string, required: false }
+              - { label: 導入後, name: after, widget: text }
+          - { label: 注記, name: note, widget: string, required: false }
       - label: ご利用イメージ
         name: scenarios
         widget: object

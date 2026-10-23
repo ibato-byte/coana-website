@@ -159,6 +159,10 @@ export type Solution = {
   tools?: string[];
   tools_note?: string;
   scenarios?: { title?: string; lead?: string; items?: { name: string; tag?: string; before?: string; text: string }[]; note?: string };
+  /** LPのデザイン。"signal" はトップと同じ Signal Sky の作り（番号つき見出し・導入前／導入後の切り替えなど） */
+  design?: string;
+  /** 導入前／導入後の切り替え（design が "signal" のLPで表示） */
+  before_after?: { title?: string; lead?: string; sources?: string[]; center_before?: string; center_after?: string; partner?: string; items?: { label: string; before_status?: string; before: string; after_status?: string; after: string }[]; note?: string };
   steps_title?: string;
   flow?: { name: string; text: string }[];
   flow_note?: string;

@@ -278,5 +278,50 @@
   "related": [
     "20270209-sales-pipeline-basics",
     "20260925-sns-outsourcing"
-  ]
+  ],
+  "design": "signal",
+  "before_after": {
+    "title": "営業の仕組みを整えると、\nこう変わる。",
+    "lead": "スイッチを切り替えて、整える前と整えた後を見比べてください。",
+    "sources": [
+      "紹介",
+      "Webサイト",
+      "SNS",
+      "セミナー"
+    ],
+    "center_before": "担当者まかせ",
+    "center_after": "営業の仕組み",
+    "partner": "商談・受注",
+    "items": [
+      {
+        "label": "新規の入り口",
+        "before_status": "紹介頼み",
+        "before": "新規は紹介や既存客からだけ",
+        "after_status": "複数",
+        "after": "Web・SNS・セミナーから商談までの道をつくる"
+      },
+      {
+        "label": "強みの伝え方",
+        "before_status": "あいまい",
+        "before": "強みや対象顧客を、うまく言葉にできない",
+        "after_status": "明確",
+        "after": "強みを整理し、提案資料と話し方をそろえる"
+      },
+      {
+        "label": "フォロー",
+        "before_status": "漏れ",
+        "before": "見込み客の情報が個人メモに散らばる",
+        "after_status": "管理",
+        "after": "段階ごとに管理し、次の一手を型にする"
+      },
+      {
+        "label": "振り返り",
+        "before_status": "なし",
+        "before": "うまくいった理由も失注の理由も残らない",
+        "after_status": "改善",
+        "after": "毎月の振り返りで、やり方を少しずつ改善"
+      }
+    ],
+    "note": "※ 表示はご利用イメージです（よくあるご相談をもとにした想定例）。"
+  }
 }

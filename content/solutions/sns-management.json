@@ -280,5 +280,50 @@
       "text": "Webサイト・営業・セミナーと組み合わせ、集客の流れの中に。"
     }
   ],
-  "features_lead": "目的の整理から運用・振り返りまで。企画だけ・作成だけも歓迎です。"
+  "features_lead": "目的の整理から運用・振り返りまで。企画だけ・作成だけも歓迎です。",
+  "design": "signal",
+  "before_after": {
+    "title": "SNSを任せると、\nこう変わる。",
+    "lead": "スイッチを切り替えて、任せる前と任せた後を見比べてください。",
+    "sources": [
+      "Instagram",
+      "X",
+      "LINE",
+      "Webサイト"
+    ],
+    "center_before": "思いつきで投稿",
+    "center_after": "月間計画で運用",
+    "partner": "ご相談・予約",
+    "items": [
+      {
+        "label": "投稿の内容",
+        "before_status": "迷う",
+        "before": "何を投稿すればよいか分からず、手が止まる",
+        "after_status": "計画",
+        "after": "テーマを決め、月間の投稿計画をつくる"
+      },
+      {
+        "label": "続けること",
+        "before_status": "停止中",
+        "before": "忙しくて投稿が止まったまま",
+        "after_status": "継続",
+        "after": "作成から投稿まで代行。確認するだけで続く"
+      },
+      {
+        "label": "問い合わせ",
+        "before_status": "つながらない",
+        "before": "投稿しても、相談や予約につながらない",
+        "after_status": "導線",
+        "after": "プロフィールからLINE・予約・サイトへ案内"
+      },
+      {
+        "label": "振り返り",
+        "before_status": "なし",
+        "before": "どの投稿が反応されたか分からない",
+        "after_status": "改善",
+        "after": "毎月の振り返りで、次の投稿に活かす"
+      }
+    ],
+    "note": "※ 表示はご利用イメージです（よくあるご相談をもとにした想定例）。"
+  }
 }

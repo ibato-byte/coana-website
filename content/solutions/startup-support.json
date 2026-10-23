@@ -316,5 +316,50 @@
     "20270126-business-plan-numbers",
     "20260318-cloud-accounting-setup",
     "20260617-bookkeeping-dependency"
-  ]
+  ],
+  "design": "signal",
+  "before_after": {
+    "title": "相談すると、\n創業の準備がこう変わる。",
+    "lead": "スイッチを切り替えて、相談する前と相談した後を見比べてください。",
+    "sources": [
+      "事業計画",
+      "資金の準備",
+      "設立の手続き",
+      "経理・請求"
+    ],
+    "center_before": "ひとりで手探り",
+    "center_after": "伴走して準備",
+    "partner": "提携の専門家",
+    "items": [
+      {
+        "label": "事業計画",
+        "before_status": "白紙",
+        "before": "何をどう書けばよいか分からず、手が止まる",
+        "after_status": "形に",
+        "after": "コンセプトを整理し、収支計画まで一緒に作成"
+      },
+      {
+        "label": "資金調達",
+        "before_status": "不安",
+        "before": "創業融資や補助金の準備の進め方が分からない",
+        "after_status": "準備済み",
+        "after": "必要な書類と相談の流れを整理して準備"
+      },
+      {
+        "label": "手続き・専門家",
+        "before_status": "迷う",
+        "before": "設立・税務・労務を誰に頼めばよいか分からない",
+        "after_status": "紹介",
+        "after": "司法書士・税理士・社労士など提携の専門家へつなぐ"
+      },
+      {
+        "label": "開業後の経理",
+        "before_status": "未整備",
+        "before": "請求・経費のルールがなく、領収書がたまる",
+        "after_status": "整備",
+        "after": "会計・請求ツールとルールを開業前に整える"
+      }
+    ],
+    "note": "※ 表示はご利用イメージです（よくあるご相談をもとにした想定例）。"
+  }
 }

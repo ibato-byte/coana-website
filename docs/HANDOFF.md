@@ -3,6 +3,13 @@
 最終更新：2026-10-22（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
 
+## クラウド会計・ITツール導入支援のLPを新デザインで組み直し（2026-10-23、オーナー依頼）
+
+- `content/solutions/cloud-accounting.json` に `design: "signal"` と `before_after`（導入前／導入後の切り替え）を追加。CMS（/admin のサービス別ページ）で「ページのデザイン」「導入前／導入後の切り替え」を編集できる。
+- `design: "signal"` のLPは、番号つき見出し（CSS カウンター）・導入前／導入後の切り替え（`BeforeAfter`。画面に入って約1.6秒で導入後へ。スイッチで見比べ。reduced-motion は最初から導入後）・番号タイルのお悩み・Before/After のご利用イメージ・線の太い支援内容になる。HOW IT WORKS・FLOW の鳩の図はそのまま。ほかのLPは今までどおり（同じ値を入れれば同じ作りにできる）。
+- 表示はご利用イメージ（数字は使っていない）。
+- 2026-10-23 追加：切り替えをより大胆に（光が走る・札が整列・中央がはじける・状態の札が回転・データの粒が流れる・背景の BEFORE/AFTER）。オーナー指示で全LP（英語版を含む9ページ）を `design: "signal"` に統一し、各LPに `before_after` を追加（ラベルは英語版で Before/After）。図の中の文字は 320〜430px で文節の区切りでだけ折り返すことを確認。
+
 ## サイト全体のリニューアル「Signal Sky」（2026-10-22、オーナー依頼）
 
 - ブランチ `claude/signal-sky-redesign`。オーナーが選んだデザイン案（濃い青の空・白い羽・2px の線・番号つき見出し）を React 本体に移植。CMS（content/ と /admin の設定）はそのまま使える。
