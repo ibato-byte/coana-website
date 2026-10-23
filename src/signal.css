@@ -1295,8 +1295,15 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 }
 
 /* PC（固定するヒーロー）：大きな動詞が画面の高さに合わせて小さくなると、右のカードとの間が広く空く。
-   動詞とカードをひとかたまりにして中央に寄せ、間を一定にする（上の一文・下のリード文と同じ中央寄せ） */
-.home-page .sky-hero-pin.is-pin .sky-hero-mid { grid-template-columns: auto minmax(400px, 560px); justify-content: center; column-gap: clamp(56px, 6vw, 112px); }
+   動詞とカードをひとかたまりにして中央に寄せ、間を一定にする（上の一文・下のリード文と同じ中央寄せ）。
+   高さ800px未満では、中央に寄せたカード（2・3枚目は高い）が下のリード文に重なるため、寄せずに今までどおり右に置く */
+@media (min-height: 800px) {
+  .home-page .sky-hero-pin.is-pin .sky-hero-mid { grid-template-columns: auto minmax(400px, 560px); justify-content: center; column-gap: clamp(56px, 6vw, 112px); }
+}
+/* 低い画面（高さ760px以下）：ヒーローの下の余白を増やした分、2・3枚目のカードが下のボタンに近づくので、カードの内側の余白を少し詰める */
+@media (max-height: 760px) {
+  .home-page .sky-hero-pin.is-pin .sky-card { gap: 6px; padding-block: 20px; }
+}
 
 /* ヒーローの下の帯：上（ボタンと帯の間）を少し広く。ヒーローの下の余白だけを増やし、帯の重なり（margin-top）は変えないので、帯の上にすき間はできない */
 .sky-hero { padding-bottom: calc(76px + 3.3vw); }
