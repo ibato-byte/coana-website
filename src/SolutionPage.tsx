@@ -299,13 +299,14 @@ function BeforeAfter({ sol }: { sol: Solution }) {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) { setAfter(true); return; }
     let timer = 0;
+    // 6割が見えたら（スマホで図が画面より高いときは、画面の高さの6割を占めたら）待ち始める
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      if (!e.isIntersecting || (e.intersectionRatio < 0.6 && e.intersectionRect.height < window.innerHeight * 0.6)) return;
       io.disconnect();
       // 導入前をしっかり読めるよう、画面に入ってから約4.5秒待って切り替える（待っている間はスイッチの下に細い進み具合の線）
       setCounting(true);
       timer = window.setTimeout(() => { setCounting(false); if (!touched.current) setAfter(true); }, BA_WAIT_MS);
-    }, { threshold: 0.6 });
+    }, { threshold: [0, 0.2, 0.3, 0.4, 0.5, 0.6] });
     io.observe(el);
     return () => { io.disconnect(); window.clearTimeout(timer); };
   }, []);
