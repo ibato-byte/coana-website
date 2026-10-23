@@ -1245,3 +1245,11 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
    帯の中心線から下を、次のセクションと同じ白で帯と同じ角度に覆う（帯の後ろ・ヒーローの前。動かすのは帯の文字だけ） */
 .home-page .sky-tape-wrap::after { content: ""; position: absolute; left: -40px; right: -40px; top: 50%; height: calc(50% + 3vw + 24px); background: #fff; transform-origin: 50% 0; transform: rotate(-1.4deg); z-index: -1; pointer-events: none; }
 .home-page .sky-tape { position: relative; z-index: 1; }
+
+/* トップのヒーロー：デザイン案と同じく、上の一文（＋右の英字）と下のリード文（＋ボタン）を中身の幅にして中央に寄せる
+   （2026-10-24 オーナー指示。大きな動詞とカードの段は今のまま全幅） */
+@media (min-width: 901px) {
+  .home-page .sky-hero-top, .home-page .sky-hero-bottom { width: fit-content; max-width: min(100%, 1400px); margin-inline: auto; justify-content: center; }
+  .home-page .sky-hero-top { column-gap: clamp(60px, 9vw, 160px); }
+  .home-page .sky-hero-bottom { column-gap: clamp(28px, 3vw, 48px); }
+}
