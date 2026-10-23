@@ -95,6 +95,8 @@ const LABELS = {
     baBefore: "導入前",
     baAfter: "導入後",
     baAria: "導入後の状態を表示する",
+    baMeterBefore: (n: number) => `${n}つの困りごとを抱えた状態`,
+    baMeterAfter: (n: number) => `${n}つの困りごとが、すべて改善`,
     baTitle: "導入すると、\nこう変わる。",
     before: "Before",
     after: "After",
@@ -134,6 +136,8 @@ const LABELS = {
     baBefore: "Before",
     baAfter: "After",
     baAria: "Show the after state",
+    baMeterBefore: (n: number) => `${n} pain points`,
+    baMeterAfter: (n: number) => `All ${n} areas improved`,
     baTitle: "Here is\nthe difference.",
     before: "Before",
     after: "After",
@@ -315,9 +319,9 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             </div>
           </div>
           <div className="lp-ba-board" aria-live="polite">
-            {/* 背景の大きな文字（BEFORE → AFTER）と、切り替えの瞬間に左から右へ走る光 */}
+            {/* 背景の大きな文字（BEFORE → AFTER）と、導入後に差し込む空の光 */}
+            <span className="lp-ba-light" aria-hidden="true" />
             <span className="lp-ba-word" aria-hidden="true"><span className="b">BEFORE</span><span className="a">AFTER</span></span>
-            <span className="lp-ba-sweep" key={after ? "a" : "b"} aria-hidden="true" />
             {sources.length > 0 && (
               <div className="lp-ba-map" data-live>
                 <svg className="lp-ba-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -344,11 +348,16 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             <ul className="lp-ba-grid">
               {(ba.items ?? []).map((it, i) => (
                 <li key={it.label} style={{ ["--i" as string]: i }}>
+                  <span className="lp-ba-check" aria-hidden="true"><Icon name="check" size={14} /></span>
                   <p className="lp-ba-head"><span>{it.label}</span><b className="lp-ba-status"><span className="b">{it.before_status || "—"}</span><span className="a">{it.after_status || "✓"}</span></b></p>
                   <p className="lp-ba-val"><span className="b">{it.before}</span><span className="a">{it.after}</span></p>
                 </li>
               ))}
             </ul>
+            <div className="lp-ba-meter" aria-hidden="true">
+              <span className="lp-ba-meter-bar">{(ba.items ?? []).map((_, i) => <i key={i} style={{ ["--i" as string]: i }} />)}</span>
+              <span className="lp-ba-meter-label"><span className="b">{L.baMeterBefore((ba.items ?? []).length)}</span><span className="a">{L.baMeterAfter((ba.items ?? []).length)}</span></span>
+            </div>
             {ba.note && <p className="lp-ba-note">{ba.note}</p>}
           </div>
         </div>
