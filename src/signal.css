@@ -1211,3 +1211,17 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .home-page :is(.sky-hero, .contact-band) :is(.sky-kicker, .sky-crumbs, .eyebrow, .sky-chk, .sky-verb small, .hero-lead, p) { text-shadow: none; }
 .home-page .faq-mark { background: var(--sky-g); }
 .home-page .faq-item.open .faq-mark { background: var(--ink); }
+
+/* 帯の上のすき間を、どの端末・拡大率でも出さない：帯をヒーローにさらに深く重ね、その分ヒーローの下の余白も広げる */
+.sky-tape-wrap { margin-top: calc(-44px - 3.2vw) !important; }
+@supports not (overflow: clip) { .sky-tape-wrap { margin-top: calc(-44px - 4.5vw) !important; } }
+.sky-hero { padding-bottom: calc(52px + 3.3vw); }
+.sky-hero-pin.is-pin > .sky-hero { padding-bottom: calc(58px + 3.3vw); }
+.sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 440px - 3.3vw) / 3.15)); }
+.sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 440px - 3.3vw) / 34)); }
+/* 自動で導入後に切り替わるまでの待ち時間を、スイッチの下の細い線で見せる（スイッチを押せば止まる） */
+.lp-ba-switch { position: relative; }
+.lp-ba-switch::after { content: ""; position: absolute; left: 18px; right: 18px; bottom: -10px; height: 3px; border-radius: 3px; background: var(--sky-d); transform: scaleX(0); transform-origin: left; opacity: 0; }
+.lp-ba-switch.is-counting::after { opacity: 1; animation: lp-ba-wait var(--wait, 4500ms) linear forwards; }
+@keyframes lp-ba-wait { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .lp-ba-switch::after { display: none; } }
