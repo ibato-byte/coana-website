@@ -1191,6 +1191,8 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .lp-sig-hero .lp-hero-actions { width: 100%; }
   .lp-sig-hero .lp-hero-actions > * { flex: 1 1 100%; justify-content: center; white-space: nowrap; font-size: 16px; padding-inline: 20px; }
   .lp-sig-hero .lp-hero-title:lang(en) { letter-spacing: -.03em; }
+  /* 英語の見出し：下線のフレーズを改行させないと、狭い画面で「with」だけの行ができる。スマホでは単語の区切りで自然に折り返す */
+  .lp-sig-hero .lp-hero-title:lang(en) .title-underline { white-space: normal; }
   .lp-sig-hero .lp-hero-big { display: none; }
 }
 
@@ -1238,3 +1240,8 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .lp-ba-switch.is-counting::after { opacity: 1; animation: lp-ba-wait var(--wait, 4500ms) linear forwards; }
 @keyframes lp-ba-wait { to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .lp-ba-switch::after { display: none; } }
+
+/* 帯の右下のすき間（2026-10-24 オーナー指摘）：帯は右上がりに傾いているので、右端では帯の下にヒーローの青が三角にのぞく。
+   帯の中心線から下を、次のセクションと同じ白で帯と同じ角度に覆う（帯の後ろ・ヒーローの前。動かすのは帯の文字だけ） */
+.home-page .sky-tape-wrap::after { content: ""; position: absolute; left: -40px; right: -40px; top: 50%; height: calc(50% + 3vw + 24px); background: #fff; transform-origin: 50% 0; transform: rotate(-1.4deg); z-index: -1; pointer-events: none; }
+.home-page .sky-tape { position: relative; z-index: 1; }
