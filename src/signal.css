@@ -728,7 +728,8 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 
 /* ヒーローのピン留め（PC のみ・案どおり：固定して 1.8 画面分スクロールする間に 整える→任せる→伸ばす） */
 .sky-hero-pin.is-pin { height: 280vh; }
-.sky-hero-pin.is-pin > .sky-hero { position: sticky; top: 0; height: 100vh; min-height: 0; }
+.sky-hero-pin.is-pin .sky-hero-stick { position: sticky; top: 0; }
+.sky-hero-pin.is-pin .sky-hero { height: 100vh; min-height: 0; }
 .sky-verb { transition: color .5s var(--m-ease), -webkit-text-stroke-color .5s; }
 .sky-hero.is-pinning .sky-verb { color: transparent; -webkit-text-stroke: 2px rgba(255, 255, 255, .8); }
 .sky-hero.is-pinning .sky-verb.is-on { color: #fff; -webkit-text-stroke: 2px transparent; }
@@ -970,7 +971,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 }
 
 /* ピン留め中（PC）は画面の高さ1枚に必ず収める：言葉の大きさを画面の高さでも上限を決め、カードと余白を詰める（下の文章・ボタンが隠れない） */
-.sky-hero-pin.is-pin > .sky-hero { padding-top: calc(96px + env(safe-area-inset-top, 0px)); padding-bottom: 24px; }
+.sky-hero-pin.is-pin .sky-hero { padding-top: calc(96px + env(safe-area-inset-top, 0px)); padding-bottom: 24px; }
 .sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 400px) / 3.15)); }
 .sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 400px) / 34)); }
 .sky-hero-pin.is-pin .sky-hero-mid { padding: 14px 0; min-height: 0; }
@@ -980,7 +981,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .sky-hero-pin.is-pin .sky-card-links a.go-link { padding-top: 8px; }
 .sky-hero-pin.is-pin .sky-hero-top { padding-bottom: 12px; }
 /* ピン留めが終わるとき、斜めの帯（右側ほど高い）がボタンに重ならないよう、下の余白をとる */
-.sky-hero-pin.is-pin > .sky-hero { padding-bottom: 60px; }
+.sky-hero-pin.is-pin .sky-hero { padding-bottom: 60px; }
 .sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 440px) / 3.15)); }
 .sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 440px) / 34)); }
 
@@ -988,7 +989,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
  * その分ヒーローの下の余白を広げ、帯の右側（高い側）がボタンに重ならないようにする。値は帯の傾き（-1.4°）と画面の幅から決める */
 .sky-tape-wrap { margin-top: calc(-24px - 2.5vw); }
 .sky-hero { padding-bottom: calc(34px + 2.6vw); }
-.sky-hero-pin.is-pin > .sky-hero { padding-bottom: calc(40px + 2.6vw); }
+.sky-hero-pin.is-pin .sky-hero { padding-bottom: calc(40px + 2.6vw); }
 .sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 420px - 2.6vw) / 3.15)); }
 .sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 420px - 2.6vw) / 34)); }
 
@@ -1221,8 +1222,9 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 @media (max-width: 600px) { .lp-signal .lp-feature-grid { grid-template-columns: 1fr; } }
 
 /* ホームは公開中のデザインのまま（オーナー「今のままがベスト」）：空は明るい水色の 160° グラデーションに戻す */
-.home-page { --sky-g: linear-gradient(160deg, #7ccbf7 0%, #3aa4ee 42%, #0670cb 100%); --sky-g-flat: linear-gradient(160deg, #7ccbf7 0%, #3aa4ee 42%, #0670cb 100%); --sky-glow: radial-gradient(55% 45% at 85% 8%, rgba(255, 255, 255, .35), transparent 60%), radial-gradient(40% 40% at 6% 100%, rgba(255, 255, 255, .18), transparent 70%); }
-@media (max-width: 700px) { .home-page { --sky-g: linear-gradient(160deg, #7ccbf7 0%, #3aa4ee 42%, #0670cb 100%); } }
+/* 空の色：オーナー指示（2026-10-24）でホームの明るい水色に全ページ統一（LP・下層ページも同じ） */
+:root, .home-page { --sky-g: linear-gradient(160deg, #7ccbf7 0%, #3aa4ee 42%, #0670cb 100%); --sky-g-flat: linear-gradient(160deg, #7ccbf7 0%, #3aa4ee 42%, #0670cb 100%); --sky-glow: radial-gradient(55% 45% at 85% 8%, rgba(255, 255, 255, .35), transparent 60%), radial-gradient(40% 40% at 6% 100%, rgba(255, 255, 255, .18), transparent 70%); }
+@media (max-width: 700px) { :root, .home-page { --sky-g: linear-gradient(160deg, #7ccbf7 0%, #3aa4ee 42%, #0670cb 100%); } }
 .home-page :is(.sky-hero, .contact-band) :is(.sky-kicker, .sky-crumbs, .eyebrow, .sky-chk, .sky-verb small, .hero-lead, p) { text-shadow: none; }
 .home-page .faq-mark { background: var(--sky-g); }
 .home-page .faq-item.open .faq-mark { background: var(--ink); }
@@ -1231,7 +1233,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .sky-tape-wrap { margin-top: calc(-44px - 3.2vw) !important; }
 @supports not (overflow: clip) { .sky-tape-wrap { margin-top: calc(-44px - 4.5vw) !important; } }
 .sky-hero { padding-bottom: calc(52px + 3.3vw); }
-.sky-hero-pin.is-pin > .sky-hero { padding-bottom: calc(58px + 3.3vw); }
+.sky-hero-pin.is-pin .sky-hero { padding-bottom: calc(58px + 3.3vw); }
 .sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 440px - 3.3vw) / 3.15)); }
 .sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 440px - 3.3vw) / 34)); }
 /* 自動で導入後に切り替わるまでの待ち時間を、スイッチの下の細い線で見せる（スイッチを押せば止まる） */
@@ -1253,3 +1255,16 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .home-page .sky-hero-top { column-gap: clamp(60px, 9vw, 160px); }
   .home-page .sky-hero-bottom { column-gap: clamp(28px, 3vw, 48px); }
 }
+
+/* おすすめプラン：空の色を明るい水色に統一したので、白い小さな文字が読めるよう濃い青の面にする。チェックも白 */
+.lp-signal .lp-plan.is-featured { background: linear-gradient(160deg, #1679cd 0%, #0f6dc2 45%, #0a62b8 100%); }
+.lp-signal .lp-plan.is-featured li svg, .lp-signal .lp-plan.is-featured .lp-plan-for span { color: #fff; }
+.lp-signal .lp-plan.is-featured .lp-plan-for span { background: rgba(255, 255, 255, .18); }
+.lp-signal .lp-plan.is-featured ul { border-top-color: rgba(255, 255, 255, .5); }
+
+/* 日本語の改行を文節で（「1.5〜3か／月」「発達教／育」のような単語の途中での改行を防ぐ。入りきらない長さだけは折り返す） */
+:lang(ja) :is(h1, h2, h3, h4, p, li, dt, dd, small, figcaption) { word-break: auto-phrase; overflow-wrap: break-word; }
+/* 英語の大きな見出し：日本語向けの詰めた字間だと文字がくっつくので広げる */
+.contact-band :is(h2, .contact-band-big):lang(en), .lp-cta-band h2:lang(en) { letter-spacing: -.03em; }
+/* 下層ページのお問い合わせの帯の見出し（2行）：行どうしがくっつかないよう少し広げる */
+.contact-band:not(.is-big) h2 { line-height: 1.16; }

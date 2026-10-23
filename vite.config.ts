@@ -639,18 +639,6 @@ function coanaPageMeta(): Plugin {
       const faqs = ((home.faqs ?? []) as { q: string; a: string }[]).filter((f) => f.q && f.a)
       const faqPage = faqs.length ? [{ '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []
 
-      // レンとジル（content/renjill/episodes.json）：公開日（日本時間）を過ぎた回だけ
-      const renjillFile = path.resolve(__dirname, 'content/renjill/episodes.json')
-      const renjillData = fs.existsSync(renjillFile) ? readJson('content/renjill/episodes.json') : { episodes: [], channels: {}, series: [] }
-      const todayJstRj = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
-      const renjillEps = ((renjillData.episodes ?? []) as { no: number; title: string; caption_ja: string; caption_en: string; date: string; youtube_id: string | null }[])
-        .filter((e) => e.date <= todayJstRj).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.no - a.no))
-      const renjillVideos = renjillEps.filter((e) => e.youtube_id).map((e) => ({
-        '@type': 'VideoObject', name: e.title + '（レンとジル EP.' + e.no + '）', description: e.caption_ja + ' ' + e.caption_en, uploadDate: e.date,
-        thumbnailUrl: 'https://i.ytimg.com/vi/' + e.youtube_id + '/hqdefault.jpg', embedUrl: 'https://www.youtube.com/embed/' + e.youtube_id,
-        contentUrl: 'https://www.youtube.com/watch?v=' + e.youtube_id, publisher: { '@id': orgId },
-      }))
-
       const pages: PageMeta[] = [
         { path: '/', title: homeTitle, description: '', jsonld: graph(...faqPage) },
         { path: '/about', crumb: '会社概要', title: '会社概要・代表メッセージ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者のバックオフィスとマーケティングを支える当社の考え方、代表メッセージ、代表プロフィール、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
@@ -658,7 +646,6 @@ function coanaPageMeta(): Plugin {
         { path: '/topics', crumb: 'トピックス', title: 'トピックス｜セミナー登壇・メディア掲載・お知らせ' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。経理DXやクラウド会計に関する講座・記事もご紹介。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
         { path: '/contact', crumb: 'お問い合わせ', title: 'お問い合わせ｜バックオフィス・マーケティングのご相談' + SUFFIX, description: '経理やバックオフィスの見直し、ITツール導入、集客・営業のご相談はこちらから。中小企業・小規模事業者の小さな困りごとでもお気軽に。内容を確認のうえ担当者よりご連絡いたします。', jsonld: graph(crumbs([homeCrumb, { name: 'お問い合わせ', url: SITE + '/contact' }])) },
         { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシー。お問い合わせフォーム・メール・LINEで取得する個人情報の利用目的、第三者提供、業務委託、安全管理措置、Google アナリティクスの利用、開示等のご請求窓口について定めています。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
-        { path: '/renjill', crumb: 'レンとジル', title: 'レンとジル｜うさぎのオフィスコメディ（セリフなし）' + SUFFIX, description: 'うさぎの課長レンと、しっかり者の部下ジルが主役の、セリフのないオフィスコメディ。全エピソードを YouTube で見られます。Instagram・TikTok・Facebook でも公開中。', jsonld: graph(crumbs([homeCrumb, { name: 'レンとジル', url: SITE + '/renjill' }]), ...renjillVideos) },
       ]
 
       // サービス別の専用ページ（content/solutions/*.json）
@@ -865,11 +852,6 @@ function coanaPageMeta(): Plugin {
         }
         if (pagePath === '/topics') return '<h1>トピックス</h1>' + paras(settings.topics_intro) + topicList(sortedTopics)
         if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro)
-        if (pagePath === '/renjill') {
-          return '<h1>レンとジル</h1><p>うさぎの課長レンと、しっかり者の部下ジル。セリフのない、オフィスコメディです。</p>' +
-            '<ul>' + Object.entries(renjillData.channels ?? {}).filter(([, url]) => url).map(([name, url]) => '<li>' + anchor(String(url), name) + '</li>').join('') + '</ul>' +
-            '<h2>エピソード</h2>' + renjillEps.map((e) => '<article><h3>EP.' + e.no + ' ' + esc(e.title) + '</h3><time datetime="' + esc(e.date) + '">' + esc(e.date) + '</time><p>' + esc(e.caption_ja) + '</p><p>' + esc(e.caption_en) + '</p></article>').join('')
-        }
         if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>' + mdToHtml(privacyBody)
         if (pagePath.startsWith('/services/')) {
           const sol = solutionList.find((item) => '/services/' + item.slug === pagePath)
