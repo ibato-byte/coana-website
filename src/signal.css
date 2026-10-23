@@ -1284,13 +1284,13 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .nav-link { transition: background-color .2s, color .2s; }
 
 /* トップの「05 よくあるご質問」：左の列を、チャットへの案内のカードにする（小さなボタンだけが浮いて見えないように） */
-.faq-ask { position: sticky; top: 110px; display: grid; gap: 14px; padding: clamp(24px, 2.6vw, 34px); border: var(--ss-line); border-radius: var(--ss-radius); background: var(--sky-s); }
+.faq-ask { display: grid; gap: 14px; padding: clamp(24px, 2.6vw, 34px); border: var(--ss-line); border-radius: var(--ss-radius); background: var(--sky-s); }
 .faq-ask-title { margin: 0; font-family: var(--font-jp); font-size: clamp(20px, 1.9vw, 26px); font-weight: 900; line-height: 1.45; letter-spacing: -.02em; color: var(--ink); }
 .faq-ask-text { margin: 0; font-size: 14px; line-height: 1.85; color: var(--ink-2, #3d5568); }
 .faq-columns .faq-ask .faq-ask-button { justify-self: start; display: inline-flex; align-items: center; gap: 10px; min-height: 60px; padding: 0 28px; font-size: 16px; background: var(--ink); color: #fff; border: 2px solid var(--ink); }
 .faq-columns .faq-ask .faq-ask-button:hover { background: var(--ink-d, #0b2236); }
 @media (max-width: 1100px) {
-  .faq-ask { position: static; order: 2; }
+  .faq-ask { order: 2; }
   .faq-columns .faq-ask .faq-ask-button { justify-self: stretch; justify-content: center; }
 }
 
@@ -1310,3 +1310,10 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .sky-hero-pin.is-pin .sky-hero { padding-bottom: calc(82px + 3.3vw); }
 .sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(64px, 11.8vw, 200px), calc((100vh - 464px - 3.3vw) / 3.15)); }
 .sky-hero-pin.is-pin .sky-verb small { font-size: min(clamp(10px, .9vw, 13px), calc((100vh - 464px - 3.3vw) / 34)); }
+
+/* チャット案内のカードはスクロールで動かさない（追従させると「下にずれる」ように見えるため。2026-10-24 オーナー指摘）
+   よくあるご質問（1100px以下）：見出しの下の線と一覧の上の線が2本並ばないよう、一覧を見出しの線にそのまま続ける */
+@media (max-width: 1100px) {
+  .faq-section.is-numbered .faq-columns { margin-top: 0; }
+  .faq-section.is-numbered .faq-list > div:first-child .faq-item { border-top: 0; }
+}
