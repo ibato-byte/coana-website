@@ -1155,30 +1155,43 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .lp-signal .section-title .eyebrow { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; letter-spacing: .16em; color: var(--sky-d); }
 .lp-signal .section-title .eyebrow::before { display: none; }
 
-/* ヒーロー：ポスターのように大きく、要素を減らす */
-.lp-sig-hero { position: relative; overflow: hidden; padding: calc(130px + env(safe-area-inset-top, 0px)) 0 clamp(70px, 8vw, 110px); }
+/* ヒーロー：デザイン案（Signal Sky）の LP と同じ配置。左寄せ1列で
+   パンくず → 英字 → 大見出し → リード → サービス名 → 3つの枠（値＋説明）→ ボタン → 注記、右下に大きな英字の輪郭。
+   見出しは案より少し控えめにして、リードや枠と大きさの差がつきすぎないようにする（2026-10-24 オーナー了承） */
+.lp-sig-hero { position: relative; overflow: hidden; padding: calc(150px + env(safe-area-inset-top, 0px)) 0 clamp(64px, 8vw, 110px); }
 .lp-sig-hero .container { position: relative; z-index: 1; }
+.lp-sig-hero .lp-hero-inner { display: flex; flex-direction: column; align-items: flex-start; }
+.lp-sig-hero :is(.lp-hero-head, .lp-hero-body) { display: contents; }
+.lp-sig-hero .lp-hero-inner > * , .lp-sig-hero :is(.lp-hero-head, .lp-hero-body) > * { max-width: 980px; }
+.lp-sig-hero .sky-crumbs { order: 0; margin: 0 0 clamp(36px, 6vw, 80px); }
+.lp-sig-hero .lp-hero-kicker { order: 1; margin: 0; }
 .lp-sig-hero .lp-hero-label { display: none; }
-.lp-sig-hero .lp-hero-title, .lp-sig-hero .lp-hero-title.is-plain { font-size: clamp(36px, 6vw, 100px); line-height: 1.1; letter-spacing: -.07em; margin: 6px 0 0; }
-.lp-sig-hero .lp-hero-sub { margin: 18px 0 0; padding-top: 16px; border-top: 2px solid #fff; font-family: var(--font-jp); font-size: clamp(14px, 1.2vw, 16px); font-weight: 900; letter-spacing: .02em; }
-.lp-sig-hero .lp-hero-body { margin-top: 26px; display: grid; grid-template-columns: minmax(0, 1.2fr) auto; gap: 18px 40px; align-items: end; }
-.lp-sig-hero .lp-hero-lead { grid-column: 1; margin: 0; font-size: clamp(15px, 1.25vw, 17px); line-height: 1.95; color: #fff; max-width: 40em; }
-.lp-sig-hero .lp-hero-facts { grid-column: 1; display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0; padding: 0; list-style: none; }
-.lp-sig-hero .lp-hero-facts li { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; border-radius: 0; color: #fff; font-size: 13px; font-weight: 900; }
-.lp-sig-hero .lp-hero-facts li small { display: none; }
-.lp-sig-hero .lp-hero-fact-icon { width: 20px; height: 20px; flex: none; }
-.lp-sig-hero .lp-hero-actions { grid-column: 2; grid-row: 1 / span 2; align-self: end; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin: 0; }
-.lp-sig-hero .lp-hero-note { grid-column: 1 / -1; margin: 0; font-size: 12.5px; color: #fff; }
-.lp-sig-hero .lp-hero-scroll { display: none; }
-.lp-sig-hero a.lp-hero-english { grid-column: 1; justify-self: start; }
+.lp-sig-hero .lp-hero-en { font-size: 11.5px; }
+.lp-sig-hero .lp-hero-title, .lp-sig-hero .lp-hero-title.is-plain { order: 2; font-size: clamp(30px, calc(4.2vw + 10px), 84px); line-height: 1.16; letter-spacing: -.06em; margin: 18px 0 26px; text-wrap: balance; }
+.lp-sig-hero .lp-hero-title:lang(en) { letter-spacing: -.035em; }
+.lp-sig-hero .lp-hero-lead { order: 3; margin: 0 0 22px; font-size: clamp(15px, 1.3vw, 17px); line-height: 2; color: #fff; max-width: 40em; }
+.lp-sig-hero .lp-hero-sub { order: 4; margin: 0 0 18px; padding: 0; border: 0; font-family: var(--font-jp); font-size: 13.5px; font-weight: 900; letter-spacing: .02em; color: #fff; }
+.lp-sig-hero .lp-hero-facts { order: 5; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 900px; margin: 0 0 30px; padding: 0; list-style: none; }
+.lp-sig-hero .lp-hero-facts li { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px 18px; border: 2px solid #fff; border-radius: 18px; background: rgba(255, 255, 255, .08); color: #fff; }
+.lp-sig-hero .lp-hero-facts li strong { font-size: 15.5px; font-weight: 900; line-height: 1.5; }
+.lp-sig-hero .lp-hero-facts li small { display: block; font-size: 12.5px; line-height: 1.65; color: #fff; font-weight: 500; }
+.lp-sig-hero .lp-hero-fact-icon { display: none; }
+.lp-sig-hero .lp-hero-actions { order: 6; display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; justify-content: flex-start; margin: 0; }
+.lp-sig-hero .lp-hero-actions > * { align-self: stretch; }
+.lp-sig-hero .lp-hero-note { order: 7; margin: 14px 0 0; font-size: 12.5px; color: #fff; }
+.lp-sig-hero a.lp-hero-english { order: 8; margin-top: 16px; }
+.lp-sig-hero .lp-hero-art, .lp-sig-hero .lp-hero-scroll { display: none; }
 @media (max-width: 900px) {
-  .lp-sig-hero .lp-hero-body { grid-template-columns: 1fr; }
-  .lp-sig-hero .lp-hero-actions { grid-column: 1; grid-row: auto; justify-content: flex-start; }
+  .lp-sig-hero .lp-hero-facts { grid-template-columns: minmax(0, 1fr); max-width: 560px; }
 }
-@media (max-width: 600px) {
-  .lp-sig-hero { padding-top: calc(104px + env(safe-area-inset-top, 0px)); }
-  .lp-sig-hero .lp-hero-title, .lp-sig-hero .lp-hero-title.is-plain { font-size: clamp(28px, 9vw, 44px); line-height: 1.2; }
-  .lp-sig-hero .lp-hero-actions > * { flex: 1 1 100%; justify-content: center; }
+@media (max-width: 640px) {
+  .lp-sig-hero { padding-top: calc(112px + env(safe-area-inset-top, 0px)); }
+  .lp-sig-hero .lp-hero-title, .lp-sig-hero .lp-hero-title.is-plain { font-size: clamp(26px, 7.6vw, 40px); line-height: 1.24; letter-spacing: -.05em; margin: 14px 0 20px; }
+  .lp-sig-hero .lp-hero-facts li { padding: 13px 16px; }
+  .lp-sig-hero .lp-hero-actions { width: 100%; }
+  .lp-sig-hero .lp-hero-actions > * { flex: 1 1 100%; justify-content: center; white-space: nowrap; font-size: 16px; padding-inline: 20px; }
+  .lp-sig-hero .lp-hero-title:lang(en) { letter-spacing: -.03em; }
+  .lp-sig-hero .lp-hero-big { display: none; }
 }
 
 /* 支援内容：ホームのポスターと同じ格子。プランは太い線のカード、おすすめは空色 */
