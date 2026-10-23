@@ -1317,3 +1317,16 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .faq-section.is-numbered .faq-columns { margin-top: 0; }
   .faq-section.is-numbered .faq-list > div:first-child .faq-item { border-top: 0; }
 }
+
+/* LPの「関連するコラム」：見出しの線と一覧の上の線が2本並んでいたので1本に。各行の区切りも右の「そのほかのサービス」と同じ太さの線にそろえる */
+.lp-signal .solution-more .article-list { border-top: 0; gap: 0; }
+.lp-signal .solution-more .article-row { border: 0; border-bottom: 2px solid var(--ink); border-radius: 0; box-shadow: none; background: transparent; }
+.lp-signal .solution-more .article-row:first-child { border-top: 0; }
+.lp-signal .solution-more .article-row:hover { background: var(--sky-s); }
+.lp-signal .solution-more .article-row.has-thumb { grid-template-columns: 150px 1fr 26px; padding: 18px 4px; }
+@media (max-width: 760px) {
+  .lp-signal .solution-more .article-row.has-thumb { grid-template-columns: 104px 1fr 20px; gap: 14px; padding: 16px 2px; align-items: start; }
+  .lp-signal .solution-more .article-row.has-thumb .article-row-thumb { grid-column: auto; border-radius: 8px; }
+  .lp-signal .solution-more .article-row strong { font-size: 14.5px; line-height: 1.65; }
+  .lp-signal .solution-more .article-row > svg { align-self: center; }
+}
