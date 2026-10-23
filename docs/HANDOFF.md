@@ -43,7 +43,7 @@
 - **オーナー判断待ち**：小さな白文字の AA。2026-10-24 の調整で白文字が乗る側は深い青になり主要な文字はほぼ 4.4〜4.5:1 以上になったが、右上の小さな「BACK OFFICE × MARKETING」は約3.6〜4.2:1（軽い影で補助）。このままでよいか。
 - **オーナーに依頼済み**：スマホ実機での本番確認（作業環境からは本番と pages.dev に接続できないため、Claude は本番を見ていない）。
 
-## レンとジル公式ページ（2026-10-22、Automation Hub 依頼 #38）→ 2026-10-24 オーナー指示で削除（/renjill はトップへ301。ページ・データ・Actions「レンとジルの更新」も削除）
+## レンとジル公式ページ（2026-10-22、Automation Hub 依頼 #38）→ 2026-10-24 オーナー指示で削除（/renjill は Pages Functions で 410 Gone＋noindex（検索結果から早く消すため）。ページ・データ・Actions「レンとジルの更新」も削除）
 
 - ブランチ `claude/vigilant-cerf-pl8b7o`（PR 未作成）。ページ `/renjill`（`src/RenjillPage.tsx`）、データ `content/renjill/episodes.json`、SEO は `vite.config.ts`（タイトル・VideoObject・sitemap・クローラー向け本文）。フッター下段に「レンとジル」のリンク。
 - データは Actions「レンとジルの更新」（`.github/workflows/renjill-sync.yml`、毎日 6:17）が公開リポジトリ `renjill-media` の `episodes.json` から取り込む。公開日（日本時間）前の回は出さない。YouTube は押したときだけ読み込む。

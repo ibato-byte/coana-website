@@ -3,9 +3,6 @@
 # 現在のページ（/, /about, /services, /services/*, /topics, /topics/*, /contact, /privacy, /admin, sitemap.xml など）に
 # 一致するルールは置かないこと。/services は「/service」と「/service/*」のどちらにも一致しない。
 
-# レンとジルのページは削除（2026-10-24 オーナー指示）。トップへ転送
-/renjill  /  301
-
 # ブログ・イベント → トピックス
 /blog            /topics     301
 /blog/*          /topics     301
