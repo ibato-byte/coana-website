@@ -425,10 +425,16 @@ export function FaqSection({ items = faqItems, title = home.faq_title, numbered 
     <section className={numbered ? "section faq-section is-numbered" : "section faq-section"}>
       <div className={numbered ? "container" : "container narrow"}>
         {numbered
-          ? <NumHead n={numbered} title={title} side={<p>ここにない質問は、チャットでいつでもどうぞ。</p>} />
+          ? <NumHead n={numbered} title={title} side={<p>ご相談の前によくいただく質問をまとめました。</p>} />
           : <SectionTitle en="FAQ" center>{title}</SectionTitle>}
         <div className={numbered ? "faq-columns" : undefined}>
-        {numbered && <div><button type="button" className="button button-outline button-small" onClick={() => openChat("menu")}>チャットで質問する</button></div>}
+        {numbered && (
+          <div className="faq-ask">
+            <p className="faq-ask-title">ここにない質問は、<br />チャットで聞けます。</p>
+            <p className="faq-ask-text">サイトの内容をもとに、チャットでお答えします。相談やお見積もりの前の、小さな疑問もどうぞ。</p>
+            <button type="button" className="button button-large faq-ask-button" onClick={() => openChat("menu")}><Icon name="chat" size={19} />チャットで質問する</button>
+          </div>
+        )}
         <div className="faq-list">
           {items.map((item, i) => {
             const open = openIndex === i;
