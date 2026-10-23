@@ -281,7 +281,9 @@ function Problems({ sol }: { sol: Solution }) {
 
 /* ───────────────────────── 新デザイン（Signal Sky）のLP専用パーツ ───────────────────────── */
 
-/** 導入前／導入後の切り替え。画面に入って少し読んだら（約1.6秒）自動で「導入後」へ切り替わる（ページに入るたびに同じ）。
+const BA_WAIT_MS = 4500;
+
+/** 導入前／導入後の切り替え。画面に入って導入前を読む時間をとってから（約4.5秒）自動で「導入後」へ切り替わる（ページに入るたびに同じ）。
  *  スイッチでいつでも見比べられる。導入後は、左の取引（銀行・カードなど）からクラウド会計へ線がつながり、右の税理士とも共有される。
  *  動かすのは opacity・transform と線の描画だけ。「動きを減らす」設定では最初から導入後を表示（スイッチは使える） */
 function BeforeAfter({ sol }: { sol: Solution }) {
@@ -289,6 +291,7 @@ function BeforeAfter({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
   const ref = useRef<HTMLDivElement | null>(null);
   const [after, setAfter] = useState(false);
+  const [counting, setCounting] = useState(false);
   const touched = useRef(false);
   useEffect(() => {
     const el = ref.current;
@@ -296,18 +299,21 @@ function BeforeAfter({ sol }: { sol: Solution }) {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) { setAfter(true); return; }
     let timer = 0;
+    // 6割が見えたら（スマホで図が画面より高いときは、画面の高さの6割を占めたら）待ち始める
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      if (!e.isIntersecting || (e.intersectionRatio < 0.6 && e.intersectionRect.height < window.innerHeight * 0.6)) return;
       io.disconnect();
-      timer = window.setTimeout(() => { if (!touched.current) setAfter(true); }, 1600);
-    }, { threshold: 0.4 });
+      // 導入前をしっかり読めるよう、画面に入ってから約4.5秒待って切り替える（待っている間はスイッチの下に細い進み具合の線）
+      setCounting(true);
+      timer = window.setTimeout(() => { setCounting(false); if (!touched.current) setAfter(true); }, BA_WAIT_MS);
+    }, { threshold: [0, 0.2, 0.3, 0.4, 0.5, 0.6] });
     io.observe(el);
     return () => { io.disconnect(); window.clearTimeout(timer); };
   }, []);
   if (!ba || !(ba.items ?? []).length) return null;
   const sources = (ba.sources ?? []).slice(0, 4);
   const ys = sources.map((_, i) => ((i + 0.5) / Math.max(1, sources.length)) * 100);
-  const toggle = () => { touched.current = true; setAfter((a) => !a); };
+  const toggle = () => { touched.current = true; setCounting(false); setAfter((a) => !a); };
   return (
     <section className="section lp-ba-section" id="lp-ba">
       <div className="container">
@@ -317,7 +323,7 @@ function BeforeAfter({ sol }: { sol: Solution }) {
             <span className="eyebrow" lang="en">Before / After</span>
             <h2><Lines text={ba.title || L.baTitle} /></h2>
             {ba.lead && <p>{ba.lead}</p>}
-            <div className="lp-ba-switch">
+            <div className={counting ? "lp-ba-switch is-counting" : "lp-ba-switch"} style={{ ["--wait" as string]: `${BA_WAIT_MS}ms` }}>
               <span className={after ? undefined : "on"} aria-hidden="true">{L.baBefore}</span>
               <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label={L.baAria} onClick={toggle} />
               <span className={after ? "on" : undefined} aria-hidden="true">{L.baAfter}</span>
