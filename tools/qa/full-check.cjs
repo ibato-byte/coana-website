@@ -178,7 +178,8 @@ async function interactionChecks(engine, b, links) {
     if (isFile ? st >= 400 : (info.notfound || !info.anchor)) ng('link', `${engine} ${l}（${from} から）status=${st} notfound=${info.notfound} anchor=${info.anchor}`);
   }
   const external = [...links.keys()].filter((l) => /^https?:/.test(l) && !l.startsWith(BASE));
-  const bad = [...links.keys()].filter((l) => /^tel:/.test(l)); if (bad.length) ng('content', `電話のリンク ${bad.join(', ')}`);
+  // 電話番号はお問い合わせページの AI 受付だけ掲載可（2026-10-22 オーナー決定）。ほかのページにあれば NG
+  const bad = [...links.keys()].filter((l) => /^tel:/.test(l) && links.get(l) !== '/contact'); if (bad.length) ng('content', `電話のリンク ${bad.join(', ')}`);
   await ctx.close();
   // ハンバーガーメニュー（スマホ）
   const m = await b.newContext({ viewport: { width: 390, height: 844 }, ...(engine === 'firefox' ? {} : { isMobile: true }), hasTouch: true });
@@ -190,7 +191,8 @@ async function interactionChecks(engine, b, links) {
   const closed = !(await mp.locator('.mobile-nav').isVisible());
   await mp.tap('.menu-button'); await mp.keyboard.press('Escape');
   const esc = !(await mp.locator('.mobile-nav').isVisible());
-  await mp.tap('.menu-button'); await mp.locator('.mobile-nav a').nth(1).tap(); await mp.waitForLoadState('networkidle');
+  await mp.tap('.menu-button'); await mp.locator('.mobile-nav a[href="/about"]').tap(); // 順番でなく行き先で選ぶ（ホームが先頭に加わった）
+   await mp.waitForLoadState('networkidle');
   const navigated = mp.url().endsWith('/about') && !(await mp.locator('.mobile-nav').isVisible());
   if (!(opened && closed && esc && navigated)) ng('menu', `${engine} ハンバーガーメニュー open=${opened} close=${closed} esc=${esc} 遷移=${navigated}`);
   ok('menu');
