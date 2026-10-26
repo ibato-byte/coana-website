@@ -1060,7 +1060,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 @media (max-width: 360px) { .lp-ba-map { grid-template-columns: 33% 34% 28%; } }
 .lp-lang-en .lp-ba-sources li, .lp-lang-en .lp-ba-center, .lp-lang-en .lp-ba-partner { overflow-wrap: normal; word-break: normal; }
 
-/* スマホのヒーロー：見出しと「BACK OFFICE × MARKETING」の間を詰める */
+/* スマホのヒーロー：見出しと上の英字（ヒーローの kicker）の間を詰める */
 @media (max-width: 600px) {
   .sky-hero-top { gap: 8px 20px; }
   .sky-kicker { margin-top: 0; }
@@ -1329,4 +1329,24 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .lp-signal .solution-more .article-row.has-thumb .article-row-thumb { grid-column: auto; border-radius: 8px; }
   .lp-signal .solution-more .article-row strong { font-size: 14.5px; line-height: 1.65; }
   .lp-signal .solution-more .article-row > svg { align-self: center; }
+}
+
+/* ───────── LP：プランと料金の目安（2026-10-26 オーナー依頼：最低限の目安の料金を載せる） ───────── */
+.lp-plan-head { display: grid; gap: 6px; align-content: start; }
+.lp-plan-price { margin: 0; font-family: "Outfit", "Noto Sans JP", sans-serif; font-size: 26px; line-height: 1.25; font-weight: 800; letter-spacing: .01em; color: var(--ink); font-feature-settings: "palt"; }
+.lp-signal .lp-plan.is-featured .lp-plan-price { color: #fff; }
+.lp-signal .lp-plan-note { margin-top: 18px; }
+.lp-signal #lp-support .lp-scope { margin-top: 40px; }
+@media (max-width: 600px) {
+  .lp-plan-price { font-size: 23px; }
+}
+
+/* ───────── 会社概要：代表のごあいさつ（写真＋あいさつ文。経歴は載せない。2026-10-26） ───────── */
+.greeting { display: grid; grid-template-columns: 220px 1fr; gap: 56px; align-items: start; margin-top: 56px; }
+.greeting-photo { width: 100%; }
+.greeting-title { margin: 0 0 22px; font-size: 20px; font-weight: 900; letter-spacing: .06em; color: var(--ink); }
+.greeting .signature { margin-top: 28px; }
+@media (max-width: 760px) {
+  .greeting { grid-template-columns: 1fr; gap: 40px; }
+  .greeting-photo { width: min(62%, 240px); margin: 0 auto; }
 }

@@ -161,7 +161,7 @@ export type Solution = {
   features_lead?: string;
   features: { name: string; text: string; icon?: string }[];
   scope?: { title?: string; groups?: { name: string; icon?: string; items?: string[] }[]; note?: string };
-  plans?: { title?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string; featured?: boolean }[]; note?: string };
+  plans?: { title?: string; items?: { name: string; tag?: string; text?: string; includes?: string[]; best_for?: string; featured?: boolean; price?: string }[]; note?: string };
   tools_title?: string;
   tools?: string[];
   tools_note?: string;

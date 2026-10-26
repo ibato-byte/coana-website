@@ -91,6 +91,8 @@ const LABELS = {
     tools: "対応ツールの例",
     plans: "ご利用プランの例",
     plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
+    pricing: "プランと料金の目安",
+    priceNote: "金額はすべて税別の目安です。正式な金額は、業務の量と範囲を伺ってお見積もりします（ご相談・お見積もりは無料）。",
     bestFor: "こんな方に",
     scenarios: "ご利用イメージ",
     baBefore: "導入前",
@@ -133,6 +135,8 @@ const LABELS = {
     tools: "Tools we work with",
     plans: "Example plans",
     plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
+    pricing: "Plans & pricing",
+    priceNote: "All prices are estimates, excluding tax. We send a formal quote after a free consultation.",
     bestFor: "Best for",
     scenarios: "Example situations",
     baBefore: "Before",
@@ -373,31 +377,6 @@ function BeforeAfter({ sol }: { sol: Solution }) {
           </div>
         </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-/** ご利用イメージ（新デザイン）：Before → After を1枚のカードで */
-function SignalScenarios({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const sc = sol.scenarios;
-  if (!sc || !(sc.items ?? []).length) return null;
-  return (
-    <section className="section lp-scenarios lp-sig-scenarios">
-      <div className="container">
-        <SectionTitle en="Use cases" lead={sc.lead}>{sc.title || L.scenarios}</SectionTitle>
-        <div className="lp-sig-scenario-grid">
-          {(sc.items ?? []).map((it) => (
-            <article key={it.name} className="lp-sig-scenario" data-reveal>
-              {it.tag && <span className="lp-sig-tag">{it.tag}</span>}
-              <h3>{it.name}</h3>
-              {it.before && <p className="lp-sig-before"><b>{L.before}</b>{it.before}</p>}
-              <p className="lp-sig-after"><b>{L.after}</b>{it.text}</p>
-            </article>
-          ))}
-        </div>
-        {sc.note && <p className="lp-note">{sc.note}</p>}
       </div>
     </section>
   );
@@ -825,18 +804,51 @@ function Support({ sol }: { sol: Solution }) {
   const plans = sol.plans?.items ?? [];
   const scopeCount = groups.reduce((sum, g) => sum + (g.items?.length ?? 0), 0);
   const [scopeOpen, setScopeOpen] = useState(false);
+  // 新デザインのLPは「プランと料金の目安」を先に見せ、支援内容の6枚のカードは出さない（仕組みの図・業務の一覧と重なるため。2026-10-26 オーナー依頼の LP の簡素化）
+  const signal = sol.design === "signal";
+  const hasPrice = plans.some((p) => p.price);
+  const title = signal && plans.length > 0
+    ? (sol.plans?.title || (hasPrice ? L.pricing : L.plans))
+    : (sol.features_title && sol.features_title !== "支援内容" ? sol.features_title : L.support);
+  const planNote = hasPrice ? (sol.plans?.note || L.priceNote) : (sol.plans?.note || L.plansNote);
   return (
     <section id="lp-support" className="section lp-support">
       <div className="container">
-        <SectionTitle en="Services & plans" center lead={sol.features_lead}>{sol.features_title && sol.features_title !== "支援内容" ? sol.features_title : L.support}</SectionTitle>
-        <ul className="lp-feature-grid">
-          {sol.features.map((f) => (
-            <li key={f.name} className="lp-feature">
-              <span className="lp-feature-icon"><LpIcon name={f.icon} size={26} /></span>
-              <div><h3>{f.name}</h3><p>{f.text}</p></div>
-            </li>
-          ))}
-        </ul>
+        <SectionTitle en={signal && plans.length > 0 ? "Plans & pricing" : "Services & plans"} center lead={signal ? undefined : sol.features_lead}>{title}</SectionTitle>
+        {!signal && (
+          <ul className="lp-feature-grid">
+            {sol.features.map((f) => (
+              <li key={f.name} className="lp-feature">
+                <span className="lp-feature-icon"><LpIcon name={f.icon} size={26} /></span>
+                <div><h3>{f.name}</h3><p>{f.text}</p></div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {plans.length > 0 && (
+          <>
+            {!signal && <h3 className="lp-subhead">{sol.plans?.title || L.plans}</h3>}
+            <div className="lp-plan-grid">
+              {plans.map((p) => (
+                <article key={p.name} className={p.featured ? "lp-plan is-featured" : "lp-plan"}>
+                  {p.tag && <span className="lp-plan-tag">{p.tag}</span>}
+                  <div className="lp-plan-head">
+                    <h4>{p.name}</h4>
+                    {p.price && <p className="lp-plan-price">{p.price}</p>}
+                  </div>
+                  {p.text && <p className="lp-plan-text">{p.text}</p>}
+                  {(p.includes ?? []).length > 0 && (
+                    <ul>{(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} /><span>{it}</span></li>)}</ul>
+                  )}
+                  {p.best_for && <p className="lp-plan-for"><span>{L.bestFor}</span>{p.best_for}</p>}
+                </article>
+              ))}
+            </div>
+            <p className="lp-note lp-plan-note"><LpIcon name="yen" size={16} /><span>{planNote}</span></p>
+          </>
+        )}
+
         {groups.length > 0 && (
           <details className="lp-scope" onToggle={(e) => setScopeOpen(e.currentTarget.open)}>
             <summary>
@@ -855,26 +867,6 @@ function Support({ sol }: { sol: Solution }) {
           </details>
         )}
         {sol.scope?.note && <p className="lp-note lp-note-legal">{sol.scope.note}</p>}
-
-        {plans.length > 0 && (
-          <>
-            <h3 className="lp-subhead">{sol.plans?.title || L.plans}</h3>
-            <div className="lp-plan-grid">
-              {plans.map((p) => (
-                <article key={p.name} className={p.featured ? "lp-plan is-featured" : "lp-plan"}>
-                  {p.tag && <span className="lp-plan-tag">{p.tag}</span>}
-                  <h4>{p.name}</h4>
-                  {p.text && <p className="lp-plan-text">{p.text}</p>}
-                  {(p.includes ?? []).length > 0 && (
-                    <ul>{(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} /><span>{it}</span></li>)}</ul>
-                  )}
-                  {p.best_for && <p className="lp-plan-for"><span>{L.bestFor}</span>{p.best_for}</p>}
-                </article>
-              ))}
-            </div>
-            <p className="lp-note lp-plan-note"><LpIcon name="yen" size={16} /><span>{sol.plans?.note || L.plansNote}</span></p>
-          </>
-        )}
 
         {tools.length > 0 && (
           <div className="lp-tools">
@@ -1030,7 +1022,8 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
       {signal ? <BeforeAfter sol={sol} /> : <Problems sol={sol} />}
       <Scheme sol={sol} navigate={navigate} />
       <Support sol={sol} />
-      {signal ? <SignalScenarios sol={sol} /> : <Scenarios sol={sol} />}
+      {/* 新デザインのLPでは「ご利用イメージ」を出さない（導入前／導入後の切り替えと内容が重なるため。2026-10-26 LP の簡素化） */}
+      {!signal && <Scenarios sol={sol} />}
       <Flow sol={sol} />
       {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || L.faq} />}
       {signal

@@ -203,9 +203,9 @@ const VERB_OF: Record<string, string> = {
 };
 
 const VERBS = [
-  { no: "01", en: "Systemize", verb: "整える", kicker: "仕組みをつくる", head: ["業務の流れを見直し、", "ツールで整える。"], text: "経理や事務のやり方、使っているツールを棚卸しし、少人数でも回る仕組みに。創業期の体制づくりから支援します。", slugs: ["cloud-accounting", "startup-support"] },
-  { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。担当を固定し、仕組みごと代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
-  { no: "03", en: "Grow", verb: "伸ばす", kicker: "成長につなげる", head: ["生まれた時間を、", "問い合わせと売上へ。"], text: "営業の進め方、セミナー、Webサイト。商品・サービスの魅力をお客様に届け、売上につながる仕組みをつくります。", slugs: ["sales-support", "seminar-event", "web-production"] },
+  { no: "01", en: "Systemize", verb: "整える", kicker: "仕組みをつくる", head: ["業務の流れを見直し、", "ITとAIで整える。"], text: "経理や事務のやり方、使っているツールを棚卸しし、クラウドと自動化で少人数でも回る仕組みに。創業期の立ち上げから対応します。", slugs: ["cloud-accounting", "startup-support"] },
+  { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。担当を固定し、整えた仕組みごと代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
+  { no: "03", en: "Grow", verb: "伸ばす", kicker: "成長につなげる", head: ["生まれた時間を、", "問い合わせと売上へ。"], text: "顧客管理と営業のフォロー、セミナー、Webサイト。問い合わせから受注までが自然に続く仕組みをつくります。", slugs: ["sales-support", "seminar-event", "web-production"] },
 ];
 const VERB_INTERVAL_MS = 7000;
 const VERB_FIRST_MS = 4200;
@@ -512,7 +512,7 @@ function FinderSection() {
 }
 
 /** 03 支援スタイル：大きな一文（会社概要のメッセージ見出し）＋4つの強み＋ご利用までの流れ */
-const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["実", "Expertise"], team: ["伴", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
+const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["仕", "Systems"], team: ["伴", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
 const FLOW_TEXT = ["フォームまたはLINE公式アカウントから、ご相談内容をお送りください。", "担当者からご連絡し、現状の業務や課題を伺います。", "課題と優先順位を整理し、必要な範囲に絞ってご提案します。", "ご納得いただけてからご契約し、支援を始めます。"];
 function StyleSection() {
   const mission = (about.message_heading || "").split("\n").filter(Boolean);
@@ -620,6 +620,7 @@ function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
       <PageHero en="About us" title="会社概要" intro={about.intro} image={about.hero_image} imagePosition="left 45%" />
+      {/* 代表のごあいさつ（2026-10-26 オーナー依頼：経歴は載せず、あいさつの形にする。代表の紹介は会社概要ページだけ） */}
       <section id="message" className="section message-section">
         <div className="container narrow">
           <span className="section-index">01<i>Message</i></span>
@@ -629,29 +630,27 @@ function About({ navigate }: { navigate: Nav }) {
               <li key={s.title}><span className="style-icon"><MiniIcon name={s.icon} size={26} /></span>{s.title}</li>
             ))}
           </ul>
-          <div className="message-body">
-            {about.message.map((p, i) => <p key={i}><Lines text={p} /></p>)}
-          </div>
-          <p className="signature"><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
-        </div>
-      </section>
-      <section id="profile" className="section profile-section">
-        <div className="container">
-          <span className="section-index">02<i>Profile</i></span>
-          <div className="profile-grid">
-            <figure className="profile-photo">
-              <span className="profile-photo-deco" aria-hidden="true" />
-              <span className="profile-photo-dots" aria-hidden="true" />
-              <div className="profile-photo-frame">
-                <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
-              </div>
-            </figure>
+          <div className="greeting">
+            {about.profile_photo && (
+              <figure className="profile-photo greeting-photo">
+                <span className="profile-photo-deco" aria-hidden="true" />
+                <span className="profile-photo-dots" aria-hidden="true" />
+                <div className="profile-photo-frame">
+                  <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
+                </div>
+              </figure>
+            )}
             <div>
-              <p className="profile-role">{about.profile_role}</p>
-              <h2 className="profile-name">{about.profile_name} <span>{about.profile_name_en}</span></h2>
-              <div className="profile-copy">
-                {about.profile.map((p, i) => <p key={i}>{p}</p>)}
+              <h3 className="greeting-title">ごあいさつ</h3>
+              <div className="message-body">
+                {about.message.map((p, i) => <p key={i}><Lines text={p} /></p>)}
               </div>
+              <p className="signature"><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
+              {(about.profile ?? []).length > 0 && (
+                <div className="profile-copy">
+                  {about.profile.map((p, i) => <p key={i}>{p}</p>)}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -659,7 +658,7 @@ function About({ navigate }: { navigate: Nav }) {
       <section className="section company-section">
         <div className="container company-inner">
           <div>
-            <span className="section-index">03<i>Company</i></span>
+            <span className="section-index">02<i>Company</i></span>
             <h2>会社情報</h2>
           </div>
           <dl className="company-table">
@@ -1122,8 +1121,8 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
-    const titles: Record<Page, string> = { home: "", about: "会社概要・代表メッセージ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
-    const base = "中小企業のバックオフィス・マーケティング支援 | COANA TOKYO合同会社（東京・港区）";
+    const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
+    const base = "中小企業のバックオフィス・集客をITとAIで仕組み化 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);

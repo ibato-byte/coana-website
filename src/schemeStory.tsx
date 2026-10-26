@@ -58,7 +58,7 @@ export const STORIES: Record<string, Story> = {
     ],
   },
   "startup-support": {
-    message: "ひとつの窓口に相談すると、計画・資金・事務・集客・専門家との連携が順番に整い、開業の土台ができあがる。",
+    message: "ひとつの窓口に相談すると、やること・お金・ITツール・事務・専門家との連携が順番に整い、開業の土台ができあがる。",
     stops: () => [
       { at: "client", cargo: "chat" },
       { at: "c", cargo: "chat" },
