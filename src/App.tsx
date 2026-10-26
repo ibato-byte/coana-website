@@ -203,7 +203,7 @@ const VERB_OF: Record<string, string> = {
 };
 
 const VERBS = [
-  { no: "01", en: "Systemize", verb: "整える", kicker: "仕組みをつくる", head: ["業務の流れを見直し、", "ITとAIで整える。"], text: "経理や事務のやり方、使っているツールを棚卸しし、クラウドと自動化で少人数でも回る仕組みに。創業期の立ち上げから対応します。", slugs: ["cloud-accounting", "startup-support"] },
+  { no: "01", en: "Systemize", verb: "整える", kicker: "仕組みをつくる", head: ["業務の流れを見直し、", "ツールで整える。"], text: "経理や事務のやり方、使っているツールを棚卸しし、クラウドと自動化で少人数でも回る仕組みに。創業期の立ち上げから対応します。", slugs: ["cloud-accounting", "startup-support"] },
   { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。担当を固定し、整えた仕組みごと代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
   { no: "03", en: "Grow", verb: "伸ばす", kicker: "成長につなげる", head: ["生まれた時間を、", "問い合わせと売上へ。"], text: "顧客管理と営業のフォロー、セミナー、Webサイト。問い合わせから受注までが自然に続く仕組みをつくります。", slugs: ["sales-support", "seminar-event", "web-production"] },
 ];
@@ -620,30 +620,31 @@ function About({ navigate }: { navigate: Nav }) {
   return (
     <main>
       <PageHero en="About us" title="会社概要" intro={about.intro} image={about.hero_image} imagePosition="left 45%" />
-      {/* 代表のごあいさつ（2026-10-26 オーナー依頼：経歴は載せず、あいさつの形にする。代表の紹介は会社概要ページだけ） */}
+      {/* 代表のごあいさつ（2026-10-26 オーナー依頼：経歴は載せず、あいさつの形にする。代表の紹介は会社概要ページだけ）
+          PC は写真（左）とあいさつ文（右）の2列。写真の下に名前、文の最後に署名。考え方の4つは、あいさつの後に横一列で */}
       <section id="message" className="section message-section">
-        <div className="container narrow">
-          <span className="section-index">01<i>Message</i></span>
-          <h2><Lines text={about.message_heading} /></h2>
-          <ul className="about-values">
-            {home.strengths.map((s) => (
-              <li key={s.title}><span className="style-icon"><MiniIcon name={s.icon} size={26} /></span>{s.title}</li>
-            ))}
-          </ul>
+        <div className="container">
           <div className="greeting">
-            {about.profile_photo && (
-              <figure className="profile-photo greeting-photo">
-                <span className="profile-photo-deco" aria-hidden="true" />
-                <span className="profile-photo-dots" aria-hidden="true" />
-                <div className="profile-photo-frame">
-                  <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
-                </div>
-              </figure>
-            )}
-            <div>
-              <h3 className="greeting-title">ごあいさつ</h3>
+            <div className="greeting-side">
+              {about.profile_photo && (
+                <figure className="profile-photo greeting-photo">
+                  <span className="profile-photo-dots" aria-hidden="true" />
+                  <div className="profile-photo-frame">
+                    <img src={about.profile_photo} alt={`COANA TOKYO代表 ${about.profile_name}`} />
+                  </div>
+                </figure>
+              )}
+              <p className="greeting-name">
+                <small>{about.profile_role}</small>
+                <b>{about.profile_name}</b>
+                <span lang="en">{about.profile_name_en}</span>
+              </p>
+            </div>
+            <div className="greeting-main">
+              <span className="section-index">01<i>Message</i></span>
+              <h2><Lines text={about.message_heading} /></h2>
               <div className="message-body">
-                {about.message.map((p, i) => <p key={i}><Lines text={p} /></p>)}
+                {about.message.map((p, i) => <p key={i} className={i === 0 ? "greeting-lead" : undefined}><Lines text={p} /></p>)}
               </div>
               <p className="signature"><small>代表</small>{about.signature.replace(/^代表\s*/, "")}</p>
               {(about.profile ?? []).length > 0 && (
@@ -653,6 +654,11 @@ function About({ navigate }: { navigate: Nav }) {
               )}
             </div>
           </div>
+          <ul className="about-values greeting-values">
+            {home.strengths.map((s) => (
+              <li key={s.title}><span className="style-icon"><MiniIcon name={s.icon} size={26} /></span>{s.title}</li>
+            ))}
+          </ul>
         </div>
       </section>
       <section className="section company-section">
@@ -1122,7 +1128,7 @@ export default function App() {
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
     const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
-    const base = "中小企業のバックオフィス・集客をITとAIで仕組み化 | COANA TOKYO合同会社（東京・港区）";
+    const base = "中小企業のバックオフィス・集客の仕組みづくり | COANA TOKYO合同会社（東京・港区）";
     if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);
