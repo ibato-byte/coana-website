@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 720" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="720" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">比べる観点と、相談で聞くこと</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="50" y="84" width="500" height="104" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="94" cy="136" r="22" fill="#087fe5"/><text x="94" y="145" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="134" y="128" font-weight="700">任せられる範囲</text>
+    <text x="134" y="168" font-size="24" fill="#4a667d">聞くこと：一部だけでも頼めるか</text>
+    <rect x="50" y="208" width="500" height="104" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="94" cy="260" r="22" fill="#087fe5"/><text x="94" y="269" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="134" y="252" font-weight="700">資料の渡し方</text>
+    <text x="134" y="292" font-size="24" fill="#4a667d">聞くこと：今のやり方で回るか</text>
+    <rect x="50" y="332" width="500" height="104" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="94" cy="384" r="22" fill="#087fe5"/><text x="94" y="393" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="134" y="376" font-weight="700">税理士との分担</text>
+    <text x="134" y="416" font-size="24" fill="#4a667d">聞くこと：税務は誰が受けるか</text>
+    <rect x="50" y="456" width="500" height="104" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="94" cy="508" r="22" fill="#087fe5"/><text x="94" y="517" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="134" y="500" font-weight="700">報告の内容と時期</text>
+    <text x="134" y="540" font-size="24" fill="#4a667d">聞くこと：何を・いつ受け取るか</text>
+    <rect x="50" y="580" width="500" height="104" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="94" cy="632" r="22" fill="#087fe5"/><text x="94" y="641" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+    <text x="134" y="624" font-weight="700">情報の扱いと契約</text>
+    <text x="134" y="664" font-size="24" fill="#4a667d">聞くこと：権限と見直しの方法</text>
+  </g>
+</svg>

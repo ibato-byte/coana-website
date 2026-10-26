@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 574" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="574" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">依頼先を決めるまでの流れ</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="70" y="84" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="300" y="134" text-anchor="middle">任せたい業務を書き出す</text>
+    <path d="M300 170 V192" stroke="#087fe5" stroke-width="3"/><path d="M290 186 L300 198 L310 186" fill="none" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="204" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="300" y="254" text-anchor="middle">2〜3か所に相談する</text>
+    <path d="M300 290 V312" stroke="#087fe5" stroke-width="3"/><path d="M290 306 L300 318 L310 306" fill="none" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="324" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="300" y="374" text-anchor="middle">同じ質問で比べる</text>
+    <path d="M300 410 V432" stroke="#087fe5" stroke-width="3"/><path d="M290 426 L300 438 L310 426" fill="none" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="444" width="460" height="80" rx="14" fill="#eef6fc" stroke="#087fe5" stroke-width="2"/>
+    <text x="300" y="494" text-anchor="middle" font-weight="700">一部から始めて見直す</text>
+  </g>
+</svg>
