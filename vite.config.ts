@@ -641,7 +641,7 @@ function coanaPageMeta(): Plugin {
 
       const pages: PageMeta[] = [
         { path: '/', title: homeTitle, description: '', jsonld: graph(...faqPage) },
-        { path: '/about', crumb: '会社概要', title: '会社概要・代表あいさつ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。業務の流れを設計し、中小企業・小規模事業者の仕事を仕組みにする、当社の考え方と代表のあいさつ、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
+        { path: '/about', crumb: '会社概要', title: '会社概要・代表あいさつ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者の経理・事務・集客を支える、当社の考え方と代表のあいさつ、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
         { path: '/services', crumb: 'サービス', title: 'サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援' + SUFFIX, description: '中小企業・小規模事業者に向けた、経理・業務フローの改善と実務代行、創業支援、会計・勤怠・販売管理などITツール・クラウドツールの導入支援、営業・セミナー・SNS・Webサイト制作のマーケティング支援。料金は個別お見積もり。', jsonld: graph(crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }])) },
         { path: '/topics', crumb: 'トピックス', title: 'トピックス｜セミナー登壇・メディア掲載・お知らせ' + SUFFIX, description: 'セミナー登壇やメディア掲載など、COANA TOKYO合同会社の最新の活動をお知らせします。経理DXやクラウド会計に関する講座・記事もご紹介。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
         { path: '/contact', crumb: 'お問い合わせ', title: 'お問い合わせ｜バックオフィス・マーケティングのご相談' + SUFFIX, description: '経理やバックオフィスの見直し、ITツール導入、集客・営業のご相談はこちらから。中小企業・小規模事業者の小さな困りごとでもお気軽に。内容を確認のうえ担当者よりご連絡いたします。', jsonld: graph(crumbs([homeCrumb, { name: 'お問い合わせ', url: SITE + '/contact' }])) },
