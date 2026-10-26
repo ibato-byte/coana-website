@@ -357,7 +357,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         </div>
         <div className="button-row">
           <LinkButton go={navigate} args={["contact"]}>{home.hero_button_primary}</LinkButton>
-          <button type="button" className="button button-outline" onClick={() => openChat("diagnosis")}>1分で診断</button>
+          <button type="button" className="button button-outline" onClick={() => openChat("diagnosis")}>状況から探す</button>
         </div>
       </div>
     </section>
@@ -486,18 +486,18 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
   );
 }
 
-/** 02 迷ったら診断：サポートチャットの診断（content/chat.json）の1問目をここで答えられる。答えると、チャットがその続きから開く */
+/** 02 サービスのご案内（2026-10-26 オーナー指示：「合う・合わない」ではなく、状況から該当するサービスを案内する）：サポートチャットの診断（content/chat.json）の1問目をここで答えられる。答えると、チャットがその続きから開く */
 function FinderSection() {
   const q = diagnosis.questions[0];
   const total = diagnosis.questions.length;
   return (
     <section className="section sky-section sky-dark finder-section" id="finder">
       <div className="container">
-        <NumHead n="02" title={<>どれが合うか<br />迷ったら</>} side={<p>{total}つの質問に答えるだけで、合いそうなサービスをご案内します。約1分・個人情報の入力は不要です。</p>} />
+        <NumHead n="02" title={<>状況から<br />サービスを探す</>} side={<p>{total}つの質問に答えると、いまの状況がどのサービスに当たるかをご案内します。約1分・個人情報の入力は不要です。</p>} />
         <div className="finder-grid">
-          <p className="finder-big" data-reveal>1分で、<br />合うサービスが<wbr />見つかる。<small>1問目を選ぶとチャットが開き、残りの質問にそのまま進めます。</small></p>
+          <p className="finder-big" data-reveal>質問に答えると、<br />該当するサービスが<wbr />分かる。<small>1問目を選ぶとチャットが開き、残りの質問にそのまま進めます。</small></p>
           <div className="finder-card" data-reveal>
-            <div className="finder-card-top"><span lang="en">Service finder</span><span>Q1 / {total}</span></div>
+            <div className="finder-card-top"><span lang="en">Service guide</span><span>Q1 / {total}</span></div>
             <h3>{q.text}</h3>
             <div className="finder-options">
               {q.options.map((o, i) => (
