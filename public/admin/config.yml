@@ -224,6 +224,7 @@ collections:
             summary: "{{fields.name}}"
             fields:
               - { label: プラン名, name: name, widget: string }
+              - { label: 料金の目安（例：月3万円〜。税別）, name: price, widget: string, required: false }
               - { label: タグ（例：人気）, name: tag, widget: string, required: false }
               - { label: 説明, name: text, widget: text, required: false }
               - { label: 含まれる内容, name: includes, widget: list, required: false, field: { label: 内容, name: item, widget: string } }

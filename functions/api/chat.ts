@@ -237,7 +237,7 @@ export function postProcess(raw: string, evidence: string) {
   // サイトに書いていない金額（○円・○万円）は出さない
   const amounts = text.match(/[0-9０-９,，.]+\s*(?:万|千)?円/g) ?? [];
   if (amounts.some((a) => !evidence.includes(a.replace(/\s/g, "")))) {
-    return { text: "料金は、ご依頼の内容と量を伺ったうえで個別にお見積もりしています（ご相談・お見積もりは無料です）。具体的な金額は担当者からご案内します。", handoff: true, offtopic: false };
+    return { text: "料金の目安は、各サービスのページの「プランと料金の目安」に載せています。正式な金額は、ご依頼の内容と量を伺ってお見積もりします（ご相談・お見積もりは無料です）。", handoff: true, offtopic: false };
   }
   // 代表の名前の誤った読み方は、正しい読み方に直す（読み方は知識ファイルの表記だけを使う）
   text = text.replace(/ころも(?:ぐも|ばと)|コロモ(?:グモ|バト)/g, "いばと");
