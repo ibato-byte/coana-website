@@ -21,6 +21,7 @@ const BASE = process.env.BASE || 'http://localhost:4173';
 const DIST = process.env.DIST || path.join(__dirname, '../../dist');
 const ENGINES = (process.env.ENGINES || 'chromium').split(',');
 const WIDTHS = (process.env.W || '1440,1280,1024,768,430,390,360,320').split(',').map(Number);
+const OVERLAP_RATIO = +(process.env.OVERLAP_RATIO || 0.3);
 const out = []; const counts = {};
 const ng = (kind, msg) => { out.push(`NG [${kind}] ${msg}`); counts[kind] = (counts[kind] || 0) + 1; };
 const ok = (kind) => { counts[kind] = counts[kind] || 0; };
@@ -101,8 +102,9 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
             const top = document.elementFromPoint(x, y);
             if (!top || el.contains(top) || top.contains(el)) continue;
             const fx = fixedOf(top);
-            // 上の固定ヘッダーは、ページの先頭でだけ問題にする（スクロールの途中・最下部では本文は下をくぐる）
-            if (fx && !atTop && fx.getBoundingClientRect().top < 4 && fx.getBoundingClientRect().bottom < vh / 2) continue;
+            // 上の固定ヘッダーは、ページの先頭でだけ問題にする（スクロールの途中・最下部では本文は下をくぐる）。
+            // 新デザインのヘッダーは上端から12px 浮いているので、「上端に付いている」の判定は 24px 未満にする
+            if (fx && !atTop && fx.getBoundingClientRect().top < 24 && fx.getBoundingClientRect().bottom < vh / 2) continue;
             if (fx && !fixedOf(el)) res.push(`${(fx.className || fx.tagName).toString().split(' ')[0]} が「${(el.textContent || el.getAttribute('aria-label') || el.name || el.tagName).trim().slice(0, 16)}」を隠す`);
           }
         }
@@ -112,7 +114,7 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
     }
     for (const x of covered) ng('fixed-cover', `${tag} ${url}: ${x}`);
     await p.waitForTimeout(400);
-    const r = await p.evaluate(({ mobile, url }) => {
+    const r = await p.evaluate(({ mobile, url, OVERLAP_RATIO }) => {
       const vw = document.documentElement.clientWidth;
       const inScroller = (el) => { for (let e = el.parentElement; e; e = e.parentElement) { const s = getComputedStyle(e); if (/(auto|scroll|hidden|clip)/.test(s.overflowX) || s.overflow === 'hidden') return true; } return false; };
       const wide = [];
@@ -121,7 +123,9 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
         if ((rc.right > vw + 1 || rc.left < -1) && !inScroller(el) && getComputedStyle(el).position !== 'fixed' && !el.closest('[aria-hidden="true"]')) wide.push((typeof el.className === 'string' && el.className ? '.' + el.className.split(' ')[0] : el.tagName) + `(${Math.round(rc.left)}..${Math.round(rc.right)})`);
       }
       const imgs = [...document.images].filter((i) => i.complete && i.naturalWidth === 0 && i.getBoundingClientRect().height > 0).map((i) => i.getAttribute('src'));
-      // 文字どうしの重なり（見えている文字だけ。どちらかがもう一方を含む場合・鳩の重ね絵は除く）
+      // 文字どうしの重なり（見えている文字だけ。どちらかがもう一方を含む場合・鳩の重ね絵は除く）。
+      // 新デザインは行間を詰めた見出し（line-height 約1）なので、行の箱どうしが少し重なっても文字は重ならない。
+      // 重なりの高さが、低いほうの行の高さの OVERLAP_RATIO（既定 30%）を超えたときだけ NG にする
       const vis = (e) => { if (e.checkVisibility && !e.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })) return false; for (let n = e; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (cs.visibility === 'hidden' || +cs.opacity < 0.2 || cs.display === 'none') return false; } return true; };
       const textEls = [...document.querySelectorAll('main *')].filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && !e.closest('.dove-layer, .sr-only, .visually-hidden, [aria-hidden="true"]') && vis(e));
       // 祖先の overflow で切り取られた部分（閉じた開閉UIの中身など）は見えていないので除く
@@ -131,7 +135,7 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
       for (let i = 0; i < textEls.length; i++) for (let j = i + 1; j < textEls.length; j++) {
         const a = textEls[i], c = textEls[j]; if (a.contains(c) || c.contains(a)) continue;
         let hit = false;
-        for (const r1 of rects[i]) { for (const r2 of rects[j]) { if (Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left) > 3 && Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top) > 3) { hit = true; break; } } if (hit) break; }
+        for (const r1 of rects[i]) { for (const r2 of rects[j]) { const ox = Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left), oy = Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top); if (ox > 3 && oy > 3 && oy > OVERLAP_RATIO * Math.min(r1.height, r2.height)) { hit = true; break; } } if (hit) break; }
         if (hit) overlaps.push(`「${a.textContent.trim().slice(0, 10)}」×「${c.textContent.trim().slice(0, 10)}」`);
       }
       const hidden = [...document.querySelectorAll('[data-reveal]')].filter((e) => !e.classList.contains('in') && e.getBoundingClientRect().height > 0).length;
@@ -142,7 +146,7 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
       const honeypotVisible = [...document.querySelectorAll('.form-honeypot, input[name="website"]')].some((e) => { const r = e.getBoundingClientRect(); return r.width > 2 && r.height > 2 && vis(e) && r.left > -100; });
       const hrefs = [...document.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'));
       return { docOverflow: document.documentElement.scrollWidth > vw + 1, wide: [...new Set(wide)].slice(0, 5), imgs, overlaps: overlaps.slice(0, 4), hidden, smallInputs, mail: url === '/privacy' ? 0 : mailOut + mailHref, honeypotVisible, hrefs, h1: document.querySelectorAll('h1').length };
-    }, { mobile, url });
+    }, { mobile, url, OVERLAP_RATIO });
     if (r.docOverflow) ng('overflow', `${tag} ${url}: 横スクロールが出る`);
     if (r.wide.length) ng('overflow', `${tag} ${url}: はみ出し ${r.wide.join(', ')}`);
     if (r.imgs.length) ng('image', `${tag} ${url}: 画像の欠け ${r.imgs.join(', ')}`);
@@ -187,7 +191,7 @@ async function interactionChecks(engine, b, links) {
   const closed = !(await mp.locator('.mobile-nav').isVisible());
   await mp.tap('.menu-button'); await mp.keyboard.press('Escape');
   const esc = !(await mp.locator('.mobile-nav').isVisible());
-  await mp.tap('.menu-button'); await mp.locator('.mobile-nav a').nth(1).tap(); await mp.waitForLoadState('networkidle');
+  await mp.tap('.menu-button'); await mp.locator('.mobile-nav a[href="/about"]').tap(); await mp.waitForLoadState('networkidle');
   const navigated = mp.url().endsWith('/about') && !(await mp.locator('.mobile-nav').isVisible());
   if (!(opened && closed && esc && navigated)) ng('menu', `${engine} ハンバーガーメニュー open=${opened} close=${closed} esc=${esc} 遷移=${navigated}`);
   ok('menu');
