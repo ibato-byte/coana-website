@@ -86,7 +86,7 @@ export const STORIES: Record<string, Story> = {
     ],
   },
   "sales-support": {
-    message: "見込み客が、相談→商談→受注まで一本の流れで進み、数字の振り返りで次の一手が決まる。",
+    message: "見込み客が、相談→商談→受注と段階を追って進み、数字の振り返りで次にやることが決まる。",
     stops: () => [
       { at: "n0", cargo: "person" },
       { at: "n1", cargo: "person" },
@@ -108,7 +108,7 @@ export const STORIES: Record<string, Story> = {
     ],
   },
   "sns-management": {
-    message: "計画→投稿→反応の振り返りが毎月まわり、次の月の投稿に活かされていく。",
+    message: "計画→投稿→反応の振り返りを毎月くり返し、次の月の投稿に活かされていく。",
     stops: () => [
       { at: "n0", cargo: "target" },
       { at: "n1", cargo: "calendar" },

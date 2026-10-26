@@ -791,7 +791,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 /* お問い合わせページ：左にフォームのカード、右にLINE・電話・チャット（案どおり）。スマホはほかの方法を先に */
 .contact-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 30px; align-items: start; }
 .contact-layout .contact-form-card { order: 1; max-width: none; margin: 0; padding: clamp(22px, 3vw, 40px); border: var(--ss-line); border-radius: var(--ss-radius); background: #fff; }
-.contact-layout .contact-side { order: 2; display: grid; gap: 14px; position: sticky; top: 100px; }
+.contact-layout .contact-side { order: 2; display: grid; gap: 14px; } /* スクロールに追従させない（2026-10-26 オーナー指摘と同じ理由） */
 .contact-side .line-notice { display: grid; gap: 14px; justify-items: start; margin: 0; padding: 22px 24px; text-align: left; background: #fff; }
 .contact-side .line-notice p { margin: 0; font-weight: 900; font-size: 16px; }
 .contact-side .line-notice small { display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
@@ -1341,12 +1341,41 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .lp-plan-price { font-size: 23px; }
 }
 
-/* ───────── 会社概要：代表のごあいさつ（写真＋あいさつ文。経歴は載せない。2026-10-26） ───────── */
-.greeting { display: grid; grid-template-columns: 220px 1fr; gap: 56px; align-items: start; margin-top: 56px; }
-.greeting-photo { width: 100%; }
-.greeting-title { margin: 0 0 22px; font-size: 20px; font-weight: 900; letter-spacing: .06em; color: var(--ink); }
-.greeting .signature { margin-top: 28px; }
+/* ───────── 会社概要：代表のごあいさつ（写真＋あいさつ文。経歴は載せない。2026-10-26）─────────
+   PC：写真の列（約5）と文の列（約7）。写真は文の書き出しにそろえ、写真の下に名前。文は1行35字前後で読みやすく。
+   スマホ：写真 → 名前 → 見出し → 本文 の順に1列。 */
+.message-section .greeting { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(48px, 7vw, 96px); align-items: start; }
+.greeting-side { position: relative; max-width: 400px; width: 100%; justify-self: end; padding-top: 8px; }
+.greeting-photo { width: 100%; margin: 0; }
+.greeting-photo .profile-photo-frame { aspect-ratio: 4 / 5; }
+.greeting-photo .profile-photo-frame img { transform: none; object-position: 50% 30%; }
+.greeting-photo .profile-photo-frame::after { display: none; }
+.greeting-photo .profile-photo-dots { right: -36px; top: -30px; }
+.greeting-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 30px 0 0; padding-top: 18px; border-top: 2px solid var(--ink); }
+.greeting-name small { width: 100%; font-size: 12.5px; font-weight: 700; letter-spacing: .12em; color: var(--ink-2); }
+.greeting-name b { font-size: 24px; font-weight: 900; letter-spacing: .08em; color: var(--ink); }
+.greeting-name span { font-family: var(--font-en); font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-2); }
+.greeting-main { max-width: 620px; }
+.greeting-main h2 { margin: 18px 0 36px; font-size: clamp(26px, 2.6vw, 36px); line-height: 1.6; }
+.greeting-main .message-body p { margin: 0 0 22px; font-size: 16px; line-height: 2.1; color: var(--ink); }
+.greeting-main .message-body p.greeting-lead { font-size: 17.5px; font-weight: 700; line-height: 1.95; }
+.greeting-main .signature { margin-top: 36px; text-align: right; }
+.greeting-values { margin: clamp(64px, 8vw, 96px) 0 0; }
+@media (max-width: 900px) {
+  .message-section .greeting { grid-template-columns: 1fr; gap: 40px; }
+  .greeting-side { justify-self: center; max-width: 320px; padding-top: 0; }
+  .greeting-main { max-width: none; }
+  .greeting-main h2 { font-size: 26px; margin-bottom: 28px; }
+  .greeting-main .message-body p { font-size: 15.5px; line-height: 2.05; }
+  .greeting-main .message-body p.greeting-lead { font-size: 16.5px; }
+}
+@media (max-width: 480px) {
+  .greeting-side { max-width: 260px; }
+  .greeting-photo .profile-photo-dots { right: -18px; top: -18px; width: 90px; height: 90px; }
+}
+
+/* LP のプラン：スマホは横スクロールにせず縦に並べ、金額を見比べやすく（2026-10-26） */
 @media (max-width: 760px) {
-  .greeting { grid-template-columns: 1fr; gap: 40px; }
-  .greeting-photo { width: min(62%, 240px); margin: 0 auto; }
+  .lp-signal .lp-plan-grid { display: grid; grid-template-columns: 1fr; overflow: visible; scroll-snap-type: none; margin-inline: 0; padding: 16px 0 0; gap: 26px; }
+  .lp-signal .lp-plan { width: auto; min-width: 0; flex: none; }
 }
