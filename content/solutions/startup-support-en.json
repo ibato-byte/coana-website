@@ -9,7 +9,7 @@
   "seo_title": "Start a Business in Japan | Bilingual Support",
   "description": "Bilingual support for starting a business in Japan: business plan, funding, accounting and back-office setup, and introductions to licensed professionals.",
   "catch": "Start your business in Japan\nwith **a bilingual partner**.",
-  "lead": "Planning, back office, local customs, and licensed professionals: one bilingual point of contact for starting a company in Japan.",
+  "lead": "Planning, back office, local customs, and introductions to licensed professionals: one bilingual point of contact for starting a company in Japan.",
   "hero_note": "Online nationwide, with an office in Minato-ku, Tokyo.",
   "hero_facts": [
     {
@@ -59,7 +59,7 @@
       },
       {
         "label": "Funding preparation",
-        "sub": "Loans and subsidies: documents and numbers",
+        "sub": "Loans and subsidies: information and numbers to discuss with experts",
         "icon": "yen"
       },
       {
@@ -94,8 +94,8 @@
     "points": [
       {
         "icon": "doc",
-        "name": "A plan you can actually use",
-        "text": "Turn your idea, budget, and cash flow into a plan to present to banks and partners."
+        "name": "Your to-dos and numbers, organized",
+        "text": "Your to-dos, budget, and cash flow, organized into a clear roadmap you can share with professionals."
       },
       {
         "icon": "handshake",
@@ -105,7 +105,7 @@
       {
         "icon": "rocket",
         "name": "Bilingual and hands-on",
-        "text": "Accounting, IT, and sales experience, in English, from planning to life after launch."
+        "text": "Accounting, cloud tools, and automation set up in English, from planning to life after launch."
       }
     ],
     "note": "We are not a law, tax, or immigration firm. Licensed partners we introduce handle those."
@@ -191,7 +191,6 @@
     "note": "Under Japanese law, company registration, visa and permit applications, tax filing and advice, social-insurance procedures, and legal advice may only be performed by licensed professionals. COANA TOKYO does not perform these services; we introduce you to licensed partners."
   },
   "plans": {
-    "title": "Example plans",
     "items": [
       {
         "name": "Plan & Prepare",
@@ -203,7 +202,8 @@
           "Funding preparation",
           "Roadmap and introductions"
         ],
-        "best_for": "Founders at the planning stage"
+        "best_for": "Founders at the planning stage",
+        "price": "From ¥50,000 (one-time)"
       },
       {
         "name": "Launch Package",
@@ -216,22 +216,24 @@
           "Accounting, tools, and rules",
           "3 months of post-launch support"
         ],
-        "best_for": "Founders who want to focus on the business"
+        "best_for": "Founders who want to focus on the business",
+        "price": "From ¥150,000 (one-time)"
       },
       {
         "name": "Ongoing Support",
         "tag": "After launch",
-        "text": "Bookkeeping, monthly numbers, sales, and a bilingual team to ask.",
+        "text": "Regular check-ins on your bookkeeping, tools, and marketing. Hands-on work is quoted per service.",
         "includes": [
-          "Bookkeeping and monthly reports",
-          "Website, social, sales support",
+          "Advice on bookkeeping and tools",
+          "Advice on website, social, and sales",
           "Coordination with professionals",
-          "Regular check-ins"
+          "Monthly check-ins"
         ],
-        "best_for": "Companies that have just launched"
+        "best_for": "Companies that have just launched",
+        "price": "From ¥20,000 / month"
       }
     ],
-    "note": "Pricing is quoted individually based on scope. Small or partial engagements are welcome."
+    "note": "All prices are estimates, excluding tax. We send a formal quote after a free consultation."
   },
   "scenarios": {
     "title": "Example situations",
@@ -285,7 +287,7 @@
   "faqs": [
     {
       "q": "How much does it cost?",
-      "a": "It depends on scope. After a free consultation we send a quote. Partial engagements, such as only the business plan or only the accounting setup, are welcome."
+      "a": "As a guide: Plan & Prepare from ¥50,000, the Launch Package from ¥150,000, and ongoing support from ¥20,000 per month (excluding tax). After a free consultation, we send a formal quote based on your scope."
     },
     {
       "q": "Can you handle my visa or company registration?",
@@ -352,7 +354,7 @@
         "before_status": "Blank",
         "before": "Unsure what Japanese lenders expect in a plan",
         "after_status": "Ready",
-        "after": "Plan and projections prepared in a format lenders know"
+        "after": "Plan and projections organized so you can discuss them with lenders and professionals"
       },
       {
         "label": "Business customs",
