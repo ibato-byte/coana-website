@@ -43,7 +43,7 @@ if (existing.some((c) => (c.body || '').includes(marker))) { console.log('この
 // 1. チェックの完了を待つ（この Actions 自身のジョブは除く）
 let runs = [];
 for (const deadline = Date.now() + WAIT_MIN * 60e3; ;) {
-  runs = (await api('GET', `/commits/${sha}/check-runs?per_page=100`)).check_runs.filter((r) => r.name !== SELF_JOB);
+  runs = (await api('GET', `/commits/${sha}/check-runs?per_page=100`)).check_runs.filter((r) => r.name !== SELF_JOB && r.name !== 'auto-publish'); // 自動公開のジョブも待たない（お互いを待って両方が時間切れになるため）
   const pending = runs.filter((r) => r.status !== 'completed');
   if (runs.length && !pending.length) break;
   if (Date.now() > deadline) { console.log('チェックが時間内に終わらない'); process.exit(1); }

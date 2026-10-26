@@ -63,7 +63,7 @@ jobs:
         run: |
           for i in $(seq 1 100); do
             runs=$(gh api "repos/$REPO/commits/$SHA/check-runs?per_page=100" \
-              --jq '[.check_runs[] | select(.name != "auto-publish")]')
+              --jq '[.check_runs[] | select(.name != "auto-publish" and .name != "approval-mail")]')
             statuses=$(gh api "repos/$REPO/commits/$SHA/status" --jq '.statuses')
             total=$(( $(jq length <<<"$runs") + $(jq length <<<"$statuses") ))
             pending=$(( $(jq '[.[] | select(.status != "completed")] | length' <<<"$runs") \
