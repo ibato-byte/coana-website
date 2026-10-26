@@ -12,6 +12,10 @@ const read = (f) => (f && fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8
 const DATE = opt('date', new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10)); // 日本時間の日付
 const DIR = opt('dir', path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../docs/seo-reports'));
 const local = read(opt('local')), prod = read(opt('prod')), perf = read(opt('perf'));
+// Lighthouse が LCP を検出できなかったページ（performance が null）は、LCP・TBT が 0 で記録される。
+// 0 のまま平均や前回比に入れると「大幅に改善」に見えるので、計測できなかった値として null にそろえる
+const measured = (x) => x && x.performance != null;
+for (const lh of [perf?.lighthouse]) for (const x of Object.values(lh || {})) if (!measured(x)) { x.lcpMs = null; x.tbtMs = null; }
 
 fs.mkdirSync(DIR, { recursive: true });
 const prevFile = fs.readdirSync(DIR).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f) && f < `${DATE}.json`).sort().pop();
@@ -45,8 +49,11 @@ out.push(`| ビルド成果物（ローカル） | ${local ? local.errors.length
 out.push(`| 本番 coana.co.jp | ${prod ? prod.errors.length : '未取得'} | ${prod ? prod.warnings.length : '—'} |`);
 if (perf?.lighthouse && Object.keys(perf.lighthouse).length) {
   const v = Object.values(perf.lighthouse);
-  const avg = (k) => Math.round(v.reduce((s, x) => s + (x[k] ?? 0), 0) / v.length);
-  out.push('', `表示速度（モバイル・Lighthouse の平均）：Performance ${avg('performance')}／Accessibility ${avg('accessibility')}／Best Practices ${avg('bestPractices')}／SEO ${avg('seo')}、LCP ${(avg('lcpMs') / 1000).toFixed(1)} 秒（計測：${perf.base}）`);
+  // 平均は計測できた値だけで出す（null を 0 として数えない）
+  const avg = (k) => { const xs = v.map((x) => x[k]).filter((n) => n != null); return xs.length ? Math.round(xs.reduce((s, n) => s + n, 0) / xs.length) : null; };
+  const ok = v.filter(measured).length;
+  const lcp = avg('lcpMs');
+  out.push('', `表示速度（モバイル・Lighthouse の平均）：Performance ${avg('performance') ?? '—'}／Accessibility ${avg('accessibility') ?? '—'}／Best Practices ${avg('bestPractices') ?? '—'}／SEO ${avg('seo') ?? '—'}、LCP ${lcp == null ? '—' : (lcp / 1000).toFixed(1) + ' 秒'}（計測：${perf.base}${ok < v.length ? `。Performance・LCP は ${v.length} ページ中 ${ok} ページの平均。残りは Lighthouse が LCP を検出できず計測できなかった` : ''}）`);
 }
 out.push('');
 
@@ -88,7 +95,9 @@ else out.push('直すべきもの（NG）：', list(local.errors), '', '確認�
 if (perf) {
   out.push('## 表示速度・Core Web Vitals（モバイル）', '', `計測：${perf.base}（Lighthouse 12、各ページ良い方の値）`, '');
   out.push('| ページ | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |', '| --- | --- | --- | --- | --- | --- | --- | --- |');
-  for (const [p, x] of Object.entries(perf.lighthouse || {})) out.push(`| ${p} | ${x.performance} | ${x.accessibility} | ${x.bestPractices} | ${x.seo} | ${(x.lcpMs / 1000).toFixed(1)}s | ${x.cls} | ${x.tbtMs}ms |`);
+  for (const [p, x] of Object.entries(perf.lighthouse || {})) out.push(measured(x)
+    ? `| ${p} | ${x.performance} | ${x.accessibility} | ${x.bestPractices} | ${x.seo} | ${(x.lcpMs / 1000).toFixed(1)}s | ${x.cls} | ${x.tbtMs}ms |`
+    : `| ${p} | 計測できず（LCP を検出できない） | ${x.accessibility} | ${x.bestPractices} | ${x.seo} | — | ${x.cls} | — |`);
   const failed = Object.entries(perf.lighthouse || {}).flatMap(([p, x]) => [...(x.failedSeoAudits || []).map((a) => `${p}：SEO ${a}`), ...(x.failedA11yAudits || []).map((a) => `${p}：アクセシビリティ ${a}`)]);
   if (failed.length) out.push('', '不合格の監査：', ...failed.map((f) => `- ${f}`));
   const psi = Object.entries(perf.psi || {});
