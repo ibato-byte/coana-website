@@ -151,7 +151,7 @@
         "name": "Planning & funding",
         "icon": "doc",
         "items": [
-          "Business plan writing support",
+          "Business plan structuring support (we do not ghost-write)",
           "Budget and cash-flow projections",
           "Preparation for startup-loan consultations",
           "Subsidy and grant information"
@@ -203,7 +203,7 @@
           "Roadmap and introductions"
         ],
         "best_for": "Founders at the planning stage",
-        "price": "From ¥50,000 (one-time)"
+        "price": "From ¥58,000 (one-time)"
       },
       {
         "name": "Launch Package",
@@ -217,7 +217,7 @@
           "3 months of post-launch support"
         ],
         "best_for": "Founders who want to focus on the business",
-        "price": "From ¥150,000 (one-time)"
+        "price": "From ¥230,000 (one-time)"
       },
       {
         "name": "Ongoing Support",
@@ -230,7 +230,7 @@
           "Monthly check-ins"
         ],
         "best_for": "Companies that have just launched",
-        "price": "From ¥20,000 / month"
+        "price": "From ¥45,000 / month"
       }
     ],
     "note": "All prices are estimates, excluding tax. We send a formal quote after a free consultation."
@@ -287,7 +287,7 @@
   "faqs": [
     {
       "q": "How much does it cost?",
-      "a": "As a guide: Plan & Prepare from ¥50,000, the Launch Package from ¥150,000, and ongoing support from ¥20,000 per month (excluding tax). After a free consultation, we send a formal quote based on your scope."
+      "a": "As a guide: Plan & Prepare from ¥58,000, the Launch Package from ¥230,000, and ongoing support from ¥45,000 per month (excluding tax). After a free consultation, we send a formal quote based on your scope."
     },
     {
       "q": "Can you handle my visa or company registration?",
