@@ -50,7 +50,7 @@ export function DiagnoseLink({ className = "" }: { className?: string }) {
   return (
     <p className={className ? "diagnose-link " + className : "diagnose-link"}>
       <button type="button" onClick={() => openChat("diagnosis")}>
-        どれが合うか分からない方は、約1分の診断で合うサービスをご案内します<Icon name="arrow" size={16} />
+        どのサービスに当たるか分からない方は、質問に答えるだけでご案内します<Icon name="arrow" size={16} />
       </button>
     </p>
   );
@@ -62,8 +62,8 @@ export function DiagnoseBanner({ className = "" }: { className?: string }) {
   return (
     <div className={className ? "diagnose-banner " + className : "diagnose-banner"}>
       <img src="/images/chat/coana-mark.webp" alt="" width={40} height={40} loading="lazy" />
-      <p><b>どれが合うか迷ったら</b><span>5つの質問に答えるだけで、合いそうなサービスをご案内します。</span></p>
-      <button type="button" onClick={() => openChat("diagnosis")}>約1分で診断する<Icon name="arrow" size={16} /></button>
+      <p><b>どのサービスに当たるか分からないときは</b><span>5つの質問に答えると、いまの状況に該当するサービスをご案内します。</span></p>
+      <button type="button" onClick={() => openChat("diagnosis")}>質問に答える<Icon name="arrow" size={16} /></button>
     </div>
   );
 }
@@ -393,7 +393,7 @@ export function ContactBand({ navigate, big = false, title, text, bigText = "相
           <div className="contact-band-action">
             <LinkButton go={navigate} args={["contact"]}>{primary}</LinkButton>
             <LineButton place={place} label={line} />
-            {chat && <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談・診断</button>}
+            {chat && <button type="button" className="button button-outline on-sky" onClick={() => openChat("menu")}>チャットで相談</button>}
           </div>
         </div>
       </div>
