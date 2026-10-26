@@ -13,6 +13,9 @@
 /en/event        /topics     301
 /en/event/*      /topics     301
 
+# 公開日の変更で URL が変わった記事 → 新しい URL（旧 URL がインデックス済みのため）
+/topics/20261006-cloud-accounting-setup  /topics/20260318-cloud-accounting-setup  301
+
 # サービス → サービス一覧
 /service         /services   301
 /service/*       /services   301
