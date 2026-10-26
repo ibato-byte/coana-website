@@ -297,7 +297,7 @@ export function ChatPanel({ navigate, mode, request, preset, onClose }: ChatPane
   };
   const consultMessage = () => {
     const lines: string[] = [];
-    if (diagDone) lines.push("【チャットでのサービス診断】", "おすすめ：" + diagDone.picks.map((p) => serviceName(p.slug)).join("、"), ...diagDone.summary.map((s) => "・" + s));
+    if (diagDone) lines.push("【チャットでのサービス案内】", "該当するサービス：" + diagDone.picks.map((p) => serviceName(p.slug)).join("、"), ...diagDone.summary.map((s) => "・" + s));
     if (questionsRef.current.length) lines.push("【チャットでのご質問】", ...questionsRef.current.map((q) => "・" + q));
     return lines.length ? lines.join("\n") + "\n\n" : "";
   };
@@ -351,7 +351,7 @@ export function ChatPanel({ navigate, mode, request, preset, onClose }: ChatPane
         <div className="chat-result">
           <div className="chat-result-head">
             <span className="chat-result-mark"><img src={CHAT_MARK} alt="" width={30} height={30} /></span>
-            <div><p className="chat-result-en">Your result</p><p className="chat-result-title">診断結果：こちらが合いそうです</p></div>
+            <div><p className="chat-result-en">Service guide</p><p className="chat-result-title">ご案内：該当するサービス</p></div>
           </div>
           <ol className="chat-picks">
             {r.picks.map((p) => (
@@ -365,7 +365,7 @@ export function ChatPanel({ navigate, mode, request, preset, onClose }: ChatPane
           {r.notes.map((n) => <p key={n} className="chat-small">{n}</p>)}
           <p className="chat-consult-text">{chat.consult_text}</p>
           <ConsultActions label="この内容で無料相談する" message={consultMessage()} slug={r.picks[0].slug} />
-          <div className="chat-diag-nav"><button type="button" onClick={() => startDiagnosis()}>もう一度診断する</button><button type="button" onClick={restart}>最初からやり直す</button></div>
+          <div className="chat-diag-nav"><button type="button" onClick={() => startDiagnosis()}>質問をやり直す</button><button type="button" onClick={restart}>最初からやり直す</button></div>
         </div>
       );
     }
@@ -387,8 +387,8 @@ export function ChatPanel({ navigate, mode, request, preset, onClose }: ChatPane
         )}
         {m.menu && (
           <div className="chat-menu" role="group" aria-label="ご案内メニュー">
-            <button type="button" className="chat-menu-diag" onClick={() => { turnsRef.current++; push({ from: "user", text: "あなたに合うサービスを診断" }); startDiagnosis(); }}>
-              <b>あなたに合うサービスを診断</b><small>約1分・5問</small>
+            <button type="button" className="chat-menu-diag" onClick={() => { turnsRef.current++; push({ from: "user", text: "状況からサービスを案内してほしい" }); startDiagnosis(); }}>
+              <b>状況からサービスをご案内</b><small>約1分・5問</small>
             </button>
             {chat.menu.map((item) => <button key={item.label} type="button" className="chat-chip" onClick={() => pickMenu(item)}>{item.label}</button>)}
             <button type="button" className="chat-chip" onClick={() => inputRef.current?.focus()}>その他（自由に質問）</button>

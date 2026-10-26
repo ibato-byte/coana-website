@@ -114,7 +114,7 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
         onFocus={() => void load()}
       >
         <span className="chat-launcher-mark"><img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" /></span>
-        <span className="chat-launcher-text" aria-hidden="true">チャットで相談・診断</span>
+        <span className="chat-launcher-text" aria-hidden="true">チャットで相談</span>
       </button>
       {open && Panel && <Panel navigate={navigate} mode={mode} request={request} preset={preset} onClose={close} />}
     </>

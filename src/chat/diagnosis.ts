@@ -41,7 +41,7 @@ export function diagnose(config: DiagConfig, answers: number[]): DiagResult {
   const picks = chosen.map(([slug, score], i) => {
     const base = config.reasons[slug] ?? "";
     const phrase = i === 0 && !slug.endsWith("-en") ? phraseFor(slug) : "";
-    const reason = phrase ? "「" + phrase + "」とのことなので、こちらが合いそうです。" + base : base;
+    const reason = phrase ? "「" + phrase + "」とのことなので、こちらのサービスに当たります。" + base : base;
     return { slug, score, reason };
   });
   const combo = picks.length === 2
