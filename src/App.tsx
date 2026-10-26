@@ -203,9 +203,9 @@ const VERB_OF: Record<string, string> = {
 };
 
 const VERBS = [
-  { no: "01", en: "Systemize", verb: "整える", kicker: "仕組みをつくる", head: ["業務の流れを見直し、", "ツールで整える。"], text: "経理や事務のやり方、使っているツールを棚卸しし、クラウドと自動化で少人数でも回る仕組みに。創業期の立ち上げから対応します。", slugs: ["cloud-accounting", "startup-support"] },
-  { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。担当を固定し、整えた仕組みごと代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
-  { no: "03", en: "Grow", verb: "伸ばす", kicker: "成長につなげる", head: ["生まれた時間を、", "問い合わせと売上へ。"], text: "顧客管理と営業のフォロー、セミナー、Webサイト。問い合わせから受注までが自然に続く仕組みをつくります。", slugs: ["sales-support", "seminar-event", "web-production"] },
+  { no: "01", en: "Systemize", verb: "整える", kicker: "やり方を見直す", head: ["業務の手順を見直し、", "ツールで効率よく。"], text: "経理や事務のやり方と使っているツールを棚卸しし、クラウドと自動化で手作業を減らします。創業期の立ち上げにも対応します。", slugs: ["cloud-accounting", "startup-support"] },
+  { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。窓口の担当者を固定し、決めた手順で代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
+  { no: "03", en: "Grow", verb: "伸ばす", kicker: "売上を伸ばす", head: ["空いた時間を、", "問い合わせと売上に。"], text: "顧客管理と営業のフォロー、セミナー、Webサイト。問い合わせを増やし、受注につなげるお手伝いをします。", slugs: ["sales-support", "seminar-event", "web-production"] },
 ];
 const VERB_INTERVAL_MS = 7000;
 const VERB_FIRST_MS = 4200;
@@ -1128,7 +1128,7 @@ export default function App() {
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
     const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
-    const base = "中小企業のバックオフィス・集客の仕組みづくり | COANA TOKYO合同会社（東京・港区）";
+    const base = "中小企業のバックオフィス・集客支援｜経理代行・業務改善 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);

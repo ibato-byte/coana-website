@@ -791,7 +791,7 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 /* お問い合わせページ：左にフォームのカード、右にLINE・電話・チャット（案どおり）。スマホはほかの方法を先に */
 .contact-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 30px; align-items: start; }
 .contact-layout .contact-form-card { order: 1; max-width: none; margin: 0; padding: clamp(22px, 3vw, 40px); border: var(--ss-line); border-radius: var(--ss-radius); background: #fff; }
-.contact-layout .contact-side { order: 2; display: grid; gap: 14px; position: sticky; top: 100px; }
+.contact-layout .contact-side { order: 2; display: grid; gap: 14px; } /* スクロールに追従させない（2026-10-26 オーナー指摘と同じ理由） */
 .contact-side .line-notice { display: grid; gap: 14px; justify-items: start; margin: 0; padding: 22px 24px; text-align: left; background: #fff; }
 .contact-side .line-notice p { margin: 0; font-weight: 900; font-size: 16px; }
 .contact-side .line-notice small { display: block; margin-top: 4px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
