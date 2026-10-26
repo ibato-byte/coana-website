@@ -984,7 +984,7 @@ function Contact() {
           )}
           <div className="line-notice tel-notice">
             <p>お電話でのお問い合わせ<small>AIによる自動受付ののち、担当者より折り返しご連絡いたします。</small></p>
-            <a className="tel-number" href="tel:050-5367-5192" aria-label="050-5367-5192に電話をかける" onClick={() => window.gtag?.("event", "phone_click", { place: "contact_page" })}>
+            <a className="tel-number" href="tel:050-5367-5192" aria-label="TEL 050-5367-5192（電話をかける）" onClick={() => window.gtag?.("event", "phone_click", { place: "contact_page" })}>
               <span className="tel-number__label">TEL</span>
               <span className="tel-number__digits">050-5367-5192</span>
             </a>
