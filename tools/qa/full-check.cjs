@@ -101,8 +101,8 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
             const top = document.elementFromPoint(x, y);
             if (!top || el.contains(top) || top.contains(el)) continue;
             const fx = fixedOf(top);
-            // 上の固定ヘッダーは、ページの先頭でだけ問題にする（スクロールの途中・最下部では本文は下をくぐる）
-            if (fx && !atTop && fx.getBoundingClientRect().top < 4 && fx.getBoundingClientRect().bottom < vh / 2) continue;
+            // 上の固定ヘッダーは、ページの先頭でだけ問題にする（スクロールの途中・最下部では本文は下をくぐる）。新デザインのヘッダーは上端から少し浮いている（12px）ので、上端から 24px 未満まで同じ扱いにする
+            if (fx && !atTop && fx.getBoundingClientRect().top < 24 && fx.getBoundingClientRect().bottom < vh / 2) continue;
             if (fx && !fixedOf(el)) res.push(`${(fx.className || fx.tagName).toString().split(' ')[0]} が「${(el.textContent || el.getAttribute('aria-label') || el.name || el.tagName).trim().slice(0, 16)}」を隠す`);
           }
         }
@@ -122,11 +122,14 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
       }
       const imgs = [...document.images].filter((i) => i.complete && i.naturalWidth === 0 && i.getBoundingClientRect().height > 0).map((i) => i.getAttribute('src'));
       // 文字どうしの重なり（見えている文字だけ。どちらかがもう一方を含む場合・鳩の重ね絵は除く）
-      const vis = (e) => { if (e.checkVisibility && !e.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })) return false; for (let n = e; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (cs.visibility === 'hidden' || +cs.opacity < 0.2 || cs.display === 'none') return false; } return true; };
+      // 切り替えの途中（一方が消え、他方が出てくる間）の薄い文字は、同時に2つ見えているわけではないので数えない（透明度 0.5 以下は見えていない扱い）
+      const vis = (e) => { if (e.checkVisibility && !e.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })) return false; for (let n = e; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (cs.visibility === 'hidden' || +cs.opacity <= 0.5 || cs.display === 'none') return false; } return true; };
       const textEls = [...document.querySelectorAll('main *')].filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && !e.closest('.dove-layer, .sr-only, .visually-hidden, [aria-hidden="true"]') && vis(e));
       // 祖先の overflow で切り取られた部分（閉じた開閉UIの中身など）は見えていないので除く
       const clip = (e, x) => { let l = x.left, t = x.top, r = x.right, b = x.bottom; for (let n = e.parentElement; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (/(hidden|clip|auto|scroll)/.test(cs.overflow + cs.overflowX + cs.overflowY)) { const c = n.getBoundingClientRect(); l = Math.max(l, c.left); t = Math.max(t, c.top); r = Math.min(r, c.right); b = Math.min(b, c.bottom); } } return { left: l, top: t, right: r, bottom: b, width: r - l, height: b - t }; };
-      const rects = textEls.map((e) => { const rr = []; for (const n of e.childNodes) if (n.nodeType === 3 && n.textContent.trim()) { const range = document.createRange(); range.selectNodeContents(n); rr.push(...[...range.getClientRects()].map((x) => clip(e, x)).filter((x) => x.width > 2 && x.height > 2)); } return rr; });
+      // 行間を詰めたデザインでは、文字の箱（フォントの高さ）が行の高さより大きく、隣の行の箱と重なる。見た目の重なりは「行の高さ」で判定する（箱を行の高さまで縮める）
+      const lineBox = (e, x) => { const lh = parseFloat(getComputedStyle(e).lineHeight); if (!(lh > 0) || lh >= x.height) return x; const d = (x.height - lh) / 2; return { left: x.left, right: x.right, top: x.top + d, bottom: x.bottom - d, width: x.width, height: lh }; };
+      const rects = textEls.map((e) => { const rr = []; for (const n of e.childNodes) if (n.nodeType === 3 && n.textContent.trim()) { const range = document.createRange(); range.selectNodeContents(n); rr.push(...[...range.getClientRects()].map((x) => clip(e, lineBox(e, x))).filter((x) => x.width > 2 && x.height > 2)); } return rr; });
       const overlaps = [];
       for (let i = 0; i < textEls.length; i++) for (let j = i + 1; j < textEls.length; j++) {
         const a = textEls[i], c = textEls[j]; if (a.contains(c) || c.contains(a)) continue;
