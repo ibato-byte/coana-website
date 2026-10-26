@@ -101,7 +101,7 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
             const top = document.elementFromPoint(x, y);
             if (!top || el.contains(top) || top.contains(el)) continue;
             const fx = fixedOf(top);
-            // 上の固定ヘッダーは、ページの先頭でだけ問題にする（スクロールの途中・最下部では本文は下をくぐる）。新デザインのヘッダーは上端から少し浮いている（12px）ので、上端から 24px 未満まで同じ扱いにする
+            // 上の固定ヘッダー（上端から少し浮いた形を含む）は、ページの先頭でだけ問題にする（スクロールの途中・最下部では本文は下をくぐる）
             if (fx && !atTop && fx.getBoundingClientRect().top < 24 && fx.getBoundingClientRect().bottom < vh / 2) continue;
             if (fx && !fixedOf(el)) res.push(`${(fx.className || fx.tagName).toString().split(' ')[0]} が「${(el.textContent || el.getAttribute('aria-label') || el.name || el.tagName).trim().slice(0, 16)}」を隠す`);
           }
@@ -112,6 +112,9 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
     }
     for (const x of covered) ng('fixed-cover', `${tag} ${url}: ${x}`);
     await p.waitForTimeout(400);
+    // 導入前／導入後の切り替えなど、時間差で入れ替わる表示が終わるのを待つ（途中の「重なって見える一瞬」を NG にしない）。終わらない動き・3.5秒を超える待ちは待たない
+    await p.evaluate(() => Promise.race([Promise.all(document.getAnimations().filter((a) => a.effect && a.effect.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => {}))), new Promise((res) => setTimeout(res, 3500))]));
+    await p.waitForTimeout(150);
     const r = await p.evaluate(({ mobile, url }) => {
       const vw = document.documentElement.clientWidth;
       const inScroller = (el) => { for (let e = el.parentElement; e; e = e.parentElement) { const s = getComputedStyle(e); if (/(auto|scroll|hidden|clip)/.test(s.overflowX) || s.overflow === 'hidden') return true; } return false; };
@@ -122,19 +125,19 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
       }
       const imgs = [...document.images].filter((i) => i.complete && i.naturalWidth === 0 && i.getBoundingClientRect().height > 0).map((i) => i.getAttribute('src'));
       // 文字どうしの重なり（見えている文字だけ。どちらかがもう一方を含む場合・鳩の重ね絵は除く）
-      // 切り替えの途中（一方が消え、他方が出てくる間）の薄い文字は、同時に2つ見えているわけではないので数えない（透明度 0.5 以下は見えていない扱い）
-      const vis = (e) => { if (e.checkVisibility && !e.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })) return false; for (let n = e; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (cs.visibility === 'hidden' || +cs.opacity <= 0.5 || cs.display === 'none') return false; } return true; };
-      const textEls = [...document.querySelectorAll('main *')].filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && !e.closest('.dove-layer, .sr-only, .visually-hidden, [aria-hidden="true"]') && vis(e));
+      const vis = (e) => { if (e.checkVisibility && !e.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })) return false; for (let n = e; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (cs.visibility === 'hidden' || +cs.opacity < 0.2 || cs.display === 'none') return false; } return true; };
+      const textEls = [...document.querySelectorAll('main *')].filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && !e.closest('.dove-layer, .sr-only, .visually-hidden, [aria-hidden="true"]') && vis(e) && !e.getAnimations().some((a) => a instanceof CSSTransition));
+      // ↑ 切り替えの途中（透明度が変わっている最中）の文字は除く。導入前／導入後は画面に入って約4.5秒で自動で切り替わるので、測る瞬間に重なって見えることがある
       // 祖先の overflow で切り取られた部分（閉じた開閉UIの中身など）は見えていないので除く
       const clip = (e, x) => { let l = x.left, t = x.top, r = x.right, b = x.bottom; for (let n = e.parentElement; n && n !== document.body; n = n.parentElement) { const cs = getComputedStyle(n); if (/(hidden|clip|auto|scroll)/.test(cs.overflow + cs.overflowX + cs.overflowY)) { const c = n.getBoundingClientRect(); l = Math.max(l, c.left); t = Math.max(t, c.top); r = Math.min(r, c.right); b = Math.min(b, c.bottom); } } return { left: l, top: t, right: r, bottom: b, width: r - l, height: b - t }; };
-      // 行間を詰めたデザインでは、文字の箱（フォントの高さ）が行の高さより大きく、隣の行の箱と重なる。見た目の重なりは「行の高さ」で判定する（箱を行の高さまで縮める）
-      const lineBox = (e, x) => { const lh = parseFloat(getComputedStyle(e).lineHeight); if (!(lh > 0) || lh >= x.height) return x; const d = (x.height - lh) / 2; return { left: x.left, right: x.right, top: x.top + d, bottom: x.bottom - d, width: x.width, height: lh }; };
-      const rects = textEls.map((e) => { const rr = []; for (const n of e.childNodes) if (n.nodeType === 3 && n.textContent.trim()) { const range = document.createRange(); range.selectNodeContents(n); rr.push(...[...range.getClientRects()].map((x) => clip(e, lineBox(e, x))).filter((x) => x.width > 2 && x.height > 2)); } return rr; });
+      const rects = textEls.map((e) => { const rr = []; for (const n of e.childNodes) if (n.nodeType === 3 && n.textContent.trim()) { const range = document.createRange(); range.selectNodeContents(n); rr.push(...[...range.getClientRects()].map((x) => clip(e, x)).filter((x) => x.width > 2 && x.height > 2)); } return rr; });
       const overlaps = [];
       for (let i = 0; i < textEls.length; i++) for (let j = i + 1; j < textEls.length; j++) {
         const a = textEls[i], c = textEls[j]; if (a.contains(c) || c.contains(a)) continue;
         let hit = false;
-        for (const r1 of rects[i]) { for (const r2 of rects[j]) { if (Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left) > 3 && Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top) > 3) { hit = true; break; } } if (hit) break; }
+        for (const r1 of rects[i]) { for (const r2 of rects[j]) { // 縦の重なりは、行の高さに対する割合で見る（行間を詰めた見出しは、文字の箱どうしが数px重なっても文字は重ならない）。小さい方の箱の 35% 以上が重なれば NG
+          const ov = Math.min(r1.bottom, r2.bottom) - Math.max(r1.top, r2.top);
+          if (Math.min(r1.right, r2.right) - Math.max(r1.left, r2.left) > 3 && ov > 3 && ov > 0.35 * Math.min(r1.height, r2.height)) { hit = true; break; } } if (hit) break; }
         if (hit) overlaps.push(`「${a.textContent.trim().slice(0, 10)}」×「${c.textContent.trim().slice(0, 10)}」`);
       }
       const hidden = [...document.querySelectorAll('[data-reveal]')].filter((e) => !e.classList.contains('in') && e.getBoundingClientRect().height > 0).length;
@@ -155,7 +158,7 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
     if (r.mail) ng('content', `${tag} ${url}: info@ がフッター以外にも ${r.mail} か所（重複表示）`);
     if (r.honeypotVisible) ng('form', `${tag} ${url}: スパム対策欄が見えている`);
     if (r.h1 !== 1) ng('meta', `${tag} ${url}: 表示中の h1 が ${r.h1} 個`);
-    for (const l of r.hrefs) if (!links.has(l)) links.set(l, url);
+    for (const l of r.hrefs) if (!links.has(l) || (/^tel:/.test(l) && url !== '/contact')) links.set(l, url);
   }
   await ctx.close();
   ['overflow', 'image', 'overlap', 'reveal', 'form', 'console', '404', 'fixed-cover', 'load'].forEach(ok);
@@ -178,8 +181,8 @@ async function interactionChecks(engine, b, links) {
     if (isFile ? st >= 400 : (info.notfound || !info.anchor)) ng('link', `${engine} ${l}（${from} から）status=${st} notfound=${info.notfound} anchor=${info.anchor}`);
   }
   const external = [...links.keys()].filter((l) => /^https?:/.test(l) && !l.startsWith(BASE));
-  // 電話番号はお問い合わせページの AI 受付だけ掲載可（2026-10-22 オーナー決定）。ほかのページにあれば NG
-  const bad = [...links.keys()].filter((l) => /^tel:/.test(l) && links.get(l) !== '/contact'); if (bad.length) ng('content', `電話のリンク ${bad.join(', ')}`);
+  // 電話番号は載せない。例外：お問い合わせページ（/contact）の AI 受付の電話（2026-10-22 オーナー決定）
+  const bad = [...links.entries()].filter(([l, from]) => /^tel:/.test(l) && from !== '/contact').map(([l]) => l); if (bad.length) ng('content', `電話のリンク ${bad.join(', ')}`);
   await ctx.close();
   // ハンバーガーメニュー（スマホ）
   const m = await b.newContext({ viewport: { width: 390, height: 844 }, ...(engine === 'firefox' ? {} : { isMobile: true }), hasTouch: true });
@@ -191,8 +194,7 @@ async function interactionChecks(engine, b, links) {
   const closed = !(await mp.locator('.mobile-nav').isVisible());
   await mp.tap('.menu-button'); await mp.keyboard.press('Escape');
   const esc = !(await mp.locator('.mobile-nav').isVisible());
-  await mp.tap('.menu-button'); await mp.locator('.mobile-nav a[href="/about"]').tap(); // 順番でなく行き先で選ぶ（ホームが先頭に加わった）
-   await mp.waitForLoadState('networkidle');
+  await mp.tap('.menu-button'); await mp.locator('.mobile-nav a[href="/about"]').tap(); await mp.waitForLoadState('networkidle');
   const navigated = mp.url().endsWith('/about') && !(await mp.locator('.mobile-nav').isVisible());
   if (!(opened && closed && esc && navigated)) ng('menu', `${engine} ハンバーガーメニュー open=${opened} close=${closed} esc=${esc} 遷移=${navigated}`);
   ok('menu');
