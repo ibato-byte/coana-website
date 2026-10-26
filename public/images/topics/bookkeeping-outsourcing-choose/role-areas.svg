@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="700" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">3者の役割分担の例</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="40" y="84" width="520" height="164" rx="16" fill="#ffffff" stroke="#16334d" stroke-width="2"/>
+    <text x="64" y="124" font-size="28" font-weight="700">御社</text>
+    <text x="64" y="170">やること：取引の判断・承認、</text>
+    <text x="64" y="212">資料の共有、毎月の数字を見る</text>
+    <rect x="40" y="276" width="520" height="164" rx="16" fill="#eef6fc" stroke="#087fe5" stroke-width="2"/>
+    <text x="64" y="316" font-size="28" font-weight="700" fill="#087fe5">経理代行の依頼先</text>
+    <text x="64" y="362">記帳・入力、請求や支払いの</text>
+    <text x="64" y="404">準備、月次の締めと報告</text>
+    <rect x="40" y="468" width="520" height="164" rx="16" fill="#ffffff" stroke="#4a667d" stroke-width="2" stroke-dasharray="10 8"/>
+    <text x="64" y="508" font-size="28" font-weight="700">顧問の税理士</text>
+    <text x="64" y="554">税務代理・申告書の作成、</text>
+    <text x="64" y="596">税務相談（税理士の業務）</text>
+    <text x="300" y="676" font-size="24" fill="#4a667d" text-anchor="middle">経理代行の依頼先は、税理士と資料を共有</text>
+  </g>
+</svg>
