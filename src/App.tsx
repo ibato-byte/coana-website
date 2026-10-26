@@ -512,7 +512,7 @@ function FinderSection() {
 }
 
 /** 03 支援スタイル：大きな一文（会社概要のメッセージ見出し）＋4つの強み＋ご利用までの流れ */
-const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["仕", "Systems"], team: ["伴", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
+const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["設", "Design"], team: ["担", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
 const FLOW_TEXT = ["フォームまたはLINE公式アカウントから、ご相談内容をお送りください。", "担当者からご連絡し、現状の業務や課題を伺います。", "課題と優先順位を整理し、必要な範囲に絞ってご提案します。", "ご納得いただけてからご契約し、支援を始めます。"];
 function StyleSection() {
   const mission = (about.message_heading || "").split("\n").filter(Boolean);
