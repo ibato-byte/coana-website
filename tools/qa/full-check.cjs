@@ -181,7 +181,8 @@ async function interactionChecks(engine, b, links) {
     if (isFile ? st >= 400 : (info.notfound || !info.anchor)) ng('link', `${engine} ${l}（${from} から）status=${st} notfound=${info.notfound} anchor=${info.anchor}`);
   }
   const external = [...links.keys()].filter((l) => /^https?:/.test(l) && !l.startsWith(BASE));
-  const bad = [...links.keys()].filter((l) => /^tel:/.test(l)); if (bad.length) ng('content', `電話のリンク ${bad.join(', ')}`);
+  const bad = [...links.keys()].filter((l) => /^tel:/.test(l) && l !== 'tel:050-5367-5192'); // お問い合わせページの AI 受付の電話番号は例外（CLAUDE.md、2026-10-22 オーナー決定）
+   if (bad.length) ng('content', `電話のリンク ${bad.join(', ')}`);
   await ctx.close();
   // ハンバーガーメニュー（スマホ）
   const m = await b.newContext({ viewport: { width: 390, height: 844 }, ...(engine === 'firefox' ? {} : { isMobile: true }), hasTouch: true });
