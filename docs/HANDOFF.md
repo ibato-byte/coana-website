@@ -275,3 +275,7 @@
   - チャット：`npx wrangler pages dev dist --port 8788 --binding CHAT_MOCK_AI=1`（AI の代わり）／`--port 8789`（AI なし）
 - **PR 用の画像**：`claude/pr-assets` ブランチ（サイトのコードは含まない、画像だけの独立したブランチ）に置き、`https://github.com/ibato-byte/coana-website/blob/<SHA>/<path>?raw=true` を `<img>` で。
 - **force push は使わない**（通常の push で）。
+
+## 2026-10-27 Actions の分を使い切った件（Hub 依頼 #123）
+- コラムの公開確認・自動公開のワークフローを「チェックを待たない」形に変更（check_suite／status で起動し、待ちがあれば即終了）。待ち時間で最大40〜60分を消費していたため。
+- 未確認：実際の動作（Actions は 11/1 まで停止中のため、再開後の最初のコラム PR で確かめる）。

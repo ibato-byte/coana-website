@@ -6,9 +6,13 @@
 # Automation Hub（台帳 column-publish）：一時停止中は確認メールを送らない。最後に結果を記録する（HUB_TOKEN がなければ Hub は使わない）。
 name: コラムの公開確認
 
+# Actions の分を使い切らないため、チェックを待たない。チェックが終わるたび（check_suite／status）に起動し、まだなら何もせず終わる（依頼 #123）
 on:
   pull_request:
     types: [opened, labeled, synchronize, reopened]
+  check_suite:
+    types: [completed]
+  status:
   workflow_dispatch:
     inputs:
       pr:
@@ -22,24 +26,42 @@ permissions:
   checks: read
 
 concurrency:
-  group: column-approval-${{ github.event.pull_request.number || inputs.pr }}
+  group: column-approval-${{ github.event.pull_request.number || inputs.pr || github.event.check_suite.head_sha || github.event.sha }}
   cancel-in-progress: true
 
 jobs:
   approval-mail:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'コラム公開待ち')
+    if: github.event_name != 'check_suite' || github.event.check_suite.app.slug != 'github-actions'
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      NO_WAIT: "1"
     steps:
+      - name: 対象の PR を探す
+        id: target
+        run: |
+          case "$GITHUB_EVENT_NAME" in
+            pull_request) pr="${{ github.event.pull_request.number }}" ;;
+            workflow_dispatch) pr="${{ inputs.pr }}" ;;
+            check_suite) pr="${{ github.event.check_suite.pull_requests[0].number }}" ;;
+            *) pr=$(gh api "repos/${{ github.repository }}/commits/${{ github.event.sha }}/pulls" --jq '[.[] | select(.state=="open")][0].number // empty') ;;
+          esac
+          if [ -n "$pr" ] && gh pr view "$pr" -R "${{ github.repository }}" --json labels --jq '.labels[].name' | grep -qx 'コラム公開待ち'; then
+            echo "go=true" >> "$GITHUB_OUTPUT"; echo "PR=$pr" >> "$GITHUB_OUTPUT"
+          else echo "コラム公開待ちの対象ではない"; echo "go=false" >> "$GITHUB_OUTPUT"; fi
       # 署名する処理は、PR の中身ではなく main のものを使う
       - uses: actions/checkout@v4
+        if: steps.target.outputs.go == 'true'
         with:
           ref: main
       - uses: actions/setup-node@v4
+        if: steps.target.outputs.go == 'true'
         with:
           node-version: 22
       - name: Automation Hub：一時停止の確認
         id: hub
+        if: steps.target.outputs.go == 'true'
         env:
           HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
         run: |
@@ -48,19 +70,19 @@ jobs:
           fi
           bash "$RUNNER_TEMP/hub/scripts/gha.sh" check column-publish
       - name: 確認コメント（メール）を送る
-        if: steps.hub.outputs.paused != 'true'
+        if: steps.target.outputs.go == 'true' && steps.hub.outputs.paused != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           COLUMN_APPROVAL_SECRET: ${{ secrets.COLUMN_APPROVAL_SECRET }}
           SELF_JOB: approval-mail
-        run: node tools/column/approval-comment.mjs --pr ${{ github.event.pull_request.number || inputs.pr }}
+        run: node tools/column/approval-comment.mjs --pr ${{ steps.target.outputs.PR }}
       - name: Automation Hub に記録
-        if: always()
+        if: always() && steps.target.outputs.go == 'true'
         env:
           HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
           JOB_STATUS: ${{ job.status }}
           PAUSED: ${{ steps.hub.outputs.paused }}
-          PR: ${{ github.event.pull_request.number || inputs.pr }}
+          PR: ${{ steps.target.outputs.PR }}
         run: |
           [ -d "$RUNNER_TEMP/hub" ] || exit 0
           bash "$RUNNER_TEMP/hub/scripts/gha.sh" report column-publish "$JOB_STATUS" "$PAUSED" "PR #${PR}：コラムの公開確認メール（公開・見送るボタン付き）を処理" --next-run-at none

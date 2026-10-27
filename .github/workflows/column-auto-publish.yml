@@ -5,9 +5,14 @@
 # Automation Hub（台帳 column-publish）：一時停止中は自動で公開しない。最後に結果を記録する（HUB_TOKEN がなければ Hub は使わない）。
 name: コラムの自動公開
 
+# Actions の分を使い切らないため、チェックの合格を「待たない」。チェックが終わるたび（check_suite／status）に1回ずつ確かめ、
+# まだ待ちがあれば何もせず終わる（見積もり：1回約0.5分×1記事あたり6回前後）。2026-10-27（依頼 #123）
 on:
   pull_request:
     types: [opened, labeled, synchronize, reopened]
+  check_suite:
+    types: [completed]
+  status:
   workflow_dispatch:
     inputs:
       pr:
@@ -21,25 +26,38 @@ permissions:
   statuses: read
 
 concurrency:
-  group: column-auto-publish-${{ github.event.pull_request.number || inputs.pr }}
+  group: column-auto-publish-${{ github.event.pull_request.number || inputs.pr || github.event.check_suite.head_sha || github.event.sha }}
   cancel-in-progress: true
 
 jobs:
   auto-publish:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (contains(github.event.pull_request.labels.*.name, 'コラム公開待ち') &&
-       github.event.pull_request.user.login == 'ibato-byte' &&
-       github.event.pull_request.head.repo.full_name == github.repository)
+    # GitHub Actions 自身のチェックの完了では起動しない（お互いに起こし合わないため）
+    if: github.event_name != 'check_suite' || github.event.check_suite.app.slug != 'github-actions'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 5
     env:
       GH_TOKEN: ${{ github.token }}
       REPO: ${{ github.repository }}
-      PR: ${{ github.event.pull_request.number || inputs.pr }}
     steps:
+      - name: 対象の PR を探す
+        id: target
+        run: |
+          case "$GITHUB_EVENT_NAME" in
+            pull_request) pr="${{ github.event.pull_request.number }}" ;;
+            workflow_dispatch) pr="${{ inputs.pr }}" ;;
+            check_suite) pr="${{ github.event.check_suite.pull_requests[0].number }}" ;;
+            *) pr=$(gh api "repos/$REPO/commits/${{ github.event.sha }}/pulls" --jq '[.[] | select(.state=="open")][0].number // empty') ;;
+          esac
+          if [ -z "$pr" ]; then echo "対象の PR なし"; echo "go=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          info=$(gh pr view "$pr" -R "$REPO" --json state,author,labels,headRefOid,isCrossRepository)
+          if [ "$(jq -r .state <<<"$info")" = "OPEN" ] && [ "$(jq -r .author.login <<<"$info")" = "ibato-byte" ] \
+             && [ "$(jq -r .isCrossRepository <<<"$info")" = "false" ] \
+             && jq -e '.labels | map(.name) | index("コラム公開待ち")' <<<"$info" >/dev/null; then
+            echo "go=true" >> "$GITHUB_OUTPUT"; echo "PR=$pr" >> "$GITHUB_ENV"; echo "SHA=$(jq -r .headRefOid <<<"$info")" >> "$GITHUB_ENV"
+          else echo "コラム公開待ちの対象ではない"; echo "go=false" >> "$GITHUB_OUTPUT"; fi
       - name: Automation Hub：一時停止の確認
         id: hub
+        if: steps.target.outputs.go == 'true'
         env:
           HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
         run: |
@@ -47,44 +65,30 @@ jobs:
             echo "paused=false" >> "$GITHUB_OUTPUT"; echo "Automation Hub を使わずに続ける"; exit 0
           fi
           bash "$RUNNER_TEMP/hub/scripts/gha.sh" check column-publish
-      - name: PR の条件を確認
-        if: steps.hub.outputs.paused != 'true'
+      - name: ほかのチェックの合格を確かめる（待たない）
+        id: checks
+        if: steps.target.outputs.go == 'true' && steps.hub.outputs.paused != 'true'
         run: |
-          info=$(gh pr view "$PR" -R "$REPO" --json state,author,labels,headRefOid,isCrossRepository)
-          echo "$info"
-          [ "$(jq -r .state <<<"$info")" = "OPEN" ] || { echo "PR が開いていません"; exit 1; }
-          [ "$(jq -r .author.login <<<"$info")" = "ibato-byte" ] || { echo "作成者が違います"; exit 1; }
-          [ "$(jq -r .isCrossRepository <<<"$info")" = "false" ] || { echo "外部のブランチです"; exit 1; }
-          jq -e '.labels | map(.name) | index("コラム公開待ち")' <<<"$info" >/dev/null || { echo "ラベルがありません"; exit 1; }
-          echo "SHA=$(jq -r .headRefOid <<<"$info")" >> "$GITHUB_ENV"
-
-      - name: ほかのチェックの合格を待つ
-        if: steps.hub.outputs.paused != 'true'
-        run: |
-          for i in $(seq 1 100); do
-            runs=$(gh api "repos/$REPO/commits/$SHA/check-runs?per_page=100" \
-              --jq '[.check_runs[] | select(.name != "auto-publish" and .name != "approval-mail")]')
-            statuses=$(gh api "repos/$REPO/commits/$SHA/status" --jq '.statuses')
-            total=$(( $(jq length <<<"$runs") + $(jq length <<<"$statuses") ))
-            pending=$(( $(jq '[.[] | select(.status != "completed")] | length' <<<"$runs") \
-                      + $(jq '[.[] | select(.state == "pending")] | length' <<<"$statuses") ))
-            failed=$(( $(jq '[.[] | select(.status == "completed" and (.conclusion | IN("success","neutral","skipped") | not))] | length' <<<"$runs") \
-                     + $(jq '[.[] | select(.state == "failure" or .state == "error")] | length' <<<"$statuses") ))
-            echo "[$i] チェック $total 件 / 待ち $pending / 失敗 $failed"
-            if [ "$failed" -gt 0 ]; then echo "失敗したチェックがあるため公開しません"; exit 1; fi
-            if [ "$total" -gt 0 ] && [ "$pending" -eq 0 ] && [ "$i" -ge 3 ]; then exit 0; fi
-            sleep 30
-          done
-          echo "時間内にチェックが終わりませんでした"; exit 1
+          runs=$(gh api "repos/$REPO/commits/$SHA/check-runs?per_page=100" \
+            --jq '[.check_runs[] | select(.name != "auto-publish" and .name != "approval-mail")]')
+          statuses=$(gh api "repos/$REPO/commits/$SHA/status" --jq '.statuses')
+          total=$(( $(jq length <<<"$runs") + $(jq length <<<"$statuses") ))
+          pending=$(( $(jq '[.[] | select(.status != "completed")] | length' <<<"$runs") \
+                    + $(jq '[.[] | select(.state == "pending")] | length' <<<"$statuses") ))
+          failed=$(( $(jq '[.[] | select(.status == "completed" and (.conclusion | IN("success","neutral","skipped") | not))] | length' <<<"$runs") \
+                   + $(jq '[.[] | select(.state == "failure" or .state == "error")] | length' <<<"$statuses") ))
+          echo "チェック $total 件 / 待ち $pending / 失敗 $failed"
+          if [ "$failed" -gt 0 ]; then echo "失敗したチェックがあるため公開しません"; exit 1; fi
+          if [ "$total" -gt 0 ] && [ "$pending" -eq 0 ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "まだ待ち。チェックが終わるとまた起動する"; fi
 
       - name: マージして公開
-        if: steps.hub.outputs.paused != 'true'
+        if: steps.checks.outputs.ready == 'true'
         run: |
           gh pr merge "$PR" -R "$REPO" --squash --delete-branch --match-head-commit "$SHA"
           gh pr comment "$PR" -R "$REPO" --body "チェックがすべて合格したため、自動で公開しました（コラムの自動公開）。"
 
       - name: Automation Hub に記録
-        if: always()
+        if: always() && steps.checks.outputs.ready == 'true'
         env:
           HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
           JOB_STATUS: ${{ job.status }}
