@@ -46,6 +46,7 @@ for (const deadline = Date.now() + WAIT_MIN * 60e3; ;) {
   runs = (await api('GET', `/commits/${sha}/check-runs?per_page=100`)).check_runs.filter((r) => r.name !== SELF_JOB && r.name !== 'auto-publish'); // 自動公開のジョブも待たない（お互いを待って両方が時間切れになるため）
   const pending = runs.filter((r) => r.status !== 'completed');
   if (runs.length && !pending.length) break;
+  if (process.env.NO_WAIT) { console.log('チェックがまだ終わっていない。終わるとまた起動する'); process.exit(0); } // Actions の分を使わないため待たない（依頼 #123）
   if (Date.now() > deadline) { console.log('チェックが時間内に終わらない'); process.exit(1); }
   await sleep(20e3);
   const now = await api('GET', `/pulls/${PR}`);
@@ -59,7 +60,7 @@ if (bad.length) {
 
 // 2. プレビュー URL（Cloudflare Pages のボットのコメントから、このコミットのもの）と記事の URL
 let preview = '';
-for (let i = 0; i < 15 && !preview; i++) {
+for (let i = 0; i < (process.env.NO_WAIT ? 1 : 15) && !preview; i++) {
   const cs = await api('GET', `/issues/${PR}/comments?per_page=100`);
   for (const c of cs.filter((c) => /cloudflare/i.test(c.user.login)).reverse()) {
     const b = c.body || '';
@@ -67,7 +68,7 @@ for (let i = 0; i < 15 && !preview; i++) {
     const m = b.match(/Preview URL:[\s\S]*?href='(https:\/\/[a-z0-9-]+\.coana-website\.pages\.dev)'/) || b.match(/(https:\/\/[a-f0-9]{8}\.coana-website\.pages\.dev)/);
     if (m) { preview = m[1]; break; }
   }
-  if (!preview) await sleep(20e3);
+  if (!preview && !process.env.NO_WAIT) await sleep(20e3);
 }
 if (!preview) preview = `https://${pr.head.ref.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28).replace(/-+$/, '')}.coana-website.pages.dev`;
 const files = await api('GET', `/pulls/${PR}/files?per_page=100`);
