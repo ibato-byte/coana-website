@@ -900,13 +900,10 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .lp-signal .faq-section .section-title { counter-increment: none; }
 .lp-signal .faq-section .section-title::before { content: none; }
 
-/* 導入前／導入後 */
-.lp-ba-section { padding-top: clamp(60px, 7vw, 100px) !important; }
-.lp-ba { --ba-red: #c0392f; --ba-red-s: #fdecec; --ba-green: #0e7a57; --ba-green-s: #e4f6ef; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(22px, 3.4vw, 48px); align-items: center; padding: clamp(22px, 3.4vw, 46px); border: var(--ss-line); border-radius: 30px; background: #fff; box-shadow: 12px 12px 0 var(--sky-s); }
-.lp-ba-copy .eyebrow { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; letter-spacing: .16em; color: var(--sky-d); }
-.lp-ba-copy .eyebrow::before { display: none; }
-.lp-ba-copy h2 { margin: 12px 0 14px; font-size: clamp(28px, 3.4vw, 48px); line-height: 1.25; letter-spacing: -.05em; font-weight: 900; }
-.lp-ba-copy p { margin: 0 0 24px; color: var(--ink-2); }
+/* 導入前／導入後（2026-10-31：ヒーロー直下から「仕組み」のあとへ移動。見出しは他の章と同じ番号つき、カードの中はスイッチ＋盤面だけ） */
+.lp-ba-section { background: var(--mist); }
+.lp-ba { --ba-red: #c0392f; --ba-red-s: #fdecec; --ba-green: #0e7a57; --ba-green-s: #e4f6ef; display: grid; grid-template-columns: 1fr; gap: 18px; align-items: center; padding: clamp(22px, 3.4vw, 46px); border: var(--ss-line); border-radius: 30px; background: #fff; box-shadow: 12px 12px 0 var(--sky-s); }
+.lp-ba-copy { display: flex; justify-content: center; }
 .lp-ba-switch { display: inline-flex; align-items: center; gap: 14px; padding: 8px 10px 8px 18px; border: var(--ss-line); border-radius: 999px; font-size: 14px; font-weight: 900; }
 .lp-ba-switch > span { color: #7f95a7; transition: color .3s; }
 .lp-ba-switch > span.on { color: var(--ink); }
@@ -954,7 +951,6 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 .is-after .lp-ba-val .b { opacity: 0; transform: translateY(-12px); }
 .is-after .lp-ba-val .a { opacity: 1; transform: none; }
 .lp-ba-note { margin: 2px 0 0; text-align: right; font-size: 11.5px; color: var(--ink-2); }
-@media (max-width: 1000px) { .lp-ba { grid-template-columns: 1fr; } }
 @media (max-width: 600px) {
   .lp-ba { border-radius: 22px; box-shadow: 8px 8px 0 var(--sky-s); }
   .lp-ba-grid { grid-template-columns: 1fr; }

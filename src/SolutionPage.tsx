@@ -325,12 +325,10 @@ function BeforeAfter({ sol }: { sol: Solution }) {
   return (
     <section className="section lp-ba-section" id="lp-ba">
       <div className="container">
+        <SectionTitle en="Before / After" center lead={ba.lead}><Lines text={ba.title || L.baTitle} /></SectionTitle>
         <div data-reveal>
         <div className={after ? "lp-ba is-after" : "lp-ba"} ref={ref}>
           <div className="lp-ba-copy">
-            <span className="eyebrow" lang="en">Before / After</span>
-            <h2><Lines text={ba.title || L.baTitle} /></h2>
-            {ba.lead && <p>{ba.lead}</p>}
             <div className={counting ? "lp-ba-switch is-counting" : "lp-ba-switch"} style={{ ["--wait" as string]: `${BA_WAIT_MS}ms` }}>
               <span className={after ? undefined : "on"} aria-hidden="true">{L.baBefore}</span>
               <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label={L.baAria} onClick={toggle} />
@@ -799,7 +797,7 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   );
 }
 
-/* ───────────────────────── 3.5 支援事例（社名を伏せた事例） ───────────────────────── */
+/* ───────────────────────── 3.5 支援事例（社名を伏せた事例）。次の「導入前／導入後」は 2 の BeforeAfter（事例がないLPで、仕組みのあとに表示） ───────────────────────── */
 
 function Cases({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
@@ -1048,9 +1046,12 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
   return (
     <main className={`solution-page lp lp-lang-${langOf(sol)}${signal ? " lp-signal" : ""}`}>
       <Hero sol={sol} navigate={navigate} />
-      {signal ? <BeforeAfter sol={sol} /> : <Problems sol={sol} />}
+      {!signal && <Problems sol={sol} />}
       <Scheme sol={sol} navigate={navigate} />
       <Cases sol={sol} />
+      {/* 導入前／導入後（2026-10-31 オーナー指示で位置を見直し）：ヒーロー直下ではなく「仕組み」のあとに置く。
+          まず何をするかを読んでから「こう変わる」を見る流れ。支援事例があるLPは事例が実際の前後を示すので、before_after は持たせない（content を空にしてある） */}
+      {signal && <BeforeAfter sol={sol} />}
       <Support sol={sol} />
       {/* 新デザインのLPでは「ご利用イメージ」を出さない（導入前／導入後の切り替えと内容が重なるため。2026-10-26 LP の簡素化） */}
       {!signal && <Scenarios sol={sol} />}
