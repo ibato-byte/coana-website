@@ -50,14 +50,14 @@ collections:
         required: false
         hint: "記事の末尾に出す「この記事に関連するサービス」と、この記事からお問い合わせへ進んだときに選んでおく「ご相談内容の種別」です。空欄なら、本文の締めくくり（最後の見出しの節）で最初に案内しているサービスのページを自動で使います。お知らせなどで出したくないときは「出さない」を選びます。"
         options:
+          - { label: 業務改善・IT化支援, value: it-consulting }
+          - { label: 自動化・システム開発, value: automation }
           - { label: 経理代行・経理業務の改善, value: bookkeeping }
           - { label: クラウド会計・ITツール導入支援, value: cloud-accounting }
           - { label: バックオフィス代行・DX支援, value: backoffice-dx }
           - { label: 創業支援, value: startup-support }
-          - { label: 営業・販路開拓支援, value: sales-support }
-          - { label: セミナー・イベント開催支援, value: seminar-event }
-          - { label: SNS運用支援・運用代行, value: sns-management }
-          - { label: Webサイト制作, value: web-production }
+          - { label: SNS運用代行, value: sns-management }
+          - { label: LP・Webサイト制作, value: web-production }
           - { label: Startup Support (English), value: startup-support-en }
           - { label: 出さない, value: none }
       - { label: 下書き（チェックすると非公開）, name: draft, widget: boolean, default: false, required: false }
@@ -275,6 +275,18 @@ collections:
               - { label: Before（支援前）, name: before, widget: text, required: false }
               - { label: After（支援後）, name: text, widget: text }
           - { label: 注記, name: note, widget: string, required: false }
+      - { label: 実績の見出し, name: cases_title, widget: string, required: false, default: 実績 }
+      - { label: 実績のリード文, name: cases_lead, widget: text, required: false }
+      - label: 実績（社名は書かない。数字は作業記録にある実測だけ）
+        name: cases
+        widget: list
+        required: false
+        summary: "{{fields.title}}"
+        fields:
+          - { label: お客さま（業種・規模。社名は書かない）, name: client, widget: string }
+          - { label: 見出し（何をしたか）, name: title, widget: string }
+          - { label: 内容, name: text, widget: text }
+          - { label: 結果（実測の数字など）, name: result, widget: string, required: false }
       - label: 英語ページへの案内（創業支援など）
         name: english
         widget: object
@@ -324,6 +336,22 @@ collections:
           - { label: ヒーロー｜サービスボタンの文言, name: hero_button_secondary, widget: string }
           - { label: サービス｜見出し, name: services_title, widget: string }
           - { label: サービス｜リード文, name: services_lead, widget: text }
+          - { label: 実績｜見出し, name: cases_title, widget: string, required: false, default: 実績：こんな仕組みを作りました }
+          - { label: 実績｜リード文, name: cases_lead, widget: text, required: false }
+          - label: 実績（社名は書かない。数字は作業記録にある実測だけ）
+            name: cases
+            widget: list
+            required: false
+            summary: "{{fields.title}}"
+            fields:
+              - { label: お客さま（業種・規模。社名は書かない）, name: client, widget: string }
+              - { label: 見出し（何をしたか）, name: title, widget: string }
+              - { label: 前（Before）, name: before, widget: text }
+              - { label: 後（After）, name: after, widget: text }
+              - { label: 結果（実測の数字など）, name: result, widget: string, required: false }
+              - { label: 注記, name: note, widget: string, required: false }
+              - { label: 使ったツール, name: tools, widget: list, required: false, field: { label: ツール, name: tool, widget: string } }
+              - { label: 関係するサービス（slug）, name: slugs, widget: list, required: false, field: { label: slug, name: slug, widget: string } }
           - { label: 支援スタイル｜見出し, name: strengths_title, widget: string, hint: "大きな一文は会社概要ページのメッセージ見出しを使います" }
           - label: 支援スタイル（4つ）
             name: strengths
@@ -381,8 +409,8 @@ collections:
         fields:
           - { label: ページ上部の画像, name: hero_image, widget: image, hint: "サービスページ（/services）の一番上、「サービス」の文字の背景に薄く表示される画像です。新しくアップロードした画像は、公開するまでこの画面では壊れたアイコンで表示されますが、右上の「公開」を押すと約1〜2分でサイトに反映されます。" }
           - { label: 導入文, name: intro, widget: text }
-          - label: バックオフィス支援
-            name: backoffice
+          - label: 01 業務の仕組みをつくる
+            name: build
             widget: object
             fields: &serviceFields
               - { label: 英字ラベル, name: en, widget: string }
@@ -399,8 +427,8 @@ collections:
                   - { label: 説明（サービスページに表示・80文字以内）, name: text, widget: text }
                   - { label: タグ（例：実務代行にも対応）, name: tags, widget: list, required: false, field: { label: タグ, name: tag, widget: string } }
                   - { label: 専用ページ（選ぶと「詳しく見る」リンクが表示されます）, name: page, widget: relation, collection: solutions, value_field: slug, search_fields: [nav_label, title], display_fields: [nav_label], required: false }
-          - label: マーケティング支援
-            name: marketing
+          - label: 02 日々の業務を任せる
+            name: operate
             widget: object
             fields: *serviceFields
           - { label: 料金｜見出し, name: pricing_title, widget: string }
@@ -464,8 +492,8 @@ collections:
                       - { label: 選択肢の文言, name: label, widget: string }
                       - { label: 理由に引用する言い回し（任意）, name: phrase, widget: string, required: false }
                       - { label: 補足（任意。結果に添える）, name: note, widget: string, required: false }
-                      - { label: 点数（サービスのslug と点数。例：bookkeeping 6）, name: scores, widget: object, required: false, fields: [ { label: 経理代行（bookkeeping）, name: bookkeeping, widget: number, required: false }, { label: バックオフィス代行・DX（backoffice-dx）, name: backoffice-dx, widget: number, required: false }, { label: クラウド会計（cloud-accounting）, name: cloud-accounting, widget: number, required: false }, { label: 創業支援（startup-support）, name: startup-support, widget: number, required: false }, { label: 創業支援・英語（startup-support-en）, name: startup-support-en, widget: number, required: false }, { label: 営業・販路開拓（sales-support）, name: sales-support, widget: number, required: false }, { label: Webサイト制作（web-production）, name: web-production, widget: number, required: false }, { label: SNS運用（sns-management）, name: sns-management, widget: number, required: false }, { label: セミナー・イベント（seminar-event）, name: seminar-event, widget: number, required: false } ] }
-              - { label: おすすめの理由（サービスごと）, name: reasons, widget: object, fields: [ { label: 経理代行, name: bookkeeping, widget: text }, { label: バックオフィス代行・DX, name: backoffice-dx, widget: text }, { label: クラウド会計, name: cloud-accounting, widget: text }, { label: 創業支援, name: startup-support, widget: text }, { label: 創業支援（英語）, name: startup-support-en, widget: text }, { label: 営業・販路開拓, name: sales-support, widget: text }, { label: Webサイト制作, name: web-production, widget: text }, { label: SNS運用, name: sns-management, widget: text }, { label: セミナー・イベント, name: seminar-event, widget: text } ] }
+                      - { label: 点数（サービスのslug と点数。例：bookkeeping 6）, name: scores, widget: object, required: false, fields: [ { label: 経理代行（bookkeeping）, name: bookkeeping, widget: number, required: false }, { label: バックオフィス代行・DX（backoffice-dx）, name: backoffice-dx, widget: number, required: false }, { label: クラウド会計（cloud-accounting）, name: cloud-accounting, widget: number, required: false }, { label: 創業支援（startup-support）, name: startup-support, widget: number, required: false }, { label: 創業支援・英語（startup-support-en）, name: startup-support-en, widget: number, required: false }, { label: 業務改善・IT化支援（it-consulting）, name: it-consulting, widget: number, required: false }, { label: 自動化・システム開発（automation）, name: automation, widget: number, required: false }, { label: LP・Webサイト制作（web-production）, name: web-production, widget: number, required: false }, { label: SNS運用代行（sns-management）, name: sns-management, widget: number, required: false } ] }
+              - { label: おすすめの理由（サービスごと）, name: reasons, widget: object, fields: [ { label: 経理代行, name: bookkeeping, widget: text }, { label: バックオフィス代行・DX, name: backoffice-dx, widget: text }, { label: クラウド会計, name: cloud-accounting, widget: text }, { label: 創業支援, name: startup-support, widget: text }, { label: 創業支援（英語）, name: startup-support-en, widget: text }, { label: 業務改善・IT化支援, name: it-consulting, widget: text }, { label: 自動化・システム開発, name: automation, widget: text }, { label: LP・Webサイト制作, name: web-production, widget: text }, { label: SNS運用代行, name: sns-management, widget: text } ] }
               - label: 組み合わせの提案
                 name: combos
                 widget: list
