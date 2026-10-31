@@ -1,5 +1,5 @@
 {
-  "description": "東京・港区のCOANA TOKYO合同会社は、中小企業・小規模事業者の経理・事務・集客・営業を支援します。業務の手順を見直してクラウドツールを導入し、日々の実務の代行までお引き受けします。経理代行、クラウド会計・ITツール導入、Web制作・SNS運用など。全国オンライン対応。",
+  "description": "東京・港区のCOANA TOKYO合同会社は、中小企業・小規模事業者の業務を、業務の棚卸し・自動化・システム開発・クラウド会計の導入で効率化し、経理・バックオフィスの運用代行まで引き受けます。LP制作・SNS運用代行にも対応。全国オンライン対応。",
   "robots": {
     "index": true
   },
@@ -7,7 +7,7 @@
     "addBypassLinks": false,
     "ignoreReducedMotion": false
   },
-  "title": "中小企業のバックオフィス・集客支援｜経理代行・業務改善 | COANA TOKYO合同会社（東京・港区）",
+  "title": "中小企業の業務効率化・自動化・IT化支援｜経理代行・バックオフィス代行 | COANA TOKYO合同会社（東京・港区）",
   "language": "ja",
   "icons": {
     "icon": "/favicon.svg"
