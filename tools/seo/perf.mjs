@@ -17,7 +17,7 @@ const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf('--' + name); return i < 0 ? def : (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : true); };
 const BASE = String(opt('base', 'https://coana.co.jp')).replace(/\/$/, '');
 const OUT = opt('out', null);
-const PAGES = String(opt('pages', '/,/services,/services/bookkeeping,/services/backoffice-dx,/services/startup-support,/about,/topics,/contact')).split(',');
+const PAGES = String(opt('pages', '/,/services,/services/it-consulting,/services/automation,/services/bookkeeping,/services/backoffice-dx,/about,/topics,/contact')).split(',');
 const RUNS = Number(opt('runs', 2));
 const NO_PSI = !!opt('no-psi', false);
 
