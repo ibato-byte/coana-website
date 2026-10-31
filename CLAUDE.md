@@ -6,6 +6,7 @@ COANA TOKYO合同会社のWebサイト（https://coana.co.jp）。オーナー�
 ## 構成
 
 - Vite ＋ React 19 ＋ TypeScript。ページは `src/App.tsx`（トップ・会社概要・サービス一覧・トピックス・お問い合わせ）と `src/SolutionPage.tsx`（各サービスLP）。
+- **打ち出し（2026-10-31 オーナー決定）**：「業務効率化・システム化・IT化・エンジニアリングで各業務を軽くする会社」。サービスは「01 業務の仕組みをつくる（業務改善・IT化支援／自動化・システム開発／クラウド会計・ITツール導入／LP・Webサイト制作／創業支援）」と「02 日々の業務を任せる（経理代行／バックオフィス代行／SNS運用代行）」の2つ（`content/services.json` の `build`／`operate`）。営業支援・セミナー支援のLPは廃止済み（旧URLは `_redirects`）。「色々できる」に戻さない。
 - 中身は `content/`（JSON／Markdown）。Decap CMS（`/admin`、設定は `public/admin/config.yml`）で編集される。読み込みは `src/content.ts`。
 - ビルド時（`vite.config.ts`）に各ページの HTML・タイトル・説明文・構造化データ・クローラー向けの本文（`.seo-fallback`）、sitemap.xml・feed.xml・llms.txt・`chat-knowledge.json` を書き出す（プリレンダー相当）。
 - 本番は Cloudflare Pages（main への push で自動デプロイ。PR ごとにプレビュー `*.coana-website.pages.dev`）。旧URLの転送は `public/_redirects`、ヘッダーは `public/_headers`。
@@ -42,6 +43,7 @@ COANA TOKYO合同会社のWebサイト（https://coana.co.jp）。オーナー�
 - LINE ボタンは白地＋LINE の緑の枠と緑の文字（LINE の緑で塗ると白文字が 2.3:1 で AA を満たさない）。
 - 代表の紹介は会社概要ページだけ（前に出しすぎない）。
 - 数字・実績を捏造しない（サイトにない数字は使わない。「月70時間削減」のような根拠のない数字はNG）。
+- **実績は社名・個人名を書かない**（業種・規模・地域だけ。2026-10-31 オーナー指示。特定の会社が推測される業種名も避ける）。数字は作業記録にある実測だけ。資格・パートナー登録の一覧は載せない（会社情報の「所属団体」だけ）。実績は `content/home.json` の `cases` と `content/solutions/*.json` の `cases`。
 - 税理士・社労士などの士業の独占業務について判断・助言しない（提携の専門家を紹介する立場）。
 - 図の役割分担は、浮いたラベルを並べず「エリア」で示す（COANA TOKYO が担当する範囲を薄いパネルで囲んで見出し、御社のカードには「やること：〜だけ」、最後の成果は御社の側に「受け取るもの」）。士業など COANA TOKYO 以外の相手は破線の枠（`partner`）で、COANA TOKYO が独占業務をするように見せない。
 - 相談の導線は重複させない：ヒーローのCTA（最初）＋ページ下部のお問い合わせの帯（最後）＋いつでも使えるヘッダー／チャット（スマホは固定バー）が基本。途中は内容の流れで本当に自然な場所だけ。
