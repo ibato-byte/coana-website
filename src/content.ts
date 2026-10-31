@@ -170,6 +170,10 @@ export type Solution = {
   design?: string;
   /** 導入前／導入後の切り替え（design が "signal" のLPで表示） */
   before_after?: { title?: string; lead?: string; sources?: string[]; center_before?: string; center_after?: string; partner?: string; items?: { label: string; before_status?: string; before: string; after_status?: string; after: string }[]; note?: string };
+  /** 実績（社名を伏せた事例。2026-10-31）：client＝業種・規模、title＝何をしたか、text＝内容、result＝実測の結果 */
+  cases_title?: string;
+  cases_lead?: string;
+  cases?: { client: string; title: string; text: string; result?: string }[];
   steps_title?: string;
   flow?: { name: string; text: string }[];
   flow_note?: string;

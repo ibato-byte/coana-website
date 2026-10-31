@@ -276,6 +276,19 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
 .lp-scheme-points h3 { margin: 14px 0 6px; font-size: 17px; line-height: 1.5; }
 .lp-scheme-points p { margin: 0; font-size: 14px; line-height: 1.8; color: var(--navy-soft); }
 
+/* ── 3.5 実績（社名を伏せた事例。2026-10-31） ── */
+.lp-cases { background: var(--white); }
+.lp-case-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.lp-case-grid.is-1 { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+.lp-case-grid.is-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lp-case { display: flex; flex-direction: column; gap: 10px; padding: 24px 24px 22px; border-radius: 18px; background: var(--white); border: 1px solid var(--line); }
+.lp-case-client { margin: 0; font-size: 13px; line-height: 1.5; font-weight: 700; color: var(--navy-soft); }
+.lp-case h3 { margin: 0; font-size: 19px; line-height: 1.45; letter-spacing: -.02em; }
+.lp-case-text { margin: 0; font-size: 14px; line-height: 1.85; color: var(--navy-soft); }
+.lp-case-result { display: flex; align-items: flex-start; gap: 8px; margin: auto 0 0; padding: 10px 14px; border-radius: 12px; background: var(--sky-soft); font-size: 14px; line-height: 1.6; font-weight: 800; }
+.lp-case-result svg { flex: none; margin-top: 3px; color: var(--sky-deep); }
+@media (max-width: 900px) { .lp-case-grid, .lp-case-grid.is-3 { grid-template-columns: 1fr; gap: 12px; } .lp-case { padding: 20px; } .lp-case h3 { font-size: 17px; } }
+
 /* ── 4. 支援内容とプラン ── */
 .lp-feature-grid { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .lp-feature { display: flex; gap: 14px; align-items: flex-start; padding: 20px; border-radius: 18px; border: 1px solid var(--line); background: var(--white); transition: border-color .25s, box-shadow .25s; }

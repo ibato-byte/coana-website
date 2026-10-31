@@ -168,56 +168,86 @@ function Startup() {
   );
 }
 
-/* ── 営業・販路開拓：見込み客が絞り込まれて成約へ ── */
-function Sales() {
+/* ── 業務改善・IT化支援：業務の流れを書き出し、手作業の箇所に印をつけて順番を決める ── */
+function ItConsulting() {
   return (
     <Frame>
-      <g className="art-float" style={d(.3)}>
-        {[0, 1, 2].map((i) => (
-          <Card key={i} x={62 + i * 8} y={90 + i * 46} w={110} h={38} r={10}>
-            <circle cx={82 + i * 8} cy={109 + i * 46} r="10" fill={i === 1 ? YELLOW : SKY} />
-            <rect x={100 + i * 8} y={104 + i * 46} width="60" height="9" rx="4.5" fill={LINE} />
-          </Card>
+      {/* 業務フロー図（左）：4つの工程と矢印。2つ目の工程に「手作業」の印 */}
+      <Card x={56} y={78} w={230} h={210}>
+        {[0, 1, 2, 3].map((i) => (
+          <g key={i}>
+            <rect x="80" y={96 + i * 46} width="120" height="30" rx="8" fill={i === 1 ? YELLOW : SOFT} stroke={i === 1 ? AMBER : LINE} strokeWidth="2" className="art-fill" style={d(i * .3)} />
+            <rect x="92" y={107 + i * 46} width={56 + (i % 2) * 24} height="8" rx="4" fill={i === 1 ? NAVY : LINE} />
+            {i < 3 && <path d={`M140 ${126 + i * 46}v12`} stroke={DEEP} strokeWidth="3" strokeLinecap="round" />}
+          </g>
         ))}
+        {/* 手作業の印（！）と、順番の番号 */}
+        <circle cx="222" cy="157" r="13" fill={AMBER} className="art-pop" />
+        <path d="M222 150v8M222 162v1.5" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+        {[0, 1, 2].map((i) => (
+          <g key={i} className="art-pop" style={d(.6 + i * .25)}>
+            <circle cx="222" cy={111 + [0, 2, 3][i] * 46} r="11" fill={i === 0 ? DEEP : SKY} />
+            <text x="222" y={115 + [0, 2, 3][i] * 46} textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" fontFamily="Outfit, sans-serif">{i + 1}</text>
+          </g>
+        ))}
+      </Card>
+      {/* 虫めがね（棚卸し） */}
+      <g className="art-float" style={d(.5)}>
+        <circle cx="330" cy="150" r="40" fill="#fff" stroke={NAVY} strokeWidth="6" />
+        <circle cx="330" cy="150" r="28" fill={SKY} opacity=".25" />
+        <path d="M358 178l34 34" stroke={NAVY} strokeWidth="12" strokeLinecap="round" />
+        <path d="M318 150h24M330 138v24" stroke={DEEP} strokeWidth="4" strokeLinecap="round" />
       </g>
-      <path d="M200 90h130l-46 70v70l-38 22v-92Z" fill="#fff" stroke={LINE} strokeWidth="2" strokeLinejoin="round" />
-      <path d="M200 90h130l-12 18H212Z" fill={SKY} opacity=".5" />
-      {[0, 1, 2].map((i) => (
-        <circle key={i} cx="265" cy="100" r="7" fill={i === 2 ? YELLOW : DEEP} className="art-drop" style={d(i * .9)} />
-      ))}
-      <g className="art-float" style={d(.9)}>
-        <circle cx="380" cy="240" r="52" fill="#fff" stroke={LINE} strokeWidth="2" />
-        <circle cx="380" cy="240" r="34" fill="none" stroke={SKY} strokeWidth="8" />
-        <circle cx="380" cy="240" r="14" fill={YELLOW} />
-        <path d="M380 240l46-46" stroke={NAVY} strokeWidth="5" strokeLinecap="round" className="art-pop" />
-        <path d="m420 186 14-2-2 14" stroke={NAVY} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" className="art-pop" />
-      </g>
+      {/* ツールの候補（右下の小さなカード） */}
+      <Card x={318} y={236} w={126} h={60} r={12} className="art-float" style={d(.9)}>
+        <rect x="330" y="250" width="30" height="30" rx="8" fill={DEEP} />
+        <path d="M338 265h14M345 258v14" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+        <rect x="370" y="254" width="60" height="8" rx="4" fill={LINE} />
+        <rect x="370" y="268" width="40" height="8" rx="4" fill={YELLOW} />
+      </Card>
     </Frame>
   );
 }
 
-/* ── セミナー・イベント：登壇スクリーンと参加者 ── */
-function Seminar() {
+/* ── 自動化・システム開発：ツール同士がつながり、データが自動で流れる ── */
+function Automation() {
+  const W = 84, H = 70;
+  const tiles = [
+    { x: 56, y: 92, c: SKY, icon: <><rect x="-11" y="-13" width="22" height="26" rx="3" /><path d="M-5-4h10M-5 3h10M-5 10h6" /></> },
+    { x: 56, y: 208, c: YELLOW, icon: <><path d="M-12-6h24v12h-24z" /><path d="M-12-6l12 8 12-8" /></> },
+    { x: 340, y: 92, c: DEEP, icon: <><path d="M-12 11V-1M-4 11V-11M4 11V3M12 11V-6" /></> },
+    { x: 340, y: 208, c: SKY, icon: <><path d="M-12-8h24v14h-16l-6 5v-5h-2z" /></> },
+  ];
   return (
     <Frame>
-      <Card x={110} y={60} w={260} h={150}>
-        <rect x="110" y="60" width="260" height="16" rx="8" fill={NAVY} />
-        {[0, 1, 2, 3].map((i) => (
-          <rect key={i} x={140 + i * 34} y={190 - (24 + i * 20)} width="22" height={24 + i * 20} rx="4" fill={i === 3 ? YELLOW : SKY} className="art-grow" style={d(i * .3)} />
-        ))}
-        <path d="M290 110h56M290 130h56M290 150h36" stroke={LINE} strokeWidth="7" strokeLinecap="round" />
-      </Card>
-      <path d="M240 210v26" stroke={NAVY} strokeWidth="5" strokeLinecap="round" />
-      {[0, 1, 2, 3, 4].map((i) => (
-        <g key={i} className="art-bob" style={d(i * .3)}>
-          <circle cx={120 + i * 60} cy="268" r="17" fill={i === 2 ? YELLOW : i % 2 ? SKY : "#9fd3f6"} />
-          <path d={`M${96 + i * 60} 318c2-20 12-30 24-30s22 10 24 30`} fill={i === 2 ? NAVY : DEEP} />
-        </g>
+      {/* 4つのツール → 中心の歯車 → 流れる線 */}
+      {tiles.map((t, i) => (
+        <path key={i} d={`M${t.x < 200 ? t.x + W : t.x} ${t.y + H / 2} C 220 ${t.y + H / 2} 220 180 240 180`} className="art-dash" stroke={DEEP} style={d(i * .3)} fill="none" />
       ))}
-      <Card x={360} y={180} w={80} h={48} r={14} className="art-float" style={d(.5)}>
-        <path d="M376 228l-6 12 16-12" fill="#fff" stroke={LINE} strokeWidth="2" strokeLinejoin="round" />
-        <path d="M382 204h48" stroke={SKY} strokeWidth="7" strokeLinecap="round" />
-      </Card>
+      <g className="art-float" style={d(.4)}>
+        {tiles.map((t, i) => (
+          <Card key={i} x={t.x} y={t.y} w={W} h={H}>
+            <rect x={t.x} y={t.y} width={W} height="10" rx="5" fill={t.c} />
+            <g transform={`translate(${t.x + W / 2} ${t.y + 10 + (H - 10) / 2})`} stroke={NAVY} strokeWidth="3.2" fill="none" strokeLinecap="round" strokeLinejoin="round">{t.icon}</g>
+          </Card>
+        ))}
+      </g>
+      {/* 中心：回る歯車（自動で動く仕組み） */}
+      <g className="art-spin" style={{ transformOrigin: "240px 180px" }}>
+        <path d="M240 128l8 2 2 10 9 4 9-5 6 6-5 9 4 9 10 2 2 8-2 8-10 2-4 9 5 9-6 6-9-5-9 4-2 10-8 2-8-2-2-10-9-4-9 5-6-6 5-9-4-9-10-2-2-8 2-8 10-2 4-9-5-9 6-6 9 5 9-4 2-10Z" fill="#fff" stroke={NAVY} strokeWidth="5" strokeLinejoin="round" />
+        <circle cx="240" cy="180" r="18" fill={YELLOW} stroke={NAVY} strokeWidth="5" />
+      </g>
+      {/* データの粒（線の上を流れる） */}
+      {[0, 1, 2].map((i) => (
+        <circle key={i} cx="150" cy="127" r="6" fill={i === 1 ? YELLOW : DEEP} className="art-drop" style={d(i * .8)} />
+      ))}
+      {/* 右下：できあがったPDF */}
+      <g className="art-float" style={d(1)}>
+        <path d="M392 262h40l14 14v46h-54Z" fill="#fff" stroke={LINE} strokeWidth="2" strokeLinejoin="round" />
+        <path d="M432 262v14h14" fill="none" stroke={LINE} strokeWidth="2" />
+        <rect x="400" y="288" width="30" height="6" rx="3" fill={LINE} /><rect x="400" y="300" width="22" height="6" rx="3" fill={SKY} />
+        <circle cx="440" cy="268" r="11" fill={DEEP} className="art-pop" /><path d="m435 268 4 4 7-8" stroke="#fff" strokeWidth="2.6" fill="none" strokeLinecap="round" strokeLinejoin="round" className="art-pop" />
+      </g>
     </Frame>
   );
 }
@@ -286,8 +316,8 @@ const ARTS: Record<string, () => ReactNode> = {
   "backoffice-dx": BackofficeDx,
   "startup-support": Startup,
   "startup-support-en": Startup,
-  "sales-support": Sales,
-  "seminar-event": Seminar,
+  "it-consulting": ItConsulting,
+  automation: Automation,
   "sns-management": Sns,
   "web-production": Web,
 };
@@ -358,7 +388,7 @@ export function HeroScene() {
         <path d="M456 154l-6 14 18-14" fill="#fff" stroke={LINE} strokeWidth="2" strokeLinejoin="round" />
         <g transform="translate(472 106) scale(1.05)"><path d={heart} fill="#ff6b81" className="art-beat" /></g>
       </g>
-      <text x="484" y="196" textAnchor="middle" className="hero-scene-label">SNS・Web</text>
+      <text x="484" y="196" textAnchor="middle" className="hero-scene-label">LP・SNS</text>
 
       {/* 右下：営業・成長 */}
       <g className="art-float" style={d(1.3)}>
@@ -366,7 +396,7 @@ export function HeroScene() {
         <path d="m452 362 18-18 14 10 30-30" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         <path d="m502 322 14 2-2 14" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
       </g>
-      <text x="484" y="404" textAnchor="middle" className="hero-scene-label">営業・集客</text>
+      <text x="484" y="404" textAnchor="middle" className="hero-scene-label">自動化</text>
 
       {/* 中央下：COANA TOKYO */}
       <g className="art-float" style={d(.6)}>

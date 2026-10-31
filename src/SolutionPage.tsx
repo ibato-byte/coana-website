@@ -117,6 +117,8 @@ const LABELS = {
     relayGoal: "受け取るもの",
     scroll: "本文へスクロール",
     facts: "サービスの特徴",
+    cases: "実績",
+    casesLead: "お客さまの社名は伏せています。数字は、作業記録にある実測だけを載せています。",
   },
   en: {
     consult: "Book a free consultation",
@@ -161,6 +163,8 @@ const LABELS = {
     relayGoal: "What you get",
     scroll: "Scroll to content",
     facts: "Key points",
+    cases: "Case studies",
+    casesLead: "Client names are withheld. Figures come from our own work records.",
   },
 };
 type Lang = keyof typeof LABELS;
@@ -795,6 +799,31 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   );
 }
 
+/* ───────────────────────── 3.5 実績（社名を伏せた事例） ───────────────────────── */
+
+function Cases({ sol }: { sol: Solution }) {
+  const L = LABELS[langOf(sol)];
+  const items = (sol.cases ?? []).filter((c) => c.client && c.title);
+  if (!items.length) return null;
+  return (
+    <section className="section lp-cases">
+      <div className="container">
+        <SectionTitle en="Case" center lead={sol.cases_lead ?? L.casesLead}>{sol.cases_title || L.cases}</SectionTitle>
+        <ul className={`lp-case-grid is-${Math.min(items.length, 3)}`}>
+          {items.map((c) => (
+            <li key={c.client + c.title} className="lp-case" data-reveal>
+              <p className="lp-case-client">{c.client}</p>
+              <h3>{c.title}</h3>
+              <p className="lp-case-text">{c.text}</p>
+              {c.result && <p className="lp-case-result"><Icon name="check" size={15} /><span>{c.result}</span></p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── 4. 支援内容とプラン ───────────────────────── */
 
 function Support({ sol }: { sol: Solution }) {
@@ -1021,6 +1050,7 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
       <Hero sol={sol} navigate={navigate} />
       {signal ? <BeforeAfter sol={sol} /> : <Problems sol={sol} />}
       <Scheme sol={sol} navigate={navigate} />
+      <Cases sol={sol} />
       <Support sol={sol} />
       {/* 新デザインのLPでは「ご利用イメージ」を出さない（導入前／導入後の切り替えと内容が重なるため。2026-10-26 LP の簡素化） */}
       {!signal && <Scenarios sol={sol} />}
