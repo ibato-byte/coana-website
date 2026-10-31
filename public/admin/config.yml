@@ -275,9 +275,9 @@ collections:
               - { label: Before（支援前）, name: before, widget: text, required: false }
               - { label: After（支援後）, name: text, widget: text }
           - { label: 注記, name: note, widget: string, required: false }
-      - { label: 実績の見出し, name: cases_title, widget: string, required: false, default: 実績 }
-      - { label: 実績のリード文, name: cases_lead, widget: text, required: false }
-      - label: 実績（社名は書かない。数字は作業記録にある実測だけ）
+      - { label: 支援事例の見出し, name: cases_title, widget: string, required: false, default: 支援事例 }
+      - { label: 支援事例のリード文, name: cases_lead, widget: text, required: false }
+      - label: 支援事例（社名は書かない。数字は作業記録にあるものだけ。日付・人数・件数も書かない。代行サービスのページには載せない）
         name: cases
         widget: list
         required: false
@@ -336,9 +336,11 @@ collections:
           - { label: ヒーロー｜サービスボタンの文言, name: hero_button_secondary, widget: string }
           - { label: サービス｜見出し, name: services_title, widget: string }
           - { label: サービス｜リード文, name: services_lead, widget: text }
-          - { label: 実績｜見出し, name: cases_title, widget: string, required: false, default: 実績：こんな仕組みを作りました }
-          - { label: 実績｜リード文, name: cases_lead, widget: text, required: false }
-          - label: 実績（社名は書かない。数字は作業記録にある実測だけ）
+          - { label: 支援事例｜見出し, name: cases_title, widget: string, required: false, default: 支援事例 }
+          - { label: 支援事例｜リード文, name: cases_lead, widget: text, required: false }
+          - { label: 支援事例｜「ほかにも仕組みにしてきた業務」の見出し, name: cases_more_title, widget: string, required: false, default: ほかにも、こうした業務を仕組みにしてきました }
+          - { label: 支援事例｜ほかにも仕組みにしてきた業務（短い語句。件数や社名は書かない）, name: cases_more, widget: list, required: false, field: { label: 業務, name: item, widget: string } }
+          - label: 支援事例（社名は書かない。数字は作業記録にあるものだけ。日付・人数・件数も書かない）
             name: cases
             widget: list
             required: false
