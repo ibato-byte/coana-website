@@ -232,7 +232,7 @@ collections:
               - { label: おすすめとして強調する, name: featured, widget: boolean, default: false, required: false }
           - { label: 料金の注記, name: note, widget: text, required: false }
       - { label: "ページのデザイン（signal＝トップと同じ新デザイン：番号つき見出し・導入前／導入後の切り替え）", name: design, widget: select, options: ["", "signal"], required: false }
-      - label: 導入前／導入後の切り替え（新デザインのページで表示）
+      - label: 導入前／導入後の切り替え（新デザインのページで「仕組み」「支援事例」のあとに表示。支援事例があるページでは使わない＝空のまま）
         name: before_after
         widget: object
         required: false
