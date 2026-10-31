@@ -185,7 +185,7 @@ function Footer({ navigate, en = false }: { navigate: Nav; en?: boolean }) {
 
 
 /* ───────────────────────── Home（Signal Sky） ─────────────────────────
- * 構成：ヒーロー（見直す。つくる。任せる。）→ 帯 → 01 できること → 02 実績 → 03 状況から探す → 04 支援スタイルと流れ → ツール → 05 トピックス → 06 FAQ → お問い合わせ
+ * 構成：ヒーロー（見直す。つくる。任せる。）→ 帯 → 01 できること → 02 支援事例 → 03 状況から探す → 04 支援スタイルと流れ → ツール → 05 トピックス → 06 FAQ → お問い合わせ
  * 動きの決まりは docs/motion-rules.md：スクロールに連動させない（ピン留めなし）。ヒーローのカードは画面に入っている間だけ約7秒ごとに切り替え、
  * カードの上でカーソルを動かしている・フォーカスしている間は止める。「動きを減らす」設定では切り替えない（言葉を押すと切り替わる）。
  */
@@ -488,18 +488,20 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
   );
 }
 
-/** 02 実績：こんな仕組みを作りました（2026-10-31 打ち出しの見直し）：お客さまの社名を伏せた実績を、業務別に「前」→「後」＋実測の結果で並べ、関係するサービスへつなぐ。
- *  文言は content/home.json の cases（CMS「トップページ」）。数字は作業記録にある実測だけ（CLAUDE.md：数字・実績を捏造しない） */
+/** 02 支援事例（2026-10-31 打ち出しの見直し）：お客さまの社名を伏せた事例を「前」→「後」＋結果で並べ、関係するサービスへつなぐ。
+ *  「日々の支援のなかから選んだ例」として見せ、最後に「ほかにも仕組みにしてきた業務」を並べて、件数が少なく見えないようにする（件数の数字は書かない）。
+ *  文言は content/home.json の cases / cases_more（CMS「トップページ」）。数字は作業記録にあるものだけ（CLAUDE.md：数字・実績を捏造しない） */
 type CaseItem = { client: string; title: string; before: string; after: string; result?: string; note?: string; tools?: string[]; slugs?: string[] };
 function CasesSection({ navigate }: { navigate: Nav }) {
-  const h = home as { cases?: CaseItem[]; cases_title?: string; cases_lead?: string };
+  const h = home as { cases?: CaseItem[]; cases_title?: string; cases_lead?: string; cases_more_title?: string; cases_more?: string[] };
   const items = (h.cases ?? []).filter((e) => e.client && e.before && e.after);
   if (!items.length) return null;
+  const more = (h.cases_more ?? []).filter(Boolean);
   const nameOf = (slug: string) => solutions.find((s) => s.slug === slug)?.nav_label;
   return (
     <section className="section sky-section case-section" id="cases">
       <div className="container">
-        <NumHead n="02" title={<Lines text={h.cases_title || "実績：こんな仕組みを作りました"} />} side={<p>{h.cases_lead}</p>} />
+        <NumHead n="02" title={<Lines text={h.cases_title || "支援事例"} />} side={<p>{h.cases_lead}</p>} />
         <ul className="case-grid">
           {items.map((e, i) => (
             <li key={e.client + e.title} className="case-card" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
@@ -532,6 +534,14 @@ function CasesSection({ navigate }: { navigate: Nav }) {
             </li>
           ))}
         </ul>
+        {more.length > 0 && (
+          <div className="case-more" data-reveal>
+            <p className="case-more-title">{h.cases_more_title || "ほかにも、こうした業務を仕組みにしてきました"}</p>
+            <ul className="case-more-list" aria-label="仕組みにしてきた業務の例">
+              {more.map((t) => <li key={t}>{t}</li>)}
+            </ul>
+          </div>
+        )}
       </div>
     </section>
   );

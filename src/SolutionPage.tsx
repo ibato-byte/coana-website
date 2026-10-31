@@ -117,8 +117,8 @@ const LABELS = {
     relayGoal: "受け取るもの",
     scroll: "本文へスクロール",
     facts: "サービスの特徴",
-    cases: "実績",
-    casesLead: "お客さまの社名は伏せています。数字は、作業記録にある実測だけを載せています。",
+    cases: "支援事例",
+    casesLead: "仕組みの作り方が伝わりやすい例を選んでご紹介します。お客さまの社名は伏せています。",
   },
   en: {
     consult: "Book a free consultation",
@@ -164,7 +164,7 @@ const LABELS = {
     scroll: "Scroll to content",
     facts: "Key points",
     cases: "Case studies",
-    casesLead: "Client names are withheld. Figures come from our own work records.",
+    casesLead: "A few examples chosen to show how we work. Client names are withheld.",
   },
 };
 type Lang = keyof typeof LABELS;
@@ -799,7 +799,7 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   );
 }
 
-/* ───────────────────────── 3.5 実績（社名を伏せた事例） ───────────────────────── */
+/* ───────────────────────── 3.5 支援事例（社名を伏せた事例） ───────────────────────── */
 
 function Cases({ sol }: { sol: Solution }) {
   const L = LABELS[langOf(sol)];
