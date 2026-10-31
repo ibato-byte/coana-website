@@ -666,7 +666,7 @@ function coanaPageMeta(): Plugin {
       }
       // 日本語／英語ページで共通の見出し（src/SolutionPage.tsx の LABELS と対応）
       const SOL_LABELS = {
-        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', faq: 'よくあるご質問', cases: '実績', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
+        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', faq: 'よくあるご質問', cases: '支援事例', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
         en: { home: 'Home', services: 'Services', problems: 'Sound familiar?', scheme: 'How it works', before: 'Before', after: 'After', support: 'What we do & plans', tools: 'Tools we work with', scope: 'Examples of what you can ask us', plans: 'Example plans', bestFor: 'Best for', scenarios: 'Example situations', flow: 'How to get started', faq: 'FAQ', cases: 'Case studies', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
       }
       const solLang = (sol: Solution): 'ja' | 'en' => (sol.lang === 'en' ? 'en' : 'ja')
@@ -831,7 +831,7 @@ function coanaPageMeta(): Plugin {
           return '<h1>' + esc(home.hero_line1) + esc(home.hero_line2) + '</h1>' + '<p>' + esc((home.hero_words || []).join('、')) + esc(home.hero_solve_text) + '</p>' + paras(home.hero_lead) +
             ((home.hero_badges || []).length ? '<ul>' + (home.hero_badges as string[]).map((b) => '<li>' + esc(b) + '</li>').join('') + '</ul>' : '') +
             '<section><h2>' + esc(home.services_title) + '</h2>' + paras(home.services_lead) + serviceSections + anchor('/services', 'サービスを詳しく見る') + '</section>' +
-            (((home.cases || []) as { client: string; title: string; before: string; after: string; result?: string }[]).length ? '<section id="cases"><h2>' + esc(home.cases_title || '実績') + '</h2>' + paras(home.cases_lead) + (home.cases as { client: string; title: string; before: string; after: string; result?: string }[]).map((c) => '<h3>' + esc(c.title) + '</h3><p>' + esc(c.client) + '</p><p>Before：' + esc(c.before) + '</p><p>After：' + esc(c.after) + '</p>' + (c.result ? '<p>' + esc(c.result) + '</p>' : '')).join('') + '</section>' : '') +
+            (((home.cases || []) as { client: string; title: string; before: string; after: string; result?: string }[]).length ? '<section id="cases"><h2>' + esc(home.cases_title || '支援事例') + '</h2>' + paras(home.cases_lead) + (home.cases as { client: string; title: string; before: string; after: string; result?: string }[]).map((c) => '<h3>' + esc(c.title) + '</h3><p>' + esc(c.client) + '</p><p>Before：' + esc(c.before) + '</p><p>After：' + esc(c.after) + '</p>' + (c.result ? '<p>' + esc(c.result) + '</p>' : '')).join('') + ((home.cases_more || []).length ? '<p>' + esc(home.cases_more_title || 'ほかにも、こうした業務を仕組みにしてきました') + '</p><ul>' + (home.cases_more as string[]).map((t) => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '') + '</section>' : '') +
             '<section><h2>' + esc(home.strengths_title) + '</h2>' + paras(about.message_heading) + strengths.map((st) => '<h3>' + esc(st.title) + '</h3>' + paras(st.text)).join('') +
               '<p>' + esc(home.tools_title) + '：' + esc(tools.map((t) => t.name + (t.category ? '（' + t.category + '）' : '')).join('、')) + '</p>' + paras(home.tools_note) + anchor('/about', '会社概要・代表あいさつを見る') + '</section>' +
             '<section><h2>' + esc(home.faq_title) + '</h2><dl>' + faqItems.map((f) => '<dt>' + esc(f.q) + '</dt><dd>' + esc(f.a) + '</dd>').join('') + '</dl></section>' +
@@ -1090,8 +1090,9 @@ function coanaPageMeta(): Plugin {
       }
       addChunk('tools', String(home.tools_title ?? '対応ツール'), '/', list(((home.tools ?? []) as { name: string; category?: string }[]).map((tool) => tool.name + (tool.category ? '（' + tool.category + '）' : ''))) + '。' + String(home.tools_note ?? ''))
       addChunk('strength', String(home.strengths_title ?? '選ばれる理由'), '/', ((home.strengths ?? []) as { title: string; text: string }[]).map((st) => st.title + '：' + st.text).join('\n'))
-      // 実績（社名を伏せた事例）と、資格・登録・活動
-      for (const c of (home.cases ?? []) as { client: string; title: string; before: string; after: string; result?: string; note?: string }[]) addChunk('case', '実績：' + c.title, '/#cases', [c.client, c.title, '前：' + c.before, '後：' + c.after, c.result ?? '', c.note ?? ''].filter(Boolean).join('\n'))
+      // 支援事例（社名を伏せた事例）
+      for (const c of (home.cases ?? []) as { client: string; title: string; before: string; after: string; result?: string; note?: string }[]) addChunk('case', '事例：' + c.title, '/#cases', [c.client, c.title, '前：' + c.before, '後：' + c.after, c.result ?? '', c.note ?? ''].filter(Boolean).join('\n'))
+      if (((home.cases_more ?? []) as string[]).length) addChunk('case', String(home.cases_more_title ?? 'ほかにも仕組みにしてきた業務'), '/#cases', ((home.cases_more ?? []) as string[]).join('、'))
       for (const f of faqs) addChunk('faq', 'Q. ' + f.q, '/', 'Q. ' + f.q + '\nA. ' + f.a)
       // サービス別ページ
       for (const sol of solutionList) {
@@ -1101,7 +1102,7 @@ function coanaPageMeta(): Plugin {
         addChunk('lp', name + '：概要', u, [sol.title, String(sol.catch ?? '').replace(/\*\*/g, '').replace(/\n/g, ''), sol.lead, sol.description].filter(Boolean).join('\n'))
         if (sol.problems?.length) addChunk('lp', name + '：こんなお悩みに', u, list(sol.problems, '\n'))
         if (sol.scheme) addChunk('lp', name + '：支援の仕組み', u, [sol.scheme.title, sol.scheme.lead, ...relayFlow(sol.scheme), ...(sol.scheme.nodes ?? []).filter((n) => n.who).map((n) => (n.who === 'client' ? '御社：' : 'COANA TOKYO：') + n.label + '（' + (n.detail || n.sub || '') + '）'), ...(sol.scheme.points ?? []).map((pt) => pt.name + '：' + (pt.text ?? '')), sol.scheme.note].filter(Boolean).join('\n'))
-        for (const c of sol.cases ?? []) addChunk('case', name + '：実績「' + c.title + '」', u, [c.client, c.title, c.text ?? '', c.result ?? ''].filter(Boolean).join('\n'))
+        for (const c of sol.cases ?? []) addChunk('case', name + '：事例「' + c.title + '」', u, [c.client, c.title, c.text ?? '', c.result ?? ''].filter(Boolean).join('\n'))
         if (sol.features?.length) addChunk('lp', name + '：支援内容', u, [sol.features_lead, ...sol.features.map((ft) => ft.name + '：' + (ft.text ?? ''))].filter(Boolean).join('\n'))
         if (sol.tools?.length) addChunk('lp', name + '：対応ツール', u, list(sol.tools) + '。' + (sol.tools_note ?? ''))
         if (sol.scope?.groups?.length) addChunk('lp', name + '：ご依頼いただける業務', u, sol.scope.groups.map((g) => g.name + '：' + list(g.items)).join('\n') + '\n' + (sol.scope.note ?? ''))
