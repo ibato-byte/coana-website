@@ -177,8 +177,12 @@ a.line-button { border-width: 2px; font-weight: 900; box-shadow: none; }
   color: var(--ink);
   box-shadow: 14px 14px 0 rgba(12, 33, 53, .28);
 }
-.sky-card > :is(.sky-card-kicker, .sky-card-title, .sky-card-text, .sky-card-links) { transition: opacity .22s, transform .4s var(--m-ease); }
-.sky-card.is-swap > :is(.sky-card-kicker, .sky-card-title, .sky-card-text, .sky-card-links) { opacity: 0; transform: translateY(8px); }
+.sky-card-stack { display: grid; flex: 1 1 auto; }
+.sky-card-body { grid-area: 1 / 1; display: flex; flex-direction: column; gap: inherit; min-width: 0; }
+.sky-card .sky-card-stack { gap: 12px; }
+.sky-card-body:not(.is-on) { visibility: hidden; }
+.sky-card-body > :is(.sky-card-kicker, .sky-card-title, .sky-card-text, .sky-card-links) { transition: opacity .22s, transform .4s var(--m-ease); }
+.sky-card.is-swap .sky-card-body > :is(.sky-card-kicker, .sky-card-title, .sky-card-text, .sky-card-links) { opacity: 0; transform: translateY(8px); }
 .sky-card-prog { position: absolute; right: 24px; top: 24px; display: flex; gap: 5px; }
 .sky-card-prog i { width: 22px; height: 4px; border-radius: 4px; background: var(--sky-s); transition: background .4s; }
 .sky-card-prog i.on { background: var(--sky-d); }
@@ -279,14 +283,14 @@ a.line-button { border-width: 2px; font-weight: 900; box-shadow: none; }
 .case-client { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0; font-size: 13.5px; line-height: 1.5; font-weight: 700; color: var(--ink-2); }
 .case-no { font: 500 12px / 1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sky-d); white-space: nowrap; }
 .case-title { margin: -6px 0 2px; font-size: clamp(19px, 1.9vw, 24px); line-height: 1.4; letter-spacing: -.02em; font-weight: 900; }
-.case-row { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: start; }
+.case-row { --tag-w: 68px; display: grid; grid-template-columns: var(--tag-w) minmax(0, 1fr); gap: 12px; align-items: start; }
 .case-row p { margin: 0; font-size: 15px; line-height: 1.75; }
-.case-tag { display: inline-grid; place-items: center; height: 24px; margin-top: 1px; padding: 0 10px; border-radius: 999px; font: 800 11px / 1 var(--font-en); letter-spacing: .1em; text-transform: uppercase; }
+.case-tag { display: inline-grid; place-items: center; width: 100%; height: 24px; margin-top: 1px; padding: 0 6px; box-sizing: border-box; white-space: nowrap; border-radius: 999px; font: 800 11px / 1 var(--font-en); letter-spacing: .1em; text-transform: uppercase; }
 .case-row.is-before .case-tag { background: #e6ebf0; color: var(--ink-2); }
 .case-row.is-before p { color: var(--ink-2); }
 .case-row.is-after .case-tag { background: var(--ink); color: #fff; }
 .case-row.is-after p { font-weight: 700; }
-.case-arrow { display: grid; place-items: center; width: 30px; height: 30px; margin: -4px 0 -4px 17px; border-radius: 50%; background: var(--sun); color: var(--ink); }
+.case-arrow { display: grid; place-items: center; width: 30px; height: 30px; margin: -4px 0 -4px calc(var(--tag-w, 68px) / 2 - 15px); border-radius: 50%; background: var(--sun); color: var(--ink); }
 .case-result { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 4px 10px; align-items: start; margin: 4px 0 0; padding: 12px 16px; border-radius: 14px; background: var(--sky-s); color: var(--ink); font-size: 15px; line-height: 1.5; font-weight: 900; }
 .case-result svg { margin-top: 3px; color: var(--sky-d); }
 .case-result small { grid-column: 2; font-size: 12.5px; line-height: 1.6; font-weight: 500; color: var(--ink-2); }
@@ -303,7 +307,7 @@ a.line-button { border-width: 2px; font-weight: 900; box-shadow: none; }
 .case-more-list li { padding: 7px 12px; border-radius: 999px; background: var(--mist); color: var(--ink-2); font-size: 13px; line-height: 1.4; font-weight: 700; }
 @media (max-width: 800px) {
   .case-grid { grid-template-columns: 1fr; gap: 16px; }
-  .case-row { grid-template-columns: 58px minmax(0, 1fr); gap: 10px; }
+  .case-row { gap: 10px; }
   .case-row p { font-size: 14.5px; }
   .case-more { grid-template-columns: 1fr; gap: 12px; margin-top: 16px; padding: 18px 20px; }
   .case-more-list li { font-size: 12.5px; padding: 6px 10px; }
@@ -1420,3 +1424,30 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 /* 鳩のアニメーションを廃止（2026-10-26）：工程の小さなチェックも出さない（全工程が完成形で並ぶため、チェックが並ぶとうるさい） */
 .step-check { display: none !important; }
 .dove-layer { display: none !important; }
+
+/* ───── 2026-11-01 レスポンシブの点検で見つかった細部の修正 ───── */
+/* お問い合わせ（幅 380px 以下）：LINE ボタン・送信ボタンが2行に折れないよう、余白と文字を少し詰める */
+@media (max-width: 380px) {
+  .contact-side .line-notice { padding: 18px 16px; }
+  .contact-side .line-notice .line-button { white-space: nowrap; padding-inline: 16px; font-size: 14px; }
+  .contact-layout .center-button .button-large { white-space: nowrap; padding-inline: 22px; font-size: 15px; }
+}
+/* LP ヒーローの特徴カード：説明が2行になっても左揃えのまま（幅 320px で中央揃えに見えていた） */
+.lp-sig-hero .lp-hero-facts li, .lp-sig-hero .lp-hero-facts small { text-align: left; }
+/* 導入前／導入後の小さな札：前後で文字の長さが違うと、短い方の札が横に間延びしていた。
+   札の色は文字ごとに付け、見えている方の文字の幅だけの札にする（右寄せ） */
+.lp-ba-status { padding: 0; background: none !important; justify-items: end; }
+.lp-ba-status > span { padding: 5px 9px; border-radius: 999px; background: var(--ba-red-s); }
+.lp-ba-status > .a { background: var(--ba-green-s); }
+/* LP ヒーローの注記は、スマホでもほかの文字と同じ左揃え（英語版で中央揃えに見えていた） */
+.lp-sig-hero .lp-hero-note { text-align: left; }
+/* トピックスの絞り込み（スマホは横にスクロール）：右端を少しぼかして、続きがあることが分かるように */
+@media (max-width: 640px) {
+  .filter-row { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+}
+/* リレー型の図（縦並び）：幅 400px 以下では、担当範囲のパネルを画面の端に寄せすぎない */
+@media (max-width: 400px) {
+  .relay-team { margin-inline: -4px; padding-inline: 8px; }
+}
+/* ヒーローのカード：3つの内容の高さを揃えたので、リンクは本文のすぐ下に（下端に寄せると、リンクが1つのカードで中ほどが大きく空く） */
+.sky-card-body .sky-card-links { margin-top: 6px; }

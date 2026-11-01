@@ -48,7 +48,7 @@ function Logo({ navigate, white = false }: { navigate: Nav; white?: boolean }) {
 
 /* ───────────────────────── Header / Footer ───────────────────────── */
 
-function Header({ page, navigate }: { page: Page; navigate: Nav }) {
+function Header({ page, navigate, en = false }: { page: Page; navigate: Nav; en?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -84,11 +84,11 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     navigate(target);
   };
   return (
-    // ヘッダー・フッターは日本語。英語ページ（<html lang="en">）でも言語を正しく伝えるため lang="ja" を明示する
-    <header lang="ja" className={scrolled ? "site-header is-scrolled" : "site-header"}>
+    // ヘッダーは日本語。英語ページ（英語版の創業支援）だけ英語にする（2026-11-01 オーナー指示「英語版も改善」。リンク先は日本語なので「(JP)」を添える）
+    <header lang={en ? "en" : "ja"} className={scrolled ? "site-header is-scrolled" : "site-header"}>
       <div className="header-inner">
         <Logo navigate={navigate} />
-        <nav className="desktop-nav" aria-label="メインナビゲーション">
+        <nav className="desktop-nav" aria-label={en ? "Main navigation" : "メインナビゲーション"}>
           {navItems.map(([target, label, hash]) => (
             <GoLink
               key={label}
@@ -96,11 +96,11 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
               go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}
               aria-current={!hash && page === target ? "page" : undefined}
             >
-              {label}
+              {en ? EN_NAV[target] : label}
             </GoLink>
           ))}
           <GoLink className="button button-small" go={go} args={["contact"]}>
-            相談する
+            {en ? "Contact" : "相談する"}
             <Icon name="arrow" size={17} />
           </GoLink>
         </nav>
@@ -109,20 +109,20 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls="mobile-nav"
-          aria-label={open ? "メニューを閉じる" : "メニューを開く"}
+          aria-label={en ? (open ? "Close menu" : "Open menu") : open ? "メニューを閉じる" : "メニューを開く"}
         >
           <span className="menu-button-bars" aria-hidden="true" />
         </button>
       </div>
       {open && (
-        <nav className="mobile-nav" id="mobile-nav" aria-label="モバイルナビゲーション">
+        <nav className="mobile-nav" id="mobile-nav" aria-label={en ? "Mobile navigation" : "モバイルナビゲーション"}>
           {([["home", "ホーム", "Top"], ...links] as [Page, string, string, string?][]).map(([target, label, en2, hash], i) => (
             <GoLink key={label} style={{ animationDelay: `${i * 0.05}s` }} go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}>
-              <span>{label}</span><small lang="en">{en2}</small>
+              {en ? <><span lang="en">{EN_NAV[target]}</span><small lang="ja">{label}</small></> : <><span>{label}</span><small lang="en">{en2}</small></>}
             </GoLink>
           ))}
           <GoLink className="mobile-nav-cta" style={{ animationDelay: "0.25s" }} go={go} args={["contact"]}>
-            <span>無料で相談する</span>
+            <span>{en ? "Free consultation" : "無料で相談する"}</span>
           </GoLink>
           <p className="mobile-nav-foot">{settings.company_name}</p>
         </nav>
@@ -130,6 +130,9 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     </header>
   );
 }
+
+/** ヘッダーの英語表記（英語ページのときだけ。リンク先は日本語のページ） */
+const EN_NAV: Partial<Record<Page, string>> = { home: "Home (JP)", services: "Services (JP)", about: "About (JP)", topics: "Topics (JP)" };
 
 /** フッターの英語表記（英語ページのときだけ。リンク先の各ページは日本語なので、その旨を見出しに添える） */
 const FOOTER_EN = {
@@ -185,27 +188,27 @@ function Footer({ navigate, en = false }: { navigate: Nav; en?: boolean }) {
 
 
 /* ───────────────────────── Home（Signal Sky） ─────────────────────────
- * 構成：ヒーロー（見直す。つくる。任せる。）→ 帯 → 01 できること → 02 支援事例 → 03 状況から探す → 04 支援スタイルと流れ → ツール → 05 トピックス → 06 FAQ → お問い合わせ
+ * 構成：ヒーロー（整える。つくる。任せる。）→ 帯 → 01 できること → 02 支援事例 → 03 状況から探す → 04 支援スタイルと流れ → ツール → 05 トピックス → 06 FAQ → お問い合わせ
  * 動きの決まりは docs/motion-rules.md：スクロールに連動させない（ピン留めなし）。ヒーローのカードは画面に入っている間だけ約7秒ごとに切り替え、
  * カードの上でカーソルを動かしている・フォーカスしている間は止める。「動きを減らす」設定では切り替えない（言葉を押すと切り替わる）。
  */
 
-/** サービスの性格（ヒーローの3つの言葉と、一覧の右端の札）。2026-10-31 打ち出しの見直し：見直す（業務の棚卸し）→ つくる（自動化・システム・ツール導入）→ 任せる（運用代行） */
+/** サービスの性格（ヒーローの3つの言葉と、一覧の右端の札）。2026-10-31 打ち出しの見直し：整える（業務の棚卸し。2026-11-01 オーナー指示で「見直す」から変更）→ つくる（自動化・システム・ツール導入）→ 任せる（運用代行） */
 const VERB_OF: Record<string, string> = {
-  "it-consulting": "見直す",
+  "it-consulting": "整える",
   automation: "つくる",
-  "cloud-accounting": "つくる",
+  "cloud-accounting": "整える",
   "web-production": "つくる",
-  "startup-support": "つくる",
+  "startup-support": "整える",
   bookkeeping: "任せる",
   "backoffice-dx": "任せる",
   "sns-management": "任せる",
 };
 
 const VERBS = [
-  { no: "01", en: "Review", verb: "見直す", kicker: "業務を棚卸しする", head: ["いまの業務を書き出し、", "何をIT化するか決める。"], text: "仕事の流れと使っているツールを一緒に書き出し、手作業・二重入力・特定の人しか分からない作業を見つけます。IT化の順番と費用の目安まで出します。", slugs: ["it-consulting", "cloud-accounting"] },
-  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["手作業を、", "自動化と仕組みに。"], text: "ツール同士をつなぐ自動化、社内の業務アプリ、クラウド会計の導入、問い合わせが届くLP。必要なものだけを小さく作り、使いながら直します。", slugs: ["automation", "cloud-accounting", "web-production"] },
-  { no: "03", en: "Operate", verb: "任せる", kicker: "運用を任せる", head: ["日々の運用は、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務の事務、SNSの投稿。作った仕組みの上で、決めた手順どおりに代行します。担当者は固定します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
+  { no: "01", en: "Organize", verb: "整える", kicker: "業務を整える", head: ["いまの業務を書き出し、", "流れと手順を整える。"], text: "仕事の流れと使っているツールを一緒に書き出し、手作業・二重入力・特定の人しか分からない作業を見つけます。IT化の順番と費用の目安を決め、手順書まで整えます。クラウド会計などのツール導入や、開業前の準備もここから。", slugs: ["it-consulting", "cloud-accounting", "startup-support"] },
+  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["手作業を、", "自動化と仕組みに。"], text: "ツール同士をつなぐ自動化、社内の業務アプリ、問い合わせが届くLPやWebサイト。必要なものだけを小さく作り、使いながら直します。", slugs: ["automation", "web-production"] },
+  { no: "03", en: "Operate", verb: "任せる", kicker: "運用を任せる", head: ["日々の運用は、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務の事務、SNSの投稿。決めた手順どおりに代行し、窓口の担当者を決めてチームで対応します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
 ];
 const VERB_INTERVAL_MS = 7000;
 const VERB_FIRST_MS = 4200;
@@ -309,7 +312,6 @@ function HeroSection({ navigate }: { navigate: Nav }) {
     return () => { window.clearTimeout(timer); window.clearTimeout(fallback); io.disconnect(); card.removeEventListener("pointermove", onMove); card.removeEventListener("focusin", hold); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduce, replay]);
-  const v = VERBS[shown];
   const nameOf = (slug: string) => solutions.find((s) => s.slug === slug)?.nav_label || slug;
   return (
     <div className={pinMode ? "sky-hero-pin is-pin" : "sky-hero-pin"} ref={pinRef}>
@@ -338,14 +340,22 @@ function HeroSection({ navigate }: { navigate: Nav }) {
         </ul>
         <div className={swap ? "sky-card is-swap" : "sky-card"} ref={cardRef} aria-live="polite">
           <div className="sky-card-prog" aria-hidden="true">{VERBS.map((_, i) => <i key={i} className={i <= cur ? "on" : ""} />)}</div>
-          <p className="sky-card-kicker">{v.no} — {v.kicker}</p>
-          <h2 className="sky-card-title">{v.head[0]}<br />{v.head[1]}</h2>
-          <p className="sky-card-text">{v.text}</p>
-          <ul className="sky-card-links">
-            {v.slugs.filter((slug) => solutions.some((s) => s.slug === slug)).map((slug) => (
-              <li key={slug}><GoLink go={navigate} args={["solution", undefined, slug]}>{nameOf(slug)}<Icon name="arrow" size={16} /></GoLink></li>
+          {/* 3つの内容を同じ場所に重ねて置き、見えているもの以外は visibility: hidden。カードの高さはいちばん長い内容に揃うので、
+              切り替わってもヒーローの高さが変わらず、下の内容がずれない（2026-11-01：スマホで7秒ごとにページがずれていた） */}
+          <div className="sky-card-stack">
+            {VERBS.map((vv, i) => (
+              <div key={vv.no} className={i === shown ? "sky-card-body is-on" : "sky-card-body"} aria-hidden={i === shown ? undefined : true}>
+                <p className="sky-card-kicker">{vv.no} — {vv.kicker}</p>
+                <h2 className="sky-card-title">{vv.head[0]}<br />{vv.head[1]}</h2>
+                <p className="sky-card-text">{vv.text}</p>
+                <ul className="sky-card-links">
+                  {vv.slugs.filter((slug) => solutions.some((s) => s.slug === slug)).map((slug) => (
+                    <li key={slug}><GoLink go={navigate} args={["solution", undefined, slug]} tabIndex={i === shown ? undefined : -1}>{nameOf(slug)}<Icon name="arrow" size={16} /></GoLink></li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
       <div className="container sky-hero-bottom">
@@ -556,7 +566,7 @@ function FinderSection() {
       <div className="container">
         <NumHead n="03" title={<>状況から<br />サービスを探す</>} side={<p>{total}つの質問に答えると、いまの状況がどのサービスに当たるかをご案内します。約1分・個人情報の入力は不要です。</p>} />
         <div className="finder-grid">
-          <p className="finder-big" data-reveal>質問に答えると、<br />該当するサービスが<wbr />分かる。<small>1問目を選ぶとチャットが開き、残りの質問にそのまま進めます。</small></p>
+          <p className="finder-big" data-reveal>どれを頼めばいいか、<br />分からないときに。<small>1問目を選ぶとチャットが開き、残りの質問にそのまま進めます。</small></p>
           <div className="finder-card" data-reveal>
             <div className="finder-card-top"><span lang="en">Service guide</span><span>Q1 / {total}</span></div>
             <h3>{q.text}</h3>
@@ -1238,13 +1248,15 @@ export default function App() {
   else if (page === "privacy") content = <Privacy />;
   else if (page === "notfound") content = <NotFound navigate={navigate} />;
   else content = <Home navigate={navigate} />;
+  const isEnPage = page === "solution" && solutions.some((sol) => sol.lang === "en" && window.location.pathname.replace(/\/+$/, "") === "/services/" + sol.slug);
   return (
     <div className="app-shell">
-      <Header page={page} navigate={navigate} />
+      <Header page={page} navigate={navigate} en={isEnPage} />
       <div key={`${page}-${routeKey}`} className="page-fade">{content}</div>
-      <Footer navigate={navigate} en={page === "solution" && solutions.some((sol) => sol.lang === "en" && window.location.pathname.replace(/\/+$/, "") === "/services/" + sol.slug)} />
+      <Footer navigate={navigate} en={isEnPage} />
       <BackToTop />
-      <ChatLauncher navigate={navigate} page={page} />
+      {/* サポートチャットは日本語だけなので、英語ページでは出さない（お問い合わせの帯・固定バーと同じ扱い） */}
+      {!isEnPage && <ChatLauncher navigate={navigate} page={page} />}
     </div>
   );
 }

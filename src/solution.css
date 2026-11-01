@@ -492,6 +492,17 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-sticky-chat img { width: 30px; height: 30px; padding: 3px; border-radius: 50%; background: var(--white); box-sizing: content-box; }
   body.has-sticky-cta .site-footer { padding-bottom: 84px; }
 }
+/* 幅 400px 以下：固定バーの「無料で相談する」が3行に折れないよう、ボタンの余白を詰めて1行に（2026-11-01） */
+@media (max-width: 400px) {
+  .lp-sticky { left: 8px; right: 8px; bottom: 8px; gap: 6px; padding: 6px; }
+  .lp-sticky-main { gap: 6px; padding: 0 10px; font-size: 14px; white-space: nowrap; }
+  .lp-sticky a.line-button { padding: 0 12px; white-space: nowrap; }
+  .lp-sticky-chat { width: 46px; }
+}
+@media (max-width: 350px) {
+  .lp-sticky-main svg { display: none; }
+  .lp-sticky a.line-button { padding: 0 10px; font-size: 13px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .lp-hero-scroll { animation: none !important; }
@@ -505,7 +516,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 
 /* ───────── リレー型（バックオフィス代行など）：御社 →(1) COANA TOKYO →(2) 対応する領域 →(3) 完了をご報告 →(4) 御社が受け取るもの ─────────
    PC：左から右の一方向。戻りは下の段を右から左へ。線は意味のある線だけ（SVG。カードの位置から引く）。鳩が通った線から色がつく。
-   900px 以下：上から下の1列（スマホ専用の並び）。領域は2列の小さなタグ */
+   1120px 以下（2026-11-01：980〜1100px で右端のカードが画面からはみ出たため 900px から変更）：上から下の1列。領域は2列の小さなタグ */
 .relay {
   position: relative; max-width: 1120px; margin: 40px auto 0; display: grid;
   grid-template-columns: minmax(0, 220px) minmax(170px, 1fr) minmax(0, 250px) minmax(196px, 1fr) minmax(0, 300px);
@@ -585,7 +596,7 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 .relay-return.is-page .relay-page { animation: relay-page .9s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes relay-page { 0% { opacity: 0; transform: translate(4px, -14px) rotate(8deg); } 45% { opacity: 1; transform: translate(0, 0) rotate(0deg); } 80% { opacity: 1; transform: translate(-2px, 6px) scale(.85); } 100% { opacity: 0; transform: translate(-4px, 10px) scale(.6); } }
 
-@media (max-width: 900px) {
+@media (max-width: 1120px) {
   /* スマホ専用の並び：上から下の1列 */
   .relay { max-width: 480px; display: flex; flex-direction: column; align-items: stretch; row-gap: 0; }
   .relay-lines, .relay-panel { display: none; }
@@ -634,11 +645,11 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
 .lanes-cycle-label.is-cycle svg { animation: cycle-turn 1.1s cubic-bezier(.45, 0, .25, 1); color: var(--sky-deep); }
 @keyframes cycle-turn { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @media (max-width: 980px) {
-  /* 縦並び：カードの右側を「鳩の通り道」として空ける */
-  .lanes-card, .lp-scheme-flow li { padding-right: 56px; }
+  /* 縦並び：鳩の演出は 2026-10-26 に廃止したので、右側の「鳩の通り道」は空けない（2026-11-01：幅 320px で工程名が3行に折れていた） */
+  .lanes-card, .lp-scheme-flow li { padding-right: 14px; }
 }
-@media (max-width: 900px) {
-  .relay-card { padding-right: 56px; }
+@media (max-width: 1120px) {
+  .relay-card { padding-right: 14px; }
 }
 @media (min-width: 981px) {
   /* 受け渡しの注記：縦の線の左（見出しの列の空き）に2行で。鳩の止まる位置・飛ぶ道を空ける */
@@ -658,3 +669,5 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-hero-facts li { padding: 10px 4px; }
 }
 
+/* 英語ページの固定バーはチャットのボタンがない（チャットは日本語のみ）ので2列 */
+.lp-lang-en .lp-sticky { grid-template-columns: 1fr auto; }

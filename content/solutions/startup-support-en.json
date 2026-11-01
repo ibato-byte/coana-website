@@ -10,7 +10,7 @@
   "description": "Bilingual support for starting a business in Japan: business plan, funding, accounting and back-office setup, and introductions to licensed professionals.",
   "catch": "Start your business in Japan\nwith **a bilingual partner**.",
   "lead": "Planning, back office, local customs, and introductions to licensed professionals: one bilingual point of contact for starting a company in Japan.",
-  "hero_note": "Online nationwide, with an office in Minato-ku, Tokyo.",
+  "hero_note": "Online nationwide, with an office in Minato‑ku, Tokyo.",
   "hero_facts": [
     {
       "value": "English / 日本語",
@@ -230,7 +230,7 @@
           "Monthly check-ins"
         ],
         "best_for": "Companies that have just launched",
-        "price": "From ¥50,000 / month"
+        "price": "From ¥20,000 / month"
       }
     ],
     "note": "All prices are estimates, excluding tax. We send a formal quote after a free consultation."
@@ -259,7 +259,7 @@
       }
     ]
   },
-  "steps_title": "How to get started",
+  "steps_title": "Step by step",
   "flow": [
     {
       "name": "Free consultation",
@@ -287,7 +287,7 @@
   "faqs": [
     {
       "q": "How much does it cost?",
-      "a": "As a guide: Plan & Prepare from ¥60,000, the Launch Package from ¥250,000, and ongoing support from ¥50,000 per month (excluding tax). After a free consultation, we send a formal quote based on your scope."
+      "a": "As a guide: Plan & Prepare from ¥60,000, the Launch Package from ¥250,000, and ongoing support from ¥20,000 per month (excluding tax). After a free consultation, we send a formal quote based on your scope."
     },
     {
       "q": "Can you handle my visa or company registration?",

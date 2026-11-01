@@ -104,7 +104,7 @@ const LABELS = {
     baTitle: "導入すると、\nこう変わる。",
     before: "Before",
     after: "After",
-    flow: "ご利用までの流れ",
+    flow: "ご利用の流れ",
     faq: "よくあるご質問",
     column: "関連するコラム",
     ctaTitle: "まずは、現状をお聞かせください。",
@@ -466,7 +466,7 @@ function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme
 }
 
 /** リレー型：御社 →（1）COANA TOKYO →（2）対応する領域 →（3）完了をご報告 →（4）手順をマニュアル化 → 御社へ戻る。
- *  PC は左から右へ一方向（戻りは下の段を右から左へ）、900px 以下は上から下の1列（スマホ専用の並び）。
+ *  PC は左から右へ一方向（戻りは下の段を右から左へ）、1120px 以下は上から下の1列（スマホ専用の並び）。
  *  線は意味のある線だけ（矢印で順序が分かる）。鳩が通った線から色がつく。点線の道筋は出さない */
 function SchemeRelay({ scheme, story, labels }: { scheme: NonNullable<Solution["scheme"]>; story?: Story; labels: { todo: string; goal: string } }) {
   const areas = scheme.nodes ?? [];
@@ -474,7 +474,7 @@ function SchemeRelay({ scheme, story, labels }: { scheme: NonNullable<Solution["
   const steps = scheme.steps ?? [];
   const boxRef = useRef<HTMLDivElement | null>(null);
   const keys = ["client", "c", ...areas.map((_, i) => "n" + i), ...returns.map((_, i) => "r" + i)];
-  const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 900px)");
+  const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 1120px)");
   const lit = (k: string) => still || done.includes(k);
   const anyArea = areas.some((_, i) => lit("n" + i));
   void now;
@@ -488,7 +488,7 @@ function SchemeRelay({ scheme, story, labels }: { scheme: NonNullable<Solution["
     const root = boxRef.current;
     if (!root) return;
     const measure = () => {
-      const pc = !window.matchMedia("(max-width: 900px)").matches;
+      const pc = !window.matchMedia("(max-width: 1120px)").matches;
       if (!pc) { setGeom([]); return; }
       const b = root.getBoundingClientRect();
       const r = (sel: string) => { const e = root.querySelector(sel); if (!e) return null; const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; };
@@ -1009,9 +1009,11 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
       </GoLink>
       <LineButton place="solution_sticky" label="LINE" tabIndex={show ? 0 : -1} />
       {/* チャットはこのバーにまとめる（固定バーの表示中は、画面右下のチャットのボタンは出さない） */}
-      <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label="COANA TOKYO サポートチームにチャットで相談する">
-        <img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" />
-      </button>
+      {langOf(sol) === "ja" && (
+        <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label="COANA TOKYO サポートチームにチャットで相談する">
+          <img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" />
+        </button>
+      )}
     </div>
   );
 }
