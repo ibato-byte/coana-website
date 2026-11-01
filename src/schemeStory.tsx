@@ -85,28 +85,6 @@ export const STORIES: Record<string, Story> = {
       { at: "r1", cargo: "check", gold: true },
     ],
   },
-  "sales-support": {
-    message: "見込み客が、相談→商談→受注と段階を追って進み、数字の振り返りで次にやることが決まる。",
-    stops: () => [
-      { at: "n0", cargo: "person" },
-      { at: "n1", cargo: "person" },
-      { at: "n2", cargo: "chat" },
-      { at: "n3", cargo: "doc" },
-      { at: "n3", cargo: "star", gold: true },
-      { at: "n4", cargo: "chart" },
-    ],
-  },
-  "seminar-event": {
-    message: "告知で集まった参加者が、当日の体験と開催後のフォローを経て、お客さまに変わる。",
-    stops: () => [
-      { at: "n0", cargo: "target" },
-      { at: "n1", cargo: "megaphone" },
-      { at: "n2", cargo: "people" },
-      { at: "n3", cargo: "people" },
-      { at: "n4", cargo: "people" },
-      { at: "n4", cargo: "handshake", gold: true },
-    ],
-  },
   "sns-management": {
     message: "計画→投稿→反応の振り返りを毎月くり返し、次の月の投稿に活かされていく。",
     stops: () => [

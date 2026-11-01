@@ -133,7 +133,7 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
 
 /** フッターの英語表記（英語ページのときだけ。リンク先の各ページは日本語なので、その旨を見出しに添える） */
 const FOOTER_EN = {
-  tagline: "A partner for building the systems that help small businesses grow.",
+  tagline: "Engineering that makes the daily work of small businesses lighter.",
   company: "COANA TOKYO LLC.",
   address: "3F, 1-3-3 Kita-Aoyama, Minato-ku, Tokyo 107-0061, Japan",
   menuTitle: "Menu (in Japanese)",
@@ -185,27 +185,27 @@ function Footer({ navigate, en = false }: { navigate: Nav; en?: boolean }) {
 
 
 /* ───────────────────────── Home（Signal Sky） ─────────────────────────
- * 構成：ヒーロー（整える。任せる。伸ばす。）→ 帯 → 01 できること → 02 診断 → 03 支援スタイルと流れ → ツール → 04 トピックス → 05 FAQ → お問い合わせ
+ * 構成：ヒーロー（見直す。つくる。任せる。）→ 帯 → 01 できること → 02 支援事例 → 03 状況から探す → 04 支援スタイルと流れ → ツール → 05 トピックス → 06 FAQ → お問い合わせ
  * 動きの決まりは docs/motion-rules.md：スクロールに連動させない（ピン留めなし）。ヒーローのカードは画面に入っている間だけ約7秒ごとに切り替え、
  * カードの上でカーソルを動かしている・フォーカスしている間は止める。「動きを減らす」設定では切り替えない（言葉を押すと切り替わる）。
  */
 
-/** サービスの性格（ヒーローの3つの言葉と、一覧の右端の札） */
+/** サービスの性格（ヒーローの3つの言葉と、一覧の右端の札）。2026-10-31 打ち出しの見直し：見直す（業務の棚卸し）→ つくる（自動化・システム・ツール導入）→ 任せる（運用代行） */
 const VERB_OF: Record<string, string> = {
-  "startup-support": "整える",
-  "cloud-accounting": "整える",
-  "backoffice-dx": "任せる",
+  "it-consulting": "見直す",
+  automation: "つくる",
+  "cloud-accounting": "つくる",
+  "web-production": "つくる",
+  "startup-support": "つくる",
   bookkeeping: "任せる",
+  "backoffice-dx": "任せる",
   "sns-management": "任せる",
-  "sales-support": "伸ばす",
-  "seminar-event": "伸ばす",
-  "web-production": "伸ばす",
 };
 
 const VERBS = [
-  { no: "01", en: "Systemize", verb: "整える", kicker: "やり方を見直す", head: ["業務の手順を見直し、", "ツールで効率よく。"], text: "経理や事務のやり方と使っているツールを棚卸しし、クラウドと自動化で手作業を減らします。創業期の立ち上げにも対応します。", slugs: ["cloud-accounting", "startup-support"] },
-  { no: "02", en: "Delegate", verb: "任せる", kicker: "実務を任せる", head: ["日々の実務を、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務・事務、SNSの運用まで。窓口の担当者を固定し、決めた手順で代行します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
-  { no: "03", en: "Grow", verb: "伸ばす", kicker: "売上を伸ばす", head: ["空いた時間を、", "問い合わせと売上に。"], text: "顧客管理と営業のフォロー、セミナー、Webサイト。問い合わせを増やし、受注につなげるお手伝いをします。", slugs: ["sales-support", "seminar-event", "web-production"] },
+  { no: "01", en: "Review", verb: "見直す", kicker: "業務を棚卸しする", head: ["いまの業務を書き出し、", "何をIT化するか決める。"], text: "仕事の流れと使っているツールを一緒に書き出し、手作業・二重入力・特定の人しか分からない作業を見つけます。IT化の順番と費用の目安まで出します。", slugs: ["it-consulting", "cloud-accounting"] },
+  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["手作業を、", "自動化と仕組みに。"], text: "ツール同士をつなぐ自動化、社内の業務アプリ、クラウド会計の導入、問い合わせが届くLP。必要なものだけを小さく作り、使いながら直します。", slugs: ["automation", "cloud-accounting", "web-production"] },
+  { no: "03", en: "Operate", verb: "任せる", kicker: "運用を任せる", head: ["日々の運用は、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務の事務、SNSの投稿。作った仕組みの上で、決めた手順どおりに代行します。担当者は固定します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
 ];
 const VERB_INTERVAL_MS = 7000;
 const VERB_FIRST_MS = 4200;
@@ -369,7 +369,7 @@ function HeroSection({ navigate }: { navigate: Nav }) {
 
 /** ヒーローの下の帯（できることの見出し語）。画面に入っている間だけゆっくり流れ、スマホと「動きを減らす」設定では止まる */
 function SkyTape() {
-  const words = ["経理・請求", "ツール導入", "SNS・Web", "営業・集客", "創業支援", "セミナー"];
+  const words = ["業務の棚卸し", "自動化", "ツール連携", "システム開発", "クラウド会計", "経理・事務の代行", "LP制作", "SNS運用"];
   return (
     <div className="sky-tape-wrap" aria-hidden="true">
       <div className="sky-tape" data-live>
@@ -385,12 +385,14 @@ function SkyTape() {
 
 type ServiceItem = { name: string; text: string; short?: string; tags?: string[]; page?: string };
 const serviceGroups = [
-  { key: "backoffice", n: "01", data: services.backoffice },
-  { key: "marketing", n: "02", data: services.marketing },
+  { key: "build", n: "01", data: services.build },
+  { key: "operate", n: "02", data: services.operate },
 ] as const;
 
-function ServiceCard({ item, navigate, detail = false }: { item: ServiceItem; navigate: Nav; detail?: boolean }) {
+/** detail：説明文（text）を出す。stack：絵を上、文章を下に積む縦型（サービス一覧ページ。3列で5＋3枚を並べる。2026-10-31） */
+function ServiceCard({ item, navigate, detail = false, stack = false }: { item: ServiceItem; navigate: Nav; detail?: boolean; stack?: boolean }) {
   const linked = item.page && solutions.some((sol) => sol.slug === item.page);
+  const cls = stack ? "service-card is-stack" : detail ? "service-card is-detail" : "service-card";
   const body = (
     <>
       <ServiceArt slug={item.page} className="service-card-art" />
@@ -403,8 +405,8 @@ function ServiceCard({ item, navigate, detail = false }: { item: ServiceItem; na
     </>
   );
   return linked
-    ? <GoLink className={detail ? "service-card is-detail" : "service-card"} go={navigate} args={["solution", undefined, item.page]}>{body}</GoLink>
-    : <div className={detail ? "service-card is-detail" : "service-card"}>{body}</div>;
+    ? <GoLink className={cls} go={navigate} args={["solution", undefined, item.page]}>{body}</GoLink>
+    : <div className={cls}>{body}</div>;
 }
 
 /** サービスのまとまり（01 バックオフィス支援 など）の見出し。トップでは「COANA TOKYOにできること」（h2）の下なので h3、サービス一覧ページでは h2 */
@@ -486,14 +488,73 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
   );
 }
 
-/** 02 サービスのご案内（2026-10-26 オーナー指示：「合う・合わない」ではなく、状況から該当するサービスを案内する）：サポートチャットの診断（content/chat.json）の1問目をここで答えられる。答えると、チャットがその続きから開く */
+/** 02 支援事例（2026-10-31 打ち出しの見直し）：お客さまの社名を伏せた事例を「前」→「後」＋結果で並べ、関係するサービスへつなぐ。
+ *  「日々の支援のなかから選んだ例」として見せ、最後に「ほかにも仕組みにしてきた業務」を並べて、件数が少なく見えないようにする（件数の数字は書かない）。
+ *  文言は content/home.json の cases / cases_more（CMS「トップページ」）。数字は作業記録にあるものだけ（CLAUDE.md：数字・実績を捏造しない） */
+type CaseItem = { client: string; title: string; before: string; after: string; result?: string; note?: string; tools?: string[]; slugs?: string[] };
+function CasesSection({ navigate }: { navigate: Nav }) {
+  const h = home as { cases?: CaseItem[]; cases_title?: string; cases_lead?: string; cases_more_title?: string; cases_more?: string[] };
+  const items = (h.cases ?? []).filter((e) => e.client && e.before && e.after);
+  if (!items.length) return null;
+  const more = (h.cases_more ?? []).filter(Boolean);
+  const nameOf = (slug: string) => solutions.find((s) => s.slug === slug)?.nav_label;
+  return (
+    <section className="section sky-section case-section" id="cases">
+      <div className="container">
+        <NumHead n="02" title={<Lines text={h.cases_title || "支援事例"} />} side={<p>{h.cases_lead}</p>} />
+        <ul className="case-grid">
+          {items.map((e, i) => (
+            <li key={e.client + e.title} className="case-card" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+              <p className="case-client"><span className="case-no" lang="en" aria-hidden="true">Case {String(i + 1).padStart(2, "0")}</span>{e.client}</p>
+              <h3 className="case-title">{e.title}</h3>
+              <div className="case-row is-before">
+                <span className="case-tag" lang="en">Before</span>
+                <p>{e.before}</p>
+              </div>
+              <span className="case-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg></span>
+              <div className="case-row is-after">
+                <span className="case-tag" lang="en">After</span>
+                <p>{e.after}</p>
+              </div>
+              {e.result && (
+                <p className="case-result"><Icon name="check" size={16} /><span>{e.result}</span>{e.note && <small>{e.note}</small>}</p>
+              )}
+              {((e.tools ?? []).length > 0 || (e.slugs ?? []).some((s) => nameOf(s))) && (
+                <div className="case-foot">
+                  {(e.tools ?? []).length > 0 && <p className="case-tools" aria-label="使ったツール">{(e.tools ?? []).map((t) => <span key={t}>{t}</span>)}</p>}
+                  {(e.slugs ?? []).some((s) => nameOf(s)) && (
+                    <ul className="case-links" aria-label="関係するサービス">
+                      {(e.slugs ?? []).filter((s) => nameOf(s)).map((s) => (
+                        <li key={s}><GoLink go={navigate} args={["solution", undefined, s]}>{nameOf(s)}<Icon name="arrow" size={14} /></GoLink></li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+        {more.length > 0 && (
+          <div className="case-more" data-reveal>
+            <p className="case-more-title">{h.cases_more_title || "ほかにも、こうした業務を仕組みにしてきました"}</p>
+            <ul className="case-more-list" aria-label="仕組みにしてきた業務の例">
+              {more.map((t) => <li key={t}>{t}</li>)}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/** 03 サービスのご案内（2026-10-26 オーナー指示：「合う・合わない」ではなく、状況から該当するサービスを案内する）：サポートチャットの診断（content/chat.json）の1問目をここで答えられる。答えると、チャットがその続きから開く */
 function FinderSection() {
   const q = diagnosis.questions[0];
   const total = diagnosis.questions.length;
   return (
     <section className="section sky-section sky-dark finder-section" id="finder">
       <div className="container">
-        <NumHead n="02" title={<>状況から<br />サービスを探す</>} side={<p>{total}つの質問に答えると、いまの状況がどのサービスに当たるかをご案内します。約1分・個人情報の入力は不要です。</p>} />
+        <NumHead n="03" title={<>状況から<br />サービスを探す</>} side={<p>{total}つの質問に答えると、いまの状況がどのサービスに当たるかをご案内します。約1分・個人情報の入力は不要です。</p>} />
         <div className="finder-grid">
           <p className="finder-big" data-reveal>質問に答えると、<br />該当するサービスが<wbr />分かる。<small>1問目を選ぶとチャットが開き、残りの質問にそのまま進めます。</small></p>
           <div className="finder-card" data-reveal>
@@ -511,15 +572,15 @@ function FinderSection() {
   );
 }
 
-/** 03 支援スタイル：大きな一文（会社概要のメッセージ見出し）＋4つの強み＋ご利用までの流れ */
-const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["設", "Design"], team: ["担", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
-const FLOW_TEXT = ["フォームまたはLINE公式アカウントから、ご相談内容をお送りください。", "担当者からご連絡し、現状の業務や課題を伺います。", "課題と優先順位を整理し、必要な範囲に絞ってご提案します。", "ご納得いただけてからご契約し、支援を始めます。"];
+/** 04 支援スタイル：大きな一文（会社概要のメッセージ見出し）＋4つの強み＋ご利用までの流れ */
+const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["業", "Workflow"], engineering: ["作", "Engineering"], operate: ["運", "Operation"], team: ["担", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
+const FLOW_TEXT = ["フォームまたはLINE公式アカウントから、ご相談内容をお送りください。", "担当者からご連絡し、現状の業務と困りごとを伺います。", "効くところから順に、必要な範囲に絞ってご提案します。", "ご納得いただけてからご契約し、支援を始めます。"];
 function StyleSection() {
   const mission = (about.message_heading || "").split("\n").filter(Boolean);
   return (
     <section className="section sky-section style-section" id="style">
       <div className="container">
-        <NumHead n="03" title={<>{mission.map((line, i) => <span key={i} className="num-head-line">{line}</span>)}</>} side={<p>{home.strengths_title}</p>} />
+        <NumHead n="04" title={<>{mission.map((line, i) => <span key={i} className="num-head-line">{line}</span>)}</>} side={<p>{home.strengths_title}</p>} />
         <ul className="poster-grid">
           {home.strengths.map((s, i) => {
             const [k, en] = STYLE_KANJI[s.icon] || ["", ""];
@@ -575,7 +636,7 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
   return (
     <section className="section sky-section topics-home">
       <div className="container">
-        <NumHead n="04" title={home.topics_title} side={<GoLink className="text-link" go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={18} /></GoLink>} />
+        <NumHead n="05" title={home.topics_title} side={<GoLink className="text-link" go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={18} /></GoLink>} />
         {latest.length ? (
           <ul className="topic-tiles">
             {latest.map((a) => (
@@ -604,11 +665,12 @@ function Home({ navigate }: { navigate: Nav }) {
     <main className="home-page">
       <HeroSection navigate={navigate} />
       <ServicesHome navigate={navigate} />
+      <CasesSection navigate={navigate} />
       <FinderSection />
       <StyleSection />
       <ToolBand />
       <TopicsHome navigate={navigate} />
-      <FaqSection numbered="05" />
+      <FaqSection numbered="06" />
       <ContactBand navigate={navigate} big />
     </main>
   );
@@ -690,8 +752,8 @@ function Services({ navigate }: { navigate: Nav }) {
         <section key={key} id={key} className="section service-detail">
           <div className="container">
             <ServiceGroupHead n={n} data={data} level={2} />
-            <div className="service-card-grid is-detail">
-              {(data.items as ServiceItem[]).map((item) => <ServiceCard key={item.name} item={item} navigate={navigate} detail />)}
+            <div className="service-card-grid is-stack">
+              {(data.items as ServiceItem[]).map((item) => <ServiceCard key={item.name} item={item} navigate={navigate} detail stack />)}
             </div>
           </div>
         </section>
@@ -1123,8 +1185,8 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
-    const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", services: "サービス｜経理・バックオフィス改善、ITツール導入、マーケティング支援", topics: "トピックス｜セミナー登壇・メディア掲載・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜バックオフィス・マーケティングのご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
-    const base = "中小企業のバックオフィス・集客支援｜経理代行・業務改善 | COANA TOKYO合同会社（東京・港区）";
+    const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", services: "サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行", topics: "トピックス｜業務効率化・クラウド会計のコラム・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜業務の効率化・自動化・経理代行のご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
+    const base = "中小企業の業務効率化・自動化・IT化支援｜経理代行・バックオフィス代行 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
   }, [page, routeKey]);

@@ -117,6 +117,8 @@ const LABELS = {
     relayGoal: "受け取るもの",
     scroll: "本文へスクロール",
     facts: "サービスの特徴",
+    cases: "支援事例",
+    casesLead: "仕組みの作り方が伝わりやすい例を選んでご紹介します。お客さまの社名は伏せています。",
   },
   en: {
     consult: "Book a free consultation",
@@ -161,6 +163,8 @@ const LABELS = {
     relayGoal: "What you get",
     scroll: "Scroll to content",
     facts: "Key points",
+    cases: "Case studies",
+    casesLead: "A few examples chosen to show how we work. Client names are withheld.",
   },
 };
 type Lang = keyof typeof LABELS;
@@ -321,12 +325,10 @@ function BeforeAfter({ sol }: { sol: Solution }) {
   return (
     <section className="section lp-ba-section" id="lp-ba">
       <div className="container">
+        <SectionTitle en="Before / After" center lead={ba.lead}><Lines text={ba.title || L.baTitle} /></SectionTitle>
         <div data-reveal>
         <div className={after ? "lp-ba is-after" : "lp-ba"} ref={ref}>
           <div className="lp-ba-copy">
-            <span className="eyebrow" lang="en">Before / After</span>
-            <h2><Lines text={ba.title || L.baTitle} /></h2>
-            {ba.lead && <p>{ba.lead}</p>}
             <div className={counting ? "lp-ba-switch is-counting" : "lp-ba-switch"} style={{ ["--wait" as string]: `${BA_WAIT_MS}ms` }}>
               <span className={after ? undefined : "on"} aria-hidden="true">{L.baBefore}</span>
               <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label={L.baAria} onClick={toggle} />
@@ -795,6 +797,31 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   );
 }
 
+/* ───────────────────────── 3.5 支援事例（社名を伏せた事例）。次の「導入前／導入後」は 2 の BeforeAfter（事例がないLPで、仕組みのあとに表示） ───────────────────────── */
+
+function Cases({ sol }: { sol: Solution }) {
+  const L = LABELS[langOf(sol)];
+  const items = (sol.cases ?? []).filter((c) => c.client && c.title);
+  if (!items.length) return null;
+  return (
+    <section className="section lp-cases">
+      <div className="container">
+        <SectionTitle en="Case" center lead={sol.cases_lead ?? L.casesLead}>{sol.cases_title || L.cases}</SectionTitle>
+        <ul className={`lp-case-grid is-${Math.min(items.length, 3)}`}>
+          {items.map((c) => (
+            <li key={c.client + c.title} className="lp-case" data-reveal>
+              <p className="lp-case-client">{c.client}</p>
+              <h3>{c.title}</h3>
+              <p className="lp-case-text">{c.text}</p>
+              {c.result && <p className="lp-case-result"><Icon name="check" size={15} /><span>{c.result}</span></p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── 4. 支援内容とプラン ───────────────────────── */
 
 function Support({ sol }: { sol: Solution }) {
@@ -1019,8 +1046,12 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
   return (
     <main className={`solution-page lp lp-lang-${langOf(sol)}${signal ? " lp-signal" : ""}`}>
       <Hero sol={sol} navigate={navigate} />
-      {signal ? <BeforeAfter sol={sol} /> : <Problems sol={sol} />}
+      {!signal && <Problems sol={sol} />}
       <Scheme sol={sol} navigate={navigate} />
+      <Cases sol={sol} />
+      {/* 導入前／導入後（2026-10-31 オーナー指示で位置を見直し）：ヒーロー直下ではなく「仕組み」のあとに置く。
+          まず何をするかを読んでから「こう変わる」を見る流れ。支援事例があるLPは事例が実際の前後を示すので、before_after は持たせない（content を空にしてある） */}
+      {signal && <BeforeAfter sol={sol} />}
       <Support sol={sol} />
       {/* 新デザインのLPでは「ご利用イメージ」を出さない（導入前／導入後の切り替えと内容が重なるため。2026-10-26 LP の簡素化） */}
       {!signal && <Scenarios sol={sol} />}

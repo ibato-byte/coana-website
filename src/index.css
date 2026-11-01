@@ -542,6 +542,13 @@ a.service-card:hover .art * { animation-play-state: running; }
 .service-card.is-detail .service-card-body { padding: 20px 22px 4px; }
 .service-card.is-detail .service-card-text { font-size: 14px; line-height: 1.85; }
 .service-card.is-detail .service-card-more { padding: 6px 22px 18px; }
+/* サービス一覧ページ（2026-10-31）：絵を上に積む縦型を3列で。5枚＋3枚でも段が崩れない */
+.service-card-grid.is-stack { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.service-card.is-stack .service-card-art { padding: 14px 22px 0; }
+.service-card.is-stack .service-card-body { padding: 18px 22px 4px; }
+.service-card.is-stack .service-card-body strong { font-size: 17px; }
+.service-card.is-stack .service-card-text { font-size: 14px; line-height: 1.85; }
+.service-card.is-stack .service-card-more { padding: 8px 22px 18px; }
 
 /* ───────────────────────────── 支援スタイル（選ばれる理由・ツール・ミッション） ───────────────────────────── */
 
@@ -1298,6 +1305,7 @@ a.article-service-card:hover { border-color: rgba(8, 127, 229, .5); box-shadow: 
   .hero-visual { max-width: 440px; margin: 10px auto 0; }
   .service-card-grid { grid-template-columns: 1fr 1fr; }
   .service-card-grid.is-detail { grid-template-columns: 1fr; }
+  .service-card-grid.is-stack { grid-template-columns: 1fr 1fr; gap: 14px; }
   .style-grid { grid-template-columns: 1fr 1fr; }
   .about-values { grid-template-columns: 1fr 1fr; }
     }
@@ -1349,6 +1357,13 @@ a.article-service-card:hover { border-color: rgba(8, 127, 229, .5); box-shadow: 
   .service-card.is-detail .service-card-body { padding: 14px 14px 2px; }
   .service-card.is-detail .service-card-text { font-size: 13px; line-height: 1.75; }
   .service-card.is-detail .service-card-more { padding: 4px 14px 14px; }
+  .service-card-grid.is-stack { grid-template-columns: 1fr; gap: 12px; }
+  .service-card.is-stack { display: grid; grid-template-columns: 116px 1fr; grid-template-rows: 1fr auto; }
+  .service-card.is-stack .service-card-art { grid-row: span 2; display: flex; align-items: center; padding: 6px; }
+  .service-card.is-stack .service-card-body { padding: 14px 14px 2px; }
+  .service-card.is-stack .service-card-body strong { font-size: 15px; }
+  .service-card.is-stack .service-card-text { font-size: 13px; line-height: 1.75; }
+  .service-card.is-stack .service-card-more { padding: 4px 14px 14px; }
   .style-grid { gap: 8px; margin-top: 30px; }
   .style-card { padding: 16px 14px; }
   /* スマホ：光は止め、ツールは線でつながずに並べる */

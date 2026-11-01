@@ -139,9 +139,9 @@
       "text": "Scriveners, tax accountants, labor and social security attorneys, and lawyers, kept aligned."
     },
     {
-      "icon": "megaphone",
-      "name": "First customers in Japan",
-      "text": "Website, social media, sales, and events designed for the Japanese market."
+      "icon": "mail",
+      "name": "Ready to receive inquiries",
+      "text": "Landing page, contact form, and LINE set up, with automatic notifications so no inquiry is missed."
     }
   ],
   "scope": {
@@ -178,13 +178,13 @@
         ]
       },
       {
-        "name": "Customers & culture",
+        "name": "Customs & tools",
         "icon": "globe",
         "items": [
           "Japanese business customs briefing",
-          "Website and social media",
-          "Sales process design",
-          "Events and seminars"
+          "Landing page, contact form, and LINE",
+          "Automatic inquiry notifications",
+          "Chat, e-mail, and other basic tools"
         ]
       }
     ],
@@ -222,10 +222,10 @@
       {
         "name": "Ongoing Support",
         "tag": "After launch",
-        "text": "Regular check-ins on your bookkeeping, tools, and marketing. Hands-on work is quoted per service.",
+        "text": "Regular check-ins on your bookkeeping and tools. Hands-on work is quoted per service.",
         "includes": [
           "Advice on bookkeeping and tools",
-          "Advice on website, social, and sales",
+          "Advice on automation and new tools",
           "Coordination with professionals",
           "Monthly check-ins"
         ],
@@ -279,7 +279,7 @@
     },
     {
       "name": "Ongoing support",
-      "text": "Bookkeeping, monthly numbers, sales, and answers in English."
+      "text": "Bookkeeping, monthly numbers, tools, and answers in English."
     }
   ],
   "flow_note": "We work around your launch date. Early-stage talks are welcome.",
@@ -307,7 +307,7 @@
     }
   ],
   "cta_title": "Tell us your plan. We will tell you what comes next.",
-  "cta_text": "Free, no-obligation consultation in English, online. \nThe form is in Japanese; feel free to write in English.",
+  "cta_text": "Free, no-obligation consultation in English, online.\nThe form is in Japanese; feel free to write in English.",
   "tools_title": "Tools we work with",
   "tools_note": "Most Japanese cloud accounting tools have limited English. We help you choose and use them.",
   "tools": [

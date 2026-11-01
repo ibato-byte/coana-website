@@ -34,8 +34,8 @@ export function diagnose(config: DiagConfig, answers: number[]): DiagResult {
     return best?.phrase ?? "";
   };
   const ranked = [...total.entries()].filter(([slug, score]) => score > 0 && config.reasons[slug]).sort((a, b) => b[1] - a[1]);
-  // どの回答でも、必ず1つは提案する（点がつかなかった場合は、全体を見渡せるバックオフィス代行・DX支援）
-  if (!ranked.length) ranked.push(["backoffice-dx", 1]);
+  // どの回答でも、必ず1つは提案する（点がつかなかった場合は、業務全体を見渡す業務改善・IT化支援）
+  if (!ranked.length) ranked.push(["it-consulting", 1]);
   const [first, second] = ranked;
   const chosen = second && second[1] >= first[1] * 0.6 && second[1] >= 3 ? [first, second] : [first];
   const picks = chosen.map(([slug, score], i) => {

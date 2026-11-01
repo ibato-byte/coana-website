@@ -16,6 +16,10 @@
 # 公開日の変更で URL が変わった記事 → 新しい URL（旧 URL がインデックス済みのため）
 /topics/20261006-cloud-accounting-setup  /topics/20260318-cloud-accounting-setup  301
 
+# 2026-10-31 打ち出しの見直しで廃止したサービスLP → サービス一覧（旧URLがインデックス済みのため）
+/services/sales-support   /services   301
+/services/seminar-event   /services   301
+
 # サービス → サービス一覧
 /service         /services   301
 /service/*       /services   301
