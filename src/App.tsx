@@ -48,7 +48,7 @@ function Logo({ navigate, white = false }: { navigate: Nav; white?: boolean }) {
 
 /* ───────────────────────── Header / Footer ───────────────────────── */
 
-function Header({ page, navigate }: { page: Page; navigate: Nav }) {
+function Header({ page, navigate, en = false }: { page: Page; navigate: Nav; en?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -84,11 +84,11 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     navigate(target);
   };
   return (
-    // ヘッダー・フッターは日本語。英語ページ（<html lang="en">）でも言語を正しく伝えるため lang="ja" を明示する
-    <header lang="ja" className={scrolled ? "site-header is-scrolled" : "site-header"}>
+    // ヘッダーは日本語。英語ページ（英語版の創業支援）だけ英語にする（2026-11-01 オーナー指示「英語版も改善」。リンク先は日本語なので「(JP)」を添える）
+    <header lang={en ? "en" : "ja"} className={scrolled ? "site-header is-scrolled" : "site-header"}>
       <div className="header-inner">
         <Logo navigate={navigate} />
-        <nav className="desktop-nav" aria-label="メインナビゲーション">
+        <nav className="desktop-nav" aria-label={en ? "Main navigation" : "メインナビゲーション"}>
           {navItems.map(([target, label, hash]) => (
             <GoLink
               key={label}
@@ -96,11 +96,11 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
               go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}
               aria-current={!hash && page === target ? "page" : undefined}
             >
-              {label}
+              {en ? EN_NAV[target] : label}
             </GoLink>
           ))}
           <GoLink className="button button-small" go={go} args={["contact"]}>
-            相談する
+            {en ? "Contact" : "相談する"}
             <Icon name="arrow" size={17} />
           </GoLink>
         </nav>
@@ -109,20 +109,20 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls="mobile-nav"
-          aria-label={open ? "メニューを閉じる" : "メニューを開く"}
+          aria-label={en ? (open ? "Close menu" : "Open menu") : open ? "メニューを閉じる" : "メニューを開く"}
         >
           <span className="menu-button-bars" aria-hidden="true" />
         </button>
       </div>
       {open && (
-        <nav className="mobile-nav" id="mobile-nav" aria-label="モバイルナビゲーション">
+        <nav className="mobile-nav" id="mobile-nav" aria-label={en ? "Mobile navigation" : "モバイルナビゲーション"}>
           {([["home", "ホーム", "Top"], ...links] as [Page, string, string, string?][]).map(([target, label, en2, hash], i) => (
             <GoLink key={label} style={{ animationDelay: `${i * 0.05}s` }} go={(...a) => { setOpen(false); navigate(...a); }} args={[target, hash]}>
-              <span>{label}</span><small lang="en">{en2}</small>
+              {en ? <><span lang="en">{EN_NAV[target]}</span><small lang="ja">{label}</small></> : <><span>{label}</span><small lang="en">{en2}</small></>}
             </GoLink>
           ))}
           <GoLink className="mobile-nav-cta" style={{ animationDelay: "0.25s" }} go={go} args={["contact"]}>
-            <span>無料で相談する</span>
+            <span>{en ? "Free consultation" : "無料で相談する"}</span>
           </GoLink>
           <p className="mobile-nav-foot">{settings.company_name}</p>
         </nav>
@@ -130,6 +130,9 @@ function Header({ page, navigate }: { page: Page; navigate: Nav }) {
     </header>
   );
 }
+
+/** ヘッダーの英語表記（英語ページのときだけ。リンク先は日本語のページ） */
+const EN_NAV: Partial<Record<Page, string>> = { home: "Home (JP)", services: "Services (JP)", about: "About (JP)", topics: "Topics (JP)" };
 
 /** フッターの英語表記（英語ページのときだけ。リンク先の各ページは日本語なので、その旨を見出しに添える） */
 const FOOTER_EN = {
@@ -1245,13 +1248,15 @@ export default function App() {
   else if (page === "privacy") content = <Privacy />;
   else if (page === "notfound") content = <NotFound navigate={navigate} />;
   else content = <Home navigate={navigate} />;
+  const isEnPage = page === "solution" && solutions.some((sol) => sol.lang === "en" && window.location.pathname.replace(/\/+$/, "") === "/services/" + sol.slug);
   return (
     <div className="app-shell">
-      <Header page={page} navigate={navigate} />
+      <Header page={page} navigate={navigate} en={isEnPage} />
       <div key={`${page}-${routeKey}`} className="page-fade">{content}</div>
-      <Footer navigate={navigate} en={page === "solution" && solutions.some((sol) => sol.lang === "en" && window.location.pathname.replace(/\/+$/, "") === "/services/" + sol.slug)} />
+      <Footer navigate={navigate} en={isEnPage} />
       <BackToTop />
-      <ChatLauncher navigate={navigate} page={page} />
+      {/* サポートチャットは日本語だけなので、英語ページでは出さない（お問い合わせの帯・固定バーと同じ扱い） */}
+      {!isEnPage && <ChatLauncher navigate={navigate} page={page} />}
     </div>
   );
 }

@@ -669,3 +669,5 @@ a.solution-other.is-all { justify-content: space-between; background: var(--sky-
   .lp-hero-facts li { padding: 10px 4px; }
 }
 
+/* 英語ページの固定バーはチャットのボタンがない（チャットは日本語のみ）ので2列 */
+.lp-lang-en .lp-sticky { grid-template-columns: 1fr auto; }

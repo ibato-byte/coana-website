@@ -1009,9 +1009,11 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
       </GoLink>
       <LineButton place="solution_sticky" label="LINE" tabIndex={show ? 0 : -1} />
       {/* チャットはこのバーにまとめる（固定バーの表示中は、画面右下のチャットのボタンは出さない） */}
-      <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label="COANA TOKYO サポートチームにチャットで相談する">
-        <img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" />
-      </button>
+      {langOf(sol) === "ja" && (
+        <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label="COANA TOKYO サポートチームにチャットで相談する">
+          <img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" />
+        </button>
+      )}
     </div>
   );
 }
