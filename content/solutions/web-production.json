@@ -281,7 +281,7 @@
     {
       "client": "コーポレートサイト（Cloudflare Pagesで運用）",
       "title": "サイトの点検・改善・コラム作成を自動化し、無料枠で運用",
-      "text": "毎日の自動点検（表示・リンク・構造化データなど）、週次の改善、週1本のコラム作成、AIチャットを、自社開発の管理画面「Automation Hub」でまとめて管理。GitHub Actions・Cloudflare Pages・Workers AIの無料枠だけで動いています。",
+      "text": "毎日の自動点検（表示・リンク・構造化データなど）、週次の改善、週1本のコラム作成、AIチャットをすべて自動化。GitHub Actions・Cloudflare Pages・Workers AIの無料枠だけで動いています。",
       "result": "Lighthouse（モバイル）SEO・アクセシビリティ・ベストプラクティス 100"
     }
   ]
