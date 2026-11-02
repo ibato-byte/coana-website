@@ -861,7 +861,8 @@ function Support({ sol }: { sol: Solution }) {
                 <article key={p.name} className={p.featured ? "lp-plan is-featured" : "lp-plan"}>
                   {p.tag && <span className="lp-plan-tag">{p.tag}</span>}
                   <div className="lp-plan-head">
-                    <h4>{p.name}</h4>
+                    {/* 見出しの階層：新しいデザイン（signal）は小見出し（h3）がないので h3、従来のデザインは小見出しの下なので h4 */}
+                    {signal ? <h3>{p.name}</h3> : <h4>{p.name}</h4>}
                     {p.price && <p className="lp-plan-price">{p.price}</p>}
                   </div>
                   {p.text && <p className="lp-plan-text">{p.text}</p>}
