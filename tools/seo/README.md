@@ -10,7 +10,7 @@
 | `fetch-prod-data.mjs` | `seo-data` の Issue から最新の本番データを取り出す（curl で GitHub API） | 週次タスク（クラウドの作業環境） |
 | `report.mjs` | レポート `docs/seo-reports/YYYY-MM-DD.md`・`.json` を作る（前回との差分つき） | 週次タスク |
 | `weekly.sh` | ビルド → サーバー起動 → ローカル点検 → 本番データ取得 → レポートの下書き（`NO_REPORT=1` で点検だけ） | 週次タスク |
-| `run-tests.sh` | 自動マージの合格ライン（ローカル点検 NG 0、full-check、story-test、wheel、a11y を順に） | 週次タスク |
+| `run-tests.sh` | 自動マージの合格ライン（ローカル点検 NG 0、full-check、a11y を順に） | 週次タスク |
 
 ```sh
 bash tools/seo/weekly.sh                      # 点検とレポートの下書き
