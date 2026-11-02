@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="640" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">受け渡しの準備で決めること</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="40" y="84" width="520" height="150" rx="16" fill="#ffffff" stroke="#16334d" stroke-width="2"/>
+    <text x="64" y="124" font-size="28" font-weight="700">御社</text>
+    <text x="64" y="168">やること：資料を共有フォルダへ、</text>
+    <text x="64" y="208">ソフトの権限を用意する</text>
+    <path d="M300 240 V266" stroke="#087fe5" stroke-width="3"/><path d="M290 258 L300 270 L310 258" fill="none" stroke="#087fe5" stroke-width="3"/>
+    <rect x="40" y="276" width="520" height="150" rx="16" fill="#eef6fc" stroke="#087fe5" stroke-width="2"/>
+    <text x="64" y="316" font-size="28" font-weight="700" fill="#087fe5">経理代行の担当</text>
+    <text x="64" y="360">決めたルールで入力・確認、</text>
+    <text x="64" y="400">質問はチャットで</text>
+    <path d="M300 432 V458" stroke="#087fe5" stroke-width="3"/><path d="M290 450 L300 462 L310 450" fill="none" stroke="#087fe5" stroke-width="3"/>
+    <rect x="40" y="468" width="520" height="150" rx="16" fill="#ffffff" stroke="#4a667d" stroke-width="2" stroke-dasharray="10 8"/>
+    <text x="64" y="508" font-size="28" font-weight="700">顧問の税理士</text>
+    <text x="64" y="552">月次のデータや決算の資料を</text>
+    <text x="64" y="592">受け取る方法を決めておく</text>
+  </g>
+</svg>
