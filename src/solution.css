@@ -317,7 +317,7 @@ a.lanes-cta-link:hover svg { transform: translateX(3px); }
 .lp-plan.is-featured { border: 2px solid var(--sky-deep); box-shadow: var(--shadow-md); }
 .lp-plan-tag { position: absolute; top: -13px; left: 22px; padding: 3px 12px; border-radius: 999px; background: var(--sky-soft); color: var(--sky-ink); font-size: 12px; font-weight: 800; }
 .lp-plan.is-featured .lp-plan-tag { background: var(--yellow); color: var(--navy-ink); }
-.lp-plan h4 { margin: 0; font-size: 19px; line-height: 1.5; }
+.lp-plan :is(h3, h4) { margin: 0; font-size: 19px; line-height: 1.5; }
 .lp-plan-text { margin: 6px 0 0; font-size: 13.5px; line-height: 1.75; color: var(--navy-soft); }
 .lp-plan ul { list-style: none; margin: 14px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line-soft); display: grid; gap: 6px; }
 .lp-plan li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; line-height: 1.6; font-weight: 500; }

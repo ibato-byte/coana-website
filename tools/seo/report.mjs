@@ -32,7 +32,7 @@ const diffList = (now = [], before = []) => {
 const line = (x) => `- [${x.kind}] ${x.where}：${x.msg}`;
 const list = (xs, empty = '- なし') => (xs?.length ? xs.map(line).join('\n') : empty);
 const arrow = (a, b, unit = '', lowerIsBetter = false) => {
-  if (a == null) return `${b ?? '—'}${unit}`;
+  if (a == null) return b == null ? '—' : `${b}${unit}`;
   if (b == null) return '—';
   const d = b - a;
   if (!d) return `${b}${unit}`;
