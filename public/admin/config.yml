@@ -325,8 +325,8 @@ collections:
         file: content/home.json
         fields:
           - { label: ヒーロー｜小見出し（英字）, name: hero_kicker, widget: string }
-          - { label: ヒーロー｜キャッチコピー1行目, name: hero_line1, widget: string }
-          - { label: ヒーロー｜キャッチコピー2行目, name: hero_line2, widget: string }
+          - { label: ヒーロー｜キャッチコピー1行目, name: hero_line1, widget: string, hint: "句読点（、。）も含めて、入力したとおりに表示されます。自動では付きません" }
+          - { label: ヒーロー｜キャッチコピー2行目, name: hero_line2, widget: string, hint: "句読点（、。）も含めて、入力したとおりに表示されます。自動では付きません" }
           - { label: ヒーロー｜切り替わるキーワード, name: hero_words, widget: list, field: { label: キーワード, name: word, widget: string } }
           - { label: ヒーロー｜キーワードに続く文, name: hero_solve_text, widget: string }
           - { label: ヒーロー｜説明文（60文字前後）, name: hero_lead, widget: text }
