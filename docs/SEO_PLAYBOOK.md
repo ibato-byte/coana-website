@@ -116,8 +116,8 @@ Lighthouse の数値は回線や計測環境で揺れる。1回の悪化で慌�
 ## 6. テスト（自動マージの条件）
 
 `bash tools/seo/run-tests.sh` の「全テスト合格」と、PR の Cloudflare Pages のチェック成功の両方。
-中身：`tools/seo/check-site.mjs`（ローカル、NG 0）、`tools/qa/full-check.cjs`（全ページ × 8幅＋横向き）、`story-test`（仕組みの図が全工程点灯の完成形で静止しているか）、`wheel`（ホイールだけで図が表示されるか）、`a11y`、`column-approval`。
-`story-test`・`wheel` の対象の LP は `content/solutions` から自動で読む（LP を足す・廃止しても書き換え不要）。
+中身：`tools/seo/check-site.mjs`（ローカル、NG 0）、`tools/qa/full-check.cjs`（全ページ × 8幅＋横向き）、`a11y`、`column-approval`。
+`story-test`・`wheel` は鳩のアニメーションの廃止に合わせて合格ラインから外した（2026-11-02 オーナー判断、Automation Hub 依頼 #168）。中身は今のサイト（仕組みの図が全工程点灯の完成形で静止しているか／ホイールだけで図が表示されるか）を確かめる形に作り直してあり、対象の LP は `content/solutions` から自動で読む。LP の図や演出を変えたときの手動の確認に使う。
 重いテストは同時に走らせない。テストを飛ばす・弱める・書き換えて通すことはしない（点検ツールの誤検出を直すときは、その理由を PR に書く）。
 
 ### テストがサイトの変更に追いついていないとき（2026-11-02 オーナー決定「完全自動になるように」）
