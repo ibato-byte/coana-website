@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node tools/qa/cms-verbatim.mjs && vite build",
     "preview": "vite preview",
     "format": "oxfmt"
   },
@@ -31,3 +31,4 @@
     "linkedom": "0.18.13"
   }
 }
+

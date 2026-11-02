@@ -8,6 +8,7 @@ COANA TOKYO合同会社のWebサイト（https://coana.co.jp）。オーナー�
 - Vite ＋ React 19 ＋ TypeScript。ページは `src/App.tsx`（トップ・会社概要・サービス一覧・トピックス・お問い合わせ）と `src/SolutionPage.tsx`（各サービスLP）。
 - **打ち出し（2026-10-31 オーナー決定）**：「業務効率化・システム化・IT化・エンジニアリングで各業務を軽くする会社」。サービスは「01 業務の仕組みをつくる（業務改善・IT化支援／自動化・システム開発／クラウド会計・ITツール導入／LP・Webサイト制作／創業支援）」と「02 日々の業務を任せる（経理代行／バックオフィス代行／SNS運用代行）」の2つ（`content/services.json` の `build`／`operate`）。営業支援・セミナー支援のLPは廃止済み（旧URLは `_redirects`）。「色々できる」に戻さない。
 - 中身は `content/`（JSON／Markdown）。Decap CMS（`/admin`、設定は `public/admin/config.yml`）で編集される。読み込みは `src/content.ts`。
+- **CMS の文言は、入力されたとおりに表示する**（2026-11-03 オーナー指示）。コードの側で句読点（、。）などの文字を足さない（トップのヒーローで「、」「。」を足していて、CMS で消しても表示されていた）。`npm run build` の最初に `tools/qa/cms-verbatim.mjs` が検査し、見つかるとビルド（Cloudflare Pages のチェック）が不合格になる。CMS で使う変数名を増やしたときは、その検査の `CMS_VARS` にも足す。
 - ビルド時（`vite.config.ts`）に各ページの HTML・タイトル・説明文・構造化データ・クローラー向けの本文（`.seo-fallback`）、sitemap.xml・feed.xml・llms.txt・`chat-knowledge.json` を書き出す（プリレンダー相当）。
 - 本番は Cloudflare Pages（main への push で自動デプロイ。PR ごとにプレビュー `*.coana-website.pages.dev`）。旧URLの転送は `public/_redirects`、ヘッダーは `public/_headers`。
 - サポートチャットの AI は Pages Functions（`functions/api/chat.ts`）＋ Workers AI（バインディング名 `AI`、無料枠内。任意で KV `CHAT_KV`）。AI が使えないときはサイト内検索の代替応答。

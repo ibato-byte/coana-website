@@ -321,9 +321,9 @@ function HeroSection({ navigate }: { navigate: Nav }) {
       <Feathers />
       <div className="container sky-hero-top">
         <h1 className="sky-hero-title">
-          <span className="hero-line">{home.hero_line1}、</span>
+          <span className="hero-line">{home.hero_line1}</span>
           <span className="hero-line">
-            {home.hero_line2}。
+            {home.hero_line2}
           </span>
         </h1>
         <p className="sky-kicker" lang="en">{home.hero_kicker}</p>
