@@ -247,7 +247,8 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
           )}
         </div>
       </div>
-      <a className="lp-hero-scroll" href={signal ? "#lp-ba" : "#lp-problems"} aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
+      {/* 下へのボタン：導入前／導入後があるLPはそこへ、支援事例のLP（導入前／導入後を出さない）は「01 仕組み」へ */}
+      <a className="lp-hero-scroll" href={signal ? ((sol.before_after?.items ?? []).length ? "#lp-ba" : "#lp-scheme") : "#lp-problems"} aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
       <span className="page-hero-big lp-hero-big" aria-hidden="true" lang="en">{(sol.en || "Service").toUpperCase()}</span>
     </section>
   );
@@ -770,7 +771,7 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   if (!scheme || !(scheme.nodes ?? []).length) return null;
   const story = STORIES[sol.slug];
   return (
-    <section className="section lp-scheme">
+    <section className="section lp-scheme" id="lp-scheme">
       <div className="container">
         <SectionTitle en="How it works" center lead={scheme.lead}>{scheme.title || L.scheme}</SectionTitle>
         {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : scheme.type === "relay" ? <SchemeRelay scheme={scheme} story={story} labels={{ todo: L.relayTodo, goal: L.relayGoal }} /> : <SchemeDiagram scheme={scheme} story={story} />}
