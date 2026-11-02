@@ -1,7 +1,7 @@
 // 週次タスク用：GitHub Actions が Issue（ラベル seo-data）に残した本番データの最新版を取り出し、JSON ファイルにする。
 // クラウドの作業環境からは本番（coana.co.jp）に直接つなげないため、GitHub 経由で受け取る。
 //
-//   node tools/seo/fetch-prod-data.mjs --dir /tmp/seo   → /tmp/seo/prod.json・/tmp/seo/perf.json
+//   node tools/seo/fetch-prod-data.mjs --dir /tmp/seo   → /tmp/seo/prod.json・perf.json・gsc.json（Search Console。設定済みのとき）
 //
 // GitHub API は curl で呼ぶ（作業環境のプロキシが認証を付ける。Node の fetch はプロキシを通らない）。
 // GitHub Actions など GITHUB_TOKEN がある環境では、それを付けて呼ぶ。
@@ -32,6 +32,7 @@ const data = JSON.parse(m[1]);
 fs.mkdirSync(DIR, { recursive: true });
 if (data.prod) fs.writeFileSync(path.join(DIR, 'prod.json'), JSON.stringify(data.prod, null, 2));
 if (data.perf) fs.writeFileSync(path.join(DIR, 'perf.json'), JSON.stringify(data.perf, null, 2));
+if (data.gsc) fs.writeFileSync(path.join(DIR, 'gsc.json'), JSON.stringify(data.gsc, null, 2));
 const ageDays = (Date.now() - new Date(latest.created_at).getTime()) / 864e5;
 console.log(`本番データ ${data.date}（Issue #${issue.number}、${ageDays.toFixed(1)} 日前）→ ${DIR}/prod.json${data.perf ? `・${DIR}/perf.json` : ''}`);
 if (ageDays > 8) { console.log('データが古い（8日より前）。GitHub Actions「SEO の監視」の週次実行を確認'); process.exit(2); }

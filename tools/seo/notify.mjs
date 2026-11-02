@@ -12,7 +12,7 @@ import crypto from 'node:crypto';
 const args = process.argv.slice(2);
 const opt = (name) => { const i = args.indexOf('--' + name); return i < 0 ? null : (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : true); };
 const read = (f) => (f && fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : null);
-const prod = read(opt('prod')), perf = read(opt('perf'));
+const prod = read(opt('prod')), perf = read(opt('perf')), gsc = read(opt('gsc'));
 const WEEKLY = !!opt('weekly');
 const REPO = process.env.GITHUB_REPOSITORY, TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 const RUN_URL = process.env.GITHUB_RUN_ID ? `https://github.com/${REPO}/actions/runs/${process.env.GITHUB_RUN_ID}` : '';
@@ -57,7 +57,7 @@ if (WEEKLY) {
     body: `毎週月曜の朝、GitHub Actions「SEO の監視」が本番 https://coana.co.jp の点検結果と表示速度（Lighthouse・PageSpeed Insights）をここにコメントします。\n週次タスク（Claude）は \`node tools/seo/fetch-prod-data.mjs\` で最新のコメントを読み、レポート（docs/seo-reports）に使います。\n\nこの Issue は閉じないでください。${FOOTER}`,
     labels: ['seo-data'],
   });
-  const payload = { date: DATE, prod, perf };
+  const payload = { date: DATE, prod, perf, gsc };
   let json = JSON.stringify(payload);
   if (json.length > 55000 && prod) { payload.prod = { ...prod, pages: undefined }; json = JSON.stringify(payload); }
   const lh = perf?.lighthouse ? Object.entries(perf.lighthouse).map(([p, x]) => `| ${p} | ${x.performance} | ${(x.lcpMs / 1000).toFixed(1)}s | ${x.cls} | ${x.tbtMs}ms |`).join('\n') : '';

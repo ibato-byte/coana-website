@@ -7,6 +7,7 @@
 # Automation Hub（ibato-byte/automation-hub の台帳 seo-monitor）：最初に一時停止を確認し（停止中は点検しない）、最後に結果を記録する。Secrets の HUB_TOKEN がなければ Hub は使わない。
 # 無料枠内：1回あたり数分（週次は Lighthouse を含めて 15 分程度）。PageSpeed Insights は無料の API キーを
 # リポジトリの Secrets（PSI_API_KEY）に入れると安定する（なくても動く。取れない週は Lighthouse の値だけ）。
+# Search Console の検索データ（クリック・表示・クエリ・ページ）は、Secrets の GSC_SERVICE_ACCOUNT_JSON があれば週次で取る（tools/seo/gsc.mjs）。
 name: SEO の監視
 
 on:
@@ -79,11 +80,17 @@ jobs:
           export CHROME_PATH="$(command -v google-chrome || command -v chromium-browser || true)"
           node tools/seo/perf.mjs --base https://coana.co.jp --out perf.json || true
 
+      - name: Search Console の検索データ（週次のみ。Secrets に GSC_SERVICE_ACCOUNT_JSON がなければ何もしない）
+        if: env.MODE == 'weekly' && steps.hub.outputs.paused != 'true'
+        env:
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+        run: node tools/seo/gsc.mjs --out gsc.json || true
+
       - name: Issue に記録
         if: steps.hub.outputs.paused != 'true'
         run: |
           if [ "$MODE" = "weekly" ]; then
-            node tools/seo/notify.mjs --prod prod.json --perf perf.json --weekly
+            node tools/seo/notify.mjs --prod prod.json --perf perf.json --gsc gsc.json --weekly
           else
             node tools/seo/notify.mjs --prod prod.json
           fi
@@ -110,5 +117,6 @@ jobs:
           path: |
             prod.json
             perf.json
+            gsc.json
           if-no-files-found: ignore
           retention-days: 30
