@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="520" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">最初の月と、慣れてから</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="30" y="84" width="260" height="410" rx="16" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="160" y="128" font-size="28" font-weight="700" text-anchor="middle">最初の月</text>
+    <text x="54" y="190">質問や確認が</text><text x="54" y="228">多くなりやすい</text>
+    <text x="54" y="300">迷う取引の</text><text x="54" y="338">ルールを決める</text>
+    <text x="54" y="410">資料の出し方を</text><text x="54" y="448">そろえていく</text>
+    <rect x="310" y="84" width="260" height="410" rx="16" fill="#eef6fc" stroke="#087fe5" stroke-width="2"/>
+    <text x="440" y="128" font-size="28" font-weight="700" fill="#087fe5" text-anchor="middle">慣れてから</text>
+    <text x="334" y="190">決めたルールで</text><text x="334" y="228">確認が減っていく</text>
+    <text x="334" y="300">毎月の報告で</text><text x="334" y="338">数字を見る</text>
+    <text x="334" y="410">手間の残る所を</text><text x="334" y="448">一緒に見直す</text>
+  </g>
+</svg>
