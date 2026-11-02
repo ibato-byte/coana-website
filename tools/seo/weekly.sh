@@ -9,7 +9,7 @@ set -u
 cd "$(dirname "$0")/../.."
 OUT=/tmp/seo
 mkdir -p "$OUT"
-rm -f "$OUT/local.json" "$OUT/prod.json" "$OUT/perf.json"
+rm -f "$OUT/local.json" "$OUT/prod.json" "$OUT/perf.json" "$OUT/gsc.json"
 # package-lock.json はリポジトリにないので、そのときは npm install（npm ci はロックファイルが必須）
 if [ ! -d node_modules ]; then
   if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund --no-package-lock; fi
@@ -29,5 +29,6 @@ if [ -z "${NO_REPORT:-}" ]; then
   args=(--local "$OUT/local.json")
   [ -f "$OUT/prod.json" ] && args+=(--prod "$OUT/prod.json")
   [ -f "$OUT/perf.json" ] && args+=(--perf "$OUT/perf.json")
+  [ -f "$OUT/gsc.json" ] && args+=(--gsc "$OUT/gsc.json")
   node tools/seo/report.mjs "${args[@]}"
 fi
