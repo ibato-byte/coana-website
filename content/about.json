@@ -10,8 +10,8 @@
   "profile": [],
   "message_heading": "業務の中身を分かったうえで、\n仕組みをつくる。",
   "profile_role": "代表",
-  "hero_image": "/images/tokyo-skyline-hero.jpg",
   "intro": "COANA TOKYOの考え方と、会社情報をご紹介します。",
+  "hero_image": "/images/tokyo-skyline-hero.jpg",
   "signature": "代表　衣鳩 翔太",
   "profile_photo": "/images/representative-shota-ibato.jpg",
   "company": [
@@ -41,7 +41,7 @@
     },
     {
       "label": "事業内容",
-      "value": "業務効率化・IT化支援事業（業務改善・IT化支援、自動化・システム開発、クラウド会計・ITツール導入支援、LP・Webサイト制作、創業支援）\nバックオフィス運用代行事業（経理代行、バックオフィス代行、SNS運用代行）"
+      "value": "業務効率化・IT化支援事業\nバックオフィス運用代行事業"
     }
   ]
 }
