@@ -1348,6 +1348,8 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 @media (max-height: 899.98px) {
   .home-page .sky-hero-pin.is-pin .sky-verbs { justify-self: end; }
 }
+/* 固定しない画面（高さ700px未満・スマホ・動きを減らす設定）：大きな動詞の最後の行の字面が下のリード文に数px かかるので、少し空ける（2026-11-04） */
+.sky-hero-pin:not(.is-pin) .sky-verb:last-child { margin-bottom: .1em; }
 /* 低い画面（高さ760px以下）：ヒーローの下の余白を増やした分、2・3枚目のカードが下のボタンに近づくので、カードの内側の余白を少し詰める */
 @media (max-height: 760px) {
   .home-page .sky-hero-pin.is-pin .sky-card { gap: 6px; padding-block: 14px; }
