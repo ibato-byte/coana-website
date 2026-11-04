@@ -206,8 +206,8 @@ const VERB_OF: Record<string, string> = {
 };
 
 const VERBS = [
-  { no: "01", en: "Organize", verb: "整える", kicker: "業務を整える", head: ["何から変えるか、", "一緒に決めます。"], text: "いまの仕事のやり方を伺い、「ここを変えるとラクになる」を費用の目安と一緒にお伝えします。会計ソフトの導入や開業準備のご相談も。", slugs: ["it-consulting", "cloud-accounting", "startup-support"] },
-  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["毎月の同じ作業を、", "自動で終わるように。"], text: "Excelへの転記、毎月の集計、請求書づくり。くり返しの作業を自動にします。問い合わせが届くホームページもつくります。", slugs: ["automation", "web-production"] },
+  { no: "01", en: "Organize", verb: "整える", kicker: "業務を整える", head: ["何から変えるか、", "一緒に決めます。"], text: "いまの仕事のやり方を伺い、「ここを変えるとラクになる」を費用の目安と一緒にお伝えします。会計ソフトの導入や開業準備のご相談にも対応します。", slugs: ["it-consulting", "cloud-accounting", "startup-support"] },
+  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["毎月の同じ作業を、", "自動で終わるように。"], text: "Excelへの転記や毎月の集計、請求書づくりなど、くり返しの作業を自動にします。問い合わせが届くホームページもつくります。", slugs: ["automation", "web-production"] },
   { no: "03", en: "Operate", verb: "任せる", kicker: "運用を任せる", head: ["経理も事務もSNSも、", "必要な分だけ任せる。"], text: "記帳や請求、労務の手続き、SNSの投稿まで、担当者を決めて毎月代行します。「請求書だけ」など一部のご依頼も歓迎です。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
 ];
 const VERB_INTERVAL_MS = 7000;
