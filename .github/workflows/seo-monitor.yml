@@ -72,6 +72,15 @@ jobs:
           if [ "$MODE" = "weekly" ]; then extra="--external"; fi
           node tools/seo/check-site.mjs --base https://coana.co.jp --prod $extra --out prod.json || true
 
+      - name: ヒーローの崩れの点検（実際のブラウザで重なり・真ん中の空き・横はみ出しを測る。2026-11-04 オーナー指摘の再発防止）
+        if: steps.hub.outputs.paused != 'true'
+        run: |
+          if npm install --no-save --no-audit --no-fund playwright@1.49.1 >/dev/null 2>&1 && npx playwright install --with-deps chromium >/dev/null 2>&1; then
+            node tools/qa/hero-layout.mjs --base https://coana.co.jp --merge prod.json || true
+          else
+            echo "Playwright を用意できなかったので、ヒーローの点検は飛ばす"
+          fi
+
       - name: 表示速度（週次のみ）
         if: env.MODE == 'weekly' && steps.hub.outputs.paused != 'true'
         env:
