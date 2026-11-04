@@ -9,7 +9,7 @@
 //   「どのレスポンシブでも絶対に問題が起きないように」とのことなので、スマホから 2560px まで、幅×高さの組み合わせで
 //   ヒーローの要素どうしの重なりをすべて測る。
 //   - 文字の要素（見出し・英字の一文・動詞・リード文・チェック項目）とカード・ボタン・下の帯が、互いに重ならない
-//   - 固定するヒーロー（PC）では、動詞の文字の右端とカードの左端の間が HERO_MAX_GAP 以下
+//   - PC（幅1101px以上。固定する・しないとも）では、動詞の文字の右端とカードの左端の間が HERO_MAX_GAP 以下
 //   - ページが横にはみ出さない
 // 毎日の監視（--merge）は代表的な画面サイズだけ。--full は全組み合わせ（直したとき・公開前に使う）。
 // --merge を付けると、NG を「SEO の監視」の prod.json の errors に足す（Issue の作成・解消は tools/seo/notify.mjs に任せる）。
@@ -94,7 +94,8 @@ function measure({ maxGap, tol: TOL_ }) {
   }
   const pin = !!q('.sky-hero-pin.is-pin');
   let gap = null;
-  if (pin && items.カード && items.動詞) {
+  // 固定するとき（PC・高さ900px以上）も、固定しない PC（幅1101px以上）も、言葉とカードの間が空きすぎないこと（2026-11-04 オーナー指摘）
+  if ((pin || innerWidth >= 1101) && items.カード && items.動詞) {
     gap = Math.round(items.カード.l - items.動詞.r);
     if (gap > maxGap) problems.push(`ヒーローの真ん中が空いている（動詞とカードの間 ${gap}px。${maxGap}px 以下にする）`);
   }
