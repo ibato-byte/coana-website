@@ -1455,3 +1455,57 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 }
 /* ヒーローのカード：3つの内容の高さを揃えたので、リンクは本文のすぐ下に（下端に寄せると、リンクが1つのカードで中ほどが大きく空く） */
 .sky-card-body .sky-card-links { margin-top: 6px; }
+
+/* =============================================================
+   PC の見やすさ（2026-11-04 オーナー指示）
+   「MacBook などで画面いっぱいで見づらい。Chrome を 75% にしたくらいの大きさで見やすく。
+    ただし文章の文字は小さくして見づらくしない。全体のバランスを整える」
+   - 幅1101px以上だけ。大きな見出し・飾りの大きな文字・セクションの上下の余白・横幅を約75%に締める
+   - 本文（16px）・カードの説明文・注記などの読む文字は小さくしない
+   - スマホ・タブレット（1100px以下）は今までどおり
+   確認：tools/qa/hero-layout.mjs --full と、主要ページの全幅スクショ
+   ================================================================ */
+@media (min-width: 1101px) {
+  /* 横幅：画面の端まで広がらないよう、左右に余白をとる */
+  .home-page .container, .contact-band .container, .site-footer .container { width: min(1240px, calc(100% - 112px)); }
+
+  /* トップのヒーロー */
+  .sky-verb, .sky-verb.is-on { font-size: clamp(56px, 8.8vw, 150px); }
+  .sky-hero-pin.is-pin .sky-verb, .sky-hero-pin.is-pin .sky-verb.is-on { font-size: min(clamp(56px, 8.8vw, 150px), 31.746vh - 147.302px - 1.04762vw); }
+  .sky-card-title { font-size: clamp(22px, 1.9vw, 28px); }
+  .sky-tape-track span { font-size: clamp(20px, 2vw, 28px); }
+
+  /* セクションの上下の余白 */
+  .section { padding-block: 96px; }
+  .sky-section { padding-block: clamp(72px, 7.5vw, 112px); }
+  .lp-signal .section { padding-block: clamp(64px, 6.5vw, 100px); }
+  .contact-band { padding-top: clamp(72px, 7.5vw, 120px); }
+  .page-hero, .page-hero.has-image, .lp-hero, .lp-sig-hero { padding-bottom: clamp(48px, 6vw, 82px); }
+
+  /* 見出し・番号・飾りの大きな文字 */
+  .num-head-no { font-size: clamp(56px, 6.6vw, 104px); }
+  .num-head h2 { font-size: clamp(28px, 3vw, 46px); }
+  .svc-row-no { font-size: clamp(30px, 2.6vw, 40px); }
+  .svc-row-name { font-size: clamp(20px, 1.8vw, 27px); }
+  .finder-big { font-size: clamp(36px, 4.2vw, 66px); }
+  .finder-card h3 { font-size: clamp(20px, 1.8vw, 24px); }
+  .poster-kanji { font-size: clamp(110px, 12vw, 195px); }
+  .poster-card h3 { font-size: clamp(20px, 1.7vw, 24px); }
+  .step-poster-no { font-size: clamp(64px, 6.8vw, 104px); }
+  .tool-band h2 { font-size: clamp(20px, 1.7vw, 24px); }
+  .tool-pills span { font-size: clamp(16px, 1.5vw, 21px); padding: 12px 18px; }
+  .faq-ask-title { font-size: clamp(19px, 1.5vw, 22px); }
+  .contact-band p.contact-band-big { font-size: clamp(72px, 12.5vw, 220px); }
+  .contact-band h2 { font-size: clamp(24px, 2.2vw, 30px); }
+  .contact-band:not(.is-big) h2 { font-size: clamp(36px, 5.2vw, 88px); }
+  .page-hero h1 { font-size: clamp(40px, 6vw, 104px); }
+  .page-hero-big { font-size: clamp(72px, 11vw, 195px); }
+  .section-title h2, .section-title.center h2, .lp .section-title h2 { font-size: clamp(26px, 2.6vw, 36px); }
+  .lp-signal .section-title h2 { font-size: clamp(26px, 2.8vw, 42px); }
+  .lp-hero-title, .lp-hero-title.is-plain { font-size: clamp(32px, 4vw, 68px); }
+  .lp-sig-hero .lp-hero-title, .lp-sig-hero .lp-hero-title.is-plain { font-size: clamp(30px, 8px + 3.2vw, 64px); }
+  .lp-signal .solution-more-title { font-size: clamp(20px, 1.7vw, 24px); }
+  .company-inner h2 { font-size: 32px; }
+  .service-num { font-size: 38px; }
+  .section-index { font-size: 26px; }
+}
