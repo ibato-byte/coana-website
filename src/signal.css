@@ -1515,3 +1515,46 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 @media (min-width: 1101px) {
   .home-page .sky-hero-pin:not(.is-pin) .sky-hero-mid { grid-template-columns: auto minmax(400px, 540px); justify-content: center; column-gap: clamp(56px, 6vw, 112px); }
 }
+
+/* ═════ LP の見やすさ（2026-11-04 オーナー指示「LP が文字文字しくて内容が伝わりづらい。全体のバランスを最高に」） ═════ */
+/* PC：ヒーローの右側が空いていたので、3つの要点を右の列に縦に並べる（左＝見出し・リード・ボタン、右＝要点）。高さも縮む */
+@media (min-width: 1101px) {
+  .lp-sig-hero .lp-hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 320px); column-gap: clamp(40px, 4vw, 72px); row-gap: 0; align-items: start; }
+  .lp-sig-hero .lp-hero-inner > *, .lp-sig-hero .lp-hero-head > *, .lp-sig-hero .lp-hero-body > * { grid-column: 1; }
+  .lp-sig-hero .lp-hero-crumbs, .lp-sig-hero .sky-crumbs { margin-bottom: 40px; }
+  .lp-sig-hero .lp-hero-kicker { margin-bottom: 16px; }
+  .lp-sig-hero .lp-hero-lead { margin-top: 24px; max-width: 34em; }
+  .lp-sig-hero .lp-hero-sub { margin-top: 14px; }
+  .lp-sig-hero .lp-hero-actions { margin-top: 32px; }
+  .lp-sig-hero .lp-hero-note { margin-top: 12px; }
+  /* 見出しは右の列のぶん少し小さく（1行が折り返しすぎないように） */
+  .lp-sig-hero .lp-hero-title, .lp-sig-hero .lp-hero-title.is-plain { font-size: clamp(30px, 8px + 2.7vw, 56px); }
+  .lp-sig-hero .lp-hero-body > .lp-hero-facts { grid-column: 2; grid-row: 2 / span 7; align-self: center; grid-template-columns: 1fr; gap: 14px; margin: 0; width: 100%; }
+}
+/* スマホ：ヒーローの3つの要点を詰めて、最初の画面に収まる量を増やす */
+@media (max-width: 600px) {
+  .lp-sig-hero .lp-hero-facts { gap: 8px; }
+  .lp-sig-hero .lp-hero-facts li { padding: 10px 14px; gap: 2px; }
+  .lp-sig-hero .lp-hero-facts strong { font-size: 15px; }
+  .lp-sig-hero .lp-hero-lead { margin-top: 18px; }
+  /* LP のセクションの上下の余白を少し詰めて、スクロールを短く（見出しの区切りは保つ） */
+  .lp-signal .section { padding-block: 64px; }
+}
+/* 読む文章の1行の長さをそろえる（長すぎる行は読みにくい） */
+.lp-signal .faq-a, .lp-signal .faq-answer, .lp-signal .faq-item p { max-width: 42em; }
+.lp-signal .lp-case-text { max-width: 40em; }
+
+/* 小さすぎた日本語のラベルを 12px 以上に（読みやすさ） */
+.sky-card-kicker { font-size: 12px; }
+.lp-plan-for span, .lp-tools-title { font-size: 12.5px; }
+@media (min-width: 361px) {
+  .lp-ba-sources li, .lp-ba-center-before, .lp-ba-center-after { font-size: 12.5px; }
+  .lp-ba-status span { font-size: 12px; }
+}
+
+/* スマホ：押しやすさ（見た目の位置は変えずに、押せる範囲を上下に広げる） */
+@media (max-width: 760px) {
+  .header-inner .wordmark, .footer-company .wordmark, .footer-mail, .site-footer .go-link, .footer-privacy,
+  nav.sky-crumbs a, nav.sky-crumbs a.go-link, .contact-side a.tel-number, .line-notice a.tel-number, a.tel-number { display: inline-flex; align-items: center; padding-block: 10px; margin-block: -10px; }
+  .site-footer li + li { margin-top: 6px; }
+}
