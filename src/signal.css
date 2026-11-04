@@ -1337,13 +1337,23 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
 
 /* PC（固定するヒーロー）：大きな動詞が画面の高さに合わせて小さくなると、右のカードとの間が広く空く。
    動詞とカードをひとかたまりにして中央に寄せ、間を一定にする（上の一文・下のリード文と同じ中央寄せ）。
-   高さ800px未満では、中央に寄せたカード（2・3枚目は高い）が下のリード文に重なるため、寄せずに今までどおり右に置く */
-@media (min-height: 800px) {
+   高さ900px未満では、中央に寄せたカード（2・3枚目は高い）が下のリード文に重なるため、寄せずに今までどおり右に置く
+   （2026-11-04 オーナー指摘「文字と白い枠が重なる」：800〜860px の画面で重なっていたので、境目を 800px → 900px に上げた） */
+@media (min-height: 900px) {
   .home-page .sky-hero-pin.is-pin .sky-hero-mid { grid-template-columns: auto minmax(400px, 560px); justify-content: center; column-gap: clamp(56px, 6vw, 112px); }
+}
+/* 高さ900px未満（カードは右のまま）：動詞が小さくなっても真ん中が空かないよう、動詞を列の右（カードの側）に寄せる。
+   2026-11-04 オーナー指摘「ヒーローの真ん中が空いてしまう」（高さ700〜800px で動詞とカードの間が 400〜600px 空いていた）。
+   確認は tools/qa/hero-layout.mjs --full（スマホ〜2560px の幅×高さをすべて測る） */
+@media (max-height: 899.98px) {
+  .home-page .sky-hero-pin.is-pin .sky-verbs { justify-self: end; }
 }
 /* 低い画面（高さ760px以下）：ヒーローの下の余白を増やした分、2・3枚目のカードが下のボタンに近づくので、カードの内側の余白を少し詰める */
 @media (max-height: 760px) {
-  .home-page .sky-hero-pin.is-pin .sky-card { gap: 6px; padding-block: 20px; }
+  .home-page .sky-hero-pin.is-pin .sky-card { gap: 6px; padding-block: 14px; }
+  /* 幅が狭く低い画面（1101×700 など）で、カードが下のボタンに数px重なっていたので、本文の行間とリンクの上下を少し詰める（2026-11-04） */
+  .home-page .sky-hero-pin.is-pin .sky-card-text { line-height: 1.6; }
+  .home-page .sky-hero-pin.is-pin .sky-card-links .go-link { padding-top: 5px; padding-bottom: 2px; }
 }
 
 /* ヒーローの下の帯：上（ボタンと帯の間）を少し広く。ヒーローの下の余白だけを増やし、帯の重なり（margin-top）は変えないので、帯の上にすき間はできない */
