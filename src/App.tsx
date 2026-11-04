@@ -206,9 +206,9 @@ const VERB_OF: Record<string, string> = {
 };
 
 const VERBS = [
-  { no: "01", en: "Organize", verb: "整える", kicker: "業務を整える", head: ["いまの業務を書き出し、", "流れと手順を整える。"], text: "仕事の流れと使っているツールを一緒に書き出し、手作業・二重入力・特定の人しか分からない作業を見つけます。IT化の順番と費用の目安を決め、手順書まで整えます。クラウド会計などのツール導入や、開業前の準備もここから。", slugs: ["it-consulting", "cloud-accounting", "startup-support"] },
-  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["手作業を、", "自動化と仕組みに。"], text: "ツール同士をつなぐ自動化、社内の業務アプリ、問い合わせが届くLPやWebサイト。必要なものだけを小さく作り、使いながら直します。", slugs: ["automation", "web-production"] },
-  { no: "03", en: "Operate", verb: "任せる", kicker: "運用を任せる", head: ["日々の運用は、", "必要な分だけ任せる。"], text: "記帳・請求・月次の締め、労務・総務の事務、SNSの投稿。決めた手順どおりに代行し、窓口の担当者を決めてチームで対応します。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
+  { no: "01", en: "Organize", verb: "整える", kicker: "業務を整える", head: ["何から変えればいいか、", "一緒に決めます。"], text: "いまの仕事のやり方を伺い、「ここを変えるとラクになる」を費用の目安と一緒にお伝えします。会計ソフトの導入や開業準備のご相談も。", slugs: ["it-consulting", "cloud-accounting", "startup-support"] },
+  { no: "02", en: "Build", verb: "つくる", kicker: "仕組みをつくる", head: ["毎月の同じ作業を、", "自動で終わるように。"], text: "Excelへの転記、毎月の集計、請求書づくり。くり返しの作業を自動にします。問い合わせが届くホームページもつくります。", slugs: ["automation", "web-production"] },
+  { no: "03", en: "Operate", verb: "任せる", kicker: "運用を任せる", head: ["経理も事務もSNSも、", "必要な分だけ任せる。"], text: "記帳や請求、労務の手続き、SNSの投稿まで、担当者を決めて毎月代行します。「請求書だけ」など一部のご依頼も歓迎です。", slugs: ["bookkeeping", "backoffice-dx", "sns-management"] },
 ];
 const VERB_INTERVAL_MS = 7000;
 const VERB_FIRST_MS = 4200;
