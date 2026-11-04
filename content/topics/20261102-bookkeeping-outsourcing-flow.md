@@ -4,6 +4,8 @@ slug: bookkeeping-outsourcing-flow
 date: 2026-11-02
 category: サービス
 summary: "経理代行を頼んだら、そのあと何が起きるのか。相談・見積もり・受け渡しの準備・代行の開始・振り返りの5段階で、御社がそれぞれ何をすればよいか、最初の月に何が起きやすいかを、小さな会社の経営者向けにまとめました。"
+seo_title: "経理代行を頼むときの流れ｜相談から運用開始まで5段階"
+seo_description: "経理代行を頼むと、相談・見積もり・受け渡しの準備・代行の開始・振り返りの5段階で進みます。それぞれで御社がやること、最初の月に起きやすいことを、小さな会社の経営者向けにまとめました。"
 thumbnail: /uploads/topics/20261102-bookkeeping-outsourcing-flow.jpg
 service: bookkeeping
 draft: false

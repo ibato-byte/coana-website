@@ -4,6 +4,8 @@ slug: bookkeeping-outsourcing-choose
 date: 2026-10-26
 category: サービス
 summary: "経理代行・記帳代行をどこに頼むか迷っている小さな会社の経営者向けに、依頼先を比べる5つのポイントと、相談で聞くこと・答えで見るところ、決めるまでの進め方をまとめました。"
+seo_title: "経理代行・記帳代行の選び方｜比べる5つのポイント"
+seo_description: "経理代行・記帳代行をどこに頼むか迷っている小さな会社の経営者向けに、依頼先を比べる5つのポイントと、相談で聞くこと・答えで見るところ、決めるまでの進め方をまとめました。"
 thumbnail: /uploads/topics/20261026-bookkeeping-outsourcing-choose.jpg
 service: bookkeeping
 draft: false
