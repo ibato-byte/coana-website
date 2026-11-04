@@ -222,9 +222,11 @@ function HeroSection({ navigate }: { navigate: Nav }) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const heroRef = useRef<HTMLElement | null>(null);
   const pinRef = useRef<HTMLDivElement | null>(null);
-  // PC（幅1101px以上・高さ700px以上）ではデザイン案どおり、ヒーローを画面に固定し、スクロール量で言葉とカードを切り替える
+  // PC（幅1101px以上・高さ900px以上）ではデザイン案どおり、ヒーローを画面に固定し、スクロール量で言葉とカードを切り替える
   //（2026-10-23 オーナー決定。CLAUDE.md・docs/motion-rules.md の「ピン留め禁止」の例外）。それ以外の画面では自動で切り替える
-  const PIN_MQ = "(min-width: 1101px) and (min-height: 700px)";
+  // 高さの条件は 2026-11-04 オーナー指示で 700px → 900px。固定すると言葉の大きさを画面の高さに収めるため、低い画面では
+  //「整える。つくる。任せる。」が小さくなりバランスが崩れる（真ん中が空く・カードが文字に重なる）。低い画面は固定せず、言葉を大きいまま見せる
+  const PIN_MQ = "(min-width: 1101px) and (min-height: 900px)";
   const [pinMode, setPinMode] = useState(() => !reduce && window.matchMedia(PIN_MQ).matches);
   const pinModeRef = useRef(pinMode);
   // 選ばれている言葉だけ白、ほかは輪郭。PC（ピン留め）だけでなくスマホ・タブレット（自動切り替え）でも同じ見せ方にして、いまどれかが分かるように（2026-10-23 オーナー指示）
