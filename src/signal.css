@@ -1509,3 +1509,9 @@ canvas.sky-feathers { position: absolute; inset: 0; z-index: 0; display: block; 
   .service-num { font-size: 38px; }
   .section-index { font-size: 26px; }
 }
+
+/* PC で固定しないヒーロー（高さ900px未満）：言葉とカードをひとかたまりにして中央に寄せ、真ん中を空けない（2026-11-04 オーナー指摘「通常サイズの真ん中の余白が気になる」）。
+   固定するとき（高さ900px以上）と同じ並べ方にそろえる */
+@media (min-width: 1101px) {
+  .home-page .sky-hero-pin:not(.is-pin) .sky-hero-mid { grid-template-columns: auto minmax(400px, 540px); justify-content: center; column-gap: clamp(56px, 6vw, 112px); }
+}
