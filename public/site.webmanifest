@@ -1,12 +1,24 @@
 {
   "name": "COANA TOKYO合同会社",
   "short_name": "COANA TOKYO",
+  "description": "中小企業の業務効率化・自動化・IT化支援と、経理・バックオフィスの運用代行。東京・港区、全国オンライン対応。",
+  "lang": "ja",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "browser",
   "background_color": "#ffffff",
-  "theme_color": "#0d2338",
+  "theme_color": "#0d68bf",
   "icons": [
-    { "src": "/favicon-v2-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/favicon-v2-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/favicon-v2-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-v2-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }

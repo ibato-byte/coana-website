@@ -153,6 +153,11 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
         if (socialImage) {
           tags.push(
             { tag: 'meta', attrs: { property: 'og:image', content: socialImage }, injectTo: 'head' },
+            ...(/\/og-image\.jpg$/.test(socialImage) ? [
+              { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' }, injectTo: 'head' },
+              { tag: 'meta', attrs: { property: 'og:image:height', content: '630' }, injectTo: 'head' },
+              { tag: 'meta', attrs: { property: 'og:image:type', content: 'image/jpeg' }, injectTo: 'head' },
+            ] : []),
             { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' }, injectTo: 'head' },
             { tag: 'meta', attrs: { name: 'twitter:image', content: socialImage }, injectTo: 'head' },
           )
@@ -174,7 +179,8 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', ${JSON.stringify(googleAnalyticsId)});
+  // 監視・テストの自動ブラウザ（navigator.webdriver）は数えない：データセンターからのアクセスで数字が水増しされるため
+  if (!navigator.webdriver) gtag('config', ${JSON.stringify(googleAnalyticsId)});
 `,
               injectTo: 'head',
             },
