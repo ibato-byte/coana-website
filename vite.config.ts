@@ -757,10 +757,11 @@ function coanaPageMeta(): Plugin {
           const title = String(fm.title ?? slug)
           const url = SITE + '/topics/' + slug
           const image = fm.thumbnail ? absoluteUrl(String(fm.thumbnail)) : defaultImage
-          const description = String(fm.summary ?? '')
+          // 検索結果用のタイトル・説明文（seo_title / seo_description）があれば優先。ページの見出しは title のまま
+          const description = String(fm.seo_description || fm.summary || '')
           pages.push({
             path: '/topics/' + slug,
-            title: title + SUFFIX,
+            title: (fm.seo_title ? String(fm.seo_title) : title) + SUFFIX,
             description,
             image,
             type: 'article',
