@@ -9,6 +9,7 @@
 //   4. 署名付き・期限付き（14日）の「公開する」「見送る」リンクを作り、@メンション付きでコメント
 // 同じコミットに対しては1回だけコメントする（コメントに印を入れて重複を防ぐ）。
 import { LABEL, buildLink } from './signature.mjs';
+import { judgeSelfCheck } from './selfcheck.mjs';
 
 const args = process.argv.slice(2);
 const PR = Number(args[args.indexOf('--pr') + 1]);
@@ -87,7 +88,9 @@ const section = (name) => {
 };
 const title = pr.title.replace(/^【コラム公開待ち】/, '');
 
-// 4. リンクとコメント
+// 4. リンクとコメント（待っている間に自動公開でマージされていたら、確認メールは要らない）
+const latest = await api('GET', `/pulls/${PR}`);
+if (latest.merged_at || latest.state !== 'open') { console.log(`PR #${PR} はもう${latest.merged_at ? '公開（マージ）' : '閉じ'}済みなので、確認メールは送らない`); process.exit(0); }
 const exp = Math.floor((Date.now() + 14 * DAY) / 1000);
 const expDate = new Date(exp * 1000 + 9 * 3600e3).toISOString().slice(0, 10);
 let buttons;
@@ -100,7 +103,9 @@ if (SECRET) {
   try {
     const r = await fetch(publish, { redirect: 'manual', headers: { 'user-agent': 'coana-column-approval-selfcheck' } });
     const html = await r.text();
-    selfCheck = r.status === 200 && html.includes('このコラムを公開しますか')
+    const judged = judgeSelfCheck(r.status, html);
+    if (judged === 'already-published') { console.log(`PR #${PR} は自動公開が先に済んだので、確認メールは送らない`); process.exit(0); }
+    selfCheck = judged === 'ok'
       ? '公開ボタンの動作確認：本番（coana.co.jp）で確認画面が開けることを確かめました（このとき公開はしていません）。'
       : `⚠ 公開ボタンの動作確認に失敗しました（${r.status}：${(html.match(/<h1[^>]*>([^<]*)/) || [])[1] || '内容を読めず'}）。ボタンが使えない場合は、GitHub でこの PR をマージすると公開、クローズすると見送りになります。`;
     if (!selfCheck.startsWith('公開ボタンの動作確認：')) process.exitCode = 1;

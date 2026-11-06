@@ -64,3 +64,16 @@ await t('プレビュー以外の URL は確認画面に出さない', async () 
 
 console.log(`${ok} OK / ${ng} NG`);
 process.exitCode = ng ? 1 : 0;
+
+// 公開ボタンの動作確認の判定（自動公開が先に済んだときは失敗にしない）
+{
+  const { judgeSelfCheck } = await import('./selfcheck.mjs');
+  const cases = [
+    [judgeSelfCheck(200, '<h1>このコラムを公開しますか</h1>'), 'ok', '確認画面が開けば ok'],
+    [judgeSelfCheck(200, '<h1>この記事は公開済みです</h1>'), 'already-published', '公開済みは失敗にしない（PR #106）'],
+    [judgeSelfCheck(403, '<h1>リンクが無効です</h1>'), 'ng', 'それ以外は ng'],
+  ];
+  for (const [got, want, label] of cases) {
+    if (got === want) { console.log(`OK ${label}`); } else { console.log(`NG ${label}（${got}）`); process.exitCode = 1; }
+  }
+}
