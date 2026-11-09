@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 654" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="654" fill="#fbfdff"/>
+  <text x="300" y="52" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">IT化を進める順番</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="70" y="84" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="114" cy="124" r="22" fill="#087fe5"/><text x="114" y="133" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="154" y="134">今の業務を棚卸しする</text>
+    <path d="M300 168 V190" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="196" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="114" cy="236" r="22" fill="#087fe5"/><text x="114" y="245" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="154" y="246">効果とすぐできるかで並べる</text>
+    <path d="M300 280 V302" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="308" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="114" cy="348" r="22" fill="#087fe5"/><text x="114" y="357" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="154" y="358">1つ選んで小さく試す</text>
+    <path d="M300 392 V414" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="420" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="114" cy="460" r="22" fill="#087fe5"/><text x="114" y="469" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="154" y="470">使われているか点検</text>
+    <path d="M300 504 V526" stroke="#087fe5" stroke-width="3"/>
+    <rect x="70" y="532" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <circle cx="114" cy="572" r="22" fill="#087fe5"/><text x="114" y="581" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+    <text x="154" y="582">次の業務へ進む</text>
+  </g>
+</svg>
