@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
   <rect width="600" height="600" fill="#fbfdff"/>
-  <text x="300" y="48" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">順番の決め方（効果×手軽さ）</text>
+  <text x="300" y="48" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">順番の決め方（効果×すぐできるか）</text>
   <g font-size="26" fill="#16334d">
     <rect x="100" y="80" width="230" height="210" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="215" y="170" text-anchor="middle">効果：大きい</text><text x="215" y="208" text-anchor="middle">手間がかかる</text><text x="215" y="250" text-anchor="middle" font-weight="700">2番目に</text>
+    <text x="215" y="170" text-anchor="middle">効果：大きい</text><text x="215" y="208" text-anchor="middle">準備が大きい</text><text x="215" y="250" text-anchor="middle" font-weight="700">2番目に</text>
     <rect x="346" y="80" width="230" height="210" rx="12" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
-    <text x="461" y="170" text-anchor="middle">効果：大きい</text><text x="461" y="208" text-anchor="middle">手軽にできる</text><text x="461" y="250" text-anchor="middle" font-weight="700">まずここ</text>
+    <text x="461" y="170" text-anchor="middle">効果：大きい</text><text x="461" y="208" text-anchor="middle">すぐできる</text><text x="461" y="250" text-anchor="middle" font-weight="700">まずここ</text>
     <rect x="100" y="306" width="230" height="210" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="215" y="396" text-anchor="middle">効果：小さい</text><text x="215" y="434" text-anchor="middle">手間がかかる</text><text x="215" y="476" text-anchor="middle" font-weight="700">あとで考える</text>
+    <text x="215" y="396" text-anchor="middle">効果：小さい</text><text x="215" y="434" text-anchor="middle">準備が大きい</text><text x="215" y="476" text-anchor="middle" font-weight="700">あとで考える</text>
     <rect x="346" y="306" width="230" height="210" rx="12" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="461" y="396" text-anchor="middle">効果：小さい</text><text x="461" y="434" text-anchor="middle">手軽にできる</text><text x="461" y="476" text-anchor="middle" font-weight="700">ついでに</text>
-    <text x="70" y="300" font-size="24" fill="#4a667d" text-anchor="middle" transform="rotate(-90 70 300)">効果（頻度×手間）→</text>
-    <text x="338" y="560" font-size="24" fill="#4a667d" text-anchor="middle">手軽さ（今のツールで済む）→</text>
+    <text x="461" y="396" text-anchor="middle">効果：小さい</text><text x="461" y="434" text-anchor="middle">すぐできる</text><text x="461" y="476" text-anchor="middle" font-weight="700">ついでに</text>
+    <text x="70" y="298" font-size="24" fill="#4a667d" text-anchor="middle" transform="rotate(-90 70 298)">効果（頻度×1回の時間）→</text>
+    <text x="338" y="560" font-size="24" fill="#4a667d" text-anchor="middle">すぐできる（今のツールで済む）→</text>
   </g>
 </svg>

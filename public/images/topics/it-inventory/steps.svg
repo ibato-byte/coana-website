@@ -8,7 +8,7 @@
     <path d="M300 168 V190" stroke="#087fe5" stroke-width="3"/>
     <rect x="70" y="196" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
     <circle cx="114" cy="236" r="22" fill="#087fe5"/><text x="114" y="245" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
-    <text x="154" y="246">効果と手軽さで並べる</text>
+    <text x="154" y="246">効果とすぐできるかで並べる</text>
     <path d="M300 280 V302" stroke="#087fe5" stroke-width="3"/>
     <rect x="70" y="308" width="460" height="80" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
     <circle cx="114" cy="348" r="22" fill="#087fe5"/><text x="114" y="357" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>

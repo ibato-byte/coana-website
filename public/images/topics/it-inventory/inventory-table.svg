@@ -1,17 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
-  <rect width="600" height="500" fill="#fbfdff"/>
-  <text x="300" y="48" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">業務の棚卸し表の例</text>
-  <g font-size="26" fill="#16334d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 522" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="522" fill="#fbfdff"/>
+  <text x="300" y="48" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">棚卸し表の例（数字は例）</text>
+  <g font-size="24" fill="#16334d">
     <rect x="24" y="72" width="552" height="56" rx="10" fill="#16334d"/>
-    <text x="40" y="110" fill="#ffffff" font-weight="700">業務</text><text x="268" y="110" fill="#ffffff" font-weight="700">頻度</text><text x="372" y="110" fill="#ffffff" font-weight="700">手作業</text>
+    <text x="36" y="109" fill="#ffffff" font-weight="700">仕事</text><text x="228" y="109" fill="#ffffff" font-weight="700">頻度</text><text x="300" y="109" fill="#ffffff" font-weight="700">1回</text><text x="398" y="109" fill="#ffffff" font-weight="700">手作業</text>
     <rect x="24" y="128" width="552" height="76" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="40" y="176">請求書の作成</text><text x="268" y="176">毎月</text><text x="372" y="176">表から転記</text>
+    <text x="36" y="175">請求書の作成</text><text x="228" y="175">毎月</text><text x="300" y="175">約60分</text><text x="398" y="175">表から転記</text>
     <rect x="24" y="204" width="552" height="76" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="40" y="252">経費の精算</text><text x="268" y="252">毎週</text><text x="372" y="252">紙を集める</text>
+    <text x="36" y="251">経費の精算</text><text x="228" y="251">毎週</text><text x="300" y="251">約30分</text><text x="398" y="251">紙を集める</text>
     <rect x="24" y="280" width="552" height="76" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="40" y="328">問い合わせ対応</text><text x="268" y="328">毎日</text><text x="372" y="328">メールを探す</text>
+    <text x="36" y="327">問い合わせ対応</text><text x="228" y="327">毎日</text><text x="300" y="327">約20分</text><text x="398" y="327">メールを探す</text>
     <rect x="24" y="356" width="552" height="76" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
-    <text x="40" y="404">勤怠の集計</text><text x="268" y="404">毎月</text><text x="372" y="404">手で合計</text>
-    <text x="300" y="474" font-size="24" fill="#4a667d" text-anchor="middle">誰が・どのツールでやっているかも残す</text>
+    <text x="36" y="403">勤怠の集計</text><text x="228" y="403">毎月</text><text x="300" y="403">約90分</text><text x="398" y="403">手で合計</text>
+    <text x="300" y="472" text-anchor="middle" fill="#4a667d">頻度×1回の時間で、手間の大きさを比べる</text>
+    <text x="300" y="508" text-anchor="middle" fill="#4a667d">誰が・どのツールでやっているかも残す</text>
   </g>
 </svg>
