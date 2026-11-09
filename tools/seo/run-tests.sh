@@ -23,7 +23,10 @@ W_ARG=()
 [ "${QUICK:-}" = 1 ] && W_ARG=(env W=1280,390)
 run seo-local 'errors 0 /' node tools/seo/check-site.mjs --base http://localhost:8789 --dist dist --out "$LOG_DIR/seo-local.json"
 run full-check '項目ごとの NG 件数' "${W_ARG[@]}" node tools/qa/full-check.cjs
-# story-test・wheel は鳩のアニメーション専用のテスト。アニメーションは 2026-10-26 に廃止したため、合格ラインから外した（2026-11-02 オーナー判断・Automation Hub 依頼 #168）
+# story-test：仕組みの図が全工程点灯の完成形で静止しているか／wheel：ホイールだけで図が表示されるか（鳩のアニメーションの廃止に合わせて作り直したもの。対象の LP は content/solutions から自動で読む）。
+# 2026-11-02 にいったん外したが、2026-11-07 のオーナー判断（Automation Hub 指示 #236「外さず、今のサイトに合わせて直す」）で合格ラインに戻した
+run story-test ' OK / 0 NG' node tools/qa/story-test.cjs
+run wheel '^ALL OK' node tools/qa/wheel.cjs
 run a11y '^ALL OK' node tools/qa/a11y.cjs
 run column-approval ' OK / 0 NG' node tools/column/approval.test.mjs
 if [ "$fail" = 0 ]; then echo "全テスト合格"; else echo "不合格あり：マージしない"; fi

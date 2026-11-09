@@ -95,7 +95,13 @@ async function renderChecks(engine, b, w, h, mobile, tag) {
         for (const el of document.querySelectorAll('main a, main button, main input, main select, main textarea, footer a, footer button')) {
           const r = el.getBoundingClientRect(); if (r.width < 4 || r.height < 4) continue;
           if (getComputedStyle(el).visibility === 'hidden' || el.closest('[aria-hidden="true"]') || el.closest('.form-honeypot')) continue;
+          // リンク・ボタンの中心に加えて、大きなカード（幅200px・高さ150px以上）は中の文字の各行（中心と両端）も見る。どれか1点でも隠れれば NG（2026-11-09 追加。カードの見出しが隠れるのを見逃していた）
           const pts = [[r.left + r.width / 2, r.top + r.height / 2]];
+          if (r.width >= 200 && r.height >= 150) {
+            const tp = []; const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+            for (let n = tw.nextNode(); n; n = tw.nextNode()) { if (!n.textContent.trim() || n.parentElement.closest('[aria-hidden="true"], .sr-only, .visually-hidden')) continue; const rg = document.createRange(); rg.selectNodeContents(n); for (const q of rg.getClientRects()) if (q.width > 2 && q.height > 2) tp.push([q.left + q.width / 2, q.top + q.height / 2], [q.left + 4, q.top + q.height / 2], [q.right - 4, q.top + q.height / 2]); }
+            pts.push(...tp);
+          }
           for (const [x, y] of pts) {
             if (x < 0 || y < 0 || x >= vw || y >= vh) continue;
             const top = document.elementFromPoint(x, y);
