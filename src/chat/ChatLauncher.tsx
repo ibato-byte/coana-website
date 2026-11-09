@@ -40,16 +40,16 @@ export function ChatLauncher({ navigate, page }: { navigate: Nav; page: Page }) 
     window.addEventListener("scroll", f, { passive: true });
     return () => window.removeEventListener("scroll", f);
   }, [page]);
-  // 少しスクロールしたら出す（一度出したら、上に戻っても消さない）。スクロールできないほど短いページでは最初から出す
+  // 少しスクロールしたら出す。ページの先頭に戻ったら、最初と同じく隠す（先頭の画面で、カードの見出しなどに重ならないように。2026-11-09）。
+  // スクロールできないほど短いページでは最初から出す
   useEffect(() => {
-    if (shown) return;
     const check = () => {
-      if (window.scrollY > SHOW_AFTER_PX || document.documentElement.scrollHeight <= window.innerHeight + SHOW_AFTER_PX) setShown(true);
+      setShown(window.scrollY > SHOW_AFTER_PX || document.documentElement.scrollHeight <= window.innerHeight + SHOW_AFTER_PX);
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
     return () => window.removeEventListener("scroll", check);
-  }, [shown, page]);
+  }, [page]);
   // フッターが見えている間は、フッターのリンクや著作権表示に重ならないよう隠す（画面の高い PC でも、フッターの右の列を覆わない）
   useEffect(() => {
     const target = document.querySelector(".site-footer");
