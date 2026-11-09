@@ -1,0 +1,1754 @@
+{
+  "date": "2026-11-09",
+  "local": {
+    "base": "http://localhost:8789",
+    "at": "2026-11-08T23:58:44.431Z",
+    "mode": "local",
+    "errors": [],
+    "warnings": [
+      {
+        "kind": "title",
+        "where": "/",
+        "msg": "title が長い（全角換算 52 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services",
+        "msg": "title が長い（全角換算 51 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/cloud-accounting",
+        "msg": "title が長い（全角換算 43 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/startup-support",
+        "msg": "title が長い（全角換算 45 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/automation",
+        "msg": "title が長い（全角換算 42 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/web-production",
+        "msg": "title が長い（全角換算 44 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/backoffice-dx",
+        "msg": "title が長い（全角換算 43 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/sns-management",
+        "msg": "title が長い（全角換算 45 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/topics/20260219-seminar",
+        "msg": "title が長い（全角換算 43 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/topics/20260318-cloud-accounting-setup",
+        "msg": "title が長い（全角換算 41 文字。目安 40 以内。検索結果で末尾が切れる）"
+      }
+    ],
+    "metrics": {
+      "sitemapUrls": 28,
+      "feedItems": 13,
+      "avgTtfbMs": 7,
+      "pages": 28,
+      "internalLinks": 28,
+      "images": 14,
+      "jsKB": 898,
+      "cssKB": 211
+    },
+    "pages": {
+      "/": {
+        "status": 200,
+        "ttfbMs": 15,
+        "htmlKB": 24,
+        "title": "中小企業の業務効率化・自動化・IT化支援｜経理代行・バックオフィス代行 | COANA TOKYO合同会社（東京・港区）",
+        "titleLen": 52,
+        "descLen": 123,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "FAQPage"
+        ]
+      },
+      "/about": {
+        "status": 200,
+        "ttfbMs": 6,
+        "htmlKB": 12,
+        "title": "会社概要・代表あいさつ | COANA TOKYO合同会社",
+        "titleLen": 22,
+        "descLen": 81,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/services": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 14,
+        "title": "サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行 | COANA TOKYO合同会社",
+        "titleLen": 51,
+        "descLen": 135,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/topics": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 14,
+        "title": "トピックス｜業務効率化・クラウド会計のコラム・お知らせ | COANA TOKYO合同会社",
+        "titleLen": 38,
+        "descLen": 72,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/contact": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 11,
+        "title": "お問い合わせ｜業務の効率化・自動化・経理代行のご相談 | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 106,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/privacy": {
+        "status": 200,
+        "ttfbMs": 6,
+        "htmlKB": 18,
+        "title": "プライバシーポリシー | COANA TOKYO合同会社",
+        "titleLen": 21,
+        "descLen": 117,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/services/it-consulting": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 28,
+        "title": "業務改善・IT化支援｜業務の棚卸し5万円〜、IT顧問は月3万円〜 | COANA TOKYO合同会社",
+        "titleLen": 40,
+        "descLen": 111,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/cloud-accounting": {
+        "status": 200,
+        "ttfbMs": 8,
+        "htmlKB": 25,
+        "title": "クラウド会計導入支援｜freee・マネーフォワードの設定・連携・定着 | COANA TOKYO合同会社",
+        "titleLen": 43,
+        "descLen": 110,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/startup-support": {
+        "status": 200,
+        "ttfbMs": 12,
+        "htmlKB": 26,
+        "title": "創業支援｜開業準備の整理から会計・ITツールの立ち上げまで（英語対応） | COANA TOKYO合同会社",
+        "titleLen": 45,
+        "descLen": 118,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/automation": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 28,
+        "title": "業務の自動化・システム開発｜転記・通知・書類作成を1件5万円から | COANA TOKYO合同会社",
+        "titleLen": 42,
+        "descLen": 132,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/web-production": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 26,
+        "title": "LP・Webサイト制作｜原稿づくりから問い合わせ通知まで（LP20万円〜） | COANA TOKYO合同会社",
+        "titleLen": 44,
+        "descLen": 128,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/bookkeeping": {
+        "status": 200,
+        "ttfbMs": 15,
+        "htmlKB": 25,
+        "title": "経理代行｜月1万円から、記帳・請求・月次締めを必要な分だけ | COANA TOKYO合同会社",
+        "titleLen": 40,
+        "descLen": 99,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/backoffice-dx": {
+        "status": 200,
+        "ttfbMs": 6,
+        "htmlKB": 29,
+        "title": "バックオフィス代行・DX支援｜経理・労務・総務・事務を月3万円から | COANA TOKYO合同会社",
+        "titleLen": 43,
+        "descLen": 103,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/sns-management": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 25,
+        "title": "SNS運用代行｜媒体を問わず、投稿の計画から振り返りまで（月10万円〜） | COANA TOKYO合同会社",
+        "titleLen": 45,
+        "descLen": 144,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/startup-support-en": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 24,
+        "title": "Start a Business in Japan | Bilingual Support | COANA TOKYO LLC",
+        "titleLen": 32,
+        "descLen": 154,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/topics/20260219-seminar": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 16,
+        "title": "講師登壇：経理DXの実践｜ポリテクセンター福岡の生産性向上支援訓練 | COANA TOKYO合同会社",
+        "titleLen": 43,
+        "descLen": 98,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260318-cloud-accounting-setup": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 22,
+        "title": "クラウド会計の導入で失敗しない｜導入前に整理したい5つのこと | COANA TOKYO合同会社",
+        "titleLen": 41,
+        "descLen": 107,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260430-seminar": {
+        "status": 200,
+        "ttfbMs": 6,
+        "htmlKB": 16,
+        "title": "セミナー登壇：迷わない経理のロードマップ（AIと経理DX） | COANA TOKYO合同会社",
+        "titleLen": 38,
+        "descLen": 82,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260526-seminar": {
+        "status": 200,
+        "ttfbMs": 4,
+        "htmlKB": 17,
+        "title": "共同セミナー：クラウド会計で経営判断を早くする数字の見方 | COANA TOKYO合同会社",
+        "titleLen": 39,
+        "descLen": 89,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260617-bookkeeping-dependency": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 21,
+        "title": "経理の属人化を解消する4つのステップ｜小さな会社向け | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 107,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260710-seminar": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 15,
+        "title": "福岡・天神「はじめてのクラウド会計講座」開催レポート | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 93,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260804-outsourcing-checklist": {
+        "status": 200,
+        "ttfbMs": 6,
+        "htmlKB": 21,
+        "title": "経理代行で後悔しないために｜依頼前に整理したい3つのこと | COANA TOKYO合同会社",
+        "titleLen": 39,
+        "descLen": 91,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260911-media": {
+        "status": 200,
+        "ttfbMs": 8,
+        "htmlKB": 16,
+        "title": "メディア掲載：経営者インタビュー「経道」に代表・衣鳩の対談 | COANA TOKYO合同会社",
+        "titleLen": 40,
+        "descLen": 62,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260925-sns-outsourcing": {
+        "status": 200,
+        "ttfbMs": 9,
+        "htmlKB": 20,
+        "title": "SNS運用代行を頼む前に｜中小企業が決めておきたい4つのこと | COANA TOKYO合同会社",
+        "titleLen": 39,
+        "descLen": 89,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261014-sponsor-fukuoka-cde": {
+        "status": 200,
+        "ttfbMs": 6,
+        "htmlKB": 15,
+        "title": "NPO法人福岡幼児発達教育研究会のゴールドスポンサーに | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 79,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261019-payment-matching": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 23,
+        "title": "入金確認（入金消込）のやり方｜入金漏れを防ぐ手順 | COANA TOKYO合同会社",
+        "titleLen": 35,
+        "descLen": 101,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261026-bookkeeping-outsourcing-choose": {
+        "status": 200,
+        "ttfbMs": 7,
+        "htmlKB": 25,
+        "title": "経理代行・記帳代行の選び方｜比べる5つのポイント | COANA TOKYO合同会社",
+        "titleLen": 35,
+        "descLen": 84,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261102-bookkeeping-outsourcing-flow": {
+        "status": 200,
+        "ttfbMs": 5,
+        "htmlKB": 22,
+        "title": "経理代行を頼むときの流れ｜相談から運用開始まで5段階 | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 91,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      }
+    }
+  },
+  "prod": {
+    "base": "https://coana.co.jp",
+    "at": "2026-11-08T23:58:40.731Z",
+    "mode": "prod",
+    "errors": [],
+    "warnings": [
+      {
+        "kind": "title",
+        "where": "/",
+        "msg": "title が長い（全角換算 52 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services",
+        "msg": "title が長い（全角換算 51 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/cloud-accounting",
+        "msg": "title が長い（全角換算 43 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/startup-support",
+        "msg": "title が長い（全角換算 45 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/automation",
+        "msg": "title が長い（全角換算 42 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/web-production",
+        "msg": "title が長い（全角換算 44 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/backoffice-dx",
+        "msg": "title が長い（全角換算 43 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/services/sns-management",
+        "msg": "title が長い（全角換算 45 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/topics/20260219-seminar",
+        "msg": "title が長い（全角換算 43 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "title",
+        "where": "/topics/20260318-cloud-accounting-setup",
+        "msg": "title が長い（全角換算 41 文字。目安 40 以内。検索結果で末尾が切れる）"
+      },
+      {
+        "kind": "external-link",
+        "where": "https://support.freee.co.jp/hc/ja/articles/203317600（/topics/20261019-payment-matching）",
+        "msg": "status 403"
+      },
+      {
+        "kind": "external-link",
+        "where": "https://support.freee.co.jp/hc/ja/articles/13285508666649（/topics/20261019-payment-matching）",
+        "msg": "status 403"
+      }
+    ],
+    "metrics": {
+      "sitemapUrls": 28,
+      "feedItems": 13,
+      "avgTtfbMs": 89,
+      "pages": 28,
+      "internalLinks": 28,
+      "images": 14,
+      "www": "301 → https://coana.co.jp/",
+      "columnApproval": 400,
+      "headers": {
+        "strict-transport-security": "max-age=31536000",
+        "x-content-type-options": "nosniff",
+        "content-security-policy": null,
+        "cache-control": "public, max-age=0, must-revalidate",
+        "server": "cloudflare"
+      },
+      "externalLinks": 10
+    },
+    "pages": {
+      "/": {
+        "status": 200,
+        "ttfbMs": 115,
+        "htmlKB": 24,
+        "title": "中小企業の業務効率化・自動化・IT化支援｜経理代行・バックオフィス代行 | COANA TOKYO合同会社（東京・港区）",
+        "titleLen": 52,
+        "descLen": 123,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "FAQPage"
+        ]
+      },
+      "/about": {
+        "status": 200,
+        "ttfbMs": 57,
+        "htmlKB": 12,
+        "title": "会社概要・代表あいさつ | COANA TOKYO合同会社",
+        "titleLen": 22,
+        "descLen": 81,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/services": {
+        "status": 200,
+        "ttfbMs": 109,
+        "htmlKB": 14,
+        "title": "サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行 | COANA TOKYO合同会社",
+        "titleLen": 51,
+        "descLen": 135,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/topics": {
+        "status": 200,
+        "ttfbMs": 87,
+        "htmlKB": 14,
+        "title": "トピックス｜業務効率化・クラウド会計のコラム・お知らせ | COANA TOKYO合同会社",
+        "titleLen": 38,
+        "descLen": 72,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/contact": {
+        "status": 200,
+        "ttfbMs": 128,
+        "htmlKB": 11,
+        "title": "お問い合わせ｜業務の効率化・自動化・経理代行のご相談 | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 106,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/privacy": {
+        "status": 200,
+        "ttfbMs": 121,
+        "htmlKB": 18,
+        "title": "プライバシーポリシー | COANA TOKYO合同会社",
+        "titleLen": 21,
+        "descLen": 117,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList"
+        ]
+      },
+      "/services/it-consulting": {
+        "status": 200,
+        "ttfbMs": 72,
+        "htmlKB": 28,
+        "title": "業務改善・IT化支援｜業務の棚卸し5万円〜、IT顧問は月3万円〜 | COANA TOKYO合同会社",
+        "titleLen": 40,
+        "descLen": 111,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/cloud-accounting": {
+        "status": 200,
+        "ttfbMs": 64,
+        "htmlKB": 25,
+        "title": "クラウド会計導入支援｜freee・マネーフォワードの設定・連携・定着 | COANA TOKYO合同会社",
+        "titleLen": 43,
+        "descLen": 110,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/startup-support": {
+        "status": 200,
+        "ttfbMs": 108,
+        "htmlKB": 26,
+        "title": "創業支援｜開業準備の整理から会計・ITツールの立ち上げまで（英語対応） | COANA TOKYO合同会社",
+        "titleLen": 45,
+        "descLen": 118,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/automation": {
+        "status": 200,
+        "ttfbMs": 102,
+        "htmlKB": 28,
+        "title": "業務の自動化・システム開発｜転記・通知・書類作成を1件5万円から | COANA TOKYO合同会社",
+        "titleLen": 42,
+        "descLen": 132,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/web-production": {
+        "status": 200,
+        "ttfbMs": 121,
+        "htmlKB": 26,
+        "title": "LP・Webサイト制作｜原稿づくりから問い合わせ通知まで（LP20万円〜） | COANA TOKYO合同会社",
+        "titleLen": 44,
+        "descLen": 128,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/bookkeeping": {
+        "status": 200,
+        "ttfbMs": 94,
+        "htmlKB": 25,
+        "title": "経理代行｜月1万円から、記帳・請求・月次締めを必要な分だけ | COANA TOKYO合同会社",
+        "titleLen": 40,
+        "descLen": 99,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/backoffice-dx": {
+        "status": 200,
+        "ttfbMs": 92,
+        "htmlKB": 29,
+        "title": "バックオフィス代行・DX支援｜経理・労務・総務・事務を月3万円から | COANA TOKYO合同会社",
+        "titleLen": 43,
+        "descLen": 103,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/sns-management": {
+        "status": 200,
+        "ttfbMs": 116,
+        "htmlKB": 25,
+        "title": "SNS運用代行｜媒体を問わず、投稿の計画から振り返りまで（月10万円〜） | COANA TOKYO合同会社",
+        "titleLen": 45,
+        "descLen": 144,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/services/startup-support-en": {
+        "status": 200,
+        "ttfbMs": 84,
+        "htmlKB": 24,
+        "title": "Start a Business in Japan | Bilingual Support | COANA TOKYO LLC",
+        "titleLen": 32,
+        "descLen": 154,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Service",
+          "FAQPage"
+        ]
+      },
+      "/topics/20260219-seminar": {
+        "status": 200,
+        "ttfbMs": 95,
+        "htmlKB": 16,
+        "title": "講師登壇：経理DXの実践｜ポリテクセンター福岡の生産性向上支援訓練 | COANA TOKYO合同会社",
+        "titleLen": 43,
+        "descLen": 98,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260318-cloud-accounting-setup": {
+        "status": 200,
+        "ttfbMs": 51,
+        "htmlKB": 22,
+        "title": "クラウド会計の導入で失敗しない｜導入前に整理したい5つのこと | COANA TOKYO合同会社",
+        "titleLen": 41,
+        "descLen": 107,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260430-seminar": {
+        "status": 200,
+        "ttfbMs": 95,
+        "htmlKB": 16,
+        "title": "セミナー登壇：迷わない経理のロードマップ（AIと経理DX） | COANA TOKYO合同会社",
+        "titleLen": 38,
+        "descLen": 82,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260526-seminar": {
+        "status": 200,
+        "ttfbMs": 85,
+        "htmlKB": 17,
+        "title": "共同セミナー：クラウド会計で経営判断を早くする数字の見方 | COANA TOKYO合同会社",
+        "titleLen": 39,
+        "descLen": 89,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260617-bookkeeping-dependency": {
+        "status": 200,
+        "ttfbMs": 73,
+        "htmlKB": 21,
+        "title": "経理の属人化を解消する4つのステップ｜小さな会社向け | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 107,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260710-seminar": {
+        "status": 200,
+        "ttfbMs": 43,
+        "htmlKB": 15,
+        "title": "福岡・天神「はじめてのクラウド会計講座」開催レポート | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 93,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260804-outsourcing-checklist": {
+        "status": 200,
+        "ttfbMs": 76,
+        "htmlKB": 21,
+        "title": "経理代行で後悔しないために｜依頼前に整理したい3つのこと | COANA TOKYO合同会社",
+        "titleLen": 39,
+        "descLen": 91,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260911-media": {
+        "status": 200,
+        "ttfbMs": 94,
+        "htmlKB": 16,
+        "title": "メディア掲載：経営者インタビュー「経道」に代表・衣鳩の対談 | COANA TOKYO合同会社",
+        "titleLen": 40,
+        "descLen": 62,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20260925-sns-outsourcing": {
+        "status": 200,
+        "ttfbMs": 76,
+        "htmlKB": 20,
+        "title": "SNS運用代行を頼む前に｜中小企業が決めておきたい4つのこと | COANA TOKYO合同会社",
+        "titleLen": 39,
+        "descLen": 89,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261014-sponsor-fukuoka-cde": {
+        "status": 200,
+        "ttfbMs": 73,
+        "htmlKB": 15,
+        "title": "NPO法人福岡幼児発達教育研究会のゴールドスポンサーに | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 79,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261019-payment-matching": {
+        "status": 200,
+        "ttfbMs": 82,
+        "htmlKB": 23,
+        "title": "入金確認（入金消込）のやり方｜入金漏れを防ぐ手順 | COANA TOKYO合同会社",
+        "titleLen": 35,
+        "descLen": 101,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261026-bookkeeping-outsourcing-choose": {
+        "status": 200,
+        "ttfbMs": 83,
+        "htmlKB": 25,
+        "title": "経理代行・記帳代行の選び方｜比べる5つのポイント | COANA TOKYO合同会社",
+        "titleLen": 35,
+        "descLen": 84,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      },
+      "/topics/20261102-bookkeeping-outsourcing-flow": {
+        "status": 200,
+        "ttfbMs": 84,
+        "htmlKB": 22,
+        "title": "経理代行を頼むときの流れ｜相談から運用開始まで5段階 | COANA TOKYO合同会社",
+        "titleLen": 37,
+        "descLen": 91,
+        "jsonld": [
+          "Organization/ProfessionalService",
+          "WebSite",
+          "BreadcrumbList",
+          "Article"
+        ]
+      }
+    }
+  },
+  "perf": {
+    "base": "https://coana.co.jp",
+    "at": "2026-11-09T00:00:16.404Z",
+    "lighthouse": {
+      "/": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 9618,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/services": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 8739,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/services/it-consulting": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 9132,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/services/automation": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 9137,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/services/bookkeeping": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 10169,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/services/backoffice-dx": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 10990,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/about": {
+        "performance": null,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": null,
+        "cls": 0,
+        "tbtMs": null,
+        "fcpMs": 8162,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/topics": {
+        "performance": 56,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": 12296,
+        "cls": 0,
+        "tbtMs": 92,
+        "fcpMs": 8900,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      },
+      "/contact": {
+        "performance": 59,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "lcpMs": 8918,
+        "cls": 0,
+        "tbtMs": 54,
+        "fcpMs": 7000,
+        "failedSeoAudits": [],
+        "failedA11yAudits": []
+      }
+    },
+    "psi": {
+      "/": {
+        "labPerformance": 0,
+        "field": null,
+        "originField": null
+      },
+      "/services": {
+        "labPerformance": 0,
+        "field": null
+      },
+      "/services/it-consulting": {
+        "labPerformance": 0,
+        "field": null
+      },
+      "/services/automation": {
+        "labPerformance": 0,
+        "field": null
+      }
+    },
+    "notes": []
+  },
+  "gsc": {
+    "site": "sc-domain:coana.co.jp",
+    "at": "2026-11-09T00:05:25.023Z",
+    "range": {
+      "start": "2026-10-10",
+      "end": "2026-11-06"
+    },
+    "prevRange": {
+      "start": "2026-09-12",
+      "end": "2026-10-09"
+    },
+    "totals": {
+      "clicks": 98,
+      "impressions": 688,
+      "ctr": 14.2,
+      "position": 14.9
+    },
+    "prevTotals": {
+      "clicks": 32,
+      "impressions": 94,
+      "ctr": 34,
+      "position": 6.7
+    },
+    "brandClicks": 53,
+    "prevBrandClicks": 0,
+    "nonBrandClicks": 1,
+    "prevNonBrandClicks": 0,
+    "queries": [
+      {
+        "key": "coana tokyo",
+        "clicks": 39,
+        "impressions": 65,
+        "ctr": 60,
+        "position": 1.2
+      },
+      {
+        "key": "coana",
+        "clicks": 14,
+        "impressions": 30,
+        "ctr": 46.7,
+        "position": 1.8
+      },
+      {
+        "key": "米山毅",
+        "clicks": 1,
+        "impressions": 14,
+        "ctr": 7.1,
+        "position": 6.6
+      },
+      {
+        "key": "\"米山毅\"",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 17.7
+      },
+      {
+        "key": "coana twitter",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 5
+      },
+      {
+        "key": "japanese business bookkeeping support usa",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 66
+      },
+      {
+        "key": "kohana 案件",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 78
+      },
+      {
+        "key": "pomoc prawna dla firm z japonii",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0,
+        "position": 28.8
+      },
+      {
+        "key": "sns 運用支援",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 35
+      },
+      {
+        "key": "sns文章 代行",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 61
+      },
+      {
+        "key": "イベント 登壇",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 32.7
+      },
+      {
+        "key": "イベント 相談",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 17
+      },
+      {
+        "key": "イベント 集客 代行",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 96
+      },
+      {
+        "key": "イベント運営 代行 会社 セミナー",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0,
+        "position": 18.2
+      },
+      {
+        "key": "ウェビナー 集客代行",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 98
+      },
+      {
+        "key": "オンラインイベント支援",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 25
+      },
+      {
+        "key": "カンファレンス 代行",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 67
+      },
+      {
+        "key": "クラウド会計 導入支援",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 83
+      },
+      {
+        "key": "セミナー 代行",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 44.5
+      },
+      {
+        "key": "セミナー 外注",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 71
+      },
+      {
+        "key": "セミナー 支援",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 19.5
+      },
+      {
+        "key": "セミナー 登壇",
+        "clicks": 0,
+        "impressions": 16,
+        "ctr": 0,
+        "position": 24.4
+      },
+      {
+        "key": "セミナー代行",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 45
+      },
+      {
+        "key": "セミナー登壇",
+        "clicks": 0,
+        "impressions": 13,
+        "ctr": 0,
+        "position": 23
+      },
+      {
+        "key": "マキナフロー",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 60.5
+      },
+      {
+        "key": "マキナフロー ワークフロー",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 60
+      },
+      {
+        "key": "中小企業 営業支援",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 65
+      },
+      {
+        "key": "事業計画書 代行",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 97
+      },
+      {
+        "key": "会社設立後に会計・給与・請求書管理まで始めやすいサービスを教えてください",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 10
+      },
+      {
+        "key": "催事 コンサルタント 集客 コンサル",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 8
+      },
+      {
+        "key": "入金漏れ",
+        "clicks": 0,
+        "impressions": 27,
+        "ctr": 0,
+        "position": 8.4
+      },
+      {
+        "key": "入金漏れとは",
+        "clicks": 0,
+        "impressions": 51,
+        "ctr": 0,
+        "position": 7.4
+      },
+      {
+        "key": "投稿代行",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 14
+      },
+      {
+        "key": "経理 代行",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0,
+        "position": 80.8
+      },
+      {
+        "key": "経理 代行 中小 企業",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 49.5
+      },
+      {
+        "key": "経理 依頼",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 71
+      },
+      {
+        "key": "経理が1人に属人化しています。業務を外注しながら、誰でも回せる仕組みに変えてくれる会社はありますか？",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 1
+      },
+      {
+        "key": "経理代行",
+        "clicks": 0,
+        "impressions": 15,
+        "ctr": 0,
+        "position": 73.1
+      },
+      {
+        "key": "経理代行 東京",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 83
+      },
+      {
+        "key": "衣鳩",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 10
+      },
+      {
+        "key": "記帳代行 見極め方",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 9
+      },
+      {
+        "key": "集客 サポート",
+        "clicks": 0,
+        "impressions": 9,
+        "ctr": 0,
+        "position": 90.7
+      },
+      {
+        "key": "領収書 代行",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 88
+      }
+    ],
+    "pages": [
+      {
+        "key": "https://coana.co.jp/",
+        "clicks": 69,
+        "impressions": 167,
+        "ctr": 41.3,
+        "position": 2.7
+      },
+      {
+        "key": "https://coana.co.jp/about",
+        "clicks": 10,
+        "impressions": 164,
+        "ctr": 6.1,
+        "position": 2.4
+      },
+      {
+        "key": "https://coana.co.jp/?utm_source=google&utm_medium=organic&utm_campaign=gbp",
+        "clicks": 4,
+        "impressions": 101,
+        "ctr": 4,
+        "position": 8.8
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260911-media",
+        "clicks": 4,
+        "impressions": 22,
+        "ctr": 18.2,
+        "position": 5.7
+      },
+      {
+        "key": "https://hay-dash.coana.co.jp/guide",
+        "clicks": 4,
+        "impressions": 10,
+        "ctr": 40,
+        "position": 3.3
+      },
+      {
+        "key": "https://coana.co.jp/renjill",
+        "clicks": 3,
+        "impressions": 4,
+        "ctr": 75,
+        "position": 1
+      },
+      {
+        "key": "https://renjill.coana.co.jp/",
+        "clicks": 3,
+        "impressions": 7,
+        "ctr": 42.9,
+        "position": 2.1
+      },
+      {
+        "key": "https://coana.co.jp/privacy",
+        "clicks": 2,
+        "impressions": 85,
+        "ctr": 2.4,
+        "position": 1.9
+      },
+      {
+        "key": "https://coana.co.jp/topics/20261019-payment-matching",
+        "clicks": 2,
+        "impressions": 140,
+        "ctr": 1.4,
+        "position": 7
+      },
+      {
+        "key": "https://coana.co.jp/contact",
+        "clicks": 1,
+        "impressions": 85,
+        "ctr": 1.2,
+        "position": 18.9
+      },
+      {
+        "key": "https://coana.co.jp/services/cloud-accounting",
+        "clicks": 1,
+        "impressions": 7,
+        "ctr": 14.3,
+        "position": 29.1
+      },
+      {
+        "key": "https://coana.co.jp/services/sns-management",
+        "clicks": 1,
+        "impressions": 29,
+        "ctr": 3.4,
+        "position": 9.4
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260219-seminar",
+        "clicks": 1,
+        "impressions": 8,
+        "ctr": 12.5,
+        "position": 6.6
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260526-seminar",
+        "clicks": 1,
+        "impressions": 42,
+        "ctr": 2.4,
+        "position": 6.2
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260804-outsourcing-checklist",
+        "clicks": 1,
+        "impressions": 28,
+        "ctr": 3.6,
+        "position": 16.8
+      },
+      {
+        "key": "https://hay-dash.coana.co.jp/",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 100,
+        "position": 1
+      },
+      {
+        "key": "https://www.coana.co.jp/services/seminar-event",
+        "clicks": 1,
+        "impressions": 18,
+        "ctr": 5.6,
+        "position": 26.1
+      },
+      {
+        "key": "https://coana.co.jp/services",
+        "clicks": 0,
+        "impressions": 60,
+        "ctr": 0,
+        "position": 2.2
+      },
+      {
+        "key": "https://coana.co.jp/services/automation",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 60.3
+      },
+      {
+        "key": "https://coana.co.jp/services/backoffice-dx",
+        "clicks": 0,
+        "impressions": 17,
+        "ctr": 0,
+        "position": 2.4
+      },
+      {
+        "key": "https://coana.co.jp/services/bookkeeping",
+        "clicks": 0,
+        "impressions": 29,
+        "ctr": 0,
+        "position": 57.3
+      },
+      {
+        "key": "https://coana.co.jp/services/it-consulting",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 5
+      },
+      {
+        "key": "https://coana.co.jp/services/sales-support",
+        "clicks": 0,
+        "impressions": 13,
+        "ctr": 0,
+        "position": 78.9
+      },
+      {
+        "key": "https://coana.co.jp/services/seminar-event",
+        "clicks": 0,
+        "impressions": 56,
+        "ctr": 0,
+        "position": 24.2
+      },
+      {
+        "key": "https://coana.co.jp/services/startup-support",
+        "clicks": 0,
+        "impressions": 7,
+        "ctr": 0,
+        "position": 38.7
+      },
+      {
+        "key": "https://coana.co.jp/services/startup-support-en",
+        "clicks": 0,
+        "impressions": 22,
+        "ctr": 0,
+        "position": 15.7
+      },
+      {
+        "key": "https://coana.co.jp/services/web-production",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 2.7
+      },
+      {
+        "key": "https://coana.co.jp/topics",
+        "clicks": 0,
+        "impressions": 38,
+        "ctr": 0,
+        "position": 1.9
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260318-cloud-accounting-setup",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 5
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260430-seminar",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 9
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260710-seminar",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 4
+      },
+      {
+        "key": "https://coana.co.jp/topics/20260925-sns-outsourcing",
+        "clicks": 0,
+        "impressions": 10,
+        "ctr": 0,
+        "position": 5.8
+      },
+      {
+        "key": "https://coana.co.jp/topics/20261006-cloud-accounting-setup",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 2
+      },
+      {
+        "key": "https://coana.co.jp/topics/20261014-sponsor-fukuoka-cde",
+        "clicks": 0,
+        "impressions": 34,
+        "ctr": 0,
+        "position": 6.3
+      },
+      {
+        "key": "https://coana.co.jp/topics/20261026-bookkeeping-outsourcing-choose",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 30
+      },
+      {
+        "key": "https://coana.co.jp/topics/20261102-bookkeeping-outsourcing-flow",
+        "clicks": 0,
+        "impressions": 9,
+        "ctr": 0,
+        "position": 8.1
+      },
+      {
+        "key": "https://hay-dash.coana.co.jp/guide-en.html",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 4
+      },
+      {
+        "key": "https://www.coana.co.jp/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 7.3
+      },
+      {
+        "key": "https://www.coana.co.jp/en",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 6
+      },
+      {
+        "key": "https://www.coana.co.jp/en/blog/news-2",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 3
+      },
+      {
+        "key": "https://www.coana.co.jp/event?date=old",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 7
+      },
+      {
+        "key": "https://www.coana.co.jp/privacy",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0,
+        "position": 1.2
+      },
+      {
+        "key": "https://www.coana.co.jp/services",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0,
+        "position": 6.8
+      },
+      {
+        "key": "https://www.coana.co.jp/services/bookkeeping",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 88
+      },
+      {
+        "key": "https://www.coana.co.jp/services/cloud-accounting",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 9
+      },
+      {
+        "key": "https://www.coana.co.jp/services/sales-support",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 5
+      },
+      {
+        "key": "https://www.coana.co.jp/services/web-production",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 3
+      },
+      {
+        "key": "https://www.coana.co.jp/topics",
+        "clicks": 0,
+        "impressions": 18,
+        "ctr": 0,
+        "position": 1.4
+      }
+    ]
+  }
+}
