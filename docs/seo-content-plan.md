@@ -75,7 +75,7 @@
 
 | 作成日 | テーマ# | ファイル | PR | 結果 |
 | --- | --- | --- | --- | --- |
-| 2026-11-09 | 24 | content/topics/20261109-it-inventory.md | （この PR） | 公開待ち（チェック合格で自動公開）。経理代行のテーマが3本続くため、新しい打ち出し（IT化）で記事からの入口がなかった業務改善・IT化支援のテーマを #15 より先に |
+| 2026-11-09 | 24 | content/topics/20261109-it-inventory.md | https://github.com/ibato-byte/coana-website/pull/123 | 公開待ち（チェック合格で自動公開）。経理代行のテーマが3本続くため、新しい打ち出し（IT化）で記事からの入口がなかった業務改善・IT化支援のテーマを #15 より先に |
 | 2026-11-02 | 14 | content/topics/20261102-bookkeeping-outsourcing-flow.md | https://github.com/ibato-byte/coana-website/pull/106 | 公開 |
 | 2026-10-26 | 13 | content/topics/20261026-bookkeeping-outsourcing-choose.md | https://github.com/ibato-byte/coana-website/pull/91 | 公開（2026-10-26） |
 | 2026-10-19 | 1 | content/topics/20261019-payment-matching.md | https://github.com/ibato-byte/coana-website/pull/58 | 公開（2026-10-20、自動公開） |
