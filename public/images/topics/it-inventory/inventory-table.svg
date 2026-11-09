@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="500" fill="#fbfdff"/>
+  <text x="300" y="48" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">業務の棚卸し表の例</text>
+  <g font-size="26" fill="#16334d">
+    <rect x="24" y="72" width="552" height="56" rx="10" fill="#16334d"/>
+    <text x="40" y="110" fill="#ffffff" font-weight="700">業務</text><text x="268" y="110" fill="#ffffff" font-weight="700">頻度</text><text x="372" y="110" fill="#ffffff" font-weight="700">手作業</text>
+    <rect x="24" y="128" width="552" height="76" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="40" y="176">請求書の作成</text><text x="268" y="176">毎月</text><text x="372" y="176">表から転記</text>
+    <rect x="24" y="204" width="552" height="76" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="40" y="252">経費の精算</text><text x="268" y="252">毎週</text><text x="372" y="252">紙を集める</text>
+    <rect x="24" y="280" width="552" height="76" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="40" y="328">問い合わせ対応</text><text x="268" y="328">毎日</text><text x="372" y="328">メールを探す</text>
+    <rect x="24" y="356" width="552" height="76" fill="#eef6fc" stroke="#d8e7f2" stroke-width="2"/>
+    <text x="40" y="404">勤怠の集計</text><text x="268" y="404">毎月</text><text x="372" y="404">手で合計</text>
+    <text x="300" y="474" font-size="24" fill="#4a667d" text-anchor="middle">誰が・どのツールでやっているかも残す</text>
+  </g>
+</svg>
