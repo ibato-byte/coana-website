@@ -4,6 +4,7 @@ slug: it-inventory
 date: 2026-11-09
 category: サービス
 summary: "ツールを入れたのに使われない、何から手を付ければいいか分からない。そんな小さな会社の経営者向けに、IT化の前にやる業務の棚卸しのやり方と、効果と手軽さで順番を決める方法、小さく試して広げる進め方をまとめました。"
+seo_title: "何からIT化すればいい？業務の棚卸しと順番の決め方"
 thumbnail: /uploads/topics/20261109-it-inventory.jpg
 service: it-consulting
 draft: false
