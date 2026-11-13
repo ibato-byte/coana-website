@@ -1,6 +1,6 @@
 // サービスLPとホームページ（トップ・サービス一覧・会社概要・トピックス・お問い合わせ）の「読みやすさ」の検査
 // （2026-11-13 オーナー指摘「LP が見ていて疲れる」の再発防止）
-//   node tools/qa/lp-readable.cjs            … 全LP＋ホームページ5ページ × 9つの幅
+//   node tools/qa/lp-readable.cjs            … 全LP＋ホームページ5ページ × 10の幅
 //   W=390,1280 ONLY=/services/bookkeeping node tools/qa/lp-readable.cjs
 // 確かめること（1件でもあれば「NG」を出し、終了コード 1）
 //  1. 12px 未満の文字がない（説明の字が小さいと読み疲れる）
@@ -15,7 +15,7 @@ const path = require('path');
 const BASE = process.env.BASE || 'http://localhost:4173';
 const dir = path.join(__dirname, '../../content/solutions');
 const PAGES = (process.env.ONLY ? process.env.ONLY.split(',') : fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => '/services/' + f.replace('.json', '')).concat(['/', '/services', '/about', '/topics', '/contact']));
-const WIDTHS = (process.env.W || '320,360,390,430,768,1024,1280,1440,1920').split(',').map(Number);
+const WIDTHS = (process.env.W || '320,360,390,430,768,966,1024,1280,1440,1920').split(',').map(Number);
 
 (async () => {
   const b = await pw.chromium.launch({ executablePath: process.env.CHROME_PATH || undefined, args: ['--no-sandbox'] });
@@ -69,6 +69,19 @@ const WIDTHS = (process.env.W || '320,360,390,430,768,1024,1280,1440,1920').spli
         // 紺の地（トップ「状況から探す」）の説明文が暗い色になっていないか
         const dark = document.querySelector('.sky-dark .num-head-side p');
         if (dark) { const m = getComputedStyle(dark).color.match(/[\d.]+/g).map(Number); if (m[0] < 200) out.push('紺の地の説明文が暗い ' + getComputedStyle(dark).color); }
+        // ヒーローの3項目：横に並んでいるのに上の線、縦に並んでいるのに左の線、になっていないか
+        const facts = vis('.lp-hero-facts li');
+        if (facts.length > 1) {
+          const row = Math.abs(facts[0].getBoundingClientRect().top - facts[1].getBoundingClientRect().top) < 4;
+          const c = getComputedStyle(facts[1]);
+          if (row && parseFloat(c.borderTopWidth) > 0) out.push('ヒーローの3項目：横並びなのに上に区切り線');
+          if (!row && parseFloat(c.borderLeftWidth) > 0) out.push('ヒーローの3項目：縦並びなのに左に区切り線');
+        }
+        // リード文が英字の社名（COANA TOKYO）の途中で折れていないか
+        for (const lead of vis('.section-title .section-lead')) {
+          const tw = document.createTreeWalker(lead, NodeFilter.SHOW_TEXT); let n;
+          while ((n = tw.nextNode())) { const i = n.textContent.indexOf('COANA TOKYO'); if (i < 0) continue; const rg = document.createRange(); rg.setStart(n, i); rg.setEnd(n, i + 11); if (rg.getClientRects().length > 1) out.push('リード文が社名の途中で折れる 「' + lead.textContent.slice(0, 18) + '」'); }
+        }
         const sub = document.querySelector('.relay-center .relay-sub');
         if (sub && getComputedStyle(sub).color !== 'rgb(255, 255, 255)') out.push('紺のカードの説明が白くない ' + getComputedStyle(sub).color);
         for (const h of main.querySelectorAll('h1, h2, h3')) {
