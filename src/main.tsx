@@ -4,6 +4,8 @@ import './index.css'
 import App from './App'
 // Signal Sky（2026-10 リニューアル）の見た目。index.css・solution.css の後に読み込む
 import './signal.css'
+import './lp-calm.css'
+import './hp-calm.css'
 import { installButtonFx } from './buttonFx'
 import { installMotion } from './motion'
 

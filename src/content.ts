@@ -139,6 +139,8 @@ export type Solution = {
      *  relay：御社（client）→ COANA TOKYO（center）→ 対応する領域（nodes）→ 戻り（returns）の一方向の流れ */
     type?: "hub" | "flow" | "lanes" | "relay";
     title?: string;
+    /** 見出しのうち、色を変えて目立たせる言葉（見出しに含まれる言葉をそのまま書く） */
+    title_mark?: string;
     lead?: string;
     center?: { label: string; sub?: string; icon?: string };
     /** relay 型：起点（御社。todo＝御社がやること「まとめて相談するだけ」など）、矢印に添える言葉（1・2）、戻りの流れ（3・4…。最後は御社が受け取るもの）。

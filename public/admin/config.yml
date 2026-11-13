@@ -133,6 +133,7 @@ collections:
         fields:
           - { label: 図の種類, name: type, widget: select, options: [{ label: 御社 → COANA TOKYO → 対応する領域 → 戻り（リレー型）, value: relay }, { label: 中心と周囲（ハブ型）, value: hub }, { label: 左から右の流れ（フロー型）, value: flow }, { label: 御社とCOANAの役割を分けた流れ（レーン型）, value: lanes }], default: relay, required: false }
           - { label: 見出し, name: title, widget: string, required: false }
+          - { label: 見出しで目立たせる言葉, name: title_mark, widget: string, required: false, hint: 見出しの中の言葉をそのまま書くと、その言葉だけ色が変わります（空欄なら変えません） }
           - { label: リード文, name: lead, widget: text, required: false }
           - label: リレー型｜起点（御社。図の左／スマホでは一番上）
             name: client

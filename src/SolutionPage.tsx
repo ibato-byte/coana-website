@@ -107,6 +107,7 @@ const LABELS = {
     flow: "ご利用の流れ",
     faq: "よくあるご質問",
     column: "関連するコラム",
+    columnMore: "コラムをもっと見る",
     ctaTitle: "まずは、現状をお聞かせください。",
     ctaText: "ご相談・お見積もりは無料です。何から相談すればいいか分からない段階でも大丈夫です。",
     ctaButton: "無料相談・お問い合わせ",
@@ -153,6 +154,7 @@ const LABELS = {
     flow: "How to get started",
     faq: "FAQ",
     column: "Related articles",
+    columnMore: "See more articles",
     ctaTitle: "Tell us where you are. We will take it from there.",
     ctaText: "Consultation and quotes are free. If you are not sure where to start, that is exactly where we begin.",
     ctaButton: "Contact us (free consultation)",
@@ -179,6 +181,14 @@ function fitText(text: string, fontSize: number, max: number) {
   let width = 0;
   for (const ch of text) width += (ch.charCodeAt(0) > 0xff ? 1 : 0.56) * fontSize;
   return width > max ? { textLength: max, lengthAdjust: "spacingAndGlyphs" as const } : {};
+}
+
+/** 見出しのうち、いちばん伝えたい言葉（CMS の「見出しで目立たせる言葉」）だけ色を変える。
+ *  見出しにその言葉がなければ、そのまま表示する（文字は足さない） */
+function MarkedTitle({ text, mark }: { text: string; mark?: string }) {
+  const at = mark ? text.indexOf(mark) : -1;
+  if (!mark || at < 0) return <Lines text={text} />;
+  return <>{text.slice(0, at)}<em className="lp-mark">{mark}</em>{text.slice(at + mark.length)}</>;
 }
 
 /* ───────────────────────── 1. Hero ───────────────────────── */
@@ -210,7 +220,7 @@ function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   const signal = sol.design === "signal";
   return (
     <section className={signal ? "lp-hero lp-sig-hero" : "lp-hero"}>
-      {signal && <Feathers count={12} />}
+      {signal && <Feathers count={6} mobileCount={4} />}
       <div className="container lp-hero-inner">
         <div className="lp-hero-head">
           <nav className="sky-crumbs" aria-label="パンくずリスト"><GoLink go={navigate} args={["home"]}>{langOf(sol) === "en" ? "Home" : "ホーム"}</GoLink><span aria-hidden="true">/</span><GoLink go={navigate} args={["services"]}>{langOf(sol) === "en" ? "Services" : "サービス"}</GoLink><span aria-hidden="true">/</span><span>{sol.nav_label}</span></nav>
@@ -773,7 +783,7 @@ function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
   return (
     <section className="section lp-scheme" id="lp-scheme">
       <div className="container">
-        <SectionTitle en="How it works" center lead={scheme.lead}>{scheme.title || L.scheme}</SectionTitle>
+        <SectionTitle en="How it works" center lead={scheme.lead}><MarkedTitle text={scheme.title || L.scheme} mark={scheme.title_mark} /></SectionTitle>
         {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : scheme.type === "relay" ? <SchemeRelay scheme={scheme} story={story} labels={{ todo: L.relayTodo, goal: L.relayGoal }} /> : <SchemeDiagram scheme={scheme} story={story} />}
         {(scheme.points ?? []).length > 0 && (
           <ul className="lp-scheme-points">
@@ -1022,6 +1032,9 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
 
 /* ───────────────────────── ページ本体 ───────────────────────── */
 
+/** 関連するコラムは3本まで（多いとページの終わりが長くなり、読み疲れる）。残りはトピックスの一覧へ */
+const RELATED_MAX = 3;
+
 export function SolutionPage({ navigate }: { navigate: Nav }) {
   const rawSlug = window.location.pathname.replace(/^\/services\//, "").replace(/\/+$/, "");
   let slug = rawSlug;
@@ -1070,8 +1083,11 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
             <div>
               <h2 className="solution-more-title">{L.column}</h2>
               <div className="article-list">
-                {related.map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
+                {related.slice(0, RELATED_MAX).map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
               </div>
+              {related.length > RELATED_MAX && (
+                <GoLink className="solution-more-all" go={navigate} args={["topics"]}>{L.columnMore}<Icon name="arrow" size={16} /></GoLink>
+              )}
             </div>
           )}
           <div>
