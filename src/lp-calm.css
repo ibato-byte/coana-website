@@ -1,0 +1,167 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+ * サービスLP「読み疲れない」層（2026-11-13 オーナー依頼：文字が多すぎず、見やすく。現状は見ていて疲れる）
+ * 基調デザイン（Signal Sky：空のグラデーション・番号つきの見出し・紺と水色）はそのまま。変えるのは次の4つだけ。
+ *   1. 文字を大きく・濃く（説明文 12.5〜14px → 14.5〜16px、薄い灰青 → 濃い灰青）
+ *   2. 線と影を軽く（紺の太い枠・ずらした濃い影 → 細い水色の線・やわらかい影）
+ *   3. 余白を広く（章の間・カードの中）
+ *   4. 1画面の要素を減らす（ヒーローの3つの枠を1枚に、特徴の3枚の枠をなくす など）
+ * signal.css のあとに読み込む。指定はすべて main.lp.lp-signal の中だけ（ほかのページには影響しない）。
+ * ═════════════════════════════════════════════════════════════════════════════ */
+main.lp.lp-signal {
+  --calm-line: #d3e5f3;
+  --calm-line-strong: rgba(22, 51, 77, .2);
+  --calm-text: #3d576c;
+  --calm-shadow: 0 10px 30px rgba(22, 51, 77, .07);
+  --calm-mark: #0668bd;
+}
+
+/* ───────── 章：余白を広く、見出しの線を細く、字間をゆるめる ───────── */
+main.lp.lp-signal > .section { padding-block: clamp(72px, 8.6vw, 124px); }
+main.lp.lp-signal .section-title { padding-bottom: 22px; margin-bottom: clamp(34px, 4vw, 56px); border-bottom: 1.5px solid var(--calm-line-strong); }
+main.lp.lp-signal .section-title h2 { letter-spacing: -.02em; line-height: 1.4; }
+main.lp.lp-signal .section-title .section-lead { margin-top: 12px; max-width: 38em; color: var(--calm-text); font-size: clamp(15.5px, 1.25vw, 17px); line-height: 1.95; }
+main.lp.lp-signal .lp-mark { font-style: normal; color: var(--calm-mark); }
+
+/* ───────── ヒーロー：要素を減らし、3つの枠を1枚のやわらかいパネルに ───────── */
+main.lp.lp-signal .lp-sig-hero .lp-hero-title { letter-spacing: -.03em; line-height: 1.32; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-lead { max-width: 31em; font-size: clamp(15.5px, 1.3vw, 17.5px); line-height: 2; }
+/* サービス名は、英字の代わりに見出しの上に1回だけ出す（パンくず・英字・リードの下の3か所に重ねない） */
+main.lp.lp-signal .lp-sig-hero .lp-hero-en { display: none; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-label { display: inline-block; padding: 5px 14px; border-radius: 999px; background: rgba(255, 255, 255, .94); color: var(--ink); font-size: 13px; font-weight: 900; line-height: 1.5; letter-spacing: .02em; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-sub { display: none; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-lead { margin-bottom: 30px; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts { gap: 0; padding: 6px 22px; border-radius: 22px; background: rgba(255, 255, 255, .16); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5); }
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts li { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; row-gap: 2px; align-items: start; padding: 16px 0; border: 0; border-radius: 0; background: transparent; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts li + li { border-top: 1px solid rgba(255, 255, 255, .42); }
+main.lp.lp-signal .lp-sig-hero .lp-hero-fact-icon { display: grid; place-items: center; grid-row: 1 / span 2; width: 26px; height: 26px; margin-top: 1px; border-radius: 50%; background: var(--sun); color: var(--ink); }
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts li strong { grid-column: 2; font-size: 17px; line-height: 1.5; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts li small { grid-column: 2; font-size: 13.5px; line-height: 1.7; font-weight: 500; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-note { font-size: 13.5px; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-big { opacity: .5; }
+@media (max-width: 980px) {
+  main.lp.lp-signal .lp-sig-hero .lp-hero-facts { padding: 2px 18px; margin-bottom: 26px; }
+  main.lp.lp-signal .lp-sig-hero .lp-hero-facts li { padding: 13px 0; }
+  main.lp.lp-signal .lp-sig-hero .lp-hero-facts li strong { font-size: 16px; }
+}
+
+/* ───────── 01 仕組み：説明の字を読める大きさに。特徴は枠をなくして3つ並べる ───────── */
+main.lp.lp-signal :is(.lanes-text, .lp-scheme-flow li) > span:not(.lp-scheme-flow-icon),
+main.lp.lp-signal .lanes-text > span,
+main.lp.lp-signal .relay-sub { font-size: 13.5px; line-height: 1.75; color: var(--calm-text); }
+main.lp.lp-signal .lanes-text strong, main.lp.lp-signal .lp-scheme-flow li strong { font-size: 16.5px; font-weight: 800; }
+main.lp.lp-signal .lp-scheme-points { gap: 0; margin-top: clamp(40px, 5vw, 64px); }
+main.lp.lp-signal .lp-scheme-points li { padding: 6px clamp(18px, 2.4vw, 34px); border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+main.lp.lp-signal .lp-scheme-points li + li { border-left: 1.5px solid var(--calm-line); }
+main.lp.lp-signal .lp-scheme-points li:first-child { padding-left: 0; }
+main.lp.lp-signal .lp-scheme-points li:last-child { padding-right: 0; }
+main.lp.lp-signal .lp-scheme-points h3 { font-size: 18.5px; line-height: 1.5; }
+main.lp.lp-signal .lp-scheme-points p { font-size: 15px; line-height: 1.9; color: var(--calm-text); }
+@media (max-width: 860px) {
+  main.lp.lp-signal .lp-scheme-points li, main.lp.lp-signal .lp-scheme-points li:first-child, main.lp.lp-signal .lp-scheme-points li:last-child { padding: 20px 0; }
+  main.lp.lp-signal .lp-scheme-points li + li { border-left: 0; border-top: 1.5px solid var(--calm-line); }
+  main.lp.lp-signal .lp-scheme-points li:first-child { padding-top: 0; }
+  main.lp.lp-signal .lp-scheme-points li:last-child { padding-bottom: 0; }
+  main.lp.lp-signal .lp-scheme-points h3 { font-size: 17px; }
+}
+
+/* ───────── 02 支援事例・導入前／導入後：太い枠とずらした影をやめる ───────── */
+main.lp.lp-signal .lp-case { padding: clamp(22px, 2.6vw, 32px); border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.lp.lp-signal .lp-case-client { font-size: 13.5px; color: var(--calm-mark); }
+main.lp.lp-signal .lp-case h3 { letter-spacing: -.01em; line-height: 1.55; }
+main.lp.lp-signal .lp-case-text { font-size: 15px; line-height: 1.9; color: var(--calm-text); }
+main.lp.lp-signal .lp-case-result { font-size: 14.5px; }
+main.lp.lp-signal .lp-ba { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.lp.lp-signal .lp-ba-grid li { border-width: 1.5px; border-color: var(--calm-line); box-shadow: none; }
+main.lp.lp-signal .lp-ba-head { font-size: 13.5px; }
+main.lp.lp-signal .lp-ba-val { line-height: 1.7; }
+main.lp.lp-signal .lp-ba-note { font-size: 12.5px; color: var(--calm-text); }
+
+/* ───────── 03 プランと料金：金額を主役に、説明を読める大きさに ───────── */
+main.lp.lp-signal .lp-plan { padding: 34px 26px 26px; border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.lp.lp-signal .lp-plan.is-featured { border-color: transparent; box-shadow: 0 18px 40px rgba(10, 98, 184, .28); }
+main.lp.lp-signal .lp-plan :is(h3, h4) { font-size: 18px; }
+main.lp.lp-signal .lp-plan-price { font-size: clamp(26px, 2.5vw, 31px); letter-spacing: 0; }
+main.lp.lp-signal .lp-plan-text { font-size: 15px; line-height: 1.85; color: var(--calm-text); }
+main.lp.lp-signal .lp-plan ul { gap: 10px; border-top-color: var(--calm-line); }
+main.lp.lp-signal .lp-plan li { font-size: 15px; line-height: 1.65; }
+main.lp.lp-signal .lp-plan-for { display: grid; gap: 6px; justify-items: start; font-size: 14.5px; line-height: 1.7; color: var(--calm-text); }
+main.lp.lp-signal .lp-plan-for span { margin: 0; }
+main.lp.lp-signal .lp-plan.is-featured :is(.lp-plan-text, .lp-plan-for) { color: #fff; }
+main.lp.lp-signal .lp-plan.is-featured ul { border-top-color: rgba(255, 255, 255, .45); }
+main.lp.lp-signal .lp-plan-note { margin-top: 26px; font-size: 14px; line-height: 1.85; color: var(--calm-text); }
+main.lp.lp-signal .lp-scope { margin-top: 30px; border: 1.5px solid var(--calm-line); }
+main.lp.lp-signal .lp-scope summary { padding: 18px 22px; font-size: 16px; }
+main.lp.lp-signal .lp-scope-card li { font-size: 14.5px; line-height: 1.8; }
+main.lp.lp-signal .lp-note-legal { font-size: 13.5px; line-height: 1.85; color: var(--calm-text); }
+main.lp.lp-signal .lp-tools { margin-top: 36px; }
+main.lp.lp-signal .lp-tools-title { font-size: 14px; }
+main.lp.lp-signal .lp-tools li { padding: 10px 18px; border: 1.5px solid var(--calm-line); background: #fff; font-size: 14px; font-weight: 700; }
+main.lp.lp-signal .lp-tools small { font-size: 13.5px; color: var(--calm-text); }
+
+/* ───────── 04 流れ・05 よくあるご質問：説明を大きく、区切りの線を細く ───────── */
+main.lp.lp-signal .flowx-body h3 { font-size: 17px; line-height: 1.55; }
+main.lp.lp-signal .flowx-body p { font-size: 14.5px; line-height: 1.85; color: var(--calm-text); }
+main.lp.lp-signal .flowx-note { padding: 6px 16px; font-size: 14px; }
+main.lp.lp-signal .faq-item, main.lp.lp-signal .faq-item.open, main.lp.lp-signal .faq-item:hover { border-bottom: 1.5px solid var(--calm-line); }
+main.lp.lp-signal .faq-list > div:first-child .faq-item { border-top: 1.5px solid var(--calm-line); }
+main.lp.lp-signal .faq-section.is-numbered .faq-list > div:first-child .faq-item { border-top: 0; }
+main.lp.lp-signal .faq-q { padding-block: 24px; }
+main.lp.lp-signal .faq-a-inner p { color: var(--calm-text); line-height: 1.95; }
+@media (max-width: 700px) {
+  main.lp.lp-signal .faq-q { font-size: 16px; line-height: 1.65; }
+  main.lp.lp-signal .faq-a-inner p { font-size: 15px; }
+}
+
+/* ───────── ページの終わり：関連するコラムは3本まで、区切りは細い線 ───────── */
+main.lp.lp-signal .solution-more .article-row { border-bottom: 1.5px solid var(--calm-line); }
+main.lp.lp-signal .solution-more a.solution-other { border-color: var(--calm-line); }
+main.lp.lp-signal .solution-more-title { border-bottom-width: 1.5px; border-bottom-color: var(--calm-line-strong); letter-spacing: -.01em; }
+main.lp.lp-signal a.solution-more-all { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; padding: 4px 0; color: var(--calm-mark); font-size: 15px; font-weight: 800; text-decoration: underline; text-underline-offset: 5px; text-decoration-color: rgba(6, 104, 189, .35); }
+main.lp.lp-signal a.solution-more-all:hover { text-decoration-color: currentColor; }
+main.lp.lp-signal a.solution-more-all svg { transition: transform .3s var(--ease-out, ease); }
+main.lp.lp-signal a.solution-more-all:hover svg { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) { main.lp.lp-signal a.solution-more-all svg { transition: none; } }
+
+/* ───────── 点検で見つけた細部（1周目） ───────── */
+/* スマホ：ヒーローの3項目が中央寄せになり、チェックの印と文字が離れていた → 左寄せにそろえる */
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts li, main.lp.lp-signal .lp-sig-hero .lp-hero-facts li :is(strong, small) { text-align: left; justify-self: start; }
+/* 導入前／導入後の下の帯だけ紺の太い枠が残っていた → ほかのカードと同じ細い線に */
+main.lp.lp-signal .lp-ba-meter { border: 1.5px solid var(--calm-line); box-shadow: none; }
+/* PC：リード文が「COANA / TOKYOが行います。」のように社名の途中で折れていた → 幅を少し広げ、文節で折る */
+@media (min-width: 981px) { main.lp.lp-signal .section-title .section-lead { max-width: 44em; } }
+main.lp.lp-signal .section-title .section-lead, main.lp.lp-signal .lp-hero-lead { word-break: auto-phrase; text-wrap: pretty; }
+/* スマホ：12px 未満の字が残っていた（導入前／導入後の図の札 10.5px、状態の札 11px、御社／COANA TOKYO の札 11px、英字の小見出し 11.5px、コラムの分類 11.5px）→ 12px 以上に */
+main.lp.lp-signal .eyebrow { font-size: 12px; }
+main.lp.lp-signal .lanes-tag { font-size: 12px; }
+main.lp.lp-signal .solution-more .article-meta i { font-size: 12px; }
+@media (max-width: 700px) {
+  main.lp.lp-signal .lp-ba-sources li, main.lp.lp-signal .lp-ba-partner { font-size: 12px; letter-spacing: -.01em; }
+  main.lp.lp-signal .lp-ba-center span { font-size: 12.5px; }
+  main.lp.lp-signal .lp-ba-status span { font-size: 12px; }
+}
+
+/* ───────── 点検で見つけた細部（2周目） ───────── */
+/* 紺のカード（COANA TOKYO チーム）の説明が、濃い灰青になって読めなくなっていた → 白に戻す */
+main.lp.lp-signal .relay-center .relay-sub { color: #fff; }
+/* スマホ：ヒーローの3項目の区切り線が、文字の幅で途中までしか引かれていなかった → 端から端まで */
+main.lp.lp-signal .lp-sig-hero .lp-hero-facts li { justify-self: stretch; width: 100%; }
+/* 見出しの色を変えた言葉が「問い／合わせが届く」のように途中で折れていた → 言葉ごと次の行へ送る */
+main.lp.lp-signal .lp-mark { display: inline-block; max-width: 100%; }
+
+/* ───────── 点検で見つけた細部（3周目） ───────── */
+/* タブレット（641〜980px）：特徴が2列＋1つになり、区切り線が段違いに引かれていた → 1列にそろえる */
+@media (max-width: 980px) {
+  main.lp.lp-signal .lp-scheme-points { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  main.lp.lp-signal .lp-scheme-points li, main.lp.lp-signal .lp-scheme-points li:first-child, main.lp.lp-signal .lp-scheme-points li:last-child { padding: 20px 0; }
+  main.lp.lp-signal .lp-scheme-points li + li { border-left: 0; border-top: 1.5px solid var(--calm-line); }
+  main.lp.lp-signal .lp-scheme-points li:first-child { padding-top: 0; }
+  main.lp.lp-signal .lp-scheme-points li:last-child { padding-bottom: 0; }
+}
+@media (min-width: 641px) and (max-width: 980px) {
+  main.lp.lp-signal .lp-scheme-points li { display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 16px; }
+  main.lp.lp-signal .lp-scheme-points li > :not(.lp-scheme-point-icon) { grid-column: 2; }
+  main.lp.lp-signal .lp-scheme-points .lp-scheme-point-icon { grid-row: 1 / span 2; }
+}
+/* PC：ボタンの下の注記（ご相談・お見積もりは無料…）が、背景の大きな英字の輪郭に重なって読みにくかった → 下の余白を広げて離す */
+@media (min-width: 641px) { main.lp.lp-signal .lp-sig-hero { padding-bottom: calc(15vw + 20px); } }
+@media (min-width: 1101px) { main.lp.lp-signal .lp-sig-hero { padding-bottom: max(132px, 11vw); } }
