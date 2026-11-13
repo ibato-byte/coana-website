@@ -1,0 +1,122 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+ * ホームページ（トップ・サービス一覧・会社概要・トピックス・お問い合わせ）の「読み疲れない」層
+ * （2026-11-13 オーナー依頼：いまのデザインを基調に、LP と同じ考え方で見やすく）
+ * 基調（Signal Sky）とトップのヒーロー（.sky-hero）は変えない。変えるのは次の3つだけ。
+ *   1. 文字を大きく・濃く（説明文 11〜14px → 12〜15.5px）
+ *   2. 線と影を軽く（紺の太い枠・ずらした影 → 細い水色の線・やわらかい影）
+ *   3. 余白を少し広く
+ * 指定はすべて main:not(.lp) の中だけ（LP は lp-calm.css）。
+ * ═════════════════════════════════════════════════════════════════════════════ */
+main:not(.lp) {
+  --calm-line: #d3e5f3;
+  --calm-line-strong: rgba(22, 51, 77, .2);
+  --calm-text: #3d576c;
+  --calm-shadow: 0 10px 30px rgba(22, 51, 77, .07);
+  --calm-mark: #0668bd;
+}
+
+/* ───────── 共通：小さな英字・札・見出しの線 ───────── */
+main:not(.lp) :is(.eyebrow, .page-hero-en, .poster-en, .sky-mono):not(.sky-hero *) { font-size: 12px; }
+main:not(.lp) .num-head { padding-bottom: 24px; border-bottom: 1.5px solid var(--calm-line-strong); }
+main:not(.lp) .num-head h2 { letter-spacing: -.02em; }
+main:not(.lp) .num-head-side p { font-size: 15px; line-height: 1.9; color: var(--calm-text); }
+main:not(.lp) .section-title { border-bottom: 1.5px solid var(--calm-line-strong); }
+main:not(.lp) .section-title h2 { letter-spacing: -.02em; }
+
+/* ───────── トップ 01：サービスの行 ───────── */
+main.home-page .svc-row { border-bottom: 1.5px solid var(--calm-line); }
+main.home-page .svc-row:first-child { border-top-color: var(--calm-line); }
+main.home-page .svc-row-text { font-size: 15px; color: var(--calm-text); }
+main.home-page .svc-row-text em { font-size: 12px; }
+main.home-page .svc-row-verb { border-width: 1.5px; border-color: var(--calm-line-strong); }
+
+/* ───────── トップ 02：支援事例 ───────── */
+main.home-page .case-card { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.home-page .case-title { letter-spacing: -.01em; line-height: 1.5; }
+main.home-page .case-client { color: var(--calm-mark); }
+main.home-page .case-tag { font-size: 12px; }
+main.home-page .case-row p { font-size: 15px; line-height: 1.8; }
+main.home-page .case-row.is-before p { color: var(--calm-text); }
+main.home-page .case-result small { font-size: 13px; color: var(--calm-text); }
+main.home-page .case-tools span { font-size: 12.5px; color: var(--calm-text); }
+main.home-page .case-card li a.go-link { border-width: 1.5px; border-color: var(--calm-line-strong); font-size: 13.5px; }
+main.home-page .case-more { border: 1.5px solid var(--calm-line); }
+main.home-page .case-more-list li { font-size: 13.5px; color: var(--calm-text); }
+
+/* ───────── トップ 03：状況から探す（紺の地はそのまま。影だけ軽く） ───────── */
+main.home-page .finder-card { box-shadow: 0 18px 44px rgba(0, 0, 0, .28); }
+main.home-page .finder-big small { color: rgba(255, 255, 255, .9); font-size: 15px; }
+main.home-page .finder-card-top span { font-size: 13px; }
+
+/* ───────── トップ 04：支援スタイル・流れ・ツール ───────── */
+main.home-page .poster-grid { border-width: 1.5px; border-color: var(--calm-line-strong); border-bottom-width: 0; }
+main.home-page .poster-card { border-color: var(--calm-line-strong); border-bottom-width: 1.5px; }
+main.home-page .poster-card p { color: var(--calm-text); line-height: 1.9; }
+main.home-page .poster-card h3 { letter-spacing: -.01em; }
+
+/* ───────── トップ 05 トピックス・06 よくあるご質問 ───────── */
+main.home-page .topic-tile-meta :is(time, i) { font-size: 12.5px; }
+main.home-page .topic-tile-more { font-size: 13.5px; }
+main:not(.lp) .faq-item, main:not(.lp) .faq-item.open, main:not(.lp) .faq-item:hover { border-bottom: 1.5px solid var(--calm-line); }
+main:not(.lp) .faq-list > div:first-child .faq-item { border-top: 1.5px solid var(--calm-line); }
+main:not(.lp) .faq-section.is-numbered .faq-list > div:first-child .faq-item { border-top: 0; }
+main:not(.lp) .faq-a-inner p { color: var(--calm-text); line-height: 1.95; }
+main:not(.lp) .faq-ask { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main:not(.lp) .faq-ask-text { font-size: 15px; color: var(--calm-text); }
+@media (max-width: 700px) { main:not(.lp) .faq-q { font-size: 16px; line-height: 1.65; } }
+
+/* ───────── サービス一覧 ───────── */
+main.services-page .service-group-head { border-top: 1.5px solid var(--calm-line-strong); }
+main.services-page .service-tagline { font-size: 15.5px; line-height: 1.85; color: var(--calm-text); }
+main.services-page .service-card { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.services-page .service-card-body strong { font-size: 18px; }
+main.services-page .service-card-text { font-size: 15px; line-height: 1.85; color: var(--calm-text); }
+main.services-page .service-card-more { font-size: 14px; }
+main.services-page .service-tag, main.services-page .service-en em { font-size: 12px; }
+main.services-page .diagnose-banner { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.services-page .diagnose-banner p span { font-size: 14.5px; color: var(--calm-text); }
+main.services-page .flowx-body h3 { font-size: 17px; }
+main.services-page .flowx-body small span { font-size: 12px; }
+@media (max-width: 700px) {
+  main.services-page .service-card-text { font-size: 14.5px; }
+  main.services-page .service-tagline { font-size: 15px; }
+}
+
+/* ───────── 会社概要 ───────── */
+main:not(.lp) .greeting-name { border-top: 1.5px solid var(--calm-line-strong); }
+main:not(.lp) .greeting-name :is(small, span) { font-size: 13px; color: var(--calm-text); }
+main:not(.lp) .section-index i { font-size: 13.5px; }
+@media (max-width: 700px) { main:not(.lp) .company-table dt, main:not(.lp) dl > div > dt { font-size: 14px; } }
+
+/* ───────── トピックス ───────── */
+main:not(.lp) .filter-row button { border-width: 1.5px; border-color: var(--calm-line-strong); }
+main:not(.lp) .filter-row button.active { border-color: var(--ink); }
+main:not(.lp) .article-meta time { font-size: 13.5px; color: var(--calm-text); }
+main:not(.lp) .article-meta i { font-size: 12px; }
+main:not(.lp) .pagination button { font-size: 14px; }
+
+/* ───────── お問い合わせ ───────── */
+main:not(.lp) .contact-form-card { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main:not(.lp) .contact-side > :is(.line-notice, .tel-notice, .chat-notice, div) { border-width: 1.5px; border-color: var(--calm-line); }
+main:not(.lp) .form-wrap :is(input:not([type="checkbox"]), select, textarea) { border-width: 1.5px; border-color: rgba(22, 51, 77, .5); }
+main:not(.lp) .form-wrap :is(input, select, textarea):focus-visible { border-color: var(--calm-mark); }
+main:not(.lp) .form-steps li { font-size: 13.5px; }
+main:not(.lp) .form-steps li span { font-size: 12px; }
+main:not(.lp) .field-label i { font-size: 12px; }
+main:not(.lp) .form-note, main:not(.lp) .contact-side p small { font-size: 14px; }
+main:not(.lp) .form-wrap span > b { font-size: 12px; }
+main:not(.lp) .form-lang-note { font-size: 13.5px; color: var(--calm-text); }
+main:not(.lp) .tel-number__label { font-size: 12.5px; }
+
+/* ───────── 点検で見つけた細部 ───────── */
+/* 紺の地（03 状況から探す）の説明文まで濃い灰青になり、読めなくなっていた → 白に戻す */
+main.home-page .sky-dark .num-head-side p { color: rgba(255, 255, 255, .9); }
+main.home-page .sky-dark .num-head { border-bottom-color: rgba(255, 255, 255, .35); }
+/* 太い紺の線が残っていたところ（流れの縦線・ツールの札・料金の箱）もそろえる */
+main.home-page .step-poster li, main.home-page .step-poster li:last-child, main.home-page .step-poster li:nth-child(2) { border-color: var(--calm-line-strong); border-left-width: 1.5px; }
+main.home-page .step-poster li:last-child { border-right-width: 1.5px; }
+@media (max-width: 1100px) { main.home-page .step-poster li { border-right-width: 1.5px; } }
+main.home-page .step-poster li p { font-size: 14.5px; line-height: 1.85; color: var(--calm-text); }
+main.home-page .tool-pills span { border-width: 1.5px; border-color: var(--calm-line-strong); }
+main.services-page .pricing-box { border: 1.5px solid var(--calm-line); box-shadow: var(--calm-shadow); }
+main.services-page .pricing-box p { font-size: 15px; line-height: 1.9; color: var(--calm-text); }

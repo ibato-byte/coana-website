@@ -27,7 +27,7 @@ main.lp.lp-signal .lp-sig-hero .lp-hero-title { letter-spacing: -.03em; line-hei
 main.lp.lp-signal .lp-sig-hero .lp-hero-lead { max-width: 31em; font-size: clamp(15.5px, 1.3vw, 17.5px); line-height: 2; }
 /* サービス名は、英字の代わりに見出しの上に1回だけ出す（パンくず・英字・リードの下の3か所に重ねない） */
 main.lp.lp-signal .lp-sig-hero .lp-hero-en { display: none; }
-main.lp.lp-signal .lp-sig-hero .lp-hero-label { display: inline-block; padding: 5px 14px; border-radius: 999px; background: rgba(255, 255, 255, .94); color: var(--ink); font-size: 13px; font-weight: 900; line-height: 1.5; letter-spacing: .02em; }
+main.lp.lp-signal .lp-sig-hero .lp-hero-label { display: inline-block; padding: 5px 14px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 13px; font-weight: 900; line-height: 1.5; letter-spacing: .02em; }
 main.lp.lp-signal .lp-sig-hero .lp-hero-sub { display: none; }
 main.lp.lp-signal .lp-sig-hero .lp-hero-lead { margin-bottom: 30px; }
 main.lp.lp-signal .lp-sig-hero .lp-hero-facts { gap: 0; padding: 6px 22px; border-radius: 22px; background: rgba(255, 255, 255, .16); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5); }

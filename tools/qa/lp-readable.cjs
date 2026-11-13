@@ -1,5 +1,6 @@
-// サービスLPの「読みやすさ」の検査（2026-11-13 オーナー指摘「LP が見ていて疲れる」の再発防止）
-//   node tools/qa/lp-readable.cjs            … 全LP × 9つの幅
+// サービスLPとホームページ（トップ・サービス一覧・会社概要・トピックス・お問い合わせ）の「読みやすさ」の検査
+// （2026-11-13 オーナー指摘「LP が見ていて疲れる」の再発防止）
+//   node tools/qa/lp-readable.cjs            … 全LP＋ホームページ5ページ × 9つの幅
 //   W=390,1280 ONLY=/services/bookkeeping node tools/qa/lp-readable.cjs
 // 確かめること（1件でもあれば「NG」を出し、終了コード 1）
 //  1. 12px 未満の文字がない（説明の字が小さいと読み疲れる）
@@ -13,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const BASE = process.env.BASE || 'http://localhost:4173';
 const dir = path.join(__dirname, '../../content/solutions');
-const PAGES = (process.env.ONLY ? process.env.ONLY.split(',') : fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => '/services/' + f.replace('.json', '')));
+const PAGES = (process.env.ONLY ? process.env.ONLY.split(',') : fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => '/services/' + f.replace('.json', '')).concat(['/', '/services', '/about', '/topics', '/contact']));
 const WIDTHS = (process.env.W || '320,360,390,430,768,1024,1280,1440,1920').split(',').map(Number);
 
 (async () => {
@@ -24,7 +25,7 @@ const WIDTHS = (process.env.W || '320,360,390,430,768,1024,1280,1440,1920').spli
     const p = await ctx.newPage();
     for (const u of PAGES) {
       await p.goto(BASE + u, { waitUntil: 'domcontentloaded' });
-      await p.waitForSelector('main.lp');
+      await p.waitForSelector('main');
       await p.evaluate(() => document.fonts.ready);
       await p.evaluate(() => {
         document.querySelectorAll('details.lp-scope').forEach((d) => { d.open = true; });
@@ -42,7 +43,7 @@ const WIDTHS = (process.env.W || '320,360,390,430,768,1024,1280,1440,1920').spli
           if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) continue;
           const r = e.getBoundingClientRect();
           if (!r.width || !r.height) continue;
-          if (e.closest('[aria-hidden="true"], .visually-hidden, svg, .seo-fallback, .lanes-handoff')) continue;
+          if (e.closest('[aria-hidden="true"], .visually-hidden, svg, .seo-fallback, .lanes-handoff, .sky-hero, .filter-row')) continue;
           if (![...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
           const id = e.tagName.toLowerCase() + '.' + String(e.className).split(' ').slice(0, 2).join('.') + ' 「' + e.textContent.trim().slice(0, 16) + '」';
           const fsz = parseFloat(cs.fontSize);
@@ -65,6 +66,9 @@ const WIDTHS = (process.env.W || '320,360,390,430,768,1024,1280,1440,1920').spli
           for (const e of vis('.lp-hero-note, .lp-hero-english, .lp-hero-actions, .lp-hero-facts')) low = Math.max(low, e.getBoundingClientRect().bottom);
           if (top - low < 4) out.push('ヒーローの注記が背景の大きな英字に重なる（' + Math.round(top - low) + 'px）');
         }
+        // 紺の地（トップ「状況から探す」）の説明文が暗い色になっていないか
+        const dark = document.querySelector('.sky-dark .num-head-side p');
+        if (dark) { const m = getComputedStyle(dark).color.match(/[\d.]+/g).map(Number); if (m[0] < 200) out.push('紺の地の説明文が暗い ' + getComputedStyle(dark).color); }
         const sub = document.querySelector('.relay-center .relay-sub');
         if (sub && getComputedStyle(sub).color !== 'rgb(255, 255, 255)') out.push('紺のカードの説明が白くない ' + getComputedStyle(sub).color);
         for (const h of main.querySelectorAll('h1, h2, h3')) {
