@@ -75,7 +75,7 @@
 
 | 作成日 | テーマ# | ファイル | PR | 結果 |
 | --- | --- | --- | --- | --- |
-| 2026-11-16 | 15 | content/topics/20261116-bookkeeping-inhouse-or-outsource.md | （この PR） | 公開待ち（チェック合格で自動公開）。依頼を検討する前段階の「自社か外注か」で迷う人の入口。20261222（採用か外注か）・20260804（任せる前の整理）と重ねず、作業と判断の分け方と一部から始める進め方に絞った |
+| 2026-11-16 | 15 | content/topics/20261116-bookkeeping-inhouse-or-outsource.md | （この PR） | 公開待ち（チェック合格で自動公開）。依頼を検討する前段階の「自社か外注か」で迷う人の入口。20261222（採用か外注か）・20260804（任せる前の整理）・20261110（費用）と重ねず、任せどきのサイン、1か月の記録での確かめ方、3つの段階の選び方に絞った |
 | 2026-11-09 | 24 | content/topics/20261109-it-inventory.md | https://github.com/ibato-byte/coana-website/pull/123 | 公開（2026-11-09、自動公開）。経理代行のテーマが3本続くため、新しい打ち出し（IT化）で記事からの入口がなかった業務改善・IT化支援のテーマを #15 より先に |
 | 2026-11-02 | 14 | content/topics/20261102-bookkeeping-outsourcing-flow.md | https://github.com/ibato-byte/coana-website/pull/106 | 公開 |
 | 2026-10-26 | 13 | content/topics/20261026-bookkeeping-outsourcing-choose.md | https://github.com/ibato-byte/coana-website/pull/91 | 公開（2026-10-26） |
