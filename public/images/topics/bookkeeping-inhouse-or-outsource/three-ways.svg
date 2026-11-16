@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="600" fill="#fbfdff"/>
+  <text x="300" y="48" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">経理の任せ方の3つの段階</text>
+  <rect x="24" y="78" width="552" height="152" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text x="52" y="122" font-size="28" font-weight="700" fill="#087fe5">自社で続ける</text>
+  <text x="52" y="168" font-size="24" fill="#4a667d">向いている：<tspan fill="#16334d">取引が少なく余裕がある</tspan></text>
+  <text x="52" y="208" font-size="24" fill="#4a667d">自社に残す：<tspan fill="#16334d">全部の作業と承認</tspan></text>
+  <rect x="24" y="250" width="552" height="152" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <text x="52" y="294" font-size="28" font-weight="700" fill="#087fe5">一部を任せる</text>
+  <text x="52" y="340" font-size="24" fill="#4a667d">向いている：<tspan fill="#16334d">負担の大きい作業が明確</tspan></text>
+  <text x="52" y="380" font-size="24" fill="#4a667d">自社に残す：<tspan fill="#16334d">残りの作業と承認</tspan></text>
+  <rect x="24" y="422" width="552" height="152" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <text x="52" y="466" font-size="28" font-weight="700" fill="#087fe5">まるごと任せる</text>
+  <text x="52" y="512" font-size="24" fill="#4a667d">向いている：<tspan fill="#16334d">担当者がいない・社長が兼任</tspan></text>
+  <text x="52" y="552" font-size="24" fill="#4a667d">自社に残す：<tspan fill="#16334d">承認と数字の確認</tspan></text>
+</svg>
