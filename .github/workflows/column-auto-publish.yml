@@ -19,6 +19,7 @@ permissions:
   pull-requests: write
   checks: read
   statuses: read
+  actions: read   # Hub への記録で、新しい実行に引き継がれて止まった実行を失敗と数えないため（Automation Hub 依頼 #251）
 
 concurrency:
   group: column-auto-publish-${{ github.event.pull_request.number || inputs.pr }}
