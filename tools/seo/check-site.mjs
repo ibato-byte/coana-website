@@ -62,7 +62,7 @@ const width = (s) => Math.round([...(s || '')].reduce((w, c) => w + (/[\x20-\x7e
 const PHONE = /(?:0\d{1,4}[-‐ー−（(]\d{1,4}[-‐ー−）)]\d{3,4}|\+81[-\s]?\d)/;
 
 // 長さの目安（日本語の全角を1文字。Google の表示幅に収まりやすい範囲）
-const TITLE_MAX = 40, TITLE_MIN = 10, DESC_MIN = 50, DESC_MAX = 160;
+const TITLE_MAX = 40, TITLE_MIN = 10, DESC_MIN = 100, DESC_MAX = 160; // 2026-11-22：Bing が 62〜99 文字の説明文を「短すぎる」と 9 ページ指摘したため 50 → 100
 
 async function main() {
   // ── サイト全体 ──

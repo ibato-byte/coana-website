@@ -647,9 +647,9 @@ function coanaPageMeta(): Plugin {
 
       const pages: PageMeta[] = [
         { path: '/', title: homeTitle, description: '', jsonld: graph(...faqPage) },
-        { path: '/about', crumb: '会社概要', title: '会社概要・代表あいさつ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者の業務をITの仕組みで軽くする、当社の考え方と代表のあいさつ、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
+        { path: '/about', crumb: '会社概要', title: '会社概要・代表あいさつ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者の業務を、業務の棚卸し・自動化・クラウド会計の導入、経理やバックオフィスの代行でITの仕組みにして軽くします。当社の考え方と代表のあいさつ、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
         { path: '/services', crumb: 'サービス', title: 'サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行' + SUFFIX, description: '中小企業・小規模事業者に向けた、業務の棚卸しとIT化の支援、手作業の自動化・ツール連携・業務アプリの開発、クラウド会計・ITツールの導入、LP・Webサイト制作、創業支援、そして経理代行・バックオフィス代行・SNS運用代行。料金の目安を掲載、正式な金額は個別お見積もり。', jsonld: graph(crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }])) },
-        { path: '/topics', crumb: 'トピックス', title: 'トピックス｜業務効率化・クラウド会計のコラム・お知らせ' + SUFFIX, description: '業務の効率化やクラウド会計、経理・バックオフィスに役立つコラムと、セミナー登壇やメディア掲載などCOANA TOKYO合同会社の活動のお知らせ。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
+        { path: '/topics', crumb: 'トピックス', title: 'トピックス｜業務効率化・クラウド会計のコラム・お知らせ' + SUFFIX, description: '業務の効率化やIT化、クラウド会計、経理代行・バックオフィス代行に役立つコラムと、セミナー登壇やメディア掲載などCOANA TOKYO合同会社の活動のお知らせ。小さな会社の経営者に向けて、業務を軽くする具体的な進め方を解説しています。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
         { path: '/contact', crumb: 'お問い合わせ', title: 'お問い合わせ｜業務の効率化・自動化・経理代行のご相談' + SUFFIX, description: '手作業の多い業務の見直し、自動化・システム開発、クラウド会計の導入、経理・バックオフィスの代行のご相談はこちらから。中小企業・小規模事業者の小さな困りごとでもお気軽に。内容を確認のうえ担当者よりご連絡いたします。', jsonld: graph(crumbs([homeCrumb, { name: 'お問い合わせ', url: SITE + '/contact' }])) },
         { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシー。お問い合わせフォーム・メール・LINEで取得する個人情報の利用目的、第三者提供、業務委託、安全管理措置、Google アナリティクスの利用、開示等のご請求窓口について定めています。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
       ]
