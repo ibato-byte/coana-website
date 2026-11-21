@@ -80,7 +80,7 @@
 .lpx .lpx-primary:hover { border-color: var(--x-blue-d); background: var(--x-blue-d); }
 .lpx-hero-actions a.line-button { min-height: 62px; padding: 0 28px; font-size: 16px; }
 .lpx-hero-note { margin-top: 14px; color: var(--x-text); font-size: 13.5px; }
-.lpx-hero-english { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--x-blue); font-size: 14.5px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.lpx-hero-english { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--x-blue-d); font-size: 14.5px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .lpx-hero-art { justify-self: center; width: 100%; max-width: 580px; }
 .lpx-hero-svg text { letter-spacing: .02em; }
 .lpx-hero-facts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
