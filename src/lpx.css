@@ -26,8 +26,9 @@
   color: var(--x-ink);
   background: #fff;
 }
-.lpx h1, .lpx h2, .lpx h3, .lpx p, .lpx ul, .lpx ol { margin: 0; }
-.lpx ul, .lpx ol { padding: 0; list-style: none; }
+/* 詳細度を上げない（:where）：下の1クラスの指定で余白を付けられるように */
+.lpx :where(h1, h2, h3, p, ul, ol) { margin: 0; }
+.lpx :where(ul, ol) { padding: 0; list-style: none; }
 .lpx .art, .lpx-spot, .lpx-face { display: block; }
 .lpx .lpx-hero-svg text, .lpx-worry-svg text { font-family: var(--font-jp); }
 
