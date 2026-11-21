@@ -5,7 +5,7 @@ date: 2026-10-14
 category: お知らせ
 summary: COANA TOKYOは、福岡で子どもと家族の居場所づくりや発達支援に取り組むNPO法人福岡幼児発達教育研究会の2026年度ゴールドスポンサーとして、同会の活動を応援しています。
 seo_title: "NPO法人福岡幼児発達教育研究会のゴールドスポンサーに"
-seo_description: "COANA TOKYOは、福岡で子どもと家族の居場所づくりや発達支援に取り組むNPO法人福岡幼児発達教育研究会の、2026年度ゴールドスポンサーになりました。"
+seo_description: "COANA TOKYOは、福岡で子どもと家族の居場所づくりや発達支援に取り組むNPO法人福岡幼児発達教育研究会の、2026年度ゴールドスポンサーになりました。親子教室・フリースクールや野外教室などを運営する同会の活動と、協賛にあたっての思いをご紹介します。"
 thumbnail: /uploads/topics/20261014-sponsor-fukuoka-cde.jpg
 draft: false
 ---
