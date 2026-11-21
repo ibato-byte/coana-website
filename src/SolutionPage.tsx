@@ -330,8 +330,11 @@ function SchemeLanes({ scheme, L }: { scheme: Scheme; L: L10n }) {
         <ol className="lpx-lane-list">
           {nodes.map((n, i) => {
             const who = n.who === "client" ? "client" : "team";
+            // 次の工程への矢印の向き：同じ段なら右、段が変わるなら斜め下／斜め上
+            const next = nodes[i + 1];
+            const to = !next ? "" : (next.who === "client" ? "client" : "team") === who ? " to-same" : who === "client" ? " to-down" : " to-up";
             return (
-              <li key={n.label} className={`lpx-lane-node is-${who}`} style={{ gridColumn: i + 2, gridRow: who === "client" ? 1 : 2 }}>
+              <li key={n.label} className={`lpx-lane-node is-${who}${to}`} style={{ gridColumn: i + 2, gridRow: who === "client" ? 1 : 2 }}>
                 <span className="lpx-lane-who">{who === "client" ? L.clientTag : "COANA TOKYO"}</span>
                 <span className="lpx-lane-icon"><LpIcon name={n.icon || "check"} size={26} /><b>{i + 1}</b></span>
                 <strong>{n.label}</strong>

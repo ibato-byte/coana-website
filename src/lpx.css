@@ -140,6 +140,10 @@
 .lpx-lane-list { display: contents; }
 .lpx-lane-node { position: relative; display: flex; flex-direction: column; align-items: center; padding: 16px 8px 14px; border-radius: 16px; background: #fff; box-shadow: 0 6px 16px rgba(22, 51, 77, .07); text-align: center; }
 .lpx-lane-who { display: none; }
+/* 次の工程への矢印（カードの間のすき間に置く。同じ段は右向き、段が変わるときは斜め） */
+.lpx-lane-node[class*=" to-"]::after { content: ""; position: absolute; right: -6px; top: 50%; width: 20px; height: 20px; background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316334d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h17M13 5l7 7-7 7'/%3E%3C/svg%3E"); transform: translate(50%, -50%); z-index: 1; }
+.lpx-lane-node.to-down::after { top: auto; bottom: -15px; transform: translate(50%, 50%) rotate(45deg); }
+.lpx-lane-node.to-up::after { top: -15px; transform: translate(50%, -50%) rotate(-45deg); }
 .lpx-lane-icon { position: relative; display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 8px; border-radius: 50%; background: var(--x-pale); color: var(--x-blue); }
 .lpx-lane-node.is-client .lpx-lane-icon { background: #ffefb8; color: var(--x-warm-ink); }
 .lpx-lane-icon b { position: absolute; top: -6px; left: -8px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--x-ink); color: #fff; font-family: var(--font-en); font-size: 13px; font-weight: 800; line-height: 1; }
@@ -422,6 +426,7 @@ a.lpx-other:hover { border-color: var(--x-sky); box-shadow: var(--x-shadow); tra
   .lpx-lane-list { display: grid; gap: 12px; }
   .lpx-lane-node { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 2px 16px; align-items: center; padding: 16px 18px; border: 2px solid var(--x-line-d); background: var(--x-pale); box-shadow: none; text-align: left; grid-column: auto !important; grid-row: auto !important; }
   .lpx-lane-node.is-client { border-color: var(--x-warm-line); background: var(--x-warm); }
+  .lpx-lane-node[class*=" to-"]::after, .lpx-lane-node.to-down::after, .lpx-lane-node.to-up::after { top: auto; right: auto; left: 50%; bottom: -16px; width: 20px; height: 20px; transform: translateX(-50%) rotate(90deg); }
   .lpx-lane-who { display: inline-block; grid-column: 2; justify-self: start; padding: 1px 12px; border-radius: 999px; background: var(--x-blue); color: #fff; font-size: 13px; font-weight: 800; line-height: 1.7; }
   .lpx-lane-node.is-client .lpx-lane-who { background: #f2a516; color: #2b1c00; }
   .lpx-lane-icon { grid-row: 1 / span 3; margin: 0; background: #fff; }
