@@ -50,7 +50,7 @@ function Bust({ x, y, s = 1, shirt = DEEP, hair = NAVY, mood = "smile", long = f
         </>
       ) : (
         <>
-          <path d="M37 38.5l7 2M63 38.5l-7 2" stroke={NAVY} strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M36 41l8-3M64 41l-8-3" stroke={NAVY} strokeWidth="2.2" strokeLinecap="round" />
           <circle cx="41.5" cy="45" r="2.3" fill={NAVY} />
           <circle cx="58.5" cy="45" r="2.3" fill={NAVY} />
           <path d="M44 55q6-4 12 0" stroke={NAVY} strokeWidth="2.4" fill="none" strokeLinecap="round" />
@@ -271,7 +271,7 @@ const TAGS: Record<string, [string, string, string][]> = {
   "cloud-accounting": [["bank", "銀行・カード", DEEP], ["cloud", "自動で取込", YELLOW], ["chart", "月次の数字", DEEP]],
   "web-production": [["layout", "構成・原稿", DEEP], ["camera", "デザイン", YELLOW], ["mail", "問い合わせ", DEEP]],
   "startup-support": [["doc", "事業計画", DEEP], ["rocket", "開業", YELLOW], ["handshake", "専門家", DEEP]],
-  "startup-support-en": [["doc", "Business plan", DEEP], ["rocket", "Launch", YELLOW], ["handshake", "Experts", DEEP]],
+  "startup-support-en": [["doc", "Plan", DEEP], ["rocket", "Launch", YELLOW], ["handshake", "Experts", DEEP]],
   bookkeeping: [["camera", "撮って送る", DEEP], ["invoice", "請求・支払い", YELLOW], ["chart", "月次レポート", DEEP]],
   "backoffice-dx": [["mail", "チャットで依頼", DEEP], ["users", "チームで対応", YELLOW], ["rules", "手順を残す", DEEP]],
   "sns-management": [["calendar", "投稿計画", DEEP], ["camera", "作成・投稿", YELLOW], ["chart", "振り返り", DEEP]],
