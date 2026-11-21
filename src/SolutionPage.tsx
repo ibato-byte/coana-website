@@ -439,10 +439,8 @@ function Cases({ sol, L }: { sol: Solution; L: L10n }) {
         <ul className={`lpx-case-grid is-${Math.min(items.length, 3)}`}>
           {items.map((c, i) => (
             <li key={c.client + c.title} className="lpx-case" data-reveal style={{ ["--d" as string]: `${(i * 0.1).toFixed(2)}s` }}>
-              <div className="lpx-case-top">
-                <SpotIcon name={CASE_ICONS[i % CASE_ICONS.length]} size={76} />
-                <p className="lpx-case-client"><span>CASE {String(i + 1).padStart(2, "0")}</span>{c.client}</p>
-              </div>
+              <div className="lpx-point-art lpx-case-art"><PointArt name={CASE_ICONS[i % CASE_ICONS.length]} /></div>
+              <p className="lpx-case-client"><span>CASE {String(i + 1).padStart(2, "0")}</span>{c.client}</p>
               <h3>{c.title}</h3>
               <p className="lpx-case-text">{c.text}</p>
               {c.result && <p className="lpx-case-result"><span className="lpx-case-result-tag"><Icon name="check" size={14} />{L.result}</span><strong>{c.result}</strong></p>}
@@ -623,13 +621,13 @@ function Faq({ sol, L }: { sol: Solution; L: L10n }) {
             return (
               <div key={item.q} className={open ? "lpx-faq-item is-open" : "lpx-faq-item"}>
                 <h3>
-                  <button type="button" className="lpx-faq-q" aria-expanded={open} aria-controls={`lpx-faq-a-${i}`} onClick={() => setOpenIndex(open ? -1 : i)}>
+                  <button type="button" className="lpx-faq-q" aria-expanded={open} aria-controls={`faq-a-${i}`} onClick={() => setOpenIndex(open ? -1 : i)}>
                     <span className="lpx-faq-mark" aria-hidden="true">Q</span>
                     <span className="lpx-faq-q-text">{item.q}</span>
                     <span className="lpx-faq-toggle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path className="v" d="M12 5v14" /><path d="M5 12h14" /></svg></span>
                   </button>
                 </h3>
-                <div id={`lpx-faq-a-${i}`} className="lpx-faq-a" role="region" aria-label={item.q}>
+                <div id={`faq-a-${i}`} className="lpx-faq-a" role="region" aria-label={item.q}>
                   <div className="lpx-faq-a-inner"><p><span className="lpx-faq-mark is-a" aria-hidden="true">A</span><span>{item.a}</span></p></div>
                 </div>
               </div>
