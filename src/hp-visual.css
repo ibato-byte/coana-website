@@ -24,6 +24,7 @@ a.hv-svc:hover .hv-svc-art .art * { animation-play-state: running; }
 .hv-svc-verb.is-build { background: var(--x-blue); color: #fff; }
 .hv-svc-verb.is-operate { background: var(--x-yellow); color: var(--x-ink); }
 .hv-svc strong { display: block; margin-top: 10px; padding: 0 20px; font-size: 17px; font-weight: 900; line-height: 1.5; }
+.hv-svc strong, .hv-svc-text { align-self: stretch; min-width: 0; }
 .hv-svc-text { display: block; margin-top: 6px; padding: 0 20px; color: var(--x-text); font-size: 14.5px; line-height: 1.75; }
 .hv-svc-tag { display: inline-block; margin: 10px 0 0 20px; padding: 1px 12px; border-radius: 999px; background: var(--x-warm); border: 1px solid var(--x-warm-line); color: var(--x-warm-ink); font-size: 13px; font-style: normal; font-weight: 800; line-height: 1.7; }
 .hv-svc-more { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding: 14px 20px 0; color: var(--x-blue); font-size: 14px; font-weight: 800; }
