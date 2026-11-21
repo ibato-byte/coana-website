@@ -672,7 +672,7 @@ function coanaPageMeta(): Plugin {
       }
       // 日本語／英語ページで共通の見出し（src/SolutionPage.tsx の LABELS と対応）
       const SOL_LABELS = {
-        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用までの流れ', faq: 'よくあるご質問', cases: '支援事例', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
+        ja: { home: 'ホーム', services: 'サービス', problems: 'こんなお悩みはありませんか', scheme: '支援の仕組み', before: 'Before', after: 'After', support: '支援内容とプラン', tools: '対応ツールの例', scope: 'ご依頼いただける業務の一覧', plans: 'ご利用プランの例', bestFor: 'こんな方に', scenarios: 'ご利用イメージ', flow: 'ご利用の流れ', faq: 'よくあるご質問', cases: '支援事例', contact: 'お問い合わせ・ご相談はこちら（無料）', list: 'サービス一覧', english: 'English page', suffix: ' | COANA TOKYO合同会社' },
         en: { home: 'Home', services: 'Services', problems: 'Sound familiar?', scheme: 'How it works', before: 'Before', after: 'After', support: 'What we do & plans', tools: 'Tools we work with', scope: 'Examples of what you can ask us', plans: 'Example plans', bestFor: 'Best for', scenarios: 'Example situations', flow: 'How to get started', faq: 'FAQ', cases: 'Case studies', contact: 'Contact us (free consultation)', list: 'All services', english: 'Japanese page', suffix: ' | COANA TOKYO LLC' },
       }
       const solLang = (sol: Solution): 'ja' | 'en' => (sol.lang === 'en' ? 'en' : 'ja')
@@ -889,14 +889,14 @@ function coanaPageMeta(): Plugin {
         const supportTitle = sol.features_title && sol.features_title !== '支援内容' ? sol.features_title : T.support
         return (sol.catch ? '<h1>' + esc(catchText(sol.catch)) + '</h1><p>' + esc(sol.title) + '</p>' : '<h1>' + esc(sol.title) + '</h1>') + paras(sol.lead) +
           ((sol.hero_facts ?? []).length ? '<ul>' + (sol.hero_facts ?? []).map((f) => '<li>' + esc(f.value) + (f.label ? '：' + esc(f.label) : '') + '</li>').join('') + '</ul>' : '') +
-          // 新デザイン（design: signal）のLPは「お悩み」を出さない。導入前／導入後は画面と同じく「仕組み」「支援事例」のあとに出す（2026-10-31）
-          (sol.design === 'signal' ? '' : section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '')) +
+          // 画面（src/SolutionPage.tsx）と同じ順：お悩み → 仕組み（特徴を含む）→ 支援事例 または Before／After → 料金 → 流れ → FAQ（2026-11-22 に LP を作り直し）
+          section(sol.problems_title || T.problems, (sol.problems ?? []).length ? '<ul>' + (sol.problems ?? []).map((p) => '<li>' + esc(p) + '</li>').join('') + '</ul>' : '') +
           section(sol.scheme?.title || T.scheme, (sol.scheme ? paras(sol.scheme.lead) +
             (relayFlow(sol.scheme).length ? '<ol>' + relayFlow(sol.scheme).map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>' : '') +
             ((sol.scheme.nodes ?? []).length ? '<ul>' + (sol.scheme.nodes ?? []).map((n) => '<li><strong>' + (n.who === 'client' ? '【御社】' : n.who === 'team' ? '【COANA TOKYO】' : '') + esc(n.label) + '</strong>' + (n.sub ? '：' + esc(n.sub) : '') + '</li>').join('') + '</ul>' : '') +
             named(sol.scheme.points, 'h3') + paras(sol.scheme.note) : '')) +
           section(sol.cases_title || T.cases, ((sol.cases ?? []).length ? paras(sol.cases_lead) + (sol.cases ?? []).map((c) => '<h3>' + esc(c.title) + '</h3><p>' + esc(c.client) + '</p>' + paras(c.text) + (c.result ? '<p>' + esc(c.result) + '</p>' : '')).join('') : '')) +
-          (sol.design === 'signal' ? section(catchText(sol.before_after?.title || '') || T.before + ' / ' + T.after, (sol.before_after?.items ?? []).length ? paras(sol.before_after?.lead) + '<ul>' + (sol.before_after?.items ?? []).map((it) => '<li><strong>' + esc(it.label) + '</strong>：' + esc(T.before) + '　' + esc(it.before) + '／' + esc(T.after) + '　' + esc(it.after) + '</li>').join('') + '</ul>' : '') : '') +
+          (sol.design === 'signal' ? section(catchText(sol.before_after?.title || '') || T.before + ' / ' + T.after, (sol.before_after?.items ?? []).length && !(sol.cases ?? []).length ? '<ul>' + (sol.before_after?.items ?? []).map((it) => '<li><strong>' + esc(it.label) + '</strong>：' + esc(T.before) + '　' + esc(it.before) + '／' + esc(T.after) + '　' + esc(it.after) + '</li>').join('') + '</ul>' : '') : '') +
           section(supportTitle, paras(sol.features_lead) + named(sol.features, 'h3') +
             (sol.scope && (sol.scope.groups ?? []).length ? '<h3>' + esc(sol.scope.title || T.scope) + '</h3>' + (sol.scope.groups ?? []).map((g) => '<h4>' + esc(g.name) + '</h4><ul>' + (g.items ?? []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>').join('') : '') + paras(sol.scope?.note) +
             (sol.plans && (sol.plans.items ?? []).length ? '<h3>' + esc(sol.plans.title || T.plans) + '</h3>' + (sol.plans.items ?? []).map((pl) => '<h4>' + esc(pl.name) + (pl.tag ? '（' + esc(pl.tag) + '）' : '') + '</h4>' + (pl.price ? '<p>' + esc(pl.price) + '</p>' : '') + paras(pl.text) +

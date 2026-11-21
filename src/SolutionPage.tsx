@@ -159,13 +159,19 @@ function MarkedTitle({ text, mark }: { text: string; mark?: string }) {
   return <>{text.slice(0, at)}<em className="lpx-mark">{mark}</em>{text.slice(at + mark.length)}</>;
 }
 
+/** 社名（COANA TOKYO）の途中で行が折れないようにする（文字は足さない） */
+function Brand({ text }: { text: string }) {
+  const parts = text.split("COANA TOKYO");
+  return <>{parts.map((t, i) => <Fragment key={i}>{i > 0 && <span className="lpx-nb">COANA TOKYO</span>}{t}</Fragment>)}</>;
+}
+
 /** 章の見出し：小さなラベル → 見出し → 短い線 → リード文（中央寄せ） */
 function Head({ kicker, children, lead, lang }: { kicker: string; children: ReactNode; lead?: string; lang?: string }) {
   return (
     <div className="lpx-head" data-reveal>
       <p className="lpx-kicker" lang={lang}>{kicker}</p>
       <h2>{children}</h2>
-      {lead && <p className="lpx-head-lead">{lead}</p>}
+      {lead && <p className="lpx-head-lead"><Brand text={lead} /></p>}
     </div>
   );
 }

@@ -295,7 +295,6 @@
   "design": "signal",
   "before_after": {
     "title": "SNSを任せると、\nこう変わる。",
-    "lead": "スイッチで、任せる前と後を見比べられます。",
     "sources": [
       "Instagram",
       "X",

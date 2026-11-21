@@ -46,6 +46,7 @@
 .lpx-head h2::after { content: ""; display: block; width: 56px; height: 5px; margin: 20px auto 0; border-radius: 3px; background: linear-gradient(90deg, var(--x-blue), var(--x-sky)); }
 .lpx-head-lead { margin-top: 20px; color: var(--x-text); font-size: 16px; line-height: 1.9; }
 .lpx-mark { font-style: normal; color: var(--x-blue); }
+.lpx-nb { white-space: nowrap; }
 
 .lpx-note { display: flex; align-items: flex-start; justify-content: center; gap: 8px; max-width: 860px; margin: 28px auto 0; color: var(--x-text); font-size: 14px; line-height: 1.8; text-align: center; }
 .lpx-note svg { flex: none; margin-top: 4px; color: var(--x-blue); }
