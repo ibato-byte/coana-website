@@ -13,6 +13,7 @@ coana.co.jp を「いつも最良の SEO の状態」に保つための、毎週
 | いつ | だれが | 何をする |
 | --- | --- | --- |
 | 毎日 6:17（日本時間） | GitHub Actions「SEO の監視」（`.github/workflows/seo-monitor.yml`） | 本番を点検（全ページの 200・title／description・canonical・構造化データ・内部リンク切れ・画像・sitemap・robots・llms.txt・ファビコン）。NG があれば Issue（ラベル `seo-alert`）を立てる。解消したら自動で閉じる。**直さない** |
+| main への push（content・src などが変わったとき） | GitHub Actions「indexnow」（`.github/workflows/indexnow.yml`、2026-11-22） | 公開から約4分後に、本番の sitemap.xml の全 URL を IndexNow（Bing など・無料）に知らせる（`tools/seo/indexnow.mjs`）。Google は Search Console のサイトマップで知らせる |
 | 毎週月曜 5:37 | 同上（週次） | 上に加えて外部リンクの生存確認と表示速度（Lighthouse・PageSpeed Insights、モバイル）。結果を Issue（ラベル `seo-data`）に JSON で残す |
 | 毎週月曜 8:54 | Claude の週次タスク（スケジュールタスク「COANA SEO 週次ブラッシュアップ」`trig_01RrZBY7DC79EtMXno9werew`。専用セッション `session_01HbxZBk1N9D7dtypAM8AM36` に毎週届く。通知はプッシュのみ） | この文書の「2. 毎週の手順」。技術面は直して自動マージ、文章は「要承認」の PR、レポートを残してオーナーに要約を通知 |
 | 毎週（週次タスクの中で） | 同上 | コラムを1本書き、品質ゲートに合格したら「コラム公開待ち」の PR を作る。チェックがすべて合格すると Actions「コラムの自動公開」が自動でマージ＝公開（「8. コラムの自動作成」） |
