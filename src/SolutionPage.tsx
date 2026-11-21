@@ -5,7 +5,6 @@ import { CHAT_MARK } from "./chat/ChatLauncher";
 import { ServiceArt } from "./illustrations";
 import { LpIcon } from "./lpIcons";
 import { HeroArt, MoodFace, SpotIcon, WorryArt } from "./lpArt";
-import "./lpx.css";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
  * content/solutions/*.json（CMS「サービス別ページ」）の内容を描画する。

@@ -7,7 +7,8 @@
  * - クラスは lpx- で始める（古い LP の .lp- とは別。固定の相談バー .lp-sticky だけは、チャットなどが参照するので名前を残す）。
  * ───────────────────────────────────────────────────────────────────── */
 
-.lpx {
+/* 色などの変数は、LP（.lpx）と、ホームページで同じ部品を使う場所（.hv）、固定の相談バーで共有する */
+.lpx, .hv, .home-page {
   --x-ink: #16334d;
   --x-text: #3d576c;
   --x-blue: #0670cb;
@@ -23,9 +24,8 @@
   --x-warm-ink: #7a5200;
   --x-shadow: 0 12px 34px rgba(22, 51, 77, .08);
   --x-shadow-lg: 0 22px 54px rgba(13, 68, 120, .16);
-  color: var(--x-ink);
-  background: #fff;
 }
+.lpx { color: var(--x-ink); background: #fff; }
 /* 詳細度を上げない（:where）：下の1クラスの指定で余白を付けられるように */
 .lpx :where(h1, h2, h3, p, ul, ol) { margin: 0; }
 .lpx :where(ul, ol) { padding: 0; list-style: none; }
