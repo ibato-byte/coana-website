@@ -3,6 +3,7 @@ import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, priva
 import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { MiniIcon, ServiceArt } from "./illustrations";
+import { SpotIcon } from "./lpArt";
 import { LogoMark } from "./logo";
 import { Feathers } from "./feathers";
 // 診断の1問目（トップの「迷ったら」）。チャットのデータ全体ではなく diagnosis だけを読み込む
@@ -436,64 +437,35 @@ function ServiceGroupHead({ n, data, level = 3 }: { n: string; data: { en: strin
   );
 }
 
-/** 一覧の行の上で、カーソルについてくる黄色い丸「詳しく見る」（PC・マウスのみ。「動きを減らす」設定とタッチ端末では出さない）。
- *  行の上にいる間だけ追いかける（離れたら止める）。transform と位置だけを動かす */
-function FollowLabel({ areaRef }: { areaRef: { current: HTMLElement | null } }) {
-  const labelRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const area = areaRef.current;
-    const el = labelRef.current;
-    if (!area || !el) return;
-    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let x = 0, y = 0, cx = 0, cy = 0, raf = 0, on = false;
-    const loop = () => {
-      cx += (x - cx) * 0.18; cy += (y - cy) * 0.18;
-      el.style.left = `${cx}px`; el.style.top = `${cy}px`;
-      raf = on || Math.abs(x - cx) + Math.abs(y - cy) > 0.5 ? requestAnimationFrame(loop) : 0;
-    };
-    const onMove = (e: PointerEvent) => {
-      x = e.clientX; y = e.clientY;
-      const hit = !!(e.target as Element | null)?.closest?.(".svc-row a");
-      if (hit && !on) { if (!raf) { cx = x; cy = y; } }
-      on = hit;
-      el.classList.toggle("on", hit);
-      if (!raf) raf = requestAnimationFrame(loop);
-    };
-    const onLeave = () => { on = false; el.classList.remove("on"); };
-    area.addEventListener("pointermove", onMove);
-    area.addEventListener("pointerleave", onLeave);
-    window.addEventListener("scroll", onLeave, { passive: true });
-    return () => { cancelAnimationFrame(raf); area.removeEventListener("pointermove", onMove); area.removeEventListener("pointerleave", onLeave); window.removeEventListener("scroll", onLeave); };
-  }, [areaRef]);
-  return <div className="follow-label" ref={labelRef} aria-hidden="true">詳しく<br />見る</div>;
-}
-
+/** 01 できること：8つのサービスを、絵つきのカードで並べる（2026-11-22 オーナー依頼「文字ばかり。図や絵で直感的に」。
+ *  以前は文字だけの行の一覧だった）。札の言葉（整える・つくる・任せる）はヒーローの3つの言葉と同じ */
 function ServicesHome({ navigate }: { navigate: Nav }) {
   const items = serviceGroups.flatMap(({ data }) => data.items as ServiceItem[]);
-  const rowsRef = useRef<HTMLUListElement | null>(null);
   return (
     <section className="section sky-section services-home" id="services">
       <div className="container">
         <NumHead n="01" title={home.services_title} side={<p>{home.services_lead}</p>} />
-        <ul className="svc-rows" ref={rowsRef}>
+        <ul className="hv hv-svc-grid">
           {items.map((item, i) => {
             const linked = item.page && solutions.some((sol) => sol.slug === item.page);
+            const verb = item.page ? VERB_OF[item.page] : undefined;
             const inner = (
               <>
-                <span className="svc-row-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-                <span className="svc-row-name">{item.name}</span>
-                <span className="svc-row-text">{item.short || item.text}{item.tags?.map((t) => <em key={t}>{t}</em>)}</span>
-                {item.page && VERB_OF[item.page] && <span className="svc-row-verb" aria-hidden="true">{VERB_OF[item.page]}。</span>}
+                <ServiceArt slug={item.page} className="hv-svc-art" />
+                {verb && <span className={`hv-svc-verb is-${verb === "任せる" ? "operate" : verb === "つくる" ? "build" : "organize"}`}>{verb}</span>}
+                <strong>{item.name}</strong>
+                <span className="hv-svc-text">{item.short || item.text}</span>
+                {item.tags?.map((t) => <em className="hv-svc-tag" key={t}>{t}</em>)}
+                {linked && <span className="hv-svc-more">詳しく見る<Icon name="arrow" size={16} /></span>}
               </>
             );
             return (
-              <li key={item.name} className="svc-row" data-reveal style={{ ["--d" as string]: `${(i * 0.04).toFixed(2)}s` }}>
-                {linked ? <GoLink go={navigate} args={["solution", undefined, item.page]}>{inner}</GoLink> : <div>{inner}</div>}
+              <li key={item.name} data-reveal style={{ ["--d" as string]: `${((i % 4) * 0.06).toFixed(2)}s` }}>
+                {linked ? <GoLink className="hv-svc" go={navigate} args={["solution", undefined, item.page]}>{inner}</GoLink> : <div className="hv-svc">{inner}</div>}
               </li>
             );
           })}
         </ul>
-        <FollowLabel areaRef={rowsRef} />
         <p className="svc-rows-more"><GoLink className="text-link" go={navigate} args={["services"]}>サービス一覧を見る<Icon name="arrow" size={18} /></GoLink></p>
       </div>
     </section>
@@ -503,6 +475,7 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
 /** 02 支援事例（2026-10-31 打ち出しの見直し）：お客さまの社名を伏せた事例を「前」→「後」＋結果で並べ、関係するサービスへつなぐ。
  *  「日々の支援のなかから選んだ例」として見せ、最後に「ほかにも仕組みにしてきた業務」を並べて、件数が少なく見えないようにする（件数の数字は書かない）。
  *  文言は content/home.json の cases / cases_more（CMS「トップページ」）。数字は作業記録にあるものだけ（CLAUDE.md：数字・実績を捏造しない） */
+const CASE_ART: Record<string, string> = { "web-production": "layout", automation: "link", "it-consulting": "search", bookkeeping: "invoice", "cloud-accounting": "cloud", "backoffice-dx": "users" };
 type CaseItem = { client: string; title: string; before: string; after: string; result?: string; note?: string; tools?: string[]; slugs?: string[] };
 function CasesSection({ navigate }: { navigate: Nav }) {
   const h = home as { cases?: CaseItem[]; cases_title?: string; cases_lead?: string; cases_more_title?: string; cases_more?: string[] };
@@ -517,6 +490,7 @@ function CasesSection({ navigate }: { navigate: Nav }) {
         <ul className="case-grid">
           {items.map((e, i) => (
             <li key={e.client + e.title} className="case-card" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+              <span className="hv-case-art" aria-hidden="true"><SpotIcon name={CASE_ART[(e.slugs ?? [])[0]] || "refresh"} tone={i % 2 ? "warm" : "sky"} size={84} /></span>
               <p className="case-client"><span className="case-no" lang="en" aria-hidden="true">Case {String(i + 1).padStart(2, "0")}</span>{e.client}</p>
               <h3 className="case-title">{e.title}</h3>
               <div className="case-row is-before">
@@ -585,34 +559,37 @@ function FinderSection() {
 }
 
 /** 04 支援スタイル：大きな一文（会社概要のメッセージ見出し）＋4つの強み＋ご利用までの流れ */
-const STYLE_KANJI: Record<string, [string, string]> = { expertise: ["業", "Workflow"], engineering: ["作", "Engineering"], operate: ["運", "Operation"], team: ["担", "Team"], "one-stop": ["窓", "One window"], flexible: ["適", "Right size"] };
+const STYLE_ART: Record<string, [string, string]> = { expertise: ["search", "Workflow"], engineering: ["tools", "Engineering"], operate: ["refresh", "Operation"], team: ["users", "Team"], "one-stop": ["handshake", "One window"], flexible: ["layout", "Right size"] };
 const FLOW_TEXT = ["フォームまたはLINE公式アカウントから、ご相談内容をお送りください。", "担当者からご連絡し、現状の業務と困りごとを伺います。", "効くところから順に、必要な範囲に絞ってご提案します。", "ご納得いただけてからご契約し、支援を始めます。"];
+const FLOW_ART = ["mail", "users", "doc", "rocket"];
 function StyleSection() {
   const mission = (about.message_heading || "").split("\n").filter(Boolean);
   return (
     <section className="section sky-section style-section" id="style">
       <div className="container">
         <NumHead n="04" title={<>{mission.map((line, i) => <span key={i} className="num-head-line">{line}</span>)}</>} side={<p>{home.strengths_title}</p>} />
-        <ul className="poster-grid">
+        {/* 4つの強み：絵・短い見出し・説明（2026-11-22。以前は文字だけの枠に大きな漢字の飾り） */}
+        <ul className={`hv lpx-point-grid is-${Math.min(home.strengths.length, 4)} hv-style-grid`}>
           {home.strengths.map((s, i) => {
-            const [k, en] = STYLE_KANJI[s.icon] || ["", ""];
+            const [icon, en] = STYLE_ART[s.icon] || ["check", ""];
             return (
-              <li key={s.title} className="poster-card" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
-                {k && <span className="poster-kanji" aria-hidden="true">{k}</span>}
-                {en && <span className="poster-en" lang="en">{en}</span>}
+              <li key={s.title} className="lpx-point" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+                <div className="lpx-point-art"><SpotIcon name={icon} tone={i % 2 ? "warm" : "sky"} size={120} /></div>
+                {en && <p className="lpx-point-no" lang="en">{en}</p>}
                 <h3>{s.title}</h3>
-                <p>{s.text}</p>
+                <p className="lpx-point-text">{s.text}</p>
               </li>
             );
           })}
         </ul>
-        <h3 className="visually-hidden">{services.flow_title}</h3>
-        <ol className="step-poster">
+        <h3 className="hv-flow-title">{services.flow_title}</h3>
+        <ol className={`hv lpx-flow-list is-${Math.min(services.flow.length, 6)} hv-flow`}>
           {services.flow.map((name, i) => (
             <li key={name} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
-              <span className="step-poster-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-              <b>{name}</b>
-              {FLOW_TEXT[i] && <p>{FLOW_TEXT[i]}</p>}
+              <span className="lpx-flow-art"><SpotIcon name={FLOW_ART[i] || "check"} tone={i === 0 ? "warm" : "sky"} size={88} /></span>
+              <p className="lpx-flow-no" aria-hidden="true"><span lang="en">STEP</span>{String(i + 1).padStart(2, "0")}</p>
+              <b className="hv-flow-name">{name}</b>
+              {FLOW_TEXT[i] && <p className="lpx-flow-text">{FLOW_TEXT[i]}</p>}
             </li>
           ))}
         </ol>
@@ -650,13 +627,13 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
       <div className="container">
         <NumHead n="05" title={home.topics_title} side={<GoLink className="text-link" go={navigate} args={["topics"]}>一覧を見る<Icon name="arrow" size={18} /></GoLink>} />
         {latest.length ? (
-          <ul className="topic-tiles">
-            {latest.map((a) => (
-              <li key={a.slug} data-reveal>
-                <GoLink className="topic-tile" go={navigate} args={["article", undefined, a.slug]}>
-                  <span className="topic-tile-meta"><i>{a.category}</i><time dateTime={a.sortKey.slice(0, 10)}>{a.date}</time></span>
+          <ul className="hv lpx-column-grid hv-topics">
+            {latest.map((a, i) => (
+              <li key={a.slug} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
+                <GoLink className="lpx-column" go={navigate} args={["article", undefined, a.slug]}>
+                  {a.thumbnail && <span className="lpx-column-thumb"><img src={a.thumbnail} alt="" loading="lazy" /></span>}
+                  <span className="lpx-column-meta"><time dateTime={a.sortKey.slice(0, 10)}>{a.date}</time><i>{a.category}</i></span>
                   <strong>{a.title}</strong>
-                  <span className="topic-tile-more" lang="en">READ<Icon name="arrow" size={15} /></span>
                 </GoLink>
               </li>
             ))}

@@ -1,68 +1,22 @@
-import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { articles, home, inquiryTypeOf, solutions, type Article, type Solution } from "./content";
-import { ArticleRow, ContactBand, DiagnoseLink, FaqSection, FlowLine, GoLink, Icon, LineButton, Lines, NotFound, SectionTitle, StepCheck, openChat, setInquiryPreset, type Nav } from "./shared";
+import { ContactBand, DiagnoseLink, GoLink, Icon, LineButton, Lines, NotFound, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
-import { HeroVideo, ServiceArt } from "./illustrations";
-import { STORIES, useSchemeStory, type Story } from "./schemeStory";
-import { Feathers } from "./feathers";
-import "./solution.css";
+import { ServiceArt } from "./illustrations";
+import { LpIcon } from "./lpIcons";
+import { HeroArt, MoodFace, SpotIcon, WorryArt } from "./lpArt";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
- * content/solutions/*.json（CMS「サービス別ページ」）の内容を、1画面1メッセージの8セクションで描画する。
- * ヒーロー → お悩み → 仕組み → 支援内容とプラン → 事例 → 流れ → FAQ → お問い合わせ。
- * 文章よりアイコン・図解を優先し、空欄のセクションは表示しない。
+ * content/solutions/*.json（CMS「サービス別ページ」）の内容を描画する。
+ *
+ * 2026-11-22 オーナー依頼で、デザインをゼロから作り直した（「文字ばかりで AI っぽく、最後まで読まれない。
+ * 図・絵を増やして、直感的に分かるように。不要なものは削ってよい」）。
+ * 章の順：ヒーロー（絵つき）→ お悩み → 特徴（3つ）→ 仕組みの図 → 支援事例 または Before／After
+ *        → 料金 → ご利用の流れ → よくあるご質問 → お問い合わせの帯 → 関連するコラム・ほかのサービス。
+ * - どの章も「絵・図・アイコン＋短い言葉」で見せる。文章は CMS のものをそのまま使い、コードで文字を足さない。
+ * - 動きは、画面に入ったときの表示（data-reveal）と、絵がゆっくり浮く動きだけ（スクロールには連動させない）。
+ * - 見た目は src/lpx.css（クラスは lpx-）。絵は src/lpArt.tsx、アイコンは src/lpIcons.tsx。
  */
-
-type LpIconName =
-  | "chart" | "cloud" | "link" | "rules" | "doc" | "invoice" | "calendar" | "search" | "tools" | "users"
-  | "megaphone" | "camera" | "globe" | "rocket" | "shield" | "clock" | "yen" | "handshake" | "mic" | "layout"
-  | "building" | "person" | "store" | "check" | "sparkle" | "arrow-down" | "target" | "bank" | "refresh" | "mail";
-
-function LpIcon({ name, size = 26 }: { name?: string; size?: number }) {
-  const c = {
-    width: size,
-    height: size,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.7,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
-  };
-  switch ((name || "check") as LpIconName) {
-    case "chart": return <svg {...c}><path d="M4 20h16" /><path d="M6 16v-5M11 16V7M16 16v-3M21 16V4" /></svg>;
-    case "cloud": return <svg {...c}><path d="M7 18a4 4 0 0 1-.6-7.95A6 6 0 0 1 18 9a3.5 3.5 0 0 1 0 7H7Z" /><path d="m9.5 14 2-2 2 2M11.5 12v5" /></svg>;
-    case "link": return <svg {...c}><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" /></svg>;
-    case "rules": return <svg {...c}><rect x="4" y="3" width="16" height="18" rx="2.5" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>;
-    case "doc": return <svg {...c}><path d="M7 3h7l5 5v13H7z" /><path d="M14 3v5h5M10 13h5M10 17h5" /></svg>;
-    case "invoice": return <svg {...c}><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z" /><path d="M9 8h6M9 12h6M9 16h3" /></svg>;
-    case "calendar": return <svg {...c}><rect x="3" y="5" width="18" height="16" rx="2.5" /><path d="M3 10h18M8 3v4M16 3v4" /><path d="m9 15 2 2 4-4" /></svg>;
-    case "search": return <svg {...c}><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.3-4.3" /></svg>;
-    case "tools": return <svg {...c}><path d="m14.5 6.5 3 3L7 20H4v-3L14.5 6.5Z" /><path d="m12 9 3 3M17 3l4 4-2 2-4-4z" /></svg>;
-    case "users": return <svg {...c}><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.5-4 3-6 6.5-6s6 2 6.5 6" /><circle cx="17" cy="9" r="2.5" /><path d="M16 14c3 0 5 1.7 5.5 5" /></svg>;
-    case "megaphone": return <svg {...c}><path d="M3 10v4a1 1 0 0 0 1 1h3l6 4V5L7 9H4a1 1 0 0 0-1 1Z" /><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a8 8 0 0 1 0 11" /></svg>;
-    case "camera": return <svg {...c}><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg>;
-    case "globe": return <svg {...c}><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" /></svg>;
-    case "rocket": return <svg {...c}><path d="M12 3c3 2 5 6 5 10l-5 4-5-4c0-4 2-8 5-10Z" /><path d="M7 13l-3 3 3 .5M17 13l3 3-3 .5M12 17v4" /><circle cx="12" cy="10" r="1.5" /></svg>;
-    case "shield": return <svg {...c}><path d="M12 3 5 6v5c0 4.4 2.8 8 7 10 4.2-2 7-5.6 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4.5" /></svg>;
-    case "clock": return <svg {...c}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>;
-    case "yen": return <svg {...c}><circle cx="12" cy="12" r="9" /><path d="m8.5 7 3.5 5 3.5-5M12 12v5M9 13h6M9 15.5h6" /></svg>;
-    case "handshake": return <svg {...c}><path d="M3 7.5 7.2 6l4.8 1.8L16.8 6 21 7.5V15l-4.5 4-4.5-3.4L7.5 19 3 15V7.5Z" /><path d="m12 7.8-3.3 3.3a1.6 1.6 0 0 0 2.2 2.2l1.4-1.3 3.5 3" /></svg>;
-    case "mic": return <svg {...c}><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6" /></svg>;
-    case "layout": return <svg {...c}><rect x="3" y="4" width="18" height="16" rx="2.5" /><path d="M3 9h18M9 9v11" /></svg>;
-    case "building": return <svg {...c}><path d="M4 21V5l8-2v18M12 9l8 2v10" /><path d="M7 8h2M7 12h2M7 16h2M15 14h2M15 18h2" /></svg>;
-    case "person": return <svg {...c}><circle cx="12" cy="8" r="4" /><path d="M4 21c.6-4.5 3.6-7 8-7s7.4 2.5 8 7" /></svg>;
-    case "store": return <svg {...c}><path d="M4 9 5.5 4h13L20 9" /><path d="M4 9a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0" /><path d="M5 11v10h14V11M10 21v-6h4v6" /></svg>;
-    case "sparkle": return <svg {...c}><path d="M12 3c.6 5.1 2.9 7.4 8 8-5.1.6-7.4 2.9-8 8-.6-5.1-2.9-7.4-8-8 5.1-.6 7.4-2.9 8-8Z" /></svg>;
-    case "arrow-down": return <svg {...c}><path d="M12 5v14M6 13l6 6 6-6" /></svg>;
-    case "target": return <svg {...c}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.5" /></svg>;
-    case "bank": return <svg {...c}><path d="M3 9 12 4l9 5H3Z" /><path d="M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 18h18M3 21h18" /></svg>;
-    case "refresh": return <svg {...c}><path d="M20 12a8 8 0 0 1-14 5.3L4 15" /><path d="M4 12a8 8 0 0 1 14-5.3L20 9" /><path d="M4 20v-5h5M20 4v5h-5" /></svg>;
-    case "mail": return <svg {...c}><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m4 7 8 6 8-6" /></svg>;
-    default: return <svg {...c}><path d="m5 12 4 4L19 6" /></svg>;
-  }
-}
 
 /** 対応ツール名から、トップページ「対応ツール」に登録されたロゴを探す */
 function toolLogo(name: string) {
@@ -75,126 +29,164 @@ function toolLogo(name: string) {
 /* ───────────────────────── 文言（日本語／英語ページ共通ラベル） ───────────────────────── */
 const LABELS = {
   ja: {
+    home: "ホーム",
+    services: "サービス",
     consult: "無料で相談する",
     consultLine: "LINEで気軽に相談",
     heroNote: "ご相談・お見積もりは無料。全国オンライン対応。",
+    facts: "サービスの特徴",
+    kWorry: "お悩み",
     problems: "こんなお悩みはありませんか",
     bridge: ["そのお悩み、", "COANA TOKYO", "にご相談ください。"],
+    kPoints: "特徴",
+    points: (n: number) => (n === 3 ? "COANA TOKYOの3つの特徴" : "COANA TOKYOの特徴"),
+    point: "特徴",
+    kScheme: "仕組み",
     scheme: "支援の仕組み",
-    support: "支援内容とプラン",
+    clientLane: "御社がやること",
+    teamLane: "COANA TOKYOがやること",
+    clientTag: "御社",
+    relayTodo: "やること",
+    relayGoal: "受け取るもの",
+    cycle: "毎月くり返し",
+    kCases: "事例",
+    cases: "支援事例",
+    casesLead: "仕組みの作り方が伝わりやすい例を選んでご紹介します。お客さまの社名は伏せています。",
+    result: "結果",
+    kBa: "Before / After",
+    baTitle: "導入すると、\nこう変わる。",
+    baBefore: "Before",
+    baAfter: "After",
+    kPlans: "料金",
+    pricing: "プランと料金の目安",
+    plans: "ご利用プランの例",
+    plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
+    priceNote: "金額はすべて税別の目安です。正式な金額は、業務の量と範囲を伺ってお見積もりします（ご相談・お見積もりは無料）。",
+    bestFor: "こんな方に",
     scope: "ご依頼いただける業務の一覧",
     scopeOpen: "業務の一覧を見る",
     scopeClose: "閉じる",
     count: (n: number) => `（${n}件）`,
-    more: "詳しく見る",
-    less: "閉じる",
     tools: "対応ツールの例",
-    plans: "ご利用プランの例",
-    plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
-    pricing: "プランと料金の目安",
-    priceNote: "金額はすべて税別の目安です。正式な金額は、業務の量と範囲を伺ってお見積もりします（ご相談・お見積もりは無料）。",
-    bestFor: "こんな方に",
-    scenarios: "ご利用イメージ",
-    baBefore: "Before",
-    baAfter: "After",
-    baAria: "変わった後の状態を表示する",
-    bigCta: "相談する。",
-    baMeterBefore: (n: number) => `${n}つの困りごとを抱えた状態`,
-    baMeterAfter: (n: number) => `${n}つの困りごとが、すべて改善`,
-    baTitle: "導入すると、\nこう変わる。",
-    before: "Before",
-    after: "After",
+    kFlow: "流れ",
     flow: "ご利用の流れ",
+    kFaq: "FAQ",
     faq: "よくあるご質問",
-    column: "関連するコラム",
-    columnMore: "コラムをもっと見る",
+    bigCta: "相談する。",
     ctaTitle: "まずは、現状をお聞かせください。",
     ctaText: "ご相談・お見積もりは無料です。何から相談すればいいか分からない段階でも大丈夫です。",
     ctaButton: "無料相談・お問い合わせ",
+    column: "関連するコラム",
+    columnMore: "コラムをもっと見る",
     others: "そのほかのサービス",
     allServices: "サービス一覧を見る",
     sticky: "無料で相談する",
-    relayTodo: "やること",
-    relayGoal: "受け取るもの",
-    scroll: "本文へスクロール",
-    facts: "サービスの特徴",
-    cases: "支援事例",
-    casesLead: "仕組みの作り方が伝わりやすい例を選んでご紹介します。お客さまの社名は伏せています。",
+    chat: "COANA TOKYO サポートチームにチャットで相談する",
+    crumbs: "パンくずリスト",
   },
   en: {
+    home: "Home",
+    services: "Services",
     consult: "Book a free consultation",
     consultLine: "Chat on LINE",
     heroNote: "Consultation and quotes are free. Available online nationwide, in English.",
+    facts: "Key points",
+    kWorry: "Challenges",
     problems: "Sound familiar?",
-    bridge: ["We help you solve these, ", "step by step", ", with a bilingual partner on your side."],
+    bridge: ["Talk to ", "COANA TOKYO", ". We sort these out with you, step by step."],
+    kPoints: "Why us",
+    points: (_n: number) => "What makes COANA TOKYO different",
+    point: "Point",
+    kScheme: "How it works",
     scheme: "How it works",
-    support: "What we do & plans",
+    clientLane: "Your part",
+    teamLane: "COANA TOKYO handles",
+    clientTag: "You",
+    relayTodo: "Your part",
+    relayGoal: "What you get",
+    cycle: "Every month",
+    kCases: "Case studies",
+    cases: "Case studies",
+    casesLead: "A few examples chosen to show how we work. Client names are withheld.",
+    result: "Result",
+    kBa: "Before / After",
+    baTitle: "Here is\nthe difference.",
+    baBefore: "Before",
+    baAfter: "After",
+    kPlans: "Pricing",
+    pricing: "Plans & pricing",
+    plans: "Example plans",
+    plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
+    priceNote: "All prices are estimates, excluding tax. We send a formal quote after a free consultation.",
+    bestFor: "Best for",
     scope: "Examples of what you can ask us",
     scopeOpen: "See the full list",
     scopeClose: "Close",
     count: (n: number) => ` (${n})`,
-    more: "Details",
-    less: "Close",
     tools: "Tools we work with",
-    plans: "Example plans",
-    plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
-    pricing: "Plans & pricing",
-    priceNote: "All prices are estimates, excluding tax. We send a formal quote after a free consultation.",
-    bestFor: "Best for",
-    scenarios: "Example situations",
-    baBefore: "Before",
-    baAfter: "After",
-    baAria: "Show the after state",
-    bigCta: "Let’s talk.",
-    baMeterBefore: (n: number) => `${n} pain points`,
-    baMeterAfter: (n: number) => `All ${n} areas improved`,
-    baTitle: "Here is\nthe difference.",
-    before: "Before",
-    after: "After",
+    kFlow: "Steps",
     flow: "How to get started",
+    kFaq: "FAQ",
     faq: "FAQ",
-    column: "Related articles",
-    columnMore: "See more articles",
+    bigCta: "Let’s talk.",
     ctaTitle: "Tell us where you are. We will take it from there.",
     ctaText: "Consultation and quotes are free. If you are not sure where to start, that is exactly where we begin.",
     ctaButton: "Contact us (free consultation)",
+    column: "Related articles",
+    columnMore: "See more articles",
     others: "Other services (Japanese pages)",
     allServices: "See all services",
     sticky: "Free consultation",
-    relayTodo: "Your part",
-    relayGoal: "What you get",
-    scroll: "Scroll to content",
-    facts: "Key points",
-    cases: "Case studies",
-    casesLead: "A few examples chosen to show how we work. Client names are withheld.",
+    chat: "Chat with the COANA TOKYO support team",
+    crumbs: "Breadcrumb",
   },
 };
 type Lang = keyof typeof LABELS;
+type L10n = (typeof LABELS)[Lang];
 const langOf = (sol: Solution): Lang => (sol.lang === "en" ? "en" : "ja");
 /** お問い合わせへ遷移する前に相談種別を記録する navigate */
 const withInquiry = (sol: Solution, navigate: Nav): Nav => (...args) => {
   if (args[0] === "contact") setInquiryPreset(inquiryTypeOf(sol));
   navigate(...args);
 };
-/** SVG 図解のラベルが枠からはみ出さないよう、長い文字列は幅を指定して詰める */
-function fitText(text: string, fontSize: number, max: number) {
-  let width = 0;
-  for (const ch of text) width += (ch.charCodeAt(0) > 0xff ? 1 : 0.56) * fontSize;
-  return width > max ? { textLength: max, lengthAdjust: "spacingAndGlyphs" as const } : {};
-}
 
 /** 見出しのうち、いちばん伝えたい言葉（CMS の「見出しで目立たせる言葉」）だけ色を変える。
  *  見出しにその言葉がなければ、そのまま表示する（文字は足さない） */
 function MarkedTitle({ text, mark }: { text: string; mark?: string }) {
   const at = mark ? text.indexOf(mark) : -1;
   if (!mark || at < 0) return <Lines text={text} />;
-  return <>{text.slice(0, at)}<em className="lp-mark">{mark}</em>{text.slice(at + mark.length)}</>;
+  return <>{text.slice(0, at)}<em className="lpx-mark">{mark}</em>{text.slice(at + mark.length)}</>;
 }
 
-/* ───────────────────────── 1. Hero ───────────────────────── */
+/** 社名（COANA TOKYO）の途中で行が折れないようにする（文字は足さない） */
+function Brand({ text }: { text: string }) {
+  const parts = text.split("COANA TOKYO");
+  return <>{parts.map((t, i) => <Fragment key={i}>{i > 0 && <span className="lpx-nb">COANA TOKYO</span>}{t}</Fragment>)}</>;
+}
 
-/** キャッチコピーの行。「**」で囲んだ部分に下線を引く（囲みがなければ最後の行全体）。
- *  下線のフレーズは途中で改行させず、入りきらない幅ではフレーズごと次の行へ送る（前後に改行位置 <wbr> を置く）。 */
+/** 章の見出し：小さなラベル → 見出し → 短い線 → リード文（中央寄せ） */
+function Head({ kicker, children, lead, lang }: { kicker: string; children: ReactNode; lead?: string; lang?: string }) {
+  return (
+    <div className="lpx-head" data-reveal>
+      <p className="lpx-kicker" lang={lang}>{kicker}</p>
+      <h2>{children}</h2>
+      {lead && <p className="lpx-head-lead"><Brand text={lead} /></p>}
+    </div>
+  );
+}
+
+const Chevron = () => <svg className="lpx-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>;
+/** 図の中の矢印（PC は右向き、スマホは下向き：CSS で回す） */
+const Arrow = ({ className = "" }: { className?: string }) => (
+  <span className={`lpx-arrow ${className}`} aria-hidden="true">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+  </span>
+);
+
+/* ───────────────────────── 1. ヒーロー ───────────────────────── */
+
+/** キャッチコピーの行。「**」で囲んだ部分に蛍光ペンの線を引く（囲みがなければ最後の行全体）。
+ *  線を引くフレーズは途中で改行させず、入りきらない幅ではフレーズごと次の行へ送る（前後に改行位置 <wbr> を置く）。 */
 function CatchLines({ text }: { text: string }) {
   const lines = text.split("\n");
   const marked = text.includes("**");
@@ -203,9 +195,9 @@ function CatchLines({ text }: { text: string }) {
       {lines.map((line, i) => {
         const parts = marked ? line.split(/\*\*(.+?)\*\*/) : i === lines.length - 1 ? ["", line] : [line];
         return (
-          <span key={i} className="lp-hero-line">
+          <span key={i} className="lpx-hero-line">
             {parts.map((part, j) => (j % 2
-              ? <Fragment key={j}><wbr /><span className="title-underline">{part}</span><wbr /></Fragment>
+              ? <Fragment key={j}><wbr /><span className="lpx-marker">{part}</span><wbr /></Fragment>
               : part))}
           </span>
         );
@@ -214,83 +206,62 @@ function CatchLines({ text }: { text: string }) {
   );
 }
 
-function Hero({ sol, navigate }: { sol: Solution; navigate: Nav }) {
-  const L = LABELS[langOf(sol)];
+function Hero({ sol, navigate, L }: { sol: Solution; navigate: Nav; L: L10n }) {
   const facts = sol.hero_facts ?? [];
-  const signal = sol.design === "signal";
   return (
-    <section className={signal ? "lp-hero lp-sig-hero" : "lp-hero"}>
-      {signal && <Feathers count={6} mobileCount={4} />}
-      <div className="container lp-hero-inner">
-        <div className="lp-hero-head">
-          <nav className="sky-crumbs" aria-label="パンくずリスト"><GoLink go={navigate} args={["home"]}>{langOf(sol) === "en" ? "Home" : "ホーム"}</GoLink><span aria-hidden="true">/</span><GoLink go={navigate} args={["services"]}>{langOf(sol) === "en" ? "Services" : "サービス"}</GoLink><span aria-hidden="true">/</span><span>{sol.nav_label}</span></nav>
-          <p className="lp-hero-kicker">
-            <span className="lp-hero-en">{sol.en || "Service"}</span>
-            <span className="lp-hero-label">{sol.nav_label}</span>
-          </p>
-          <h1 className={sol.catch ? "lp-hero-title" : "lp-hero-title is-plain"}>
-            {sol.catch ? <CatchLines text={sol.catch} /> : sol.title}
-          </h1>
-          {sol.catch && <p className="lp-hero-sub">{sol.title}</p>}
-        </div>
-        <div className="lp-hero-art"><HeroVideo src={sol.hero_video} fallback={<ServiceArt slug={sol.slug} />} /></div>
-        <div className="lp-hero-body">
-          <p className="lp-hero-lead"><Lines text={sol.lead} /></p>
-          {facts.length > 0 && (
-            <ul className="lp-hero-facts" aria-label={L.facts}>
-              {facts.map((f) => (
-                <li key={f.value}><span className="lp-hero-fact-icon"><Icon name="check" size={15} /></span><strong>{f.value}</strong><small>{f.label}</small></li>
-              ))}
-            </ul>
-          )}
-          <div className="lp-hero-actions">
-            <GoLink className="button button-large lp-button-primary" go={navigate} args={["contact"]}>
+    <section className="lpx-hero">
+      <span className="lpx-hero-cloud is-1" aria-hidden="true" /><span className="lpx-hero-cloud is-2" aria-hidden="true" />
+      <div className="container lpx-hero-inner">
+        <div className="lpx-hero-copy">
+          <nav className="lpx-crumbs" aria-label={L.crumbs}><GoLink go={navigate} args={["home"]}>{L.home}</GoLink><span aria-hidden="true">/</span><GoLink go={navigate} args={["services"]}>{L.services}</GoLink><span aria-hidden="true">/</span><span>{sol.nav_label}</span></nav>
+          <p className="lpx-hero-label">{sol.nav_label}</p>
+          <h1 className="lpx-hero-title">{sol.catch ? <CatchLines text={sol.catch} /> : sol.title}</h1>
+          <p className="lpx-hero-lead"><Lines text={sol.lead} /></p>
+          <div className="lpx-hero-actions">
+            <GoLink className="button button-large lpx-primary" go={navigate} args={["contact"]}>
               {L.consult}<Icon name="arrow" size={19} />
             </GoLink>
             <LineButton place="solution_hero" label={L.consultLine} />
           </div>
-          <p className="lp-hero-note">{sol.hero_note || L.heroNote}</p>
+          <p className="lpx-hero-note">{sol.hero_note || L.heroNote}</p>
           {sol.english?.slug && (
-            <GoLink className="lp-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
+            <GoLink className="lpx-hero-english" go={navigate} args={["solution", undefined, sol.english.slug]}>
               <LpIcon name="globe" size={17} />{sol.english.button || "English page"}<Icon name="arrow" size={15} />
             </GoLink>
           )}
         </div>
+        <div className="lpx-hero-art" data-live><HeroArt slug={sol.slug} /></div>
+        {facts.length > 0 && (
+          <ul className="lpx-hero-facts" aria-label={L.facts}>
+            {facts.map((f) => (
+              <li key={f.value}><span className="lpx-fact-check"><Icon name="check" size={16} /></span><span><strong>{f.value}</strong><small>{f.label}</small></span></li>
+            ))}
+          </ul>
+        )}
       </div>
-      {/* 下へのボタン：導入前／導入後があるLPはそこへ、支援事例のLP（導入前／導入後を出さない）は「01 仕組み」へ */}
-      <a className="lp-hero-scroll" href={signal ? ((sol.before_after?.items ?? []).length ? "#lp-ba" : "#lp-scheme") : "#lp-problems"} aria-label={L.scroll}><LpIcon name="arrow-down" size={18} /></a>
-      <span className="page-hero-big lp-hero-big" aria-hidden="true" lang="en">{(sol.en || "Service").toUpperCase()}</span>
     </section>
   );
 }
 
 /* ───────────────────────── 2. お悩み ───────────────────────── */
 
-const PROBLEM_FACES = ["clock", "users", "search", "chart"] as const;
-
-function Problems({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  if (!sol.problems.length) return null;
+function Worries({ sol, L }: { sol: Solution; L: L10n }) {
+  const items = sol.problems ?? [];
+  if (!items.length) return null;
   return (
-    <section id="lp-problems" className="section lp-problems">
+    <section className="lpx-section lpx-worry">
       <div className="container">
-        <SectionTitle en="Problems" center>{sol.problems_title || L.problems}</SectionTitle>
-        <ul className="lp-problem-grid">
-          {sol.problems.map((p, i) => (
-            <li key={p} data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
-              <span className="lp-problem-icon" data-draw><LpIcon name={PROBLEM_FACES[i % PROBLEM_FACES.length]} size={22} /></span>
-              <span>{p}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="lp-problems-bridge" data-reveal>
-          {/* カードから下の一文へ線が集まる（既存の余白の中に描く。スマホは1本） */}
-          <svg className="lp-funnel" viewBox="0 0 920 40" preserveAspectRatio="none" aria-hidden="true" data-draw>
-            <path className="lp-funnel-side" d="M230 0C230 26 400 34 460 40" vectorEffect="non-scaling-stroke" />
-            <path className="lp-funnel-side" d="M690 0C690 26 520 34 460 40" vectorEffect="non-scaling-stroke" />
-            <path className="lp-funnel-mid" d="M460 0V40" vectorEffect="non-scaling-stroke" />
-          </svg>
-          <span className="lp-bridge-arrow" aria-hidden="true"><LpIcon name="arrow-down" size={20} /></span>
+        <Head kicker={L.kWorry}>{sol.problems_title || L.problems}</Head>
+        <div className={`lpx-worry-stage is-${Math.min(items.length, 4)}`}>
+          <div className="lpx-worry-art" data-live><WorryArt /></div>
+          <ul className="lpx-worry-list">
+            {items.slice(0, 4).map((p, i) => (
+              <li key={p} data-reveal style={{ ["--d" as string]: `${(i * 0.08).toFixed(2)}s` }}><span className="lpx-worry-mark" aria-hidden="true"><Icon name="check" size={15} /></span><span>{p}</span></li>
+            ))}
+          </ul>
+        </div>
+        <div className="lpx-bridge" data-reveal>
+          <span className="lpx-bridge-arrow" aria-hidden="true" />
           <p>{L.bridge[0]}<strong>{L.bridge[1]}</strong>{L.bridge[2]}</p>
         </div>
       </div>
@@ -298,533 +269,179 @@ function Problems({ sol }: { sol: Solution }) {
   );
 }
 
-/* ───────────────────────── 新デザイン（Signal Sky）のLP専用パーツ ───────────────────────── */
+/* ───────────────────────── 3. 特徴 ───────────────────────── */
 
-const BA_WAIT_MS = 4500;
-
-/** 導入前／導入後の切り替え。画面に入って導入前を読む時間をとってから（約4.5秒）自動で「導入後」へ切り替わる（ページに入るたびに同じ）。
- *  スイッチでいつでも見比べられる。導入後は、左の取引（銀行・カードなど）からクラウド会計へ線がつながり、右の税理士とも共有される。
- *  動かすのは opacity・transform と線の描画だけ。「動きを減らす」設定では最初から導入後を表示（スイッチは使える） */
-function BeforeAfter({ sol }: { sol: Solution }) {
-  const ba = sol.before_after;
-  const L = LABELS[langOf(sol)];
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [after, setAfter] = useState(false);
-  const [counting, setCounting] = useState(false);
-  const touched = useRef(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { setAfter(true); return; }
-    let timer = 0;
-    // 6割が見えたら（スマホで図が画面より高いときは、画面の高さの6割を占めたら）待ち始める
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting || (e.intersectionRatio < 0.6 && e.intersectionRect.height < window.innerHeight * 0.6)) return;
-      io.disconnect();
-      // 導入前をしっかり読めるよう、画面に入ってから約4.5秒待って切り替える（待っている間はスイッチの下に細い進み具合の線）
-      setCounting(true);
-      timer = window.setTimeout(() => { setCounting(false); if (!touched.current) setAfter(true); }, BA_WAIT_MS);
-    }, { threshold: [0, 0.2, 0.3, 0.4, 0.5, 0.6] });
-    io.observe(el);
-    return () => { io.disconnect(); window.clearTimeout(timer); };
-  }, []);
-  if (!ba || !(ba.items ?? []).length) return null;
-  const sources = (ba.sources ?? []).slice(0, 4);
-  const ys = sources.map((_, i) => ((i + 0.5) / Math.max(1, sources.length)) * 100);
-  const toggle = () => { touched.current = true; setCounting(false); setAfter((a) => !a); };
+function Points({ sol, L }: { sol: Solution; L: L10n }) {
+  const points = sol.scheme?.points ?? [];
+  if (!points.length) return null;
+  const num = (i: number) => String(i + 1).padStart(2, "0");
   return (
-    <section className="section lp-ba-section" id="lp-ba">
+    <section className="lpx-section lpx-points">
       <div className="container">
-        <SectionTitle en="Before / After" center lead={ba.lead}><Lines text={ba.title || L.baTitle} /></SectionTitle>
-        <div data-reveal>
-        <div className={after ? "lp-ba is-after" : "lp-ba"} ref={ref}>
-          <div className="lp-ba-copy">
-            <div className={counting ? "lp-ba-switch is-counting" : "lp-ba-switch"} style={{ ["--wait" as string]: `${BA_WAIT_MS}ms` }}>
-              <span className={after ? undefined : "on"} aria-hidden="true">{L.baBefore}</span>
-              <button type="button" className="lp-ba-toggle" role="switch" aria-checked={after} aria-label={L.baAria} onClick={toggle} />
-              <span className={after ? "on" : undefined} aria-hidden="true">{L.baAfter}</span>
-            </div>
-          </div>
-          <div className="lp-ba-board" aria-live="polite">
-            {/* 背景の大きな文字（BEFORE → AFTER）と、導入後に差し込む空の光 */}
-            <span className="lp-ba-light" aria-hidden="true" />
-            <span className="lp-ba-word" aria-hidden="true"><span className="b">BEFORE</span><span className="a">AFTER</span></span>
-            {sources.length > 0 && (
-              <div className="lp-ba-map" data-live>
-                <svg className="lp-ba-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                  {ys.map((y, i) => (
-                    <path key={i} className="lp-ba-line" style={{ ["--i" as string]: i }} d={`M34 ${y}C38 ${y} 37 50 41 50`} pathLength={1} vectorEffect="non-scaling-stroke" />
-                  ))}
-                  {ba.partner && <path className="lp-ba-line is-share" style={{ ["--i" as string]: sources.length }} d="M63 50H71" pathLength={1} vectorEffect="non-scaling-stroke" />}
-                  {/* 導入後：線の上をデータの粒が流れ続ける（画面内のときだけ） */}
-                  {ys.map((y, i) => (
-                    <path key={"p" + i} className="lp-ba-packet" style={{ ["--i" as string]: i }} d={`M34 ${y}C38 ${y} 37 50 41 50`} pathLength={1} vectorEffect="non-scaling-stroke" />
-                  ))}
-                  {ba.partner && <path className="lp-ba-packet is-share" style={{ ["--i" as string]: sources.length }} d="M63 50H71" pathLength={1} vectorEffect="non-scaling-stroke" />}
-                </svg>
-                <ul className="lp-ba-sources">
-                  {sources.map((s, i) => <li key={s} style={{ ["--i" as string]: i }}>{s}</li>)}
-                </ul>
-                <div className="lp-ba-center">
-                  <span className="lp-ba-center-before">{ba.center_before || "手作業"}</span>
-                  <span className="lp-ba-center-after"><Icon name="check" size={14} />{ba.center_after || "自動化"}</span>
-                </div>
-                {ba.partner && <div className="lp-ba-partner">{ba.partner}</div>}
-              </div>
-            )}
-            <ul className="lp-ba-grid">
-              {(ba.items ?? []).map((it, i) => (
-                <li key={it.label} style={{ ["--i" as string]: i }}>
-                  <span className="lp-ba-check" aria-hidden="true"><Icon name="check" size={14} /></span>
-                  <p className="lp-ba-head"><span>{it.label}</span><b className="lp-ba-status"><span className="b">{it.before_status || "—"}</span><span className="a">{it.after_status || "✓"}</span></b></p>
-                  <p className="lp-ba-val"><span className="b">{it.before}</span><span className="a">{it.after}</span></p>
-                </li>
-              ))}
-            </ul>
-            <div className="lp-ba-meter" aria-hidden="true">
-              <span className="lp-ba-meter-bar">{(ba.items ?? []).map((_, i) => <i key={i} style={{ ["--i" as string]: i }} />)}</span>
-              <span className="lp-ba-meter-label"><span className="b">{L.baMeterBefore((ba.items ?? []).length)}</span><span className="a">{L.baMeterAfter((ba.items ?? []).length)}</span></span>
-            </div>
-            {ba.note && <p className="lp-ba-note">{ba.note}</p>}
-          </div>
-        </div>
-        </div>
+        <Head kicker={L.kPoints}>{L.points(points.length)}</Head>
+        <ul className={`lpx-point-grid is-${Math.min(points.length, 4)}`}>
+          {points.map((p, i) => (
+            <li key={p.name} className="lpx-point" data-reveal style={{ ["--d" as string]: `${(i * 0.1).toFixed(2)}s` }}>
+              <div className="lpx-point-art"><SpotIcon name={p.icon} tone={i === 1 ? "warm" : "sky"} size={132} /></div>
+              <p className="lpx-point-no"><span>{L.point}</span>{num(i)}</p>
+              <h3>{p.name}</h3>
+              <p className="lpx-point-text">{p.text}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── 3. 仕組みの図解 ───────────────────────── */
+/* ───────────────────────── 4. 仕組みの図 ───────────────────────── */
 
-/** 中心円型：線が中心から周りへ広がり（一度だけ）、その後は線の上を光の粒がゆっくり流れる（PC・画面内のときだけ）。
- *  PC でカーソルを当てた要素に関係する線だけを強調する。スマホは図の代わりに一覧で表示する。 */
-function SchemeDiagram({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
+type Scheme = NonNullable<Solution["scheme"]>;
+type SchemeNode = NonNullable<Scheme["nodes"]>[number];
+
+/** 一本の流れ：番号・アイコンの絵・短い言葉を、矢印でつなぐ */
+function SchemeSteps({ nodes }: { nodes: SchemeNode[] }) {
+  return (
+    <ol className={`lpx-steps is-${Math.min(nodes.length, 6)}`} data-reveal>
+      {nodes.map((st, i) => (
+        <li key={st.label}>
+          <span className="lpx-step-art"><SpotIcon name={st.icon} tone={i === nodes.length - 1 ? "warm" : "sky"} size={96} /><b>{i + 1}</b></span>
+          <strong>{st.label}</strong>
+          {st.sub && <span className="lpx-step-sub">{st.sub}</span>}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** 2つの段（御社がやること／COANA TOKYO がやること）：工程を左から順に置き、誰の仕事かを段で見せる。スマホは縦に1列で、札で見分ける */
+function SchemeLanes({ scheme, L }: { scheme: Scheme; L: L10n }) {
   const nodes = scheme.nodes ?? [];
-  const [active, setActive] = useState<number | null>(null);
-  const boxRef = useRef<HTMLDivElement | null>(null);
-  const keys = ["c", ...nodes.map((_, i) => "n" + i)];
-  // 仕組みのアニメーション（schemeStory.tsx）。スマホ（640px 以下）は一覧の形で、カードの右上を進む
-  const { state, layer } = useSchemeStory(boxRef, story, keys, "(max-width: 640px)");
-  const W = 1000, H = 600, cx = W / 2, cy = H / 2;
-  const n = nodes.length;
-  const rx = 370, ry = 215;
-  const R = 110; // 中心の円（外側の輪）の半径
-  const pos = nodes.map((_, i) => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
-    const x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a);
-    // 線は中心の輪の外から、各要素の枠の手前まで（枠 244×92 との交点）
-    const dx = x - cx, dy = y - cy, len = Math.hypot(dx, dy);
-    const t = Math.min(122 / Math.abs(dx || 1e-6), 46 / Math.abs(dy || 1e-6));
-    return { x, y, sx: cx + (dx / len) * R, sy: cy + (dy / len) * R, ex: x - dx * t, ey: y - dy * t };
-  });
-  const hover = (i: number | null) => () => setActive(i);
+  const clientLabel = scheme.client_label || L.clientLane;
+  const teamLabel = scheme.team_label || L.teamLane;
   return (
-    <div className="lp-scheme-diagram" ref={boxRef} data-reveal data-active={active === null ? undefined : active}>
-      <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="lp-sg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#087fe5" />
-            <stop offset="1" stopColor="#0d2338" />
-          </linearGradient>
-        </defs>
-        <g className="lp-scheme-lines" data-draw>
-          {pos.map((p, i) => (
-            <path
-              key={"l" + i}
-              d={`M${p.sx.toFixed(1)} ${p.sy.toFixed(1)}L${p.ex.toFixed(1)} ${p.ey.toFixed(1)}`}
-              className={active === i || active === -1 ? "lp-scheme-line is-active" : "lp-scheme-line"}
-              style={{ ["--draw-d" as string]: `${(0.15 + i * 0.09).toFixed(2)}s` }}
-            />
-          ))}
-        </g>
-        <g className="lp-scheme-ends">
-          {pos.map((p, i) => (
-            <circle key={"e" + i} cx={p.ex} cy={p.ey} r="5" className={active === i || active === -1 ? "is-active" : undefined} style={{ ["--i" as string]: i }} />
-          ))}
-        </g>
-        <g className={`lp-scheme-center${state("c")}`} data-story="c" data-perch="above-c" onPointerEnter={hover(-1)} onPointerLeave={hover(null)}>
-          <circle cx={cx} cy={cy} r={R} className="lp-scheme-ring" />
-          <circle cx={cx} cy={cy} r="96" fill="url(#lp-sg)" />
-          <text x={cx} y={cy - 8} textAnchor="middle" className="lp-scheme-center-label" {...fitText(scheme.center?.label || "COANA TOKYO", 23, 160)}>{scheme.center?.label || "COANA TOKYO"}</text>
-          {scheme.center?.sub && <text x={cx} y={cy + 20} textAnchor="middle" className="lp-scheme-center-sub" {...fitText(scheme.center.sub, 15, 170)}>{scheme.center.sub}</text>}
-        </g>
-        {nodes.map((node, i) => {
-          const p = pos[i];
-          return (
-            <g key={node.label} className={`lp-scheme-node${active === i || active === -1 ? " is-active" : ""}${state("n" + i)}${story?.checks?.includes("n" + i) ? " has-check" : ""}`} data-story={"n" + i} data-perch="above-tr" onPointerEnter={hover(i)} onPointerLeave={hover(null)}>
-              <rect x={p.x - 122} y={p.y - 46} width="244" height="92" rx="18" />
-              {/* 整った工程の印（創業支援など） */}
-              <g className="lp-scheme-check" transform={`translate(${p.x + 104} ${p.y - 46})`}>
-                <circle r="13" />
-                <path d="M-5.5 0.5l3.8 3.8L5.8-3.6" />
-              </g>
-              <text x={p.x} y={p.y - 6} textAnchor="middle" className="lp-scheme-node-label" {...fitText(node.label, 21, 220)}>{node.label}</text>
-              {node.sub && <text x={p.x} y={p.y + 22} textAnchor="middle" className="lp-scheme-node-sub" {...fitText(node.sub, 14, 220)}>{node.sub}</text>}
-            </g>
-          );
-        })}
-      </svg>
-      <ul className="lp-scheme-list" aria-label={scheme.title || ""}>
-        <li className={`is-center${state("c")}`} data-story="c" data-perch="in-tr"><strong>{scheme.center?.label || "COANA TOKYO"}</strong>{scheme.center?.sub && <span>{scheme.center.sub}</span>}</li>
-        {nodes.map((node, i) => (
-          <li key={node.label} className={(state("n" + i) + (story?.checks?.includes("n" + i) ? " has-check" : "")).trim() || undefined} data-story={"n" + i} data-perch="in-tr"><strong>{node.label}</strong>{node.sub && <span>{node.sub}</span>}</li>
-        ))}
-      </ul>
-      {layer}
-    </div>
-  );
-}
-
-/** リレー型：御社 →（1）COANA TOKYO →（2）対応する領域 →（3）完了をご報告 →（4）手順をマニュアル化 → 御社へ戻る。
- *  PC は左から右へ一方向（戻りは下の段を右から左へ）、1120px 以下は上から下の1列（スマホ専用の並び）。
- *  線は意味のある線だけ（矢印で順序が分かる）。鳩が通った線から色がつく。点線の道筋は出さない */
-function SchemeRelay({ scheme, story, labels }: { scheme: NonNullable<Solution["scheme"]>; story?: Story; labels: { todo: string; goal: string } }) {
-  const areas = scheme.nodes ?? [];
-  const returns = scheme.returns ?? [];
-  const steps = scheme.steps ?? [];
-  const boxRef = useRef<HTMLDivElement | null>(null);
-  const keys = ["client", "c", ...areas.map((_, i) => "n" + i), ...returns.map((_, i) => "r" + i)];
-  const { state, layer, now, done, still } = useSchemeStory(boxRef, story, keys, "(max-width: 1120px)");
-  const lit = (k: string) => still || done.includes(k);
-  const anyArea = areas.some((_, i) => lit("n" + i));
-  void now;
-  // 役割は「エリア」で示す：COANA TOKYO が担当する範囲（中心・領域・最後の手前までの戻り）を薄いパネルで囲み、見出しを付ける。
-  // 最後の戻り（例：開業の土台が整う）は、御社が「受け取るもの」としてパネルの外・御社の側（暖色）に置く。鳩が最後に届ける先
-  const inner = returns.slice(0, -1);
-  const goal = returns.length ? returns[returns.length - 1] : null;
-  // PC の線：カードの位置から引く（幅が変わったら・文字が読み込まれたら引き直す）
-  const [geom, setGeom] = useState<{ k: string; d: string; arrow: boolean }[]>([]);
-  useLayoutEffect(() => {
-    const root = boxRef.current;
-    if (!root) return;
-    const measure = () => {
-      const pc = !window.matchMedia("(max-width: 1120px)").matches;
-      if (!pc) { setGeom([]); return; }
-      const b = root.getBoundingClientRect();
-      const r = (sel: string) => { const e = root.querySelector(sel); if (!e) return null; const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; };
-      const client = r(".relay-client"), center = r(".relay-center"), list = r(".relay-areas");
-      const items = [...root.querySelectorAll(".relay-area")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, cy: x.top - b.top + x.height / 2 }; });
-      const rets = [...root.querySelectorAll(".relay-return, .relay-goal")].map((e) => { const x = e.getBoundingClientRect(); return { l: x.left - b.left, r: x.right - b.left, t: x.top - b.top, bt: x.bottom - b.top, cx: x.left - b.left + x.width / 2, cy: x.top - b.top + x.height / 2 }; });
-      if (!client || !center || !list || !items.length) return;
-      const f = (n: number) => n.toFixed(1);
-      const g: { k: string; d: string; arrow: boolean }[] = [];
-      const y = center.cy;
-      g.push({ k: "c", d: `M${f(client.r + 8)} ${f(y)}H${f(center.l - 10)}`, arrow: true });
-      const spine = list.l - 24;
-      g.push({ k: "trunk", d: `M${f(center.r + 8)} ${f(y)}H${f(spine)}M${f(spine)} ${f(items[0].cy)}V${f(items[items.length - 1].cy)}`, arrow: false });
-      items.forEach((it, i) => g.push({ k: "n" + i, d: `M${f(spine)} ${f(it.cy)}H${f(it.l - 9)}`, arrow: true }));
-      // 戻り：領域の下 → 3 → 4 → 御社（下の段を右から左へ、最後は上向き）
-      if (rets.length) {
-        const r0 = rets[0];
-        g.push({ k: "r0", d: `M${f(r0.cx)} ${f(list.bt + 8)}V${f(r0.t - 10)}`, arrow: true });
-        rets.slice(1).forEach((rt, i) => g.push({ k: "r" + (i + 1), d: `M${f(rets[i].l - 8)} ${f(rt.cy)}H${f(rt.r + 10)}`, arrow: true }));
-      }
-      setGeom(g);
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(root);
-    void document.fonts?.ready.then(measure);
-    return () => ro.disconnect();
-  }, [areas.length, returns.length]);
-  const on = (k: string) => (k === "trunk" ? anyArea : lit(k));
-  const num = (i: number) => <b className="relay-num">{i}</b>;
-  return (
-    <div className="relay" ref={boxRef} data-reveal>
-      <svg className="relay-lines" aria-hidden="true" focusable="false">
-        <defs>
-          <marker id="relay-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path className="relay-head" d="M1 1.5 8 5l-7 3.5" /></marker>
-          <marker id="relay-arrow-lit" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path className="relay-head is-lit" d="M1 1.5 8 5l-7 3.5" /></marker>
-        </defs>
-        {geom.map((l) => (
-          <g key={l.k} className={on(l.k) ? "is-on" : undefined}>
-            <path className="relay-line" d={l.d} markerEnd={l.arrow ? "url(#relay-arrow)" : undefined} />
-            <path className="relay-line-lit" d={l.d} markerEnd={l.arrow ? "url(#relay-arrow-lit)" : undefined} />
-          </g>
-        ))}
-      </svg>
-      <div className="relay-panel" aria-hidden="true" />
-      <div className={`relay-card relay-client${state("client")}`} data-story="client" data-perch="above-tr" data-perch-v="in-tr">
-        <span className="relay-icon"><LpIcon name={scheme.client?.icon || "person"} size={24} /><StepCheck /></span>
-        <strong>{scheme.client?.label}</strong>
-        {scheme.client?.todo ? (
-          <span className="relay-todo"><em>{labels.todo}</em>{scheme.client.todo}</span>
-        ) : scheme.client?.sub && <span className="relay-sub">{scheme.client.sub}</span>}
+    <div className="lpx-lanes-wrap" data-reveal>
+      <div className="lpx-lanes" style={{ ["--n" as string]: nodes.length }}>
+        <div className="lpx-lane-bg is-client" aria-hidden="true" />
+        <div className="lpx-lane-bg is-team" aria-hidden="true" />
+        <p className="lpx-lane-label is-client">{clientLabel}</p>
+        <p className="lpx-lane-label is-team">{teamLabel}</p>
+        <ol className="lpx-lane-list">
+          {nodes.map((n, i) => {
+            const who = n.who === "client" ? "client" : "team";
+            return (
+              <li key={n.label} className={`lpx-lane-node is-${who}`} style={{ gridColumn: i + 2, gridRow: who === "client" ? 1 : 2 }}>
+                <span className="lpx-lane-who">{who === "client" ? L.clientTag : "COANA TOKYO"}</span>
+                <span className="lpx-lane-icon"><LpIcon name={n.icon || "check"} size={26} /><b>{i + 1}</b></span>
+                <strong>{n.label}</strong>
+                {n.sub && <span className="lpx-lane-sub">{n.sub}</span>}
+              </li>
+            );
+          })}
+        </ol>
       </div>
-      <p className={`relay-step is-1${lit("c") ? " is-on" : ""}`}>{num(1)}<span>{steps[0]}</span></p>
-      {/* COANA TOKYO が担当する範囲（PC は display: contents でグリッドに並べ、背景は .relay-panel。スマホはこの箱が背景のパネル） */}
-      <div className="relay-team">
-        <p className="relay-team-head">{scheme.team_label || "COANA TOKYOが担当"}</p>
-        <div className={`relay-card relay-center${state("c")}`} data-story="c" data-perch="above-tr" data-perch-v="in-tr">
-          <span className="relay-icon"><LpIcon name={scheme.center?.icon || "users"} size={24} /><StepCheck /></span>
-          <strong>{scheme.center?.label || "COANA TOKYO"}</strong>
-          {scheme.center?.sub && <span className="relay-sub">{scheme.center.sub}</span>}
-        </div>
-        <p className={`relay-step is-2${anyArea ? " is-on" : ""}`}>{num(2)}<span>{steps[1]}</span></p>
-        <ul className={`relay-areas${anyArea ? " is-on" : ""}`}>
-          {areas.map((a, i) => (
-            // partner：提携先の専門家や御社など、COANA TOKYO 自身ではない相手（破線の枠）
-            <li key={a.label} className={`relay-area${a.partner ? " is-partner" : ""}${state("n" + i)}`} data-story={"n" + i} data-perch="group-tr">
-              <span className="relay-icon"><LpIcon name={a.icon || "check"} size={20} /><StepCheck /></span>
-              <strong>{a.label}</strong>
-              {a.sub && <span className="relay-sub">{a.sub}</span>}
-            </li>
-          ))}
-        </ul>
-        {inner.map((rt, i) => (
-          <div key={rt.label} className={`relay-card relay-return is-r${i}${state("r" + i)}${lit("r" + i) ? " is-on" : ""}`} data-story={"r" + i} data-perch="above-tr" data-perch-v="in-tr">
-            <i className="relay-arrow" aria-hidden="true" />
-            <span className="relay-icon"><LpIcon name={rt.icon || "check"} size={22} /><StepCheck /></span>
-            <strong>{num(i + 3)}{rt.label}</strong>
-            {rt.sub && <span className="relay-sub">{rt.sub}</span>}
-          </div>
-        ))}
-      </div>
-      {goal && (() => {
-        const k = "r" + inner.length;
-        return (
-          <div className={`relay-card relay-goal${state(k)}${lit(k) ? " is-on" : ""}`} data-story={k} data-perch="above-tr" data-perch-v="in-tr">
-            <i className="relay-arrow" aria-hidden="true" />
-            <span className="relay-goal-tag">{labels.goal}</span>
-            <span className="relay-icon"><LpIcon name={goal.icon || "check"} size={22} /><StepCheck /><i className="relay-page" aria-hidden="true" /></span>
-            <strong>{num(inner.length + 3)}{goal.label}</strong>
-            {goal.sub && <span className="relay-sub">{goal.sub}</span>}
-          </div>
-        );
-      })()}
-      {layer}
-    </div>
-  );
-}
-
-/** 一本の流れ型：画面に入ると、各ステージが左から順に点灯し、アイコンが線で描かれる（文字は最初から読める） */
-function SchemeFlow({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
-  const steps = scheme.nodes ?? [];
-  const boxRef = useRef<HTMLDivElement | null>(null);
-  const keys = steps.map((_, i) => "n" + i);
-  // 仕組みのアニメーション（schemeStory.tsx）。980px 以下は縦に1本で、カードの右上を進む
-  const { state, layer, running } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)");
-  return (
-    <div className="lp-scheme-flow-wrap" ref={boxRef} data-run={running ? "" : undefined}>
-      <ol className={`lp-scheme-flow is-${Math.min(steps.length, 5)}`}>
-        {steps.map((st, i) => (
-          <li key={st.label} className={state("n" + i).trim() || undefined} data-story={"n" + i} data-perch="above-tr" data-perch-v="in-tr">
-            <span className="lp-scheme-flow-icon"><LpIcon name={st.icon || "check"} size={26} /><b>{i + 1}</b><StepCheck /></span>
-            <strong>{st.label}</strong>
-            {st.sub && <span>{st.sub}</span>}
-          </li>
-        ))}
-      </ol>
-      {layer}
-    </div>
-  );
-}
-
-/** レーン型（経理代行など）：「御社がやること」と「COANA TOKYO がやること」を2段に分け、仕事の差をひと目で見せる。
- *  - PC：上の段に御社（資料を入れる・報告を受け取る の2つだけ）、下の段に COANA TOKYO の工程。スマホは縦に1本の流れ。
- *  - 領収書がクラウドに入り、COANA TOKYO の工程を順に通って、月次レポートは御社へ、決算用のデータは顧問税理士へ届く様子を、
- *    ゆっくり繰り返し見せる（schemeStory.tsx。スクロールとは連動しない）。
- *  - 文字は最初から全部読める。工程にカーソルを当てる（スマホはタップ）と、その工程でやることが少し詳しく出る。
- *  - 「動きを減らす」設定では動かさず、全工程を完了した状態で見せる。 */
-type LaneNode = NonNullable<NonNullable<Solution["scheme"]>["nodes"]>[number];
-
-/** メディアクエリが一致しているか（画面幅や入力方法が変わったら追従） */
-function useMedia(query: string) {
-  const [match, setMatch] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const on = () => setMatch(mq.matches);
-    on();
-    mq.addEventListener("change", on);
-    return () => mq.removeEventListener("change", on);
-  }, [query]);
-  return match;
-}
-
-/** 開閉の目印（文字の横の ∨。開いているときは上向き） */
-const Chevron = () => <svg className="toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>;
-
-function SchemeLanes({ scheme, story }: { scheme: NonNullable<Solution["scheme"]>; story?: Story }) {
-  const nodes = (scheme.nodes ?? []) as LaneNode[];
-  const boxRef = useRef<HTMLDivElement | null>(null);
-  const [lines, setLines] = useState<{ main: string; side: string[] }>({ main: "", side: [] });
-  const [open, setOpen] = useState<number | null>(null);
-  // PC（マウス）：カーソルを当てる・キーボードでフォーカスすると説明が出る（クリックでの開閉はしない）。
-  // タッチ端末：「詳しく見る ∨／閉じる ∧」のボタンで開閉する
-  const hoverPC = useMedia("(hover: hover) and (pointer: fine) and (min-width: 981px)");
-  // 仕組みのアニメーション（schemeStory.tsx）。工程の説明を開いている間は止める
-  const keys = nodes.map((_, i) => "n" + i);
-  const { state, layer } = useSchemeStory(boxRef, story, keys, "(max-width: 980px)", open !== null);
-  // 書類が通る順路：最後の「御社」までの工程。その後ろ（税理士への連携など）は、直前の COANA TOKYO の工程から枝分かれ
-  const lastClient = nodes.map((n) => n.who).lastIndexOf("client");
-  const pathEnd = lastClient > 0 ? lastClient : nodes.length - 1;
-  // PC の配置：COANA TOKYO の工程を左から順に並べ、御社の工程はその前後の工程の列に置く
-  let col = 0;
-  const place = nodes.map((n, i) => {
-    if (n.who === "client") {
-      const before = nodes.slice(0, i).some((m) => m.who !== "client");
-      return { row: 1, col: before ? col : col + 1 };
-    }
-    col += 1;
-    return { row: 2, col };
-  });
-  const teamCount = col;
-  // 受け渡しの地点：御社の最初の工程のすぐ後の、COANA TOKYO の工程。ここに「ここから先は COANA TOKYO が対応します」を添える
-  const firstClient = nodes.findIndex((n) => n.who === "client");
-  const handoff = firstClient >= 0 ? nodes.findIndex((n, i) => i > firstClient && n.who !== "client") : -1;
-
-  // つなぐ線：各工程のアイコンの中心を、縦横の線でつなぐ（画面幅が変わったら引き直す）
-  const centers = useCallback(() => {
-    const box = boxRef.current;
-    if (!box) return [];
-    const b = box.getBoundingClientRect();
-    return Array.from(box.querySelectorAll<HTMLElement>("[data-lane-node]")).map((el) => {
-      const r = el.getBoundingClientRect();
-      return { x: r.left + r.width / 2 - b.left, y: r.top + r.height / 2 - b.top };
-    });
-  }, []);
-  useLayoutEffect(() => {
-    const draw = () => {
-      const c = centers();
-      if (c.length < 2) return;
-      const seg = (a: { x: number; y: number }, z: { x: number; y: number }) =>
-        Math.abs(a.x - z.x) < 2 || Math.abs(a.y - z.y) < 2 ? `L${z.x.toFixed(1)} ${z.y.toFixed(1)}` : `L${a.x.toFixed(1)} ${z.y.toFixed(1)}L${z.x.toFixed(1)} ${z.y.toFixed(1)}`;
-      let main = `M${c[0].x.toFixed(1)} ${c[0].y.toFixed(1)}`;
-      for (let i = 1; i <= pathEnd; i++) main += seg(c[i - 1], c[i]);
-      // 順路の後ろの工程は、直前の COANA TOKYO の工程から枝分かれして
-      const side: string[] = [];
-      for (let i = pathEnd + 1; i < c.length; i++) {
-        let from = i - 1;
-        while (from > 0 && nodes[from].who === "client") from -= 1;
-        side.push(`M${c[from].x.toFixed(1)} ${c[from].y.toFixed(1)}` + seg(c[from], c[i]));
-      }
-      setLines({ main, side });
-    };
-    draw();
-    const ro = new ResizeObserver(draw);
-    if (boxRef.current) ro.observe(boxRef.current);
-    document.fonts?.ready.then(draw);
-    return () => ro.disconnect();
-  }, [centers, pathEnd, nodes]);
-
-  return (
-    <div className="lanes" ref={boxRef} style={{ ["--cols" as string]: teamCount }}>
-      <svg className="lanes-lines" aria-hidden="true" focusable="false">
-        <path className="lanes-line" d={lines.main} />
-        {lines.side.map((d, i) => <path key={i} className="lanes-line is-side" d={d} />)}
-      </svg>
-      <p className="lanes-label is-client"><span>{scheme.client_label || "御社がやること"}</span></p>
-      <p className="lanes-label is-team"><span>{scheme.team_label || "COANA TOKYOがやること"}</span></p>
-      <ol className="lanes-list">
-        {nodes.map((n, i) => {
-          const who = n.who === "client" ? "client" : "team";
-          return (
-            <li key={n.label} className={`lanes-item is-${who}${state("n" + i)}${open === i ? " is-open" : ""}`} style={{ gridRow: place[i].row, gridColumn: place[i].col + 1 }}>
-              {i === handoff && scheme.rest && (
-                <p className="lanes-handoff">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6" /></svg>
-                  {scheme.rest}
-                </p>
-              )}
-              {/* スマホ：担当が切り替わる工程にだけ「御社／COANA TOKYO」の札（受け渡しの地点は注記が兼ねる） */}
-              {(i === 0 || nodes[i - 1].who !== n.who) && !(i === handoff && scheme.rest) && (
-                <span className="lanes-tag">{who === "client" ? (scheme.client_label || "御社がやること").replace(/がやること$/, "") : "COANA TOKYO"}</span>
-              )}
-              {(() => {
-                const inner = (
-                  <>
-                    <span className="lanes-icon" data-lane-node>
-                      <LpIcon name={n.icon || "check"} size={22} />
-                      <StepCheck />
-                    </span>
-                    <span className="lanes-text"><strong>{n.label}</strong>{n.sub && <span>{n.sub}</span>}</span>
-                  </>
-                );
-                if (!n.detail) return <div className="lanes-card" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr">{inner}</div>;
-                if (hoverPC) {
-                  // Esc で説明を閉じられるように（フォーカスを外す）
-                  return (
-                    <div className="lanes-card is-hint" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr" tabIndex={0} aria-describedby={`lanes-detail-${i}`} onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}>
-                      {inner}
-                    </div>
-                  );
-                }
-                return (
-                  <button type="button" className="lanes-card" data-story={"n" + i} data-perch={who === "client" ? "out-r" : "above-tr"} data-perch-v="in-tr" aria-expanded={open === i} aria-controls={`lanes-detail-${i}`} onClick={() => setOpen((cur) => (cur === i ? null : i))}>
-                    {inner}
-                    <span className="lanes-more">{open === i ? "閉じる" : "詳しく見る"}<Chevron /></span>
-                  </button>
-                );
-              })()}
-              {n.detail && <p id={`lanes-detail-${i}`} className="lanes-detail" role={hoverPC ? "tooltip" : undefined}>{n.detail}</p>}
-            </li>
-          );
-        })}
-      </ol>
-      {layer}
       {(scheme.cycle ?? []).length > 0 && (
-        <div className="lanes-cycle">
-          <span className="lanes-cycle-label" data-cycle><LpIcon name="refresh" size={16} />毎月くり返し</span>
-          <ol>
-            {(scheme.cycle ?? []).map((c) => <li key={c.when}><b>{c.when}</b>{c.text}</li>)}
-          </ol>
+        <div className="lpx-cycle">
+          <span className="lpx-cycle-label"><LpIcon name="refresh" size={16} />{L.cycle}</span>
+          <ol>{(scheme.cycle ?? []).map((c) => <li key={c.when}><b>{c.when}</b>{c.text}</li>)}</ol>
         </div>
       )}
     </div>
   );
 }
 
-function Scheme({ sol, navigate }: { sol: Solution; navigate: Nav }) {
-  const L = LABELS[langOf(sol)];
-  const scheme = sol.scheme;
-  if (!scheme || !(scheme.nodes ?? []).length) return null;
-  const story = STORIES[sol.slug];
+/** リレー：御社 → COANA TOKYO が担当する範囲（窓口 → 対応する領域）→ 御社が受け取るもの。
+ *  提携の専門家など COANA TOKYO 以外の相手（partner）は破線の枠 */
+function SchemeRelay({ scheme, L }: { scheme: Scheme; L: L10n }) {
+  const areas = scheme.nodes ?? [];
+  const returns = scheme.returns ?? [];
+  const steps = scheme.steps ?? [];
+  const inner = returns.slice(0, -1);
+  const goal = returns.length ? returns[returns.length - 1] : null;
   return (
-    <section className="section lp-scheme" id="lp-scheme">
-      <div className="container">
-        <SectionTitle en="How it works" center lead={scheme.lead}><MarkedTitle text={scheme.title || L.scheme} mark={scheme.title_mark} /></SectionTitle>
-        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} story={story} /> : scheme.type === "flow" ? <SchemeFlow scheme={scheme} story={story} /> : scheme.type === "relay" ? <SchemeRelay scheme={scheme} story={story} labels={{ todo: L.relayTodo, goal: L.relayGoal }} /> : <SchemeDiagram scheme={scheme} story={story} />}
-        {(scheme.points ?? []).length > 0 && (
-          <ul className="lp-scheme-points">
-            {(scheme.points ?? []).map((p) => (
-              <li key={p.name}>
-                <span className="lp-scheme-point-icon"><LpIcon name={p.icon || "check"} size={24} /></span>
-                <h3>{p.name}</h3>
-                <p>{p.text}</p>
-              </li>
-            ))}
+    <div className="lpx-relay" data-reveal>
+      <div className="lpx-relay-side is-client">
+        <SpotIcon name={scheme.client?.icon || "person"} tone="warm" size={92} />
+        <strong>{scheme.client?.label}</strong>
+        {scheme.client?.todo
+          ? <span className="lpx-relay-todo"><em>{L.relayTodo}</em>{scheme.client.todo}</span>
+          : scheme.client?.sub && <span className="lpx-relay-sub">{scheme.client.sub}</span>}
+      </div>
+      <div className="lpx-relay-link">{steps[0] && <span className="lpx-relay-step"><b>1</b>{steps[0]}</span>}<Arrow /></div>
+      <div className="lpx-relay-team">
+        <p className="lpx-relay-head">{scheme.team_label || L.teamLane}</p>
+        <div className="lpx-relay-center">
+          <span className="lpx-relay-center-icon"><LpIcon name={scheme.center?.icon || "users"} size={26} /></span>
+          <span><strong>{scheme.center?.label || "COANA TOKYO"}</strong>{scheme.center?.sub && <small>{scheme.center.sub}</small>}</span>
+        </div>
+        {steps[1] && <p className="lpx-relay-step is-down"><b>2</b>{steps[1]}</p>}
+        <ul className={`lpx-relay-areas is-${Math.min(areas.length, 5)}`}>
+          {areas.map((a) => (
+            <li key={a.label} className={a.partner ? "is-partner" : undefined}>
+              <span className="lpx-relay-area-icon"><LpIcon name={a.icon || "check"} size={22} /></span>
+              <strong>{a.label}</strong>
+              {a.sub && <small>{a.sub}</small>}
+            </li>
+          ))}
+        </ul>
+        {inner.length > 0 && (
+          <ul className="lpx-relay-inner">
+            {inner.map((rt, i) => <li key={rt.label}><b>{i + 3}</b><strong>{rt.label}</strong>{rt.sub && <small>{rt.sub}</small>}</li>)}
           </ul>
         )}
-        {scheme.note && <p className="lp-note">{scheme.note}</p>}
-        {scheme.cta && (
-          <p className="lanes-cta">
-            <span>{scheme.cta}</span>
-            <GoLink className="lanes-cta-link" go={navigate} args={["contact"]}>{L.consult}<Icon name="arrow" size={16} /></GoLink>
-          </p>
-        )}
+      </div>
+      {goal && (
+        <>
+          <div className="lpx-relay-link"><Arrow /></div>
+          <div className="lpx-relay-side is-goal">
+            <span className="lpx-relay-goal-tag">{L.relayGoal}</span>
+            <SpotIcon name={goal.icon || "check"} tone="warm" size={92} />
+            <strong>{goal.label}</strong>
+            {goal.sub && <span className="lpx-relay-sub">{goal.sub}</span>}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function SchemeSection({ sol, L }: { sol: Solution; L: L10n }) {
+  const scheme = sol.scheme;
+  if (!scheme || !(scheme.nodes ?? []).length) return null;
+  return (
+    <section className="lpx-section lpx-scheme" id="lp-scheme">
+      <div className="container">
+        <Head kicker={L.kScheme} lead={scheme.lead}><MarkedTitle text={scheme.title || L.scheme} mark={scheme.title_mark} /></Head>
+        {scheme.type === "lanes" ? <SchemeLanes scheme={scheme} L={L} />
+          : scheme.type === "relay" ? <SchemeRelay scheme={scheme} L={L} />
+          : <SchemeSteps nodes={scheme.nodes ?? []} />}
+        {scheme.note && <p className="lpx-note">{scheme.note}</p>}
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── 3.5 支援事例（社名を伏せた事例）。次の「導入前／導入後」は 2 の BeforeAfter（事例がないLPで、仕組みのあとに表示） ───────────────────────── */
+/* ───────────────────────── 5. 支援事例（社名を伏せた事例） ───────────────────────── */
 
-function Cases({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
+const CASE_ICONS = ["refresh", "chart", "layout", "link"];
+
+function Cases({ sol, L }: { sol: Solution; L: L10n }) {
   const items = (sol.cases ?? []).filter((c) => c.client && c.title);
   if (!items.length) return null;
   return (
-    <section className="section lp-cases">
+    <section className="lpx-section lpx-cases">
       <div className="container">
-        <SectionTitle en="Case" center lead={sol.cases_lead ?? L.casesLead}>{sol.cases_title || L.cases}</SectionTitle>
-        <ul className={`lp-case-grid is-${Math.min(items.length, 3)}`}>
-          {items.map((c) => (
-            <li key={c.client + c.title} className="lp-case" data-reveal>
-              <p className="lp-case-client">{c.client}</p>
+        <Head kicker={L.kCases} lead={sol.cases_lead ?? L.casesLead}>{sol.cases_title || L.cases}</Head>
+        <ul className={`lpx-case-grid is-${Math.min(items.length, 3)}`}>
+          {items.map((c, i) => (
+            <li key={c.client + c.title} className="lpx-case" data-reveal style={{ ["--d" as string]: `${(i * 0.1).toFixed(2)}s` }}>
+              <div className="lpx-case-top">
+                <SpotIcon name={CASE_ICONS[i % CASE_ICONS.length]} size={76} />
+                <p className="lpx-case-client"><span>CASE {String(i + 1).padStart(2, "0")}</span>{c.client}</p>
+              </div>
               <h3>{c.title}</h3>
-              <p className="lp-case-text">{c.text}</p>
-              {c.result && <p className="lp-case-result"><Icon name="check" size={15} /><span>{c.result}</span></p>}
+              <p className="lpx-case-text">{c.text}</p>
+              {c.result && <p className="lpx-case-result"><span className="lpx-case-result-tag"><Icon name="check" size={14} />{L.result}</span><strong>{c.result}</strong></p>}
             </li>
           ))}
         </ul>
@@ -833,71 +450,90 @@ function Cases({ sol }: { sol: Solution }) {
   );
 }
 
-/* ───────────────────────── 4. 支援内容とプラン ───────────────────────── */
+/* ───────────────────────── 5'. Before／After（支援事例がない LP） ─────────────────────────
+ * 左に「いま」、右に「任せたあと」を並べて、行ごとに見比べる（切り替えの操作はなし。最初から両方が読める） */
 
-function Support({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
+function BeforeAfter({ sol, L }: { sol: Solution; L: L10n }) {
+  const ba = sol.before_after;
+  const items = ba?.items ?? [];
+  if (!ba || !items.length) return null;
+  return (
+    <section className="lpx-section lpx-ba-section" id="lp-ba">
+      <div className="container">
+        <Head kicker={L.kBa} lang="en"><Lines text={ba.title || L.baTitle} /></Head>
+        <div className="lpx-ba" data-reveal>
+          <div className="lpx-ba-heads" aria-hidden="true">
+            <div className="lpx-ba-headcell is-before"><MoodFace mood="worry" /><p><b lang="en">{L.baBefore}</b>{ba.center_before && <span>{ba.center_before}</span>}</p></div>
+            <div className="lpx-ba-headcell is-after"><MoodFace mood="smile" /><p><b lang="en">{L.baAfter}</b>{ba.center_after && <span>{ba.center_after}</span>}</p></div>
+          </div>
+          <ul className="lpx-ba-rows">
+            {items.map((it) => (
+              <li key={it.label}>
+                <h3>{it.label}</h3>
+                <div className="lpx-ba-cell is-before">
+                  <span className="lpx-ba-status"><span className="visually-hidden">{L.baBefore}：</span>{it.before_status || "—"}</span>
+                  <p>{it.before}</p>
+                </div>
+                <Arrow className="lpx-ba-arrow" />
+                <div className="lpx-ba-cell is-after">
+                  <span className="lpx-ba-status"><span className="visually-hidden">{L.baAfter}：</span><Icon name="check" size={13} />{it.after_status || ""}</span>
+                  <p>{it.after}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {ba.note && <p className="lpx-note">{ba.note}</p>}
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── 6. プランと料金 ───────────────────────── */
+
+function Plans({ sol, L }: { sol: Solution; L: L10n }) {
   const tools = sol.tools ?? [];
   const groups = sol.scope?.groups ?? [];
   const plans = sol.plans?.items ?? [];
   const scopeCount = groups.reduce((sum, g) => sum + (g.items?.length ?? 0), 0);
   const [scopeOpen, setScopeOpen] = useState(false);
-  // 新デザインのLPは「プランと料金の目安」を先に見せ、支援内容の6枚のカードは出さない（仕組みの図・業務の一覧と重なるため。2026-10-26 オーナー依頼の LP の簡素化）
-  const signal = sol.design === "signal";
   const hasPrice = plans.some((p) => p.price);
-  const title = signal && plans.length > 0
-    ? (sol.plans?.title || (hasPrice ? L.pricing : L.plans))
-    : (sol.features_title && sol.features_title !== "支援内容" ? sol.features_title : L.support);
-  const planNote = hasPrice ? (sol.plans?.note || L.priceNote) : (sol.plans?.note || L.plansNote);
+  if (!plans.length && !groups.length && !tools.length) return null;
+  const planNote = sol.plans?.note || (hasPrice ? L.priceNote : L.plansNote);
   return (
-    <section id="lp-support" className="section lp-support">
+    <section id="lp-support" className="lpx-section lpx-plans">
       <div className="container">
-        <SectionTitle en={signal && plans.length > 0 ? "Plans & pricing" : "Services & plans"} center lead={signal ? undefined : sol.features_lead}>{title}</SectionTitle>
-        {!signal && (
-          <ul className="lp-feature-grid">
-            {sol.features.map((f) => (
-              <li key={f.name} className="lp-feature">
-                <span className="lp-feature-icon"><LpIcon name={f.icon} size={26} /></span>
-                <div><h3>{f.name}</h3><p>{f.text}</p></div>
-              </li>
-            ))}
-          </ul>
-        )}
-
+        <Head kicker={L.kPlans}>{sol.plans?.title || (hasPrice ? L.pricing : L.plans)}</Head>
         {plans.length > 0 && (
           <>
-            {!signal && <h3 className="lp-subhead">{sol.plans?.title || L.plans}</h3>}
-            <div className="lp-plan-grid">
+            <div className={`lpx-plan-grid is-${Math.min(plans.length, 3)}`} data-reveal>
               {plans.map((p) => (
-                <article key={p.name} className={p.featured ? "lp-plan is-featured" : "lp-plan"}>
-                  {p.tag && <span className="lp-plan-tag">{p.tag}</span>}
-                  <div className="lp-plan-head">
-                    {/* 見出しの階層：新しいデザイン（signal）は小見出し（h3）がないので h3、従来のデザインは小見出しの下なので h4 */}
-                    {signal ? <h3>{p.name}</h3> : <h4>{p.name}</h4>}
-                    {p.price && <p className="lp-plan-price">{p.price}</p>}
-                  </div>
-                  {p.text && <p className="lp-plan-text">{p.text}</p>}
+                <article key={p.name} className={p.featured ? "lpx-plan is-featured" : "lpx-plan"}>
+                  {p.tag && <span className="lpx-plan-tag">{p.tag}</span>}
+                  <h3>{p.name}</h3>
+                  {p.price && <p className="lpx-plan-price">{p.price}</p>}
+                  {p.text && <p className="lpx-plan-text">{p.text}</p>}
                   {(p.includes ?? []).length > 0 && (
                     <ul>{(p.includes ?? []).map((it) => <li key={it}><Icon name="check" size={15} /><span>{it}</span></li>)}</ul>
                   )}
-                  {p.best_for && <p className="lp-plan-for"><span>{L.bestFor}</span>{p.best_for}</p>}
+                  {p.best_for && <p className="lpx-plan-for"><span>{L.bestFor}</span>{p.best_for}</p>}
                 </article>
               ))}
             </div>
-            <p className="lp-note lp-plan-note"><LpIcon name="yen" size={16} /><span>{planNote}</span></p>
+            <p className="lpx-note lpx-plan-note"><LpIcon name="yen" size={16} /><span>{planNote}</span></p>
           </>
         )}
 
         {groups.length > 0 && (
-          <details className="lp-scope" onToggle={(e) => setScopeOpen(e.currentTarget.open)}>
+          <details className="lpx-scope" onToggle={(e) => setScopeOpen(e.currentTarget.open)}>
             <summary>
               <LpIcon name="rules" size={18} />
-              <span className="lp-scope-title">{sol.scope?.title || L.scope}</span>
-              <span className="lp-scope-open">{scopeOpen ? L.scopeClose : L.scopeOpen + L.count(scopeCount)}<Chevron /></span>
+              <span className="lpx-scope-title">{sol.scope?.title || L.scope}</span>
+              <span className="lpx-scope-open">{scopeOpen ? L.scopeClose : L.scopeOpen + L.count(scopeCount)}<Chevron /></span>
             </summary>
-            <div className="lp-scope-grid">
+            <div className="lpx-scope-grid">
               {groups.map((g) => (
-                <div key={g.name} className="lp-scope-card">
+                <div key={g.name} className="lpx-scope-card">
                   <h3><LpIcon name={g.icon || "check"} size={18} />{g.name}</h3>
                   <ul>{(g.items ?? []).map((it) => <li key={it}>{it}</li>)}</ul>
                 </div>
@@ -905,16 +541,16 @@ function Support({ sol }: { sol: Solution }) {
             </div>
           </details>
         )}
-        {sol.scope?.note && <p className="lp-note lp-note-legal">{sol.scope.note}</p>}
+        {sol.scope?.note && <p className="lpx-note lpx-note-legal">{sol.scope.note}</p>}
 
         {tools.length > 0 && (
-          <div className="lp-tools">
-            <p className="lp-tools-title">{sol.tools_title || L.tools}</p>
+          <div className="lpx-tools">
+            <p className="lpx-tools-title">{sol.tools_title || L.tools}</p>
             <ul>
               {tools.map((t) => {
                 const logo = toolLogo(t);
                 return (
-                  <li key={t} className={logo ? "has-logo" : ""}>
+                  <li key={t} className={logo ? "has-logo" : undefined}>
                     {logo && <img src={logo} alt="" loading="lazy" />}
                     <span>{t}</span>
                   </li>
@@ -929,79 +565,81 @@ function Support({ sol }: { sol: Solution }) {
   );
 }
 
-/* ───────────────────────── 5. 事例（ご利用イメージ） ───────────────────────── */
+/* ───────────────────────── 7. ご利用の流れ ───────────────────────── */
 
-function Scenarios({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
-  const sc = sol.scenarios;
-  if (!sc || !(sc.items ?? []).length) return null;
-  return (
-    <section className="section lp-scenarios">
-      <div className="container">
-        <SectionTitle en="Use cases" center lead={sc.lead}>{sc.title || L.scenarios}</SectionTitle>
-        <div className="lp-scenario-grid">
-          {(sc.items ?? []).map((it) => (
-            <article key={it.name} className="lp-scenario">
-              {it.tag && <span className="lp-scenario-tag"><LpIcon name="building" size={15} />{it.tag}</span>}
-              <h3>{it.name}</h3>
-              {it.before && <p className="lp-scenario-before"><span>{L.before}</span>{it.before}</p>}
-              <span className="lp-scenario-arrow" aria-hidden="true"><LpIcon name="arrow-down" size={18} /></span>
-              <p className="lp-scenario-after"><span>{L.after}</span>{it.text}</p>
-            </article>
-          ))}
-        </div>
-        {sc.note && <p className="lp-note">{sc.note}</p>}
-      </div>
-    </section>
-  );
+/** ステップ名から絵のアイコンを選ぶ（決まらなければ順番で） */
+function flowIcon(name: string, i: number, n: number) {
+  const s = name.toLowerCase();
+  if (/問い合わせ|ヒアリング|consult/.test(s) && i === 0) return "mail";
+  if (/見積|提案|quote|roadmap|段取り/.test(s)) return "doc";
+  if (/棚卸し|整理|plan|お金/.test(s)) return "search";
+  if (/試作|作成|制作|デザイン|設計/.test(s)) return "layout";
+  if (/設定|導入|準備|整備|移行|setup|立ち上げ/.test(s)) return "tools";
+  if (/開始|スタート|公開|launch|運用/.test(s) && i < n - 1) return "rocket";
+  if (/改善|定着|見直し|保守|フォロー|振り返り|support|サポート/.test(s)) return "refresh";
+  return ["mail", "doc", "tools", "rocket", "refresh"][Math.min(i, 4)];
 }
 
-/* ───────────────────────── 6. 流れ ───────────────────────── */
-
-function Flow({ sol }: { sol: Solution }) {
-  const L = LABELS[langOf(sol)];
+function Flow({ sol, L }: { sol: Solution; L: L10n }) {
   const steps = sol.flow ?? [];
   if (!steps.length) return null;
   return (
-    <section className="section lp-flow">
+    <section className="lpx-section lpx-flow">
       <div className="container">
-        <SectionTitle en="Flow" center>{sol.steps_title || L.flow}</SectionTitle>
-        <FlowLine
-          steps={steps.map((st) => ({ name: st.name, text: st.text }))}
-          note={sol.flow_note && <><LpIcon name="clock" size={16} /><span>{sol.flow_note}</span></>}
-        />
-        {/* 相談のボタンは置かない：よくあるご質問のすぐ後に、ページ下部のお問い合わせの帯がある（PC はヘッダー、スマホは固定バーからもいつでも相談できる） */}
+        <Head kicker={L.kFlow}>{sol.steps_title || L.flow}</Head>
+        <ol className={`lpx-flow-list is-${Math.min(steps.length, 6)}`} data-reveal>
+          {steps.map((st, i) => (
+            <li key={st.name}>
+              <span className="lpx-flow-art"><SpotIcon name={flowIcon(st.name, i, steps.length)} tone={i === 0 ? "warm" : "sky"} size={88} /></span>
+              <p className="lpx-flow-no"><span>STEP</span>{String(i + 1).padStart(2, "0")}</p>
+              <h3>{st.name}</h3>
+              {st.text && <p className="lpx-flow-text">{st.text}</p>}
+            </li>
+          ))}
+        </ol>
+        {sol.flow_note && <p className="lpx-note lpx-flow-note"><LpIcon name="clock" size={16} /><span>{sol.flow_note}</span></p>}
       </div>
     </section>
   );
 }
 
-/* ───────────────────────── 8. お問い合わせ ───────────────────────── */
+/* ───────────────────────── 8. よくあるご質問 ───────────────────────── */
 
-function CtaBand({ sol, navigate }: { sol: Solution; navigate: Nav }) {
-  const L = LABELS[langOf(sol)];
+function Faq({ sol, L }: { sol: Solution; L: L10n }) {
+  const items = sol.faqs ?? [];
+  const [openIndex, setOpenIndex] = useState(0); // 最初の質問だけ開く。どれも閉じられる（-1）
+  if (!items.length) return null;
   return (
-    <section className="lp-cta-band">
-      <div className="lp-cta-orbit" aria-hidden="true" />
-      <div className="container lp-cta-inner">
-        <div className="lp-cta-copy">
-          <span className="eyebrow">Contact</span>
-          <h2>{sol.cta_title || L.ctaTitle}</h2>
-          <p><Lines text={sol.cta_text || L.ctaText} /></p>
-          <div className="lp-cta-actions">
-            <GoLink className="button button-large" go={navigate} args={["contact"]}>
-              {L.ctaButton}<Icon name="arrow" size={19} />
-            </GoLink>
-            <LineButton place="solution_cta" label={L.consultLine} />
-          </div>
+    <section className="lpx-section lpx-faq">
+      <div className="container lpx-faq-inner">
+        <Head kicker={L.kFaq} lang="en">{sol.faq_title || L.faq}</Head>
+        <div className="lpx-faq-list">
+          {items.map((item, i) => {
+            const open = openIndex === i;
+            return (
+              <div key={item.q} className={open ? "lpx-faq-item is-open" : "lpx-faq-item"}>
+                <h3>
+                  <button type="button" className="lpx-faq-q" aria-expanded={open} aria-controls={`lpx-faq-a-${i}`} onClick={() => setOpenIndex(open ? -1 : i)}>
+                    <span className="lpx-faq-mark" aria-hidden="true">Q</span>
+                    <span className="lpx-faq-q-text">{item.q}</span>
+                    <span className="lpx-faq-toggle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path className="v" d="M12 5v14" /><path d="M5 12h14" /></svg></span>
+                  </button>
+                </h3>
+                <div id={`lpx-faq-a-${i}`} className="lpx-faq-a" role="region" aria-label={item.q}>
+                  <div className="lpx-faq-a-inner"><p><span className="lpx-faq-mark is-a" aria-hidden="true">A</span><span>{item.a}</span></p></div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
-  const L = LABELS[langOf(sol)];
+/* ───────────────────────── 固定の相談バー ───────────────────────── */
+
+function StickyCta({ sol, navigate, L }: { sol: Solution; navigate: Nav; L: L10n }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 600);
@@ -1022,7 +660,7 @@ function StickyCta({ sol, navigate }: { sol: Solution; navigate: Nav }) {
       <LineButton place="solution_sticky" label="LINE" tabIndex={show ? 0 : -1} />
       {/* チャットはこのバーにまとめる（固定バーの表示中は、画面右下のチャットのボタンは出さない） */}
       {langOf(sol) === "ja" && (
-        <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label="COANA TOKYO サポートチームにチャットで相談する">
+        <button type="button" className="lp-sticky-chat" onClick={() => openChat("menu")} tabIndex={show ? 0 : -1} aria-label={L.chat}>
           <img src={CHAT_MARK} alt="" width={26} height={26} decoding="async" />
         </button>
       )}
@@ -1053,63 +691,66 @@ export function SolutionPage({ navigate }: { navigate: Nav }) {
   }, [sol]);
   if (!sol) return <NotFound navigate={navigate} />;
   navigate = withInquiry(sol, navigate);
-  const L = LABELS[langOf(sol)];
+  const lang = langOf(sol);
+  const L = LABELS[lang];
   const related = (sol.related ?? [])
     .map((r) => articles.find((a) => a.slug === r))
     .filter((a): a is Article => Boolean(a));
   const others = solutions.filter((s) => s.slug !== sol.slug && !s.hidden);
-  // 新デザイン（Signal Sky）で組み直したLP（CMS の「ページのデザイン」= signal）
-  const signal = sol.design === "signal";
+  const hasCases = (sol.cases ?? []).some((c) => c.client && c.title);
   return (
-    <main className={`solution-page lp lp-lang-${langOf(sol)}${signal ? " lp-signal" : ""}`}>
-      <Hero sol={sol} navigate={navigate} />
-      {!signal && <Problems sol={sol} />}
-      <Scheme sol={sol} navigate={navigate} />
-      <Cases sol={sol} />
-      {/* 導入前／導入後（2026-10-31 オーナー指示で位置を見直し）：ヒーロー直下ではなく「仕組み」のあとに置く。
-          まず何をするかを読んでから「こう変わる」を見る流れ。支援事例があるLPは事例が実際の前後を示すので、before_after は持たせない（content を空にしてある） */}
-      {signal && <BeforeAfter sol={sol} />}
-      <Support sol={sol} />
-      {/* 新デザインのLPでは「ご利用イメージ」を出さない（導入前／導入後の切り替えと内容が重なるため。2026-10-26 LP の簡素化） */}
-      {!signal && <Scenarios sol={sol} />}
-      <Flow sol={sol} />
-      {(sol.faqs ?? []).length > 0 && <FaqSection items={sol.faqs} title={sol.faq_title || L.faq} />}
-      {signal
-        ? <ContactBand navigate={navigate} big title={sol.cta_title || L.ctaTitle} text={sol.cta_text || L.ctaText} bigText={L.bigCta} primary={L.ctaButton} line={L.consultLine} place="solution_cta" chat={langOf(sol) === "ja"} lang={langOf(sol)} />
-        : <CtaBand sol={sol} navigate={navigate} />}
-      <section className="section solution-more">
-        <div className="container solution-more-grid">
+    <main className={`lpx lpx-lang-${lang}`}>
+      <Hero sol={sol} navigate={navigate} L={L} />
+      <Worries sol={sol} L={L} />
+      <Points sol={sol} L={L} />
+      <SchemeSection sol={sol} L={L} />
+      {/* 支援事例がある LP は事例を、ない LP（代行・創業支援）は Before／After を見せる（両方は出さない） */}
+      {hasCases ? <Cases sol={sol} L={L} /> : <BeforeAfter sol={sol} L={L} />}
+      <Plans sol={sol} L={L} />
+      <Flow sol={sol} L={L} />
+      <Faq sol={sol} L={L} />
+      <ContactBand navigate={navigate} big title={sol.cta_title || L.ctaTitle} text={sol.cta_text || L.ctaText} bigText={L.bigCta} primary={L.ctaButton} line={L.consultLine} place="solution_cta" chat={lang === "ja"} lang={lang} />
+      <section className="lpx-section lpx-more">
+        <div className="container">
           {related.length > 0 && (
-            <div>
-              <h2 className="solution-more-title">{L.column}</h2>
-              <div className="article-list">
-                {related.slice(0, RELATED_MAX).map((a) => <ArticleRow key={a.slug} article={a} navigate={navigate} />)}
+            <div className="lpx-more-block">
+              <div className="lpx-more-head">
+                <h2>{L.column}</h2>
+                {related.length > RELATED_MAX && <GoLink className="lpx-more-all" go={navigate} args={["topics"]}>{L.columnMore}<Icon name="arrow" size={16} /></GoLink>}
               </div>
-              {related.length > RELATED_MAX && (
-                <GoLink className="solution-more-all" go={navigate} args={["topics"]}>{L.columnMore}<Icon name="arrow" size={16} /></GoLink>
-              )}
+              <ul className="lpx-column-grid">
+                {related.slice(0, RELATED_MAX).map((a) => (
+                  <li key={a.slug}>
+                    <GoLink className="lpx-column" go={navigate} args={["article", undefined, a.slug]}>
+                      {a.thumbnail && <span className="lpx-column-thumb"><img src={a.thumbnail} alt="" loading="lazy" /></span>}
+                      <span className="lpx-column-meta"><time dateTime={a.sortKey.slice(0, 10)}>{a.date}</time><i>{a.category}</i></span>
+                      <strong>{a.title}</strong>
+                    </GoLink>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
-          <div>
-            <h2 className="solution-more-title">{L.others}</h2>
-            <div className="solution-other-list">
-              {others.map((o) => (
-                <GoLink key={o.slug} className="solution-other" go={navigate} args={["solution", undefined, o.slug]}>
-                  <ServiceArt slug={o.slug} className="solution-other-art" />
-                  <span>{o.nav_label}</span>
-                  <Icon name="arrow" size={18} />
-                </GoLink>
-              ))}
-              <GoLink className="solution-other is-all" go={navigate} args={["services"]}>
-                <span>{L.allServices}</span>
-                <Icon name="arrow" size={18} />
-              </GoLink>
+          <div className="lpx-more-block">
+            <div className="lpx-more-head">
+              <h2>{L.others}</h2>
+              <GoLink className="lpx-more-all" go={navigate} args={["services"]}>{L.allServices}<Icon name="arrow" size={16} /></GoLink>
             </div>
-            {langOf(sol) === "ja" && <DiagnoseLink className="is-lp" />}
+            <ul className="lpx-other-grid">
+              {others.map((o) => (
+                <li key={o.slug}>
+                  <GoLink className="lpx-other" go={navigate} args={["solution", undefined, o.slug]}>
+                    <ServiceArt slug={o.slug} className="lpx-other-art" />
+                    <span>{o.nav_label}</span>
+                  </GoLink>
+                </li>
+              ))}
+            </ul>
+            {lang === "ja" && <DiagnoseLink className="is-lpx" />}
           </div>
         </div>
       </section>
-      <StickyCta sol={sol} navigate={navigate} />
+      <StickyCta sol={sol} navigate={navigate} L={L} />
     </main>
   );
 }

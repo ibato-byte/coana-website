@@ -1,6 +1,6 @@
 const postcss = require('../../node_modules/postcss');
 const fs = require('fs');
-const files = ['src/index.css','src/solution.css','src/illustrations.css','src/chat/chat.css'];
+const files = ['src/index.css','src/lpx.css','src/hp-visual.css','src/illustrations.css','src/chat/chat.css'];
 const map = new Map();
 for (const f of files) {
   const root = postcss.parse(fs.readFileSync(__dirname + '/../../' + f, 'utf8'));

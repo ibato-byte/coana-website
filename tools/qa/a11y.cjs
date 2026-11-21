@@ -1,5 +1,5 @@
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const PAGES = ['/', '/about', '/services', '/topics', '/topics/20260804-outsourcing-checklist', '/contact', '/privacy', ...['backoffice-dx','bookkeeping','cloud-accounting','sales-support','seminar-event','sns-management','startup-support','startup-support-en','web-production'].map((s) => '/services/' + s)];
+const PAGES = ['/', '/about', '/services', '/topics', '/topics/20260804-outsourcing-checklist', '/contact', '/privacy', ...['it-consulting','automation','backoffice-dx','bookkeeping','cloud-accounting','sns-management','startup-support','startup-support-en','web-production'].map((s) => '/services/' + s)];
 (async () => { const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined }); const p = await b.newPage({ viewport: { width: 1280, height: 800 } }); let bad = 0;
  for (const u of PAGES) { await p.goto('http://localhost:4173' + u, { waitUntil: 'networkidle' });
   const r = await p.evaluate(() => {

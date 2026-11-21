@@ -325,7 +325,6 @@
   "design": "signal",
   "before_after": {
     "title": "With support,\nstarting up looks like this.",
-    "lead": "Flip the switch to compare before and after.",
     "sources": [
       "Plan",
       "Funding",

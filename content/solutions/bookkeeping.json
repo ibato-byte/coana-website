@@ -332,7 +332,6 @@
   "design": "signal",
   "before_after": {
     "title": "経理を任せると、\nこう変わる。",
-    "lead": "スイッチで、任せる前と後を見比べられます。",
     "sources": [
       "領収書",
       "請求書",
