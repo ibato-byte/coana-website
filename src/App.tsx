@@ -3,7 +3,7 @@ import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, priva
 import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { MiniIcon, ServiceArt } from "./illustrations";
-import { SpotIcon } from "./lpArt";
+import { PointArt, SpotIcon } from "./lpArt";
 import { LogoMark } from "./logo";
 import { Feathers } from "./feathers";
 // 診断の1問目（トップの「迷ったら」）。チャットのデータ全体ではなく diagnosis だけを読み込む
@@ -574,7 +574,7 @@ function StyleSection() {
             const [icon, en] = STYLE_ART[s.icon] || ["check", ""];
             return (
               <li key={s.title} className="lpx-point" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
-                <div className="lpx-point-art"><SpotIcon name={icon} tone={i % 2 ? "warm" : "sky"} size={120} /></div>
+                <div className="lpx-point-art"><PointArt name={icon} tone={i % 2 ? "warm" : "sky"} /></div>
                 {en && <p className="lpx-point-no" lang="en">{en}</p>}
                 <h3>{s.title}</h3>
                 <p className="lpx-point-text">{s.text}</p>
