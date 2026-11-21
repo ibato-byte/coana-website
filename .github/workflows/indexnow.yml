@@ -1,0 +1,18 @@
+# 公開（main への push → Cloudflare Pages の自動デプロイ）のあと、Bing などに更新を知らせる（IndexNow・無料。2026-11-22）
+# 文章（content/）やページの作り（src/・vite.config.ts）が変わったときだけ。デプロイを待ってから送る。
+name: indexnow
+on:
+  push:
+    branches: [main]
+    paths: ['content/**', 'src/**', 'vite.config.ts', 'public/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: sleep 240 && node tools/seo/indexnow.mjs
