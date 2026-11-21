@@ -1,0 +1,476 @@
+/* ─────────────────────────────────────────────────────────────────────
+ * サービス別ランディングページ（src/SolutionPage.tsx）の見た目。
+ * 2026-11-22 オーナー依頼「文字ばかりで AI っぽい。図・絵を増やして、直感的に」で、ゼロから作り直した。
+ * - 白と淡い水色の地に、紺の文字。絵（src/lpArt.tsx）と図を主役にする。
+ * - 説明の字は 14.5〜16px、補足でも 13px 以上（12px 未満は使わない）。文字色は白地で AA 以上。
+ * - 動かすのは transform と opacity だけ。レイアウトは動かさない。
+ * - クラスは lpx- で始める（古い LP の .lp- とは別。固定の相談バー .lp-sticky だけは、チャットなどが参照するので名前を残す）。
+ * ───────────────────────────────────────────────────────────────────── */
+
+.lpx {
+  --x-ink: #16334d;
+  --x-text: #3d576c;
+  --x-blue: #0670cb;
+  --x-blue-d: #0559a6;
+  --x-sky: #55b8f3;
+  --x-pale: #eaf5ff;
+  --x-soft: #f4f9fe;
+  --x-line: #d3e5f3;
+  --x-line-d: #b9dcf7;
+  --x-yellow: #ffd85a;
+  --x-warm: #fff8e1;
+  --x-warm-line: #f3d98a;
+  --x-warm-ink: #7a5200;
+  --x-shadow: 0 12px 34px rgba(22, 51, 77, .08);
+  --x-shadow-lg: 0 22px 54px rgba(13, 68, 120, .16);
+  color: var(--x-ink);
+  background: #fff;
+}
+.lpx h1, .lpx h2, .lpx h3, .lpx p, .lpx ul, .lpx ol { margin: 0; }
+.lpx ul, .lpx ol { padding: 0; list-style: none; }
+.lpx .art, .lpx-spot, .lpx-face { display: block; }
+.lpx .lpx-hero-svg text, .lpx-worry-svg text { font-family: var(--font-jp); }
+
+.lpx-section { padding: 104px 0; }
+.lpx-section:nth-of-type(odd) { background: var(--x-soft); }
+
+/* ───────── 章の見出し ───────── */
+.lpx-head { max-width: 820px; margin: 0 auto 56px; text-align: center; }
+.lpx-kicker {
+  display: inline-flex; align-items: center; min-height: 30px; padding: 0 16px; margin-bottom: 16px;
+  border-radius: 999px; background: var(--x-pale); color: var(--x-blue);
+  font-size: 13.5px; font-weight: 800; letter-spacing: .12em; line-height: 1.4;
+}
+.lpx-section:nth-of-type(odd) .lpx-kicker { background: #fff; }
+.lpx-head h2 { font-size: clamp(24px, 2.7vw, 36px); font-weight: 900; line-height: 1.45; letter-spacing: .02em; }
+.lpx-head h2::after { content: ""; display: block; width: 56px; height: 5px; margin: 20px auto 0; border-radius: 3px; background: linear-gradient(90deg, var(--x-blue), var(--x-sky)); }
+.lpx-head-lead { margin-top: 20px; color: var(--x-text); font-size: 16px; line-height: 1.9; }
+.lpx-mark { font-style: normal; color: var(--x-blue); }
+
+.lpx-note { display: flex; align-items: flex-start; justify-content: center; gap: 8px; max-width: 860px; margin: 28px auto 0; color: var(--x-text); font-size: 14px; line-height: 1.8; text-align: center; }
+.lpx-note svg { flex: none; margin-top: 4px; color: var(--x-blue); }
+.lpx-note-legal { font-size: 13.5px; }
+
+/* 図の矢印 */
+.lpx-arrow { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--x-blue); color: #fff; flex: none; }
+
+/* ───────── 1. ヒーロー ───────── */
+.lpx-hero { position: relative; padding: 128px 0 64px; overflow: hidden; background: linear-gradient(180deg, #d9eefd 0%, #eaf5ff 46%, #fff 100%); }
+.lpx-hero-cloud { position: absolute; border-radius: 999px; background: #fff; opacity: .75; filter: blur(2px); pointer-events: none; }
+.lpx-hero-cloud::before, .lpx-hero-cloud::after { content: ""; position: absolute; border-radius: 50%; background: #fff; }
+.lpx-hero-cloud.is-1 { top: 108px; left: -60px; width: 260px; height: 62px; }
+.lpx-hero-cloud.is-1::before { left: 54px; top: -34px; width: 96px; height: 96px; }
+.lpx-hero-cloud.is-1::after { left: 124px; top: -22px; width: 76px; height: 76px; }
+.lpx-hero-cloud.is-2 { top: 84px; right: -40px; width: 220px; height: 54px; }
+.lpx-hero-cloud.is-2::before { left: 40px; top: -30px; width: 84px; height: 84px; }
+.lpx-hero-cloud.is-2::after { left: 104px; top: -18px; width: 64px; height: 64px; }
+.lpx-hero-inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr); gap: 28px 40px; align-items: center; }
+.lpx-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 22px; color: var(--x-text); font-size: 13px; line-height: 1.5; }
+.lpx-crumbs a { text-decoration: none; }
+.lpx-crumbs a:hover { color: var(--x-blue); text-decoration: underline; }
+.lpx-hero-label { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 16px; margin-bottom: 18px; border-radius: 999px; background: var(--x-blue); color: #fff; font-size: 14.5px; font-weight: 800; letter-spacing: .04em; line-height: 1.4; }
+.lpx-hero-title { font-size: clamp(30px, 3.75vw, 52px); font-weight: 900; line-height: 1.38; letter-spacing: .01em; }
+.lpx-hero-line { display: block; }
+.lpx-marker { display: inline-block; background: linear-gradient(transparent 64%, #ffe27a 64%, #ffe27a 94%, transparent 94%); color: var(--x-blue-d); }
+.lpx-hero-lead { margin-top: 22px; max-width: 34em; color: var(--x-text); font-size: 16.5px; line-height: 1.95; }
+.lpx-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.lpx .lpx-primary { border-color: var(--x-blue); background: var(--x-blue); color: #fff; box-shadow: 0 14px 28px rgba(6, 112, 203, .28); }
+.lpx .lpx-primary:hover { border-color: var(--x-blue-d); background: var(--x-blue-d); }
+.lpx-hero-actions a.line-button { min-height: 62px; padding: 0 28px; font-size: 16px; }
+.lpx-hero-note { margin-top: 14px; color: var(--x-text); font-size: 13.5px; }
+.lpx-hero-english { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--x-blue); font-size: 14.5px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.lpx-hero-art { justify-self: center; width: 100%; max-width: 580px; }
+.lpx-hero-svg text { letter-spacing: .02em; }
+.lpx-hero-facts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+.lpx-hero-facts li { display: flex; align-items: center; gap: 14px; padding: 18px 22px; border: 1px solid var(--x-line); border-radius: 18px; background: #fff; box-shadow: var(--x-shadow); }
+.lpx-fact-check { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--x-yellow); color: var(--x-ink); }
+.lpx-hero-facts strong { display: block; font-size: 18px; font-weight: 900; line-height: 1.45; color: var(--x-blue-d); }
+.lpx-hero-facts small { display: block; margin-top: 2px; color: var(--x-text); font-size: 13.5px; line-height: 1.6; }
+
+/* ───────── 2. お悩み ───────── */
+.lpx-worry { background: #fff !important; padding-top: 88px; }
+.lpx-worry-stage { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 20px 44px; align-items: center; max-width: 980px; margin: 0 auto; }
+.lpx-worry-art { width: 100%; max-width: 230px; margin: 0 auto; }
+.lpx-worry-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.lpx-worry-list li { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 20px 22px; border: 2px solid var(--x-line); border-radius: 20px; background: var(--x-soft); font-size: 16px; font-weight: 700; line-height: 1.7; }
+.lpx-worry-mark { flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin-top: 1px; border-radius: 8px; background: #fff; border: 2px solid var(--x-sky); color: var(--x-blue); }
+.lpx-bridge { margin-top: 44px; text-align: center; }
+.lpx-bridge-arrow { display: block; width: 0; height: 0; margin: 0 auto 22px; border-left: 34px solid transparent; border-right: 34px solid transparent; border-top: 26px solid var(--x-sky); }
+.lpx-bridge p { font-size: clamp(19px, 2.1vw, 26px); font-weight: 900; line-height: 1.6; }
+.lpx-bridge strong { color: var(--x-blue); }
+
+/* ───────── 3. 特徴 ───────── */
+.lpx-point-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.lpx-point-grid.is-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 820px; margin: 0 auto; }
+.lpx-point-grid.is-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.lpx-point { padding: 32px 28px 34px; border-radius: 24px; background: #fff; box-shadow: var(--x-shadow); text-align: center; }
+.lpx-point-art { display: grid; place-items: center; margin-bottom: 12px; }
+.lpx-point-no { color: var(--x-blue); font-family: var(--font-en); font-size: 15px; font-weight: 800; letter-spacing: .08em; line-height: 1.4; }
+.lpx-point-no span { margin-right: 6px; font-family: var(--font-jp); font-size: 13.5px; }
+.lpx-point h3 { margin-top: 6px; font-size: 20px; font-weight: 900; line-height: 1.5; }
+.lpx-point-text { margin-top: 12px; color: var(--x-text); font-size: 15px; line-height: 1.85; text-align: left; }
+
+/* ───────── 4. 仕組みの図 ───────── */
+/* 一本の流れ */
+.lpx-steps { display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 0 18px; counter-reset: s; }
+.lpx-steps.is-3 { --n: 3; } .lpx-steps.is-4 { --n: 4; } .lpx-steps.is-5 { --n: 5; } .lpx-steps.is-6 { --n: 6; }
+.lpx-steps li { position: relative; display: flex; flex-direction: column; align-items: center; padding: 26px 14px 24px; border: 2px solid var(--x-line); border-radius: 22px; background: #fff; text-align: center; }
+.lpx-steps li + li::before { content: ""; position: absolute; top: 62px; left: -19px; width: 20px; height: 20px; background: var(--x-blue); clip-path: polygon(0 0, 100% 50%, 0 100%); transform: translateX(-50%) translateX(9px); }
+.lpx-step-art { position: relative; display: block; margin-bottom: 12px; }
+.lpx-step-art b { position: absolute; top: -6px; left: -10px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--x-blue); color: #fff; font-family: var(--font-en); font-size: 15px; font-weight: 800; line-height: 1; }
+.lpx-steps strong { font-size: 16.5px; font-weight: 900; line-height: 1.5; }
+.lpx-step-sub { margin-top: 8px; color: var(--x-text); font-size: 13.5px; line-height: 1.7; }
+
+/* 2つの段（御社／COANA TOKYO） */
+.lpx-lanes { display: grid; grid-template-columns: 132px repeat(var(--n), minmax(0, 1fr)); grid-template-rows: auto auto; gap: 30px 12px; align-items: stretch; }
+.lpx-lane-bg { grid-column: 1 / -1; margin: -14px -16px; border-radius: 22px; }
+.lpx-lane-bg.is-client { grid-row: 1; background: var(--x-warm); border: 2px solid var(--x-warm-line); }
+.lpx-lane-bg.is-team { grid-row: 2; background: var(--x-pale); border: 2px solid var(--x-line-d); }
+.lpx-lane-label { grid-column: 1; align-self: center; position: relative; padding-right: 8px; font-size: 15px; font-weight: 900; line-height: 1.5; }
+.lpx-lane-label.is-client { grid-row: 1; color: var(--x-warm-ink); }
+.lpx-lane-label.is-team { grid-row: 2; color: var(--x-blue-d); }
+.lpx-lane-list { display: contents; }
+.lpx-lane-node { position: relative; display: flex; flex-direction: column; align-items: center; padding: 16px 8px 14px; border-radius: 16px; background: #fff; box-shadow: 0 6px 16px rgba(22, 51, 77, .07); text-align: center; }
+.lpx-lane-who { display: none; }
+.lpx-lane-icon { position: relative; display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 8px; border-radius: 50%; background: var(--x-pale); color: var(--x-blue); }
+.lpx-lane-node.is-client .lpx-lane-icon { background: #ffefb8; color: var(--x-warm-ink); }
+.lpx-lane-icon b { position: absolute; top: -6px; left: -8px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--x-ink); color: #fff; font-family: var(--font-en); font-size: 13px; font-weight: 800; line-height: 1; }
+.lpx-lane-node strong { font-size: 15px; font-weight: 900; line-height: 1.5; }
+.lpx-lane-sub { margin-top: 6px; color: var(--x-text); font-size: 13px; line-height: 1.65; }
+.lpx-lanes-wrap { padding: 14px 16px; }
+.lpx-cycle { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; margin-top: 44px; }
+.lpx-cycle-label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--x-ink); color: #fff; font-size: 13.5px; font-weight: 800; }
+.lpx-cycle ol { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; }
+.lpx-cycle li { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--x-line); border-radius: 999px; background: #fff; font-size: 14px; line-height: 1.5; }
+.lpx-cycle li b { color: var(--x-blue); font-weight: 900; }
+
+/* リレー（御社 → COANA TOKYO → 受け取るもの） */
+.lpx-relay { display: grid; grid-template-columns: 196px 92px minmax(0, 1fr) 56px 196px; align-items: center; gap: 0 10px; }
+.lpx-relay:not(:has(.is-goal)) { grid-template-columns: 196px 92px minmax(0, 1fr); }
+.lpx-relay-side { position: relative; display: flex; flex-direction: column; align-items: center; padding: 26px 16px 24px; border: 2px solid var(--x-warm-line); border-radius: 22px; background: var(--x-warm); text-align: center; }
+.lpx-relay-side strong { margin-top: 6px; font-size: 17px; font-weight: 900; line-height: 1.5; }
+.lpx-relay-sub { margin-top: 6px; color: var(--x-text); font-size: 13.5px; line-height: 1.7; }
+.lpx-relay-todo { display: block; margin-top: 10px; padding: 8px 10px; border-radius: 12px; background: #fff; font-size: 14px; font-weight: 700; line-height: 1.6; }
+.lpx-relay-todo em { display: block; color: var(--x-warm-ink); font-size: 13px; font-style: normal; font-weight: 800; }
+.lpx-relay-goal-tag { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); padding: 3px 14px; border-radius: 999px; background: #f2a516; color: #2b1c00; font-size: 13.5px; font-weight: 900; line-height: 1.6; white-space: nowrap; }
+.lpx-relay-link { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.lpx-relay-step { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; color: var(--x-blue-d); font-size: 13.5px; font-weight: 800; line-height: 1.45; text-align: center; }
+.lpx-relay-step b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--x-ink); color: #fff; font-family: var(--font-en); font-size: 13px; line-height: 1; }
+.lpx-relay-step.is-down { flex-direction: row; justify-content: center; gap: 8px; margin: 14px 0; }
+.lpx-relay-step.is-down::after { content: ""; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 9px solid var(--x-blue); }
+.lpx-relay-team { position: relative; padding: 38px 24px 24px; border: 2px solid var(--x-line-d); border-radius: 26px; background: var(--x-pale); }
+.lpx-relay-head { position: absolute; top: -17px; left: 50%; transform: translateX(-50%); padding: 4px 20px; border-radius: 999px; background: var(--x-blue); color: #fff; font-size: 14.5px; font-weight: 900; line-height: 1.6; white-space: nowrap; }
+.lpx-relay-center { display: flex; align-items: center; gap: 14px; max-width: 460px; margin: 0 auto; padding: 14px 20px; border-radius: 18px; background: #fff; box-shadow: 0 6px 16px rgba(22, 51, 77, .08); }
+.lpx-relay-center-icon { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--x-blue); color: #fff; }
+.lpx-relay-center strong { display: block; font-size: 17px; font-weight: 900; line-height: 1.5; }
+.lpx-relay-center small { display: block; color: var(--x-text); font-size: 13.5px; line-height: 1.6; }
+.lpx-relay-areas { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 10px; }
+.lpx-relay-areas li { display: flex; flex-direction: column; align-items: center; padding: 14px 8px 12px; border: 2px solid transparent; border-radius: 16px; background: #fff; text-align: center; }
+.lpx-relay-areas li.is-partner { border: 2px dashed #7fb6e4; background: rgba(255, 255, 255, .55); }
+.lpx-relay-area-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 6px; border-radius: 12px; background: var(--x-pale); color: var(--x-blue); }
+.lpx-relay-areas strong { font-size: 14.5px; font-weight: 900; line-height: 1.5; }
+.lpx-relay-areas small { margin-top: 4px; color: var(--x-text); font-size: 13px; line-height: 1.6; }
+.lpx-relay-inner { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+.lpx-relay-inner li { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 16px 8px 8px; border-radius: 999px; background: #fff; font-size: 14px; line-height: 1.5; }
+.lpx-relay-inner b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--x-ink); color: #fff; font-family: var(--font-en); font-size: 13px; line-height: 1; }
+.lpx-relay-inner small { color: var(--x-text); font-size: 13px; }
+
+/* ───────── 5. 支援事例 ───────── */
+.lpx-case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.lpx-case-grid.is-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lpx-case-grid.is-1 { grid-template-columns: minmax(0, 640px); justify-content: center; }
+.lpx-case { display: flex; flex-direction: column; padding: 28px 28px 26px; border-radius: 24px; background: #fff; box-shadow: var(--x-shadow); }
+.lpx-case-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.lpx-case-top .lpx-spot { flex: none; }
+.lpx-case-client { color: var(--x-text); font-size: 14px; font-weight: 700; line-height: 1.6; }
+.lpx-case-client span { display: block; color: var(--x-blue); font-family: var(--font-en); font-size: 13px; font-weight: 800; letter-spacing: .12em; }
+.lpx-case h3 { font-size: 19px; font-weight: 900; line-height: 1.6; }
+.lpx-case-text { margin-top: 12px; color: var(--x-text); font-size: 15px; line-height: 1.85; }
+.lpx-case-result { display: flex; align-items: flex-start; gap: 12px; margin-top: auto; padding: 16px 18px; border-radius: 16px; background: var(--x-pale); }
+.lpx-case-text + .lpx-case-result { margin-top: 20px; }
+.lpx-case { gap: 0; }
+.lpx-case-result-tag { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: var(--x-blue); color: #fff; font-size: 13px; font-weight: 800; line-height: 1.7; }
+.lpx-case-result strong { font-size: 15.5px; font-weight: 900; line-height: 1.65; color: var(--x-blue-d); }
+
+/* ───────── 5'. Before／After ───────── */
+.lpx-ba { max-width: 1020px; margin: 0 auto; }
+.lpx-ba-heads, .lpx-ba-rows li { display: grid; grid-template-columns: 150px minmax(0, 1fr) 40px minmax(0, 1fr); gap: 0 14px; align-items: stretch; }
+.lpx-ba-headcell { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: 20px 20px 0 0; }
+.lpx-ba-headcell.is-before { grid-column: 2; background: #dfe6ec; color: #33475a; }
+.lpx-ba-headcell.is-after { grid-column: 4; background: var(--x-blue); color: #fff; }
+.lpx-ba-headcell p { line-height: 1.4; }
+.lpx-ba-headcell b { display: block; font-family: var(--font-en); font-size: 22px; font-weight: 800; letter-spacing: .04em; }
+.lpx-ba-headcell span { display: block; font-size: 14px; font-weight: 700; }
+.lpx-ba-rows li { align-items: center; }
+.lpx-ba-rows h3 { font-size: 15.5px; font-weight: 900; line-height: 1.5; }
+.lpx-ba-cell { align-self: stretch; padding: 16px 20px; }
+.lpx-ba-cell.is-before { background: #f1f4f7; border-left: 2px solid #dfe6ec; border-right: 2px solid #dfe6ec; color: #47596a; }
+.lpx-ba-cell.is-after { background: #fff; border-left: 2px solid var(--x-blue); border-right: 2px solid var(--x-blue); }
+.lpx-ba-rows li + li .lpx-ba-cell { border-top: 1px dashed #c9d5df; }
+.lpx-ba-rows li + li .lpx-ba-cell.is-after { border-top-color: var(--x-line-d); }
+.lpx-ba-rows li:last-child .lpx-ba-cell { border-radius: 0 0 20px 20px; }
+.lpx-ba-rows li:last-child .lpx-ba-cell.is-before { border-bottom: 2px solid #dfe6ec; }
+.lpx-ba-rows li:last-child .lpx-ba-cell.is-after { border-bottom: 2px solid var(--x-blue); }
+.lpx-ba-status { display: inline-flex; align-items: center; gap: 4px; padding: 1px 12px; margin-bottom: 6px; border-radius: 999px; font-size: 13px; font-weight: 800; line-height: 1.8; }
+.lpx-ba-cell.is-before .lpx-ba-status { background: #dfe6ec; color: #33475a; }
+.lpx-ba-cell.is-after .lpx-ba-status { background: var(--x-blue); color: #fff; }
+.lpx-ba-cell p { font-size: 15px; line-height: 1.75; }
+.lpx-ba-cell.is-after p { font-weight: 700; }
+.lpx-ba-arrow { width: 34px; height: 34px; justify-self: center; }
+.lpx-ba-arrow svg { width: 20px; height: 20px; }
+
+/* ───────── 6. プランと料金 ───────── */
+.lpx-plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: stretch; padding-top: 16px; }
+.lpx-plan-grid.is-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 800px; margin: 0 auto; }
+.lpx-plan-grid.is-1 { grid-template-columns: minmax(0, 440px); justify-content: center; }
+.lpx-plan { position: relative; display: flex; flex-direction: column; padding: 38px 28px 28px; border: 2px solid var(--x-line); border-radius: 24px; background: #fff; }
+.lpx-plan.is-featured { border: 3px solid var(--x-blue); box-shadow: var(--x-shadow-lg); }
+.lpx-plan-tag { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); padding: 3px 18px; border-radius: 999px; background: #fff; border: 2px solid var(--x-line-d); color: var(--x-blue-d); font-size: 13.5px; font-weight: 900; line-height: 1.6; white-space: nowrap; }
+.lpx-plan.is-featured .lpx-plan-tag { background: var(--x-yellow); border-color: var(--x-yellow); color: var(--x-ink); }
+.lpx-plan h3 { font-size: 18px; font-weight: 900; line-height: 1.5; text-align: center; }
+.lpx-plan-price { margin-top: 8px; padding-bottom: 18px; border-bottom: 2px dashed var(--x-line); color: var(--x-blue); font-size: clamp(24px, 2.3vw, 30px); font-weight: 900; line-height: 1.4; text-align: center; letter-spacing: .01em; }
+.lpx-plan-text { margin-top: 18px; color: var(--x-text); font-size: 14.5px; line-height: 1.8; }
+.lpx-plan ul { display: grid; gap: 10px; margin-top: 18px; margin-bottom: 22px; }
+.lpx-plan li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; font-weight: 700; line-height: 1.6; }
+.lpx-plan li svg { flex: none; margin-top: 3px; padding: 3px; width: 21px; height: 21px; border-radius: 50%; background: var(--x-pale); color: var(--x-blue); }
+.lpx-plan-for { margin-top: auto; padding: 12px 16px; border-radius: 14px; background: var(--x-soft); color: var(--x-ink); font-size: 14.5px; line-height: 1.7; }
+.lpx-plan-for span { display: block; color: var(--x-blue); font-size: 13px; font-weight: 800; }
+.lpx-plan-note { margin-top: 30px; }
+
+.lpx-scope { max-width: 980px; margin: 44px auto 0; border: 2px solid var(--x-line); border-radius: 20px; background: #fff; }
+.lpx-scope summary { display: flex; align-items: center; gap: 10px; padding: 18px 24px; cursor: pointer; list-style: none; font-weight: 900; font-size: 16px; line-height: 1.5; }
+.lpx-scope summary::-webkit-details-marker { display: none; }
+.lpx-scope summary > svg { flex: none; color: var(--x-blue); }
+.lpx-scope-title { flex: 1; }
+.lpx-scope-open { display: inline-flex; align-items: center; gap: 6px; color: var(--x-blue); font-size: 14px; font-weight: 800; white-space: nowrap; }
+.lpx-scope[open] .lpx-chevron { transform: rotate(180deg); }
+.lpx-scope-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 4px 24px 24px; }
+.lpx-scope-card { padding: 18px 20px; border-radius: 16px; background: var(--x-soft); }
+.lpx-scope-card h3 { display: flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 900; line-height: 1.5; }
+.lpx-scope-card h3 svg { flex: none; color: var(--x-blue); }
+.lpx-scope-card ul { margin-top: 10px; display: grid; gap: 4px; }
+.lpx-scope-card li { position: relative; padding-left: 16px; color: var(--x-text); font-size: 14.5px; line-height: 1.7; }
+.lpx-scope-card li::before { content: ""; position: absolute; left: 2px; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--x-sky); }
+
+.lpx-tools { max-width: 980px; margin: 44px auto 0; text-align: center; }
+.lpx-tools-title { font-size: 15px; font-weight: 900; color: var(--x-blue-d); }
+.lpx-tools ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+.lpx-tools li { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 6px 18px; border: 1px solid var(--x-line); border-radius: 999px; background: #fff; font-size: 14.5px; font-weight: 700; line-height: 1.5; }
+.lpx-tools li img { height: 22px; width: auto; max-width: 96px; object-fit: contain; }
+.lpx-tools small { display: block; margin-top: 14px; color: var(--x-text); font-size: 14px; }
+
+/* ───────── 7. ご利用の流れ ───────── */
+.lpx-flow-list { display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 0 18px; }
+.lpx-flow-list.is-3 { --n: 3; } .lpx-flow-list.is-4 { --n: 4; } .lpx-flow-list.is-5 { --n: 5; } .lpx-flow-list.is-6 { --n: 6; }
+.lpx-flow-list li { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.lpx-flow-list li:not(:last-child)::after { content: ""; position: absolute; top: 43px; left: calc(50% + 50px); width: calc(100% - 82px); border-top: 4px dotted #8fc4ef; }
+.lpx-flow-art { display: block; }
+.lpx-flow-no { margin-top: 6px; color: var(--x-blue); font-family: var(--font-en); font-size: 17px; font-weight: 800; letter-spacing: .06em; line-height: 1.4; }
+.lpx-flow-no span { margin-right: 6px; font-size: 13px; letter-spacing: .14em; }
+.lpx-flow-list h3 { margin-top: 4px; font-size: 16.5px; font-weight: 900; line-height: 1.5; }
+.lpx-flow-text { margin-top: 10px; color: var(--x-text); font-size: 14px; line-height: 1.8; text-align: left; }
+.lpx-flow-note { margin-top: 40px; }
+
+/* ───────── 8. よくあるご質問 ───────── */
+.lpx-faq-inner { max-width: 900px; }
+.lpx-faq-list { display: grid; gap: 12px; }
+.lpx-faq-item { border: 2px solid var(--x-line); border-radius: 18px; background: #fff; overflow: hidden; transition: border-color .25s; }
+.lpx-faq-item.is-open { border-color: var(--x-line-d); }
+.lpx-faq-item h3 { font-size: inherit; font-weight: inherit; }
+.lpx-faq-q { display: flex; align-items: center; gap: 14px; width: 100%; padding: 18px 22px; border: 0; background: none; text-align: left; font-size: 16.5px; font-weight: 800; line-height: 1.6; cursor: pointer; }
+.lpx-faq-q-text { flex: 1; }
+.lpx-faq-mark { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--x-blue); color: #fff; font-family: var(--font-en); font-size: 17px; font-weight: 800; line-height: 1; }
+.lpx-faq-mark.is-a { background: var(--x-yellow); color: var(--x-ink); }
+.lpx-faq-toggle { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--x-pale); color: var(--x-blue); }
+.lpx-faq-toggle .v { transition: transform .3s var(--ease-out); transform-origin: 50% 50%; }
+.lpx-faq-item.is-open .lpx-faq-toggle .v { transform: scaleY(0); }
+.lpx-faq-a { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .35s var(--ease-out), visibility 0s .35s; }
+.lpx-faq-item.is-open .lpx-faq-a { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .35s var(--ease-out), visibility 0s; }
+.lpx-faq-a-inner { overflow: hidden; }
+.lpx-faq-a-inner p { display: flex; align-items: flex-start; gap: 14px; padding: 2px 22px 22px; color: var(--x-text); font-size: 15.5px; line-height: 1.9; }
+.lpx-faq-a-inner p > span:last-child { padding-top: 3px; }
+
+/* ───────── 関連するコラム・そのほかのサービス ───────── */
+.lpx-more { background: #fff !important; padding: 88px 0 96px; }
+.lpx-more-block + .lpx-more-block { margin-top: 72px; }
+.lpx-more-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; margin-bottom: 24px; padding-bottom: 14px; border-bottom: 2px solid var(--x-line); }
+.lpx-more-head h2 { font-size: 22px; font-weight: 900; line-height: 1.5; }
+.lpx-more-all { display: inline-flex; align-items: center; gap: 6px; color: var(--x-blue); font-size: 14.5px; font-weight: 800; }
+.lpx-more-all:hover { text-decoration: underline; text-underline-offset: 4px; }
+.lpx-column-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+a.lpx-column { display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left; }
+.lpx-column-thumb { display: block; aspect-ratio: 1200 / 630; border: 1px solid var(--x-line); border-radius: 16px; overflow: hidden; background: var(--x-soft); }
+.lpx-column-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out); }
+a.lpx-column:hover .lpx-column-thumb img { transform: scale(1.04); }
+.lpx-column-meta { display: flex; align-items: center; gap: 10px; color: var(--x-text); font-size: 13px; line-height: 1.5; }
+.lpx-column-meta i { padding: 1px 10px; border-radius: 999px; background: var(--x-pale); color: var(--x-blue-d); font-style: normal; font-weight: 800; }
+a.lpx-column strong { font-size: 16px; font-weight: 800; line-height: 1.65; }
+a.lpx-column:hover strong { color: var(--x-blue); }
+.lpx-other-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+a.lpx-other { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; height: 100%; padding: 14px 12px 16px; border: 2px solid var(--x-line); border-radius: 20px; background: #fff; font-size: 15px; font-weight: 800; line-height: 1.5; transition: border-color .25s, box-shadow .25s, transform .25s var(--ease-out); }
+a.lpx-other:hover { border-color: var(--x-sky); box-shadow: var(--x-shadow); transform: translateY(-3px); }
+.lpx-other-art { width: 100%; max-width: 150px; }
+.lpx-other-art .art * { animation: none !important; }
+.diagnose-link.is-lpx { margin-top: 28px; }
+
+/* ───────── 固定の相談バー（スマホ） ───────── */
+.lp-sticky { display: none; }
+@media (max-width: 640px) {
+  .lp-sticky {
+    position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 56;
+    display: grid; grid-template-columns: 1fr auto auto; gap: 8px; padding: 8px;
+    border-radius: 18px; background: rgba(255, 255, 255, .94); backdrop-filter: blur(12px);
+    box-shadow: 0 16px 40px rgba(13, 35, 56, .22); border: 1px solid var(--line);
+    transform: translateY(120%); opacity: 0; transition: transform .45s var(--ease-out), opacity .4s; pointer-events: none;
+  }
+  .lp-sticky.show { transform: none; opacity: 1; pointer-events: auto; }
+  .lp-sticky-main { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 18px; border-radius: 12px; background: var(--sky-deep); color: var(--white); font-weight: 800; font-size: 15px; }
+  .lp-sticky a.line-button { min-height: 50px; padding: 0 18px; border-radius: 12px; font-size: 14px; }
+  /* 固定バーの表示中は「ページ先頭へ」を少し上へ（translate。レイアウトは動かさない）。チャットは固定バーの中のボタンにまとめる */
+  body.has-sticky-cta .back-to-top { translate: 0 -16px; }
+  body.has-sticky-cta .chat-launcher { opacity: 0; visibility: hidden; pointer-events: none; }
+  .lp-sticky-chat { width: 50px; height: 50px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 12px; background: var(--navy); cursor: pointer; }
+  .lp-sticky-chat img { width: 30px; height: 30px; padding: 3px; border-radius: 50%; background: var(--white); box-sizing: content-box; }
+  body.has-sticky-cta .site-footer { padding-bottom: 84px; }
+  .lpx-lang-en .lp-sticky { grid-template-columns: 1fr auto; }
+}
+@media (max-width: 400px) {
+  .lp-sticky { left: 8px; right: 8px; bottom: 8px; gap: 6px; padding: 6px; }
+  .lp-sticky-main { gap: 6px; padding: 0 10px; font-size: 14px; white-space: nowrap; }
+  .lp-sticky a.line-button { padding: 0 12px; white-space: nowrap; }
+  .lp-sticky-chat { width: 46px; }
+}
+@media (max-width: 350px) {
+  .lp-sticky-main svg { display: none; }
+  .lp-sticky a.line-button { padding: 0 10px; font-size: 13px; }
+}
+
+/* ───────── 英語ページ ───────── */
+.lpx-lang-en { word-break: normal; overflow-wrap: break-word; }
+.lpx-lang-en .lpx-hero-title { letter-spacing: -.01em; line-height: 1.2; font-size: clamp(30px, 3.9vw, 54px); }
+.lpx-lang-en .lpx-kicker { letter-spacing: .08em; text-transform: uppercase; }
+
+/* ───────── レスポンシブ ───────── */
+@media (max-width: 1100px) {
+  .lpx-section { padding: 88px 0; }
+  .lpx-relay { grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: 640px; margin: 0 auto; }
+  .lpx-relay:not(:has(.is-goal)) { grid-template-columns: minmax(0, 1fr); }
+  .lpx-relay-link { flex-direction: row; justify-content: center; gap: 12px; }
+  .lpx-relay-link .lpx-arrow { transform: rotate(90deg); }
+  .lpx-relay-link .lpx-relay-step { flex-direction: row; gap: 8px; }
+  .lpx-relay-side { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px 16px; text-align: left; padding: 20px; }
+  .lpx-relay-side .lpx-spot { width: 76px; height: 76px; }
+  .lpx-relay-side strong { margin-top: 0; }
+  .lpx-relay-side.is-goal { margin-top: 12px; }
+  .lpx-relay-team { margin-top: 12px; }
+  .lpx-steps { gap: 0 12px; }
+  .lpx-steps li { padding: 22px 8px 20px; }
+  .lpx-steps li + li::before { left: -13px; width: 14px; height: 16px; }
+}
+@media (max-width: 980px) {
+  .lpx-hero { padding: 112px 0 48px; }
+  .lpx-hero-inner { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .lpx-hero-copy { text-align: center; }
+  .lpx-crumbs, .lpx-hero-actions { justify-content: center; }
+  .lpx-hero-lead { margin-left: auto; margin-right: auto; }
+  .lpx-hero-art { max-width: 520px; order: 0; }
+  .lpx-point-grid, .lpx-point-grid.is-4 { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin: 0 auto; gap: 16px; }
+  .lpx-point { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 0 18px; align-items: center; padding: 22px 22px 24px; text-align: left; }
+  .lpx-point-art { grid-row: 1 / span 2; margin: 0; }
+  .lpx-point-art .lpx-spot { width: 104px; height: 104px; }
+  .lpx-point-no { align-self: end; }
+  .lpx-point h3 { align-self: start; margin-top: 2px; font-size: 18.5px; }
+  .lpx-point-text { grid-column: 1 / -1; }
+  /* 一本の流れ・ご利用の流れ：縦に並べ、絵を左、言葉を右に */
+  .lpx-steps, .lpx-flow-list { grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: 600px; margin: 0 auto; }
+  .lpx-steps li { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 2px 16px; align-items: center; padding: 16px 18px; text-align: left; }
+  .lpx-steps li + li::before { top: -15px; left: 50%; width: 18px; height: 14px; clip-path: polygon(0 0, 100% 0, 50% 100%); transform: translateX(-50%); }
+  .lpx-step-art { grid-row: 1 / span 2; margin: 0; }
+  .lpx-step-art .lpx-spot { width: 84px; height: 84px; }
+  .lpx-step-art b { left: -6px; top: -4px; }
+  .lpx-steps strong { align-self: end; }
+  .lpx-step-sub { align-self: start; margin-top: 0; }
+  .lpx-steps li:not(:has(.lpx-step-sub)) strong { grid-row: 1 / span 2; align-self: center; }
+  .lpx-flow-list li { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 0 16px; align-items: start; padding: 0 0 18px; text-align: left; }
+  .lpx-flow-list li:not(:last-child)::after { top: 78px; bottom: 2px; left: 37px; width: 0; border-top: 0; border-left: 4px dotted #8fc4ef; }
+  .lpx-flow-art { grid-row: 1 / span 3; }
+  .lpx-flow-art .lpx-spot { width: 76px; height: 76px; }
+  .lpx-flow-no { margin-top: 4px; }
+  .lpx-flow-text { margin-top: 6px; font-size: 14.5px; }
+  /* 2つの段：縦に1列。誰の仕事かは札と色で見分ける */
+  .lpx-lanes-wrap { padding: 0; }
+  .lpx-lanes { display: block; max-width: 600px; margin: 0 auto; }
+  .lpx-lane-bg, .lpx-lane-label { display: none; }
+  .lpx-lane-list { display: grid; gap: 12px; }
+  .lpx-lane-node { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 2px 16px; align-items: center; padding: 16px 18px; border: 2px solid var(--x-line-d); background: var(--x-pale); box-shadow: none; text-align: left; grid-column: auto !important; grid-row: auto !important; }
+  .lpx-lane-node.is-client { border-color: var(--x-warm-line); background: var(--x-warm); }
+  .lpx-lane-who { display: inline-block; grid-column: 2; justify-self: start; padding: 1px 12px; border-radius: 999px; background: var(--x-blue); color: #fff; font-size: 13px; font-weight: 800; line-height: 1.7; }
+  .lpx-lane-node.is-client .lpx-lane-who { background: #f2a516; color: #2b1c00; }
+  .lpx-lane-icon { grid-row: 1 / span 3; margin: 0; background: #fff; }
+  .lpx-lane-node.is-client .lpx-lane-icon { background: #fff; }
+  .lpx-lane-node strong, .lpx-lane-sub { grid-column: 2; }
+  .lpx-lane-sub { margin-top: 0; }
+  .lpx-cycle { margin-top: 28px; }
+  .lpx-case-grid, .lpx-case-grid.is-3 { grid-template-columns: minmax(0, 1fr); max-width: 640px; margin: 0 auto; }
+  .lpx-plan-grid, .lpx-plan-grid.is-2 { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; gap: 30px; }
+  .lpx-scope-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lpx-other-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .lpx-section { padding: 68px 0; }
+  .lpx-head { margin-bottom: 36px; }
+  .lpx-head-lead { font-size: 15px; text-align: left; }
+  .lpx-hero { padding: 100px 0 40px; }
+  .lpx-hero-cloud { opacity: .5; }
+  .lpx-hero-title { font-size: clamp(25px, 7vw, 36px); }
+  .lpx-hero-lead { font-size: 15.5px; text-align: left; }
+  .lpx-hero-actions { flex-direction: column; align-items: stretch; }
+  .lpx-hero-actions .button, .lpx-hero-actions a.line-button { width: 100%; justify-content: center; }
+  .lpx-hero-facts { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .lpx-hero-facts li { padding: 14px 18px; }
+  .lpx-hero-facts strong { font-size: 17px; }
+  .lpx-worry { padding-top: 60px; }
+  .lpx-worry-stage { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .lpx-worry-art { max-width: 168px; }
+  .lpx-worry-list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .lpx-worry-list li { padding: 16px 18px; font-size: 15.5px; }
+  .lpx-bridge { margin-top: 32px; }
+  .lpx-ba-heads { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 22px; }
+  .lpx-ba-headcell { grid-column: auto !important; padding: 10px 12px; gap: 8px; border-radius: 16px; }
+  .lpx-ba-headcell .lpx-face { width: 40px; height: 40px; flex: none; }
+  .lpx-ba-headcell b { font-size: 17px; }
+  .lpx-ba-headcell span { font-size: 13px; }
+  .lpx-ba-rows { display: grid; gap: 26px; }
+  .lpx-ba-rows li { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .lpx-ba-rows h3 { margin-bottom: 8px; padding-left: 12px; border-left: 5px solid var(--x-blue); font-size: 16.5px; }
+  .lpx-ba-cell, .lpx-ba-rows li:last-child .lpx-ba-cell { padding: 14px 16px; border-radius: 16px; }
+  .lpx-ba-cell.is-before, .lpx-ba-rows li + li .lpx-ba-cell.is-before { border: 2px solid #dfe6ec; }
+  .lpx-ba-cell.is-after, .lpx-ba-rows li + li .lpx-ba-cell.is-after { border: 2px solid var(--x-blue); }
+  .lpx-ba-arrow { margin: -6px auto; position: relative; z-index: 1; transform: rotate(90deg); }
+  .lpx-scope summary { flex-wrap: wrap; padding: 16px 18px; }
+  .lpx-scope-open { margin-left: 28px; }
+  .lpx-scope-grid { grid-template-columns: minmax(0, 1fr); padding: 0 16px 16px; }
+  .lpx-faq-q { padding: 16px; gap: 12px; font-size: 15.5px; }
+  .lpx-faq-a-inner p { padding: 0 16px 18px; gap: 12px; font-size: 15px; }
+  .lpx-more { padding: 64px 0 72px; }
+  .lpx-more-block + .lpx-more-block { margin-top: 52px; }
+  .lpx-column-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  a.lpx-column { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 4px 14px; align-items: start; }
+  .lpx-column-thumb { grid-row: 1 / span 2; border-radius: 12px; }
+  a.lpx-column strong { font-size: 15px; }
+  .lpx-other-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  a.lpx-other { padding: 10px 8px 14px; font-size: 14px; }
+  .lpx-relay-team { padding: 34px 14px 16px; }
+  .lpx-relay-areas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lpx-relay-areas.is-3 li:last-child, .lpx-relay-areas.is-5 li:last-child { grid-column: 1 / -1; }
+  .lpx-relay-inner li { border-radius: 16px; }
+}
+@media (max-width: 360px) {
+  .lpx-point { grid-template-columns: 84px minmax(0, 1fr); padding: 18px 16px 20px; }
+  .lpx-point-art .lpx-spot { width: 84px; height: 84px; }
+  .lpx-relay-head { font-size: 13.5px; padding: 4px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lpx .art *, .lpx-faq-a, .lpx-faq-toggle .v, a.lpx-other, .lpx-column-thumb img { animation: none !important; transition: none !important; }
+}
