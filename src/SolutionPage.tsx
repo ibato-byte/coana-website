@@ -4,7 +4,7 @@ import { ContactBand, DiagnoseLink, GoLink, Icon, LineButton, Lines, NotFound, o
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import { LpIcon } from "./lpIcons";
-import { HeroArt, MoodFace, SpotIcon, WorryArt } from "./lpArt";
+import { HeroArt, MoodFace, PointArt, SpotIcon, WorryArt } from "./lpArt";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
  * content/solutions/*.json（CMS「サービス別ページ」）の内容を描画する。
@@ -283,7 +283,7 @@ function Points({ sol, L }: { sol: Solution; L: L10n }) {
         <ul className={`lpx-point-grid is-${Math.min(points.length, 4)}`}>
           {points.map((p, i) => (
             <li key={p.name} className="lpx-point" data-reveal style={{ ["--d" as string]: `${(i * 0.1).toFixed(2)}s` }}>
-              <div className="lpx-point-art"><SpotIcon name={p.icon} tone={i === 1 ? "warm" : "sky"} size={132} /></div>
+              <div className="lpx-point-art"><PointArt name={p.icon} tone={i === 1 ? "warm" : "sky"} /></div>
               <p className="lpx-point-no"><span>{L.point}</span>{num(i)}</p>
               <h3>{p.name}</h3>
               <p className="lpx-point-text">{p.text}</p>

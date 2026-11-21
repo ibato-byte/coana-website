@@ -339,3 +339,262 @@ export function MoodFace({ mood }: { mood: "smile" | "worry" }) {
     </svg>
   );
 }
+
+/* ───────────────────────── 特徴のカードの絵（小さな場面） ─────────────────────────
+ * アイコン名（content の icon）ごとに、何をするかが伝わる小さな絵を出す。用意のない名前は SpotIcon で代用する。
+ * 240×150。背景は透明（カード側の淡い面の上に置く）。 */
+
+function MCard({ x, y, w, h, r = 12, children }: { x: number; y: number; w: number; h: number; r?: number; children?: ReactNode }) {
+  return (
+    <g>
+      <rect x={x + 3} y={y + 5} width={w} height={h} rx={r} fill={NAVY} opacity=".09" />
+      <rect x={x} y={y} width={w} height={h} rx={r} fill="#fff" stroke={LINE} strokeWidth="2" />
+      {children}
+    </g>
+  );
+}
+const GEAR = "M0-30l6 2 2 8 7 3 7-4 5 5-4 7 3 7 8 2v8l-8 2-3 7 4 7-5 5-7-4-7 3-2 8H-6l-2-8-7-3-7 4-5-5 4-7-3-7-8-2v-8l8-2 3-7-4-7 5-5 7 4 7-3 2-8Z";
+const Pencil = ({ x, y, rot = -40, s = 1 }: { x: number; y: number; rot?: number; s?: number }) => (
+  <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${s})`}>
+    <rect x="-7" y="-40" width="14" height="52" rx="2" fill={YELLOW} stroke={NAVY} strokeWidth="2.5" />
+    <rect x="-7" y="-40" width="14" height="10" rx="2" fill={CORAL} stroke={NAVY} strokeWidth="2.5" />
+    <path d="M-7 12h14l-7 15Z" fill={SKIN} stroke={NAVY} strokeWidth="2.5" strokeLinejoin="round" />
+    <path d="M-2.4 22h4.8L0 27Z" fill={NAVY} />
+  </g>
+);
+const Spark = ({ x, y, s = 1, color = YELLOW }: { x: number; y: number; s?: number; color?: string }) => (
+  <path transform={`translate(${x} ${y}) scale(${s})`} d="M0-9l2.4 6.6L9 0 2.4 2.4 0 9-2.4 2.4-9 0l6.6-2.4Z" fill={color} />
+);
+
+const POINT_SCENES: Record<string, () => ReactNode> = {
+  /* 業務の流れを見て、効くところを見つける */
+  search: () => (
+    <>
+      <MCard x={26} y={20} w={118} h={112}>
+        {[0, 1, 2].map((i) => (
+          <g key={i}>
+            <rect x="42" y={32 + i * 32} width="72" height="22" rx="7" fill={i === 1 ? "#fff3c9" : SOFT} stroke={i === 1 ? AMBER : LINE} strokeWidth="2" />
+            {bar(52, 39 + i * 32, 36 + i * 8, i === 1 ? NAVY : "#a9c4d9", 8)}
+            {i < 2 && <path d={`M78 ${55 + i * 32}v8m-4-4 4 4 4-4`} stroke={DEEP} strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />}
+          </g>
+        ))}
+      </MCard>
+      <path d="M176 96l26 26" stroke={NAVY} strokeWidth="11" strokeLinecap="round" />
+      <circle cx="154" cy="74" r="32" fill="#fff" stroke={NAVY} strokeWidth="6" />
+      <circle cx="154" cy="74" r="22" fill={SKY} opacity=".22" />
+      <path d="M143 74l8 8 15-17" stroke={DEEP} strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <Spark x={206} y={34} />
+    </>
+  ),
+  /* 設定や自動化を、自分たちで作る */
+  tools: () => (
+    <>
+      <MCard x={28} y={20} w={156} h={110}>
+        <path d="M28 44V32a12 12 0 0 1 12-12h132a12 12 0 0 1 12 12v12Z" fill={SOFT} />
+        <circle cx="44" cy="32" r="4" fill={CORAL} /><circle cx="58" cy="32" r="4" fill={YELLOW} /><circle cx="72" cy="32" r="4" fill={SKY} />
+        <g transform="translate(74 88) scale(.82)"><path d={GEAR} fill={NAVY} /><circle r="10" fill={YELLOW} /></g>
+        {[0, 1, 2].map((i) => (
+          <g key={i}>
+            <rect x="112" y={64 + i * 20} width="58" height="7" rx="3.5" fill={LINE} />
+            <rect x="112" y={64 + i * 20} width={[36, 20, 46][i]} height="7" rx="3.5" fill={SKY} />
+            <circle cx={112 + [36, 20, 46][i]} cy={67.5 + i * 20} r="7" fill="#fff" stroke={DEEP} strokeWidth="3" />
+          </g>
+        ))}
+      </MCard>
+      <Pencil x={196} y={86} />
+      <Spark x={214} y={30} />
+    </>
+  ),
+  /* 実務を知っている人が、チームで対応する */
+  users: () => (
+    <>
+      <rect x="84" y="10" width="72" height="38" rx="14" fill="#fff" stroke={LINE} strokeWidth="2" />
+      <path d="M106 47l-6 12 18-12Z" fill="#fff" stroke={LINE} strokeWidth="2" strokeLinejoin="round" />
+      <rect x="100" y="42" width="20" height="5" fill="#fff" />
+      <Check x={104} y={29} r={9} />{bar(119, 25, 26, "#a9c4d9", 8)}
+      <Bust x={24} y={46} s={0.93} shirt={AMBER} hair="#5b3a29" long />
+      <Bust x={124} y={46} s={0.93} shirt={DEEP} />
+      <Spark x={30} y={30} color={SKY} />
+    </>
+  ),
+  /* いまのツール同士をつなぐ */
+  link: () => (
+    <>
+      {[[34, 18, SKY], [166, 18, YELLOW], [34, 94, YELLOW], [166, 94, SKY]].map(([x, y, c], i) => (
+        <g key={i}>
+          <path d={`M${(x as number) + 20} ${(y as number) + 19}L120 75`} stroke={SKY} strokeWidth="3" strokeDasharray="2 8" strokeLinecap="round" />
+          <MCard x={x as number} y={y as number} w={40} h={38} r={10}>
+            <rect x={x as number} y={y as number} width="40" height="9" rx="4.5" fill={c as string} />
+            {bar((x as number) + 8, (y as number) + 17, 24, LINE, 6)}{bar((x as number) + 8, (y as number) + 27, 16, LINE, 6)}
+          </MCard>
+        </g>
+      ))}
+      <circle cx="120" cy="75" r="30" fill={DEEP} />
+      <circle cx="120" cy="75" r="36" fill="none" stroke={DEEP} strokeWidth="2" opacity=".3" />
+      <g color="#fff"><LpIcon name="link" size={32} x={104} y={59} strokeWidth={2.2} /></g>
+    </>
+  ),
+  /* 判断が要るところは、人が確認する */
+  shield: () => (
+    <>
+      <MCard x={34} y={18} w={104} h={116}>
+        {bar(48, 32, 44, NAVY, 9)}
+        {[0, 1, 2].map((i) => <g key={i}>{bar(48, 54 + i * 20, 76 - i * 12, LINE, 8)}</g>)}
+        <rect x="48" y="110" width="50" height="14" rx="7" fill="#fff3c9" stroke={AMBER} strokeWidth="2" />
+      </MCard>
+      <g transform="translate(160 80)">
+        <path d="M0-44 38-30V2c0 26-17 42-38 52-21-10-38-26-38-52v-32Z" fill={DEEP} />
+        <path d="M0-34 28-24V2c0 20-12 32-28 41Z" fill="#fff" opacity=".14" />
+        <path d="M-15 2l10 11 20-23" stroke="#fff" strokeWidth="7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <Spark x={210} y={26} />
+    </>
+  ),
+  /* チャットで頼める */
+  mail: () => (
+    <>
+      <circle cx="38" cy="50" r="15" fill={AMBER} /><circle cx="38" cy="45" r="6" fill={SKIN} /><path d="M27 60a11 9 0 0 1 22 0Z" fill="#fff" opacity=".9" />
+      <rect x="62" y="24" width="124" height="48" rx="16" fill="#fff" stroke={LINE} strokeWidth="2" />
+      <path d="M64 56l-12 10 16-2Z" fill="#fff" stroke={LINE} strokeWidth="2" strokeLinejoin="round" />
+      {bar(78, 38, 84, "#a9c4d9", 8)}{bar(78, 54, 56, LINE, 8)}
+      <rect x="52" y="84" width="124" height="46" rx="16" fill={DEEP} />
+      <path d="M174 114l12 10-16-2Z" fill={DEEP} />
+      {bar(68, 98, 70, "#fff", 8)}{bar(68, 113, 44, "#9cc8ee", 8)}
+      <Check x={158} y={107} r={11} color="#fff" />
+      <path d="M152.5 107l4 4.2 7-8" stroke={DEEP} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="204" cy="108" r="15" fill={NAVY} /><circle cx="204" cy="103" r="6" fill={SKIN} /><path d="M193 118a11 9 0 0 1 22 0Z" fill={SKY} />
+    </>
+  ),
+  /* 手順を残して、くり返しを減らす */
+  refresh: () => (
+    <>
+      <path d="M44 84a78 62 0 0 1 132-46" stroke={SKY} strokeWidth="6" fill="none" strokeLinecap="round" />
+      <path d="M166 22l12 17-20 3" stroke={SKY} strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M196 66a78 62 0 0 1-132 46" stroke={DEEP} strokeWidth="6" fill="none" strokeLinecap="round" />
+      <path d="M74 128l-12-17 20-3" stroke={DEEP} strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <MCard x={84} y={30} w={72} h={90}>
+        {bar(96, 44, 34, NAVY, 8)}
+        {[0, 1, 2].map((i) => <g key={i}><Check x={101} y={66 + i * 18} r={6.5} />{bar(113, 62 + i * 18, 32 - i * 5, LINE, 8)}</g>)}
+      </MCard>
+    </>
+  ),
+  /* 手順・ルールを決めて、文書に残す */
+  rules: () => (
+    <>
+      <MCard x={58} y={18} w={124} h={118}>
+        {[0, 1, 2].map((i) => (
+          <g key={i}>
+            <circle cx="80" cy={52 + i * 30} r="11" fill={i === 0 ? DEEP : SKY} />
+            <text x="80" y={57 + i * 30} textAnchor="middle" fontSize="13" fontWeight="800" fill="#fff">{i + 1}</text>
+            {bar(100, 43 + i * 30, 56 - i * 8, "#a9c4d9", 8)}{bar(100, 56 + i * 30, 38, LINE, 7)}
+          </g>
+        ))}
+      </MCard>
+      <rect x="96" y="10" width="48" height="18" rx="8" fill={NAVY} />
+      <circle cx="120" cy="19" r="4" fill={YELLOW} />
+      <Check x={180} y={122} r={15} />
+      <Spark x={38} y={40} />
+    </>
+  ),
+  /* クラウドに自動で取り込まれる */
+  cloud: () => (
+    <>
+      {[[40, SKY], [100, YELLOW], [160, DEEP]].map(([x, c], i) => (
+        <g key={i}>
+          <path d={`M${(x as number) + 20} 104L120 62`} stroke={DEEP} strokeWidth="3" strokeDasharray="2 8" strokeLinecap="round" />
+          <MCard x={x as number} y={100} w={40} h={36} r={10}>
+            <rect x={x as number} y={100} width="40" height="9" rx="4.5" fill={c as string} />
+            {bar((x as number) + 8, 116, 24, LINE, 6)}{bar((x as number) + 8, 125, 15, LINE, 6)}
+          </MCard>
+        </g>
+      ))}
+      <g transform="translate(120 44) scale(.62) translate(-238 -96)">
+        <path d="M172 140a40 40 0 0 1-4-79.6A58 58 0 0 1 280 50a42 42 0 0 1 22 82 40 40 0 0 1-10 8Z" fill="#fff" stroke={LINE} strokeWidth="3.2" />
+        <path d="M258 86a22 22 0 0 1-37 16" stroke={DEEP} strokeWidth="7" fill="none" strokeLinecap="round" />
+        <path d="M214 86a22 22 0 0 1 37-16" stroke={SKY} strokeWidth="7" fill="none" strokeLinecap="round" />
+        <path d="m252 60 1 11-11 0" stroke={SKY} strokeWidth="7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="m220 112-1-11 11 0" stroke={DEEP} strokeWidth="7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <Spark x={200} y={28} />
+    </>
+  ),
+  /* 毎月の数字が見える */
+  chart: () => (
+    <>
+      <MCard x={36} y={18} w={168} h={116}>
+        {bar(50, 32, 52, NAVY, 9)}{bar(50, 47, 34, LINE, 7)}
+        {[0, 1, 2, 3, 4].map((i) => <rect key={i} x={54 + i * 28} y={116 - (18 + i * 11)} width="17" height={18 + i * 11} rx="4" fill={i === 4 ? DEEP : SKY} />)}
+        <path d="M50 120h140" stroke={LINE} strokeWidth="3" strokeLinecap="round" />
+        <path d="M58 88l28-10 28 4 28-18 30-14" stroke={AMBER} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M160 50l13 0-4 12" stroke={AMBER} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </MCard>
+      <Check x={200} y={24} r={15} />
+    </>
+  ),
+  /* 書類・原稿を一緒に作る */
+  doc: () => (
+    <>
+      <MCard x={48} y={14} w={116} h={124}>
+        <path d="M134 14h18a12 12 0 0 1 12 12v18Z" fill={SOFT} />
+        {bar(62, 30, 50, NAVY, 9)}
+        {bar(62, 52, 84, LINE, 8)}{bar(62, 68, 84, LINE, 8)}
+        <rect x="60" y="82" width="64" height="12" rx="6" fill="#ffe9a3" />
+        {bar(62, 102, 84, LINE, 8)}{bar(62, 118, 50, LINE, 8)}
+      </MCard>
+      <Pencil x={184} y={78} rot={28} s={1.1} />
+      <Spark x={30} y={36} color={SKY} />
+    </>
+  ),
+  /* 専門家へつなぐ */
+  handshake: () => (
+    <>
+      <path d="M70 60C90 28 150 28 170 60" stroke={SKY} strokeWidth="3.5" fill="none" strokeDasharray="2 9" strokeLinecap="round" />
+      <circle cx="120" cy="36" r="22" fill={YELLOW} />
+      <g color={NAVY}><LpIcon name="handshake" size={28} x={106} y={22} strokeWidth={2} /></g>
+      <Bust x={20} y={48} s={0.91} shirt={AMBER} hair="#5b3a29" long />
+      <Bust x={130} y={48} s={0.91} shirt={NAVY} hair="#6b7f90" />
+    </>
+  ),
+  /* 開業のあとも支える */
+  rocket: () => (
+    <>
+      <MCard x={26} y={68} w={84} h={66}>
+        {[0, 1, 2].map((i) => <rect key={i} x={40 + i * 20} y={120 - (16 + i * 11)} width="13" height={16 + i * 11} rx="3.5" fill={i === 2 ? DEEP : SKY} />)}
+        <path d="M38 122h60" stroke={LINE} strokeWidth="3" strokeLinecap="round" />
+      </MCard>
+      <path d="M112 112C130 104 142 92 150 76" stroke={AMBER} strokeWidth="4" fill="none" strokeDasharray="3 9" strokeLinecap="round" />
+      <g transform="translate(170 58) rotate(32) scale(.86)">
+        <path d="M0-52c20 14 30 38 27 70h-54c-3-32 7-56 27-70Z" fill="#fff" stroke={NAVY} strokeWidth="3.4" strokeLinejoin="round" />
+        <circle cx="0" cy="-16" r="10" fill={SKY} stroke={NAVY} strokeWidth="3.4" />
+        <path d="M-27 4l-15 20 17-3M27 4l15 20-17-3" fill={DEEP} stroke={NAVY} strokeWidth="3.4" strokeLinejoin="round" />
+        <path d="M-12 18h24l-5 12h-14Z" fill={NAVY} />
+        <path d="M-6 32q6 20 12 0" fill={YELLOW} stroke={AMBER} strokeWidth="2" />
+      </g>
+      <Spark x={206} y={112} /><Spark x={128} y={26} s={0.8} color={SKY} />
+    </>
+  ),
+  /* 必要な分だけ：大きさを選べる */
+  layout: () => (
+    <>
+      {[[30, 44, 50], [92, 62, 72], [166, 46, 44]].map(([x, w, h], i) => (
+        <g key={i}>
+          <MCard x={x} y={128 - h} w={w} h={h} r={12}>
+            <rect x={x} y={128 - h} width={w} height="10" rx="5" fill={i === 1 ? DEEP : SKY} opacity={i === 1 ? 1 : 0.7} />
+            {bar(x + 9, 128 - h + 20, w - 18, i === 1 ? "#a9c4d9" : LINE, 7)}
+            {h > 46 && bar(x + 9, 128 - h + 33, w - 28, LINE, 7)}
+            {i === 1 && bar(x + 9, 128 - h + 46, w - 22, LINE, 7)}
+          </MCard>
+        </g>
+      ))}
+      <rect x="89" y="53" width="68" height="78" rx="14" fill="none" stroke={AMBER} strokeWidth="3" strokeDasharray="5 6" />
+      <Check x={154} y={52} r={14} />
+      <Spark x={40} y={52} />
+    </>
+  ),
+};
+
+export function PointArt({ name, tone = "sky" }: { name?: string; tone?: "sky" | "warm" }) {
+  const scene = POINT_SCENES[name || ""];
+  if (!scene) return <SpotIcon name={name} tone={tone} size={126} />;
+  return <svg className="art lpx-point-svg" viewBox="0 0 240 150" aria-hidden="true" focusable="false">{scene()}</svg>;
+}
