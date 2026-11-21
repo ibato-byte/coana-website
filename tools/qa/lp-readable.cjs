@@ -6,7 +6,7 @@
 // 確かめること（1件でもあれば「NG」を出し、終了コード 1）
 //  1. 12px 未満の文字がない（説明の字が小さいと読み疲れる）
 //  2. 横スクロール・画面からのはみ出し・カードからの文字のはみ出しがない（業務の一覧・FAQ・工程の説明・導入前 も開いた状態で）
-//  3. LP のヒーローの見出し・リード・3つの特徴・ボタン・注記・絵が重ならない
+//  3. LP のヒーローの見出し・リード・3つの特徴・ボタン・注記・絵が重ならない。PC では見出しが CMS の改行以外で折れない
 //  4. カードの上に載せた札（おすすめ・受け取るもの など）が2行に折れない
 //  5. 見出しの最後の行が1文字だけにならない
 //  6. 関連するコラムが4本以上並ばない
@@ -57,6 +57,11 @@ const WIDTHS = (process.env.W || '320,360,390,430,768,966,1024,1280,1440,1920').
         for (let i = 0; i < hs.length; i++) for (let j = i + 1; j < hs.length; j++) {
           const a = hs[i][1], c = hs[j][1];
           if (a.left < c.right - 2 && c.left < a.right - 2 && a.top < c.bottom - 2 && c.top < a.bottom - 2) out.push('ヒーローの重なり ' + hs[i][0] + ' × ' + hs[j][0]);
+        }
+        // LP のヒーローの見出し：PC（1024px 以上）では、CMS で入れた改行のほかに行が折れない（「支援。」だけが3行目に落ちる、を防ぐ）
+        if (vw >= 1024) for (const line of vis('.lpx-lang-ja .lpx-hero-line')) {
+          const f = parseFloat(getComputedStyle(line).fontSize);
+          if (line.getBoundingClientRect().height > f * 2.2) out.push('ヒーローの見出しが途中で折れる 「' + line.textContent.slice(0, 16) + '」');
         }
         // カードの上に載せた札が2行に折れていないか
         for (const t of vis('.lpx-plan-tag, .lpx-relay-head, .lpx-relay-goal-tag, .lpx-hero-label, .lpx-kicker')) {

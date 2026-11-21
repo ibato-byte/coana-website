@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { articles, home, inquiryTypeOf, solutions, type Article, type Solution } from "./content";
 import { ContactBand, DiagnoseLink, GoLink, Icon, LineButton, Lines, NotFound, openChat, setInquiryPreset, type Nav } from "./shared";
 import { CHAT_MARK } from "./chat/ChatLauncher";
-import { ServiceArt } from "./illustrations";
+import { HeroVideo, ServiceArt } from "./illustrations";
 import { LpIcon } from "./lpIcons";
 import { HeroArt, MoodFace, SpotIcon, WorryArt } from "./lpArt";
 
@@ -230,7 +230,8 @@ function Hero({ sol, navigate, L }: { sol: Solution; navigate: Nav; L: L10n }) {
             </GoLink>
           )}
         </div>
-        <div className="lpx-hero-art" data-live><HeroArt slug={sol.slug} /></div>
+        {/* CMS で動画を設定したときは、絵の代わりに動画を表示する */}
+        <div className="lpx-hero-art" data-live><HeroVideo src={sol.hero_video} className="lpx-hero-video" fallback={<HeroArt slug={sol.slug} />} /></div>
         {facts.length > 0 && (
           <ul className="lpx-hero-facts" aria-label={L.facts}>
             {facts.map((f) => (
