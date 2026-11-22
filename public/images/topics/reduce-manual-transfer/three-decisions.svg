@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+  <rect width="600" height="600" fill="#fbfdff"/>
+  <text x="300" y="44" font-size="28" font-weight="700" fill="#16334d" text-anchor="middle">頼む前に決めておく3つのこと</text>
+  <rect x="24" y="78" width="552" height="152" rx="14" fill="#fff7df" stroke="#ffd85a" stroke-width="3"/>
+  <circle cx="72" cy="154" r="26" fill="#087fe5"/><text x="72" y="164" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+  <text x="120" y="142" font-size="28" font-weight="700" fill="#16334d">どこを「元」にするか</text>
+  <text x="120" y="186" font-size="24" fill="#4a667d">入力するのは1か所に決める</text>
+  <rect x="24" y="250" width="552" height="152" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="72" cy="326" r="26" fill="#087fe5"/><text x="72" y="336" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+  <text x="120" y="314" font-size="28" font-weight="700" fill="#16334d">人が確かめる所</text>
+  <text x="120" y="358" font-size="24" fill="#4a667d">金額の確定や送信は人が見る</text>
+  <rect x="24" y="422" width="552" height="152" rx="14" fill="#ffffff" stroke="#d8e7f2" stroke-width="2"/>
+  <circle cx="72" cy="498" r="26" fill="#087fe5"/><text x="72" y="508" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+  <text x="120" y="486" font-size="28" font-weight="700" fill="#16334d">止まったときの連絡</text>
+  <text x="120" y="530" font-size="24" fill="#4a667d">誰が気づき、誰に連絡するか</text>
+</svg>
