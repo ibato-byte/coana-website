@@ -528,3 +528,12 @@ a.lpx-other:hover { border-color: var(--x-sky); box-shadow: var(--x-shadow); tra
 .lpx-more-all { min-height: 40px; }
 .lpx-crumbs a { display: inline-flex; align-items: center; min-height: 36px; }
 .lpx-crumbs { margin-bottom: 12px; }
+
+/* ───────── 「注意」まで解消（2026-11-22）───────── */
+/* 英語ページへの案内：押せる高さを 40px に */
+.lpx-hero-english { min-height: 40px; }
+/* 英語の注記：1行が長すぎると読みにくい（約 100 文字）ので、幅を文字数で抑える */
+.lpx-lang-en .lpx-note { max-width: 48em; margin-left: auto; margin-right: auto; }
+/* 見出しの改行（CMS で入れた改行）ごとに、行の長さをそろえる（英語で最後の行に1語だけ残っていた） */
+.lpx-head h2 > span { display: block; text-wrap: balance; }
+.lpx-head h2 > span > br { display: none; }

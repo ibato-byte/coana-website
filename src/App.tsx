@@ -3,7 +3,7 @@ import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, priva
 import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import { MiniIcon, ServiceArt } from "./illustrations";
-import { PointArt, SpotIcon } from "./lpArt";
+import { PointArt, SpotIcon, caseArtName } from "./lpArt";
 import { LogoMark } from "./logo";
 import { Feathers } from "./feathers";
 // 診断の1問目（トップの「迷ったら」）。チャットのデータ全体ではなく diagnosis だけを読み込む
@@ -437,35 +437,65 @@ function ServiceGroupHead({ n, data, level = 3 }: { n: string; data: { en: strin
   );
 }
 
-/** 01 できること：8つのサービスを、絵つきのカードで並べる（2026-11-22 オーナー依頼「文字ばかり。図や絵で直感的に」。
- *  以前は文字だけの行の一覧だった）。札の言葉（整える・つくる・任せる）はヒーローの3つの言葉と同じ */
+/** 一覧の行の上で、カーソルについてくる黄色い丸「詳しく見る」（PC・マウスのみ。「動きを減らす」設定とタッチ端末では出さない）。
+ *  行の上にいる間だけ追いかける（離れたら止める）。transform と位置だけを動かす */
+function FollowLabel({ areaRef }: { areaRef: { current: HTMLElement | null } }) {
+  const labelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const area = areaRef.current;
+    const el = labelRef.current;
+    if (!area || !el) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let x = 0, y = 0, cx = 0, cy = 0, raf = 0, on = false;
+    const loop = () => {
+      cx += (x - cx) * 0.18; cy += (y - cy) * 0.18;
+      el.style.left = `${cx}px`; el.style.top = `${cy}px`;
+      raf = on || Math.abs(x - cx) + Math.abs(y - cy) > 0.5 ? requestAnimationFrame(loop) : 0;
+    };
+    const onMove = (e: PointerEvent) => {
+      x = e.clientX; y = e.clientY;
+      const hit = !!(e.target as Element | null)?.closest?.(".svc-row a");
+      if (hit && !on) { if (!raf) { cx = x; cy = y; } }
+      on = hit;
+      el.classList.toggle("on", hit);
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+    const onLeave = () => { on = false; el.classList.remove("on"); };
+    area.addEventListener("pointermove", onMove);
+    area.addEventListener("pointerleave", onLeave);
+    window.addEventListener("scroll", onLeave, { passive: true });
+    return () => { cancelAnimationFrame(raf); area.removeEventListener("pointermove", onMove); area.removeEventListener("pointerleave", onLeave); window.removeEventListener("scroll", onLeave); };
+  }, [areaRef]);
+  return <div className="follow-label" ref={labelRef} aria-hidden="true">詳しく<br />見る</div>;
+}
+
+/** 01 できること：サービスを行の一覧で（2026-11-22 オーナー判断：絵つきのカードはサービス一覧ページと重なるので、以前の行の一覧に戻した） */
 function ServicesHome({ navigate }: { navigate: Nav }) {
   const items = serviceGroups.flatMap(({ data }) => data.items as ServiceItem[]);
+  const rowsRef = useRef<HTMLUListElement | null>(null);
   return (
     <section className="section sky-section services-home" id="services">
       <div className="container">
         <NumHead n="01" title={home.services_title} side={<p>{home.services_lead}</p>} />
-        <ul className="hv hv-svc-grid">
+        <ul className="svc-rows" ref={rowsRef}>
           {items.map((item, i) => {
             const linked = item.page && solutions.some((sol) => sol.slug === item.page);
-            const verb = item.page ? VERB_OF[item.page] : undefined;
             const inner = (
               <>
-                <ServiceArt slug={item.page} className="hv-svc-art" />
-                {verb && <span className={`hv-svc-verb is-${verb === "任せる" ? "operate" : verb === "つくる" ? "build" : "organize"}`}>{verb}</span>}
-                <strong>{item.name}</strong>
-                <span className="hv-svc-text">{item.short || item.text}</span>
-                {item.tags?.map((t) => <em className="hv-svc-tag" key={t}>{t}</em>)}
-                {linked && <span className="hv-svc-more">詳しく見る<Icon name="arrow" size={16} /></span>}
+                <span className="svc-row-no" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <span className="svc-row-name">{item.name}</span>
+                <span className="svc-row-text">{item.short || item.text}{item.tags?.map((t) => <em key={t}>{t}</em>)}</span>
+                {item.page && VERB_OF[item.page] && <span className="svc-row-verb" aria-hidden="true">{VERB_OF[item.page]}。</span>}
               </>
             );
             return (
-              <li key={item.name} data-reveal style={{ ["--d" as string]: `${((i % 4) * 0.06).toFixed(2)}s` }}>
-                {linked ? <GoLink className="hv-svc" go={navigate} args={["solution", undefined, item.page]}>{inner}</GoLink> : <div className="hv-svc">{inner}</div>}
+              <li key={item.name} className="svc-row" data-reveal style={{ ["--d" as string]: `${(i * 0.04).toFixed(2)}s` }}>
+                {linked ? <GoLink go={navigate} args={["solution", undefined, item.page]}>{inner}</GoLink> : <div>{inner}</div>}
               </li>
             );
           })}
         </ul>
+        <FollowLabel areaRef={rowsRef} />
         <p className="svc-rows-more"><GoLink className="text-link" go={navigate} args={["services"]}>サービス一覧を見る<Icon name="arrow" size={18} /></GoLink></p>
       </div>
     </section>
@@ -475,7 +505,6 @@ function ServicesHome({ navigate }: { navigate: Nav }) {
 /** 02 支援事例（2026-10-31 打ち出しの見直し）：お客さまの社名を伏せた事例を「前」→「後」＋結果で並べ、関係するサービスへつなぐ。
  *  「日々の支援のなかから選んだ例」として見せ、最後に「ほかにも仕組みにしてきた業務」を並べて、件数が少なく見えないようにする（件数の数字は書かない）。
  *  文言は content/home.json の cases / cases_more（CMS「トップページ」）。数字は作業記録にあるものだけ（CLAUDE.md：数字・実績を捏造しない） */
-const CASE_ART: Record<string, string> = { "web-production": "layout", automation: "link", "it-consulting": "search", bookkeeping: "invoice", "cloud-accounting": "cloud", "backoffice-dx": "users" };
 type CaseItem = { client: string; title: string; before: string; after: string; result?: string; note?: string; tools?: string[]; slugs?: string[] };
 function CasesSection({ navigate }: { navigate: Nav }) {
   const h = home as { cases?: CaseItem[]; cases_title?: string; cases_lead?: string; cases_more_title?: string; cases_more?: string[] };
@@ -487,41 +516,41 @@ function CasesSection({ navigate }: { navigate: Nav }) {
     <section className="section sky-section case-section" id="cases">
       <div className="container">
         <NumHead n="02" title={<Lines text={h.cases_title || "支援事例"} />} side={<p>{h.cases_lead}</p>} />
-        <ul className="case-grid">
+        {/* 事例のカード（2026-11-22 オーナー依頼：LP と同じく、絵の見出し → Before → After → 結果 で直感的に） */}
+        <ul className="hv-case-grid">
           {items.map((e, i) => (
-            <li key={e.client + e.title} className="case-card" data-reveal style={{ ["--d" as string]: `${(i * 0.06).toFixed(2)}s` }}>
-              <span className="hv-case-art" aria-hidden="true"><SpotIcon name={CASE_ART[(e.slugs ?? [])[0]] || "refresh"} tone={i % 2 ? "warm" : "sky"} size={84} /></span>
-              <p className="case-client"><span className="case-no" lang="en" aria-hidden="true">Case {String(i + 1).padStart(2, "0")}</span>{e.client}</p>
-              <h3 className="case-title">{e.title}</h3>
-              <div className="case-row is-before">
-                <span className="case-tag" lang="en">Before</span>
-                <p>{e.before}</p>
-              </div>
-              <span className="case-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg></span>
-              <div className="case-row is-after">
-                <span className="case-tag" lang="en">After</span>
-                <p>{e.after}</p>
-              </div>
-              {e.result && (
-                <p className="case-result"><Icon name="check" size={16} /><span>{e.result}</span>{e.note && <small>{e.note}</small>}</p>
-              )}
-              {((e.tools ?? []).length > 0 || (e.slugs ?? []).some((s) => nameOf(s))) && (
-                <div className="case-foot">
-                  {(e.tools ?? []).length > 0 && <p className="case-tools" aria-label="使ったツール">{(e.tools ?? []).map((t) => <span key={t}>{t}</span>)}</p>}
-                  {(e.slugs ?? []).some((s) => nameOf(s)) && (
-                    <ul className="case-links" aria-label="関係するサービス">
-                      {(e.slugs ?? []).filter((s) => nameOf(s)).map((s) => (
-                        <li key={s}><GoLink go={navigate} args={["solution", undefined, s]}>{nameOf(s)}<Icon name="arrow" size={14} /></GoLink></li>
-                      ))}
-                    </ul>
-                  )}
+            <li key={e.client + e.title} className="hv-case" data-reveal style={{ ["--d" as string]: `${((i % 2) * 0.08).toFixed(2)}s` }}>
+              <div className="lpx-point-art hv-case-art"><PointArt name={caseArtName(e.client + " " + e.title, i)} /></div>
+              <div className="hv-case-body">
+                <p className="hv-case-client"><span lang="en">CASE {String(i + 1).padStart(2, "0")}</span>{e.client}</p>
+                <h3 className="hv-case-title">{e.title}</h3>
+                <div className="hv-case-ba">
+                  <div className="hv-case-step is-before"><span className="hv-case-tag" lang="en">Before</span><p>{e.before}</p></div>
+                  <span className="hv-case-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg></span>
+                  <div className="hv-case-step is-after"><span className="hv-case-tag" lang="en">After</span><p>{e.after}</p></div>
                 </div>
-              )}
+                {e.result && (
+                  <p className="hv-case-result"><span className="hv-case-result-tag"><Icon name="check" size={14} />結果</span><span><strong>{e.result}</strong>{e.note && <small>{e.note}</small>}</span></p>
+                )}
+                {((e.tools ?? []).length > 0 || (e.slugs ?? []).some((s) => nameOf(s))) && (
+                  <div className="hv-case-foot">
+                    {(e.tools ?? []).length > 0 && <p className="hv-case-tools" aria-label="使ったツール">{(e.tools ?? []).map((t) => <span key={t}>{t}</span>)}</p>}
+                    {(e.slugs ?? []).some((s) => nameOf(s)) && (
+                      <ul className="case-links" aria-label="関係するサービス">
+                        {(e.slugs ?? []).filter((s) => nameOf(s)).map((s) => (
+                          <li key={s}><GoLink go={navigate} args={["solution", undefined, s]}>{nameOf(s)}<Icon name="arrow" size={14} /></GoLink></li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </div>
             </li>
           ))}
         </ul>
         {more.length > 0 && (
-          <div className="case-more" data-reveal>
+          <div className="case-more hv-case-more" data-reveal>
+            <span className="hv-case-more-art" aria-hidden="true"><SpotIcon name="sparkle" size={72} /></span>
             <p className="case-more-title">{h.cases_more_title || "ほかにも、こうした業務を仕組みにしてきました"}</p>
             <ul className="case-more-list" aria-label="仕組みにしてきた業務の例">
               {more.map((t) => <li key={t}>{t}</li>)}

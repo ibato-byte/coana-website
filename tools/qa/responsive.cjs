@@ -121,7 +121,7 @@ const scan = () => {
   }
 
   // 6. カードから文字がはみ出す
-  const CARDS = '.lpx-plan, .lpx-case, .lpx-scope-card, .lpx-ba-cell, .lpx-tools li, .lpx-relay-side, .lpx-relay-areas li, .lpx-relay-center, .lpx-relay-team, .lpx-lane-node, .lpx-hero-facts li, .lpx-point, .lpx-steps li, .lpx-flow-list li, .lpx-worry-list li, .lpx-faq-item, a.lpx-other, a.lpx-column, .hv-svc, .case-card, .service-card, .finder-card, .faq-ask, .pricing-box, .button, a.line-button, .tool-pills li, .topic-tile, .article-row, .contact-form-card, .header-inner';
+  const CARDS = '.hv-case, .hv-case-step, .hv-case-result, .lpx-plan, .lpx-case, .lpx-scope-card, .lpx-ba-cell, .lpx-tools li, .lpx-relay-side, .lpx-relay-areas li, .lpx-relay-center, .lpx-relay-team, .lpx-lane-node, .lpx-hero-facts li, .lpx-point, .lpx-steps li, .lpx-flow-list li, .lpx-worry-list li, .lpx-faq-item, a.lpx-other, a.lpx-column, .hv-svc, .case-card, .service-card, .finder-card, .faq-ask, .pricing-box, .button, a.line-button, .tool-pills li, .topic-tile, .article-row, .contact-form-card, .header-inner';
   textEls.forEach((e, i) => {
     // カードの縁に載せる札（おすすめ・受け取るもの など）は、はみ出して見せるものなので除く
     if (e.closest('.lpx-plan-tag, .lpx-relay-head, .lpx-relay-goal-tag, .service-tag')) return;
@@ -147,7 +147,9 @@ const scan = () => {
   }
 
   // 9. 文字が画面の端に近い（スマホで左右 10px 未満）
-  if (vw <= 760) textEls.forEach((e, i) => { if (e.closest('.site-header, .lp-sticky, .sky-tape, .sky-tape-wrap, .contact-band-big')) return; for (const x of rects[i]) if (x.left < 10 || x.right > vw - 10) { warn.push('文字が画面の端に近い ' + idOf(e)); break; } });
+  // 横に送れる一覧（トピックスの絞り込みなど。右端をぼかして続きがあると見せる）の中は、端に触れるのが正しいので除く
+  const inHScroll = (el) => { for (let n = el.parentElement; n; n = n.parentElement) if (/(auto|scroll)/.test(getComputedStyle(n).overflowX) && n.scrollWidth > n.clientWidth + 1) return true; return false; };
+  if (vw <= 760) textEls.forEach((e, i) => { if (e.closest('.site-header, .lp-sticky, .sky-tape, .sky-tape-wrap, .contact-band-big') || inHScroll(e)) return; for (const x of rects[i]) if (x.left < 10 || x.right > vw - 10) { warn.push('文字が画面の端に近い ' + idOf(e)); break; } });
 
   // 10. 何もない縦のすき間（本文の中で 420px 以上。トップの固定ヒーローは除く）
   const spans = [];

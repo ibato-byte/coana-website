@@ -593,6 +593,106 @@ const POINT_SCENES: Record<string, () => ReactNode> = {
   ),
 };
 
+/* ───────── 支援事例の絵（事例の中身ごと。2026-11-22 オーナー依頼「事例紹介を、絵で直感的に分かるように」）───────── */
+const CASE_SCENES: Record<string, () => ReactNode> = {
+  /* サーバーから無料のサービスへ移行し、スタッフが自分で更新 */
+  "case-site": () => (
+    <>
+      <MCard x={14} y={40} w={58} h={76} r={10}>
+        {[0, 1, 2].map((i) => <g key={i}><rect x="24" y={52 + i * 20} width="38" height="13" rx="4" fill={SOFT} stroke={LINE} strokeWidth="1.5" /><circle cx="54" cy={58.5 + i * 20} r="2.6" fill={i === 1 ? AMBER : "#a9c4d9"} /></g>)}
+      </MCard>
+      <circle cx="66" cy="42" r="11" fill={CORAL} />
+      <path d="M61.5 37.5l9 9M70.5 37.5l-9 9" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+      <path d="M82 80h22m-7-7 7 7-7 7" stroke={DEEP} strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <MCard x={114} y={22} w={112} h={96}>
+        <path d="M114 44V34a12 12 0 0 1 12-12h88a12 12 0 0 1 12 12v10Z" fill={SOFT} />
+        <circle cx="127" cy="33" r="3.5" fill={CORAL} /><circle cx="138" cy="33" r="3.5" fill={YELLOW} /><circle cx="149" cy="33" r="3.5" fill={SKY} />
+        <rect x="124" y="52" width="92" height="28" rx="7" fill={PALE} />
+        {bar(132, 60, 44, NAVY, 7)}{bar(132, 70, 28, "#9cc8ee", 6)}
+        {[0, 1, 2].map((i) => <rect key={i} x={124 + i * 32} y="88" width="26" height="20" rx="5" fill="#fff" stroke={LINE} strokeWidth="1.5" />)}
+      </MCard>
+      <Pencil x={214} y={118} rot={30} s={0.72} />
+      <Check x={222} y={26} r={13} />
+    </>
+  ),
+  /* シフト・勤怠・給与から請求まで、毎月の作業を自動に */
+  "case-shift": () => (
+    <>
+      <MCard x={14} y={26} w={84} h={96}>
+        <rect x="14" y="26" width="84" height="20" rx="10" fill={DEEP} />
+        <rect x="14" y="38" width="84" height="8" fill={DEEP} />
+        {[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => <rect key={r + "-" + c} x={23 + c * 24} y={54 + r * 16} width="18" height="11" rx="3" fill={(r + c) % 3 === 0 ? "#ffe9a3" : (r + c) % 3 === 1 ? PALE : SOFT} />))}
+      </MCard>
+      <path d="M102 74h14" stroke={SKY} strokeWidth="3" strokeDasharray="2 6" strokeLinecap="round" />
+      <g transform="translate(138 74) scale(.62)"><path d={GEAR} fill={NAVY} /><circle r="10" fill={YELLOW} /></g>
+      <path d="M160 74h14" stroke={SKY} strokeWidth="3" strokeDasharray="2 6" strokeLinecap="round" />
+      <MCard x={178} y={34} w={50} h={80} r={10}>
+        <circle cx="203" cy="56" r="11" fill={YELLOW} />
+        <path d="m197 50 6 7 6-7M203 57v7M198 59h10" stroke={NAVY} strokeWidth="2" fill="none" strokeLinecap="round" />
+        {bar(188, 76, 30, LINE, 6)}{bar(188, 88, 22, LINE, 6)}
+      </MCard>
+      <Check x={224} y={108} r={12} />
+      <rect x="112" y="112" width="52" height="20" rx="10" fill={GREEN} />
+      <path d="M124 122l4 4 8-8" stroke="#fff" strokeWidth="2.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {bar(140, 118, 16, "#bfeedd", 7)}
+    </>
+  ),
+  /* 自動化の結果を、1つの画面で確かめる */
+  "case-dashboard": () => (
+    <>
+      <MCard x={30} y={16} w={180} h={120}>
+        <path d="M30 40V28a12 12 0 0 1 12-12h156a12 12 0 0 1 12 12v12Z" fill={NAVY} />
+        <circle cx="44" cy="28" r="3.5" fill={YELLOW} /><circle cx="55" cy="28" r="3.5" fill={SKY} />
+        {bar(70, 24, 60, "#fff", 7)}
+        {[0, 1, 2, 3].map((i) => (
+          <g key={i}>
+            <rect x="42" y={50 + i * 20} width="156" height="15" rx="5" fill={i === 2 ? "#fff3c9" : SOFT} />
+            <circle cx="52" cy={57.5 + i * 20} r="4.5" fill={i === 2 ? AMBER : GREEN} />
+            {bar(62, 54 + i * 20, 64 - (i % 2) * 14, i === 2 ? NAVY : "#a9c4d9", 7)}
+            {bar(160, 54 + i * 20, 28, i === 2 ? AMBER : "#bfeedd", 7)}
+          </g>
+        ))}
+      </MCard>
+      <g transform="translate(214 24)">
+        <circle r="17" fill={AMBER} />
+        <path d="M-7 4h14l-2-3v-5a5 5 0 0 0-10 0v5Z" fill="#fff" />
+        <circle cy="7" r="2.4" fill="#fff" />
+      </g>
+    </>
+  ),
+  /* サイトの点検・改善を自動にし、評価で満点 */
+  "case-score": () => (
+    <>
+      <MCard x={18} y={22} w={124} h={108}>
+        <path d="M18 44V34a12 12 0 0 1 12-12h100a12 12 0 0 1 12 12v10Z" fill={SOFT} />
+        <circle cx="31" cy="33" r="3.5" fill={CORAL} /><circle cx="42" cy="33" r="3.5" fill={YELLOW} /><circle cx="53" cy="33" r="3.5" fill={SKY} />
+        {bar(30, 54, 64, NAVY, 8)}{bar(30, 70, 96, LINE, 7)}{bar(30, 84, 84, LINE, 7)}
+        <rect x="30" y="98" width="44" height="18" rx="9" fill={DEEP} />
+      </MCard>
+      {[0, 1, 2].map((i) => (
+        <g key={i} transform={`translate(${170 + (i === 1 ? 32 : 0)} ${i === 0 ? 46 : i === 1 ? 64 : 106})`}>
+          <circle r={i === 0 ? 26 : 18} fill="#fff" stroke="#dff5ec" strokeWidth="6" />
+          <circle r={i === 0 ? 26 : 18} fill="none" stroke={GREEN} strokeWidth="6" />
+          <path d={i === 0 ? "M-9 0l6 6 12-12" : "M-6 0l4 4 8-8"} stroke={GREEN} strokeWidth={i === 0 ? 4.5 : 3.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+      ))}
+      <Spark x={226} y={24} />
+    </>
+  ),
+};
+Object.assign(POINT_SCENES, CASE_SCENES);
+
+/** 支援事例の中身（お客さま・見出し）から、合う絵を選ぶ */
+export function caseArtName(text: string, i = 0) {
+  if (/点検|SEO|Lighthouse|コラム/.test(text)) return "case-score";
+  if (/サーバー|サイトを移行|公式サイト|Cloudflare Pagesへ/.test(text)) return "case-site";
+  if (/シフト|勤怠|給与/.test(text)) return "case-shift";
+  if (/画面|管理する/.test(text)) return "case-dashboard";
+  if (/入力ルール|記帳/.test(text)) return "rules";
+  if (/freee|会計/.test(text)) return "cloud";
+  return ["refresh", "chart", "link", "layout"][i % 4];
+}
+
 export function PointArt({ name, tone = "sky" }: { name?: string; tone?: "sky" | "warm" }) {
   const scene = POINT_SCENES[name || ""];
   if (!scene) return <SpotIcon name={name} tone={tone} size={126} />;
