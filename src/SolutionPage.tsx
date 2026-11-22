@@ -4,7 +4,7 @@ import { ContactBand, DiagnoseLink, GoLink, Icon, LineButton, Lines, NotFound, o
 import { CHAT_MARK } from "./chat/ChatLauncher";
 import { HeroVideo, ServiceArt } from "./illustrations";
 import { LpIcon } from "./lpIcons";
-import { HeroArt, MoodFace, PointArt, SpotIcon, WorryArt } from "./lpArt";
+import { HeroArt, MoodFace, PointArt, SpotIcon, WorryArt, caseArtName } from "./lpArt";
 
 /* ───────────────────────── サービス別ランディングページ ─────────────────────────
  * content/solutions/*.json（CMS「サービス別ページ」）の内容を描画する。
@@ -427,8 +427,6 @@ function SchemeSection({ sol, L }: { sol: Solution; L: L10n }) {
 
 /* ───────────────────────── 5. 支援事例（社名を伏せた事例） ───────────────────────── */
 
-const CASE_ICONS = ["refresh", "chart", "layout", "link"];
-
 function Cases({ sol, L }: { sol: Solution; L: L10n }) {
   const items = (sol.cases ?? []).filter((c) => c.client && c.title);
   if (!items.length) return null;
@@ -439,7 +437,7 @@ function Cases({ sol, L }: { sol: Solution; L: L10n }) {
         <ul className={`lpx-case-grid is-${Math.min(items.length, 3)}`}>
           {items.map((c, i) => (
             <li key={c.client + c.title} className="lpx-case" data-reveal style={{ ["--d" as string]: `${(i * 0.1).toFixed(2)}s` }}>
-              <div className="lpx-point-art lpx-case-art"><PointArt name={CASE_ICONS[i % CASE_ICONS.length]} /></div>
+              <div className="lpx-point-art lpx-case-art"><PointArt name={caseArtName(c.client + " " + c.title, i)} /></div>
               <p className="lpx-case-client"><span>CASE {String(i + 1).padStart(2, "0")}</span>{c.client}</p>
               <h3>{c.title}</h3>
               <p className="lpx-case-text">{c.text}</p>
