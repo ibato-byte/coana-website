@@ -38,49 +38,19 @@ const seq = async (name, p, act, state) => {
     }
     // 業務の一覧（details）
     await p.goto(BASE + '/services/backoffice-dx', { waitUntil: 'networkidle' });
-    const sum = '.lp-scope summary';
+    const sum = '.lpx-scope summary';
     await p.locator(sum).scrollIntoViewIfNeeded();
-    const sstate = async () => ({ open: await visible(p, '.lp-scope-grid'), label: await p.textContent('.lp-scope-open') });
+    const sstate = async () => ({ open: await visible(p, '.lpx-scope-grid'), label: await p.textContent('.lpx-scope-open') });
     await seq(`${d.tag} 業務の一覧 ${touch ? 'タップ' : 'クリック'}`, p, () => press(sum), sstate);
     await press(sum); await p.waitForTimeout(400);
     await p.focus(sum);
     await seq(`${d.tag} 業務の一覧 Enter`, p, () => p.keyboard.press('Enter'), sstate);
     await p.keyboard.press('Enter'); await p.waitForTimeout(400);
     await seq(`${d.tag} 業務の一覧 Space`, p, () => p.keyboard.press('Space'), sstate);
-    const labels = await p.evaluate(() => document.querySelector('.lp-scope-open').textContent); ok(`${d.tag} 業務の一覧：開いているときは「閉じる」`, /閉じる/.test(labels), labels);
+    const labels = await p.evaluate(() => document.querySelector('.lpx-scope-open').textContent); ok(`${d.tag} 業務の一覧：開いているときは「閉じる」`, /閉じる/.test(labels), labels);
     await p.keyboard.press('Space'); await p.waitForTimeout(400);
-    const closedLabel = await p.textContent('.lp-scope-open'); ok(`${d.tag} 業務の一覧：閉じているときは件数つき`, /業務の一覧を見る（\d+件）/.test(closedLabel), closedLabel);
-    // HOW IT WORKS の工程の説明（経理代行）
-    await p.goto(BASE + '/services/bookkeeping', { waitUntil: 'networkidle' });
-    await p.locator('.lanes').scrollIntoViewIfNeeded(); await p.waitForTimeout(4500);
-    const item = '.lanes-item:nth-child(2)'; const det = item + ' .lanes-detail';
-    if (!touch) {
-      await p.hover(item + ' .lanes-card'); await p.waitForTimeout(400);
-      const a = await visible(p, det);
-      await p.mouse.move(5, 5); await p.waitForTimeout(400);
-      const b2 = await visible(p, det);
-      await p.click(item + ' .lanes-card'); await p.mouse.move(5, 5); await p.waitForTimeout(400);
-      const c = await visible(p, det);
-      await p.hover(item + ' .lanes-card'); await p.waitForTimeout(400);
-      const d2 = await visible(p, det);
-      ok('PC 工程の説明：カーソルで出る→外すと消える→クリック後も外せば消える→もう一度出る', a && !b2 && !c && d2, JSON.stringify([a, b2, c, d2]));
-      await p.mouse.move(5, 5); await p.focus(item + ' .lanes-card'); await p.keyboard.press('Shift+Tab'); await p.keyboard.press('Tab'); await p.waitForTimeout(400);
-      const f = await visible(p, det); await p.keyboard.press('Escape'); await p.waitForTimeout(400);
-      const g = await visible(p, det);
-      ok('PC 工程の説明：キーボードのフォーカスで出る・Esc で消える', f && !g, JSON.stringify([f, g]));
-      ok('PC 工程の説明：＋の印・開閉ボタンなし', await p.evaluate(() => !document.querySelector('.lanes-more') && !document.querySelector('.lanes-card[aria-expanded]')));
-    } else {
-      const btn = item + ' button.lanes-card';
-      const lstate = async () => ({ open: await visible(p, det), aria: await p.getAttribute(btn, 'aria-expanded'), label: await p.textContent(item + ' .lanes-more') });
-      await seq(`${d.tag} 工程の説明 タップ`, p, () => p.tap(btn), lstate);
-      await p.tap(btn); await p.waitForTimeout(300);
-      await p.focus(btn);
-      await seq(`${d.tag} 工程の説明 Enter`, p, () => p.keyboard.press('Enter'), lstate);
-      await p.keyboard.press('Enter'); await p.waitForTimeout(300);
-      await seq(`${d.tag} 工程の説明 Space`, p, () => p.keyboard.press('Space'), lstate);
-      const lbl = await p.evaluate((s) => [...document.querySelectorAll(s)].map((e) => e.textContent), '.lanes-more');
-      ok(`${d.tag} 工程の説明：文字で「詳しく見る／閉じる」`, lbl.length > 0 && lbl.every((t) => /詳しく見る|閉じる/.test(t)), JSON.stringify(lbl.slice(0, 3)));
-    }
+    const closedLabel = await p.textContent('.lpx-scope-open'); ok(`${d.tag} 業務の一覧：閉じているときは件数つき`, /業務の一覧を見る（\d+件）/.test(closedLabel), closedLabel);
+    // （工程の説明の開閉は、2026-11-22 の LP の作り直しでなくした。図は最初から全部読める）
     // メニュー（スマホ）
     if (d.tag === 'スマホ') {
       await p.goto(BASE + '/', { waitUntil: 'networkidle' });

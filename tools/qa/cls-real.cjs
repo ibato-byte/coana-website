@@ -7,7 +7,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await p.addInitScript(() => { window.__cls = 0; window.__all = 0; new PerformanceObserver((l) => { for (const e of l.getEntries()) { window.__all += e.value; if (!e.hadRecentInput) window.__cls += e.value; } }).observe({ type: 'layout-shift', buffered: true }); });
     await p.goto('http://localhost:4173' + u, { waitUntil: 'networkidle' });
     // 1. ゆっくりスクロールで FLOW まで（指で読み進める操作の代わりにマウスホイール）
-    const target = await p.evaluate(() => document.querySelector('.flowx').getBoundingClientRect().top + scrollY - 200);
+    const target = await p.evaluate(() => document.querySelector('.lpx-flow-list').getBoundingClientRect().top + scrollY - 200);
     let y = 0; while (y < target) { await p.mouse.wheel(0, 120); y += 120; await p.waitForTimeout(60); }
     // 2. 見ている間（40秒、操作なし）
     await p.waitForTimeout(40000);
