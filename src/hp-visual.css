@@ -77,3 +77,37 @@ a.hv-svc:hover .hv-svc-more svg { transform: translateX(4px); }
   a.hv-svc, .hv-svc-more svg { transition: none; }
   a.hv-svc:hover { transform: none; }
 }
+
+/* ───────── タブレット幅の並び・小さな文字・押す場所（2026-11-22 レスポンシブの総点検）───────── */
+/* 01 できること：880px 以上は4列（1100px 以下で2列にすると、カードが大きく間延びしていた） */
+@media (min-width: 880px) and (max-width: 1100px) {
+  .hv-svc-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .hv-svc-art { padding: 6px 14px 0; }
+  .hv-svc strong { padding: 0 14px; font-size: 15.5px; }
+  .hv-svc-text { padding: 0 14px; font-size: 14px; }
+  .hv-svc-verb { margin-left: 12px; }
+  .hv-svc-tag { margin-left: 14px; }
+  .hv-svc-more { padding: 12px 14px 0; }
+}
+@media (min-width: 700px) and (max-width: 879px) {
+  .hv-svc-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .hv-svc-art { padding: 6px 12px 0; }
+}
+/* 04 支援スタイル：1000px 以上は4列、600px 以上は2列 */
+@media (min-width: 1000px) and (max-width: 1100px) {
+  .hv-style-grid.lpx-point-grid.is-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .hv-style-grid .lpx-point { padding: 10px 10px 22px; }
+  .hv-style-grid .lpx-point h3, .hv-style-grid .lpx-point-text, .hv-style-grid .lpx-point-no { padding: 0 6px; }
+}
+@media (min-width: 600px) and (max-width: 999px) {
+  .hv-style-grid.lpx-point-grid, .hv-style-grid.lpx-point-grid.is-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; gap: 14px; }
+}
+/* フッターの小さな文字（11px）を 12px に。リンクは指で押しやすい高さに */
+.footer-links-title { font-size: 12px; }
+.footer-bottom small { font-size: 12px; }
+@media (hover: none), (max-width: 980px) {
+  .footer-links a:where(.go-link) { display: flex; align-items: center; min-height: 38px; padding-top: 0; padding-bottom: 0; }
+  .footer-privacy { display: inline-flex; align-items: center; min-height: 38px; }
+  .footer-mail { min-height: 38px; }
+  .sky-crumbs a { display: inline-flex; align-items: center; min-height: 36px; }
+}

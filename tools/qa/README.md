@@ -27,6 +27,8 @@ npx wrangler pages dev dist --port 8789                             # AI なし�
 | `dove-overlap.cjs` | 鳩と荷物が文字に重ならないか（HOW IT WORKS と FLOW、全LP × 1280・390・768。止まっている間も飛んでいる間も 100ms ごと）。`DEBUG=1 ONLY=…` で詳細 |
 | `dove-perf.cjs` | CPU 1x/4x/6x での長いタスク・フレーム間隔・メインスレッド使用率。`BASELINE=1` で動きなしの比較、`RATES=6` で倍率を指定 |
 | `lp-readable.cjs` | **LP とホームページの読みやすさ**（全 LP＋トップ・サービス一覧・会社概要・トピックス・お問い合わせ × 10の幅）：12px 未満の文字、横スクロール・はみ出し（開閉をすべて開いた状態・導入前の表示でも）、LP のヒーローの重なり・注記と背景の英字の重なり、紺の地の文字色、見出しの最後の行が1文字、関連するコラムが4本以上 |
+| `responsive.cjs` | **レスポンシブの総点検**（全ページ × 37 の画面サイズ：スマホ縦横・折りたたみ・タブレット・区切りの前後・低い画面・大画面）。はみ出し・文字の重なり・枠で切れる文字・12px 未満・細長い文字の列・見出しの1文字残り・ヘッダーに潜る・画像のゆがみ（NG）、押す場所の小ささ・1行の長さ（注意。`SHOW=warn`）。`ONLY=` `VP=` で絞り込み |
+| `fonts.cjs` | 検査を**本番と同じ書体**で行うための部品（作業環境は Google Fonts に届かない）。`mkdir -p /tmp/qa-fonts && cd /tmp/qa-fonts && npm init -y && npm i @fontsource/noto-sans-jp @fontsource/outfit @fontsource/ibm-plex-mono` のあと `FONTSOURCE_DIR=/tmp/qa-fonts/node_modules/@fontsource` を付けて実行（responsive.cjs が対応） |
 | `toggles.cjs` | 全開閉UIの「開く→閉じる→開く」（クリック・タップ・Enter・Space、aria-expanded） |
 | `entry.cjs` `entry-pages.cjs` | 入り方（再読み込み・ロゴ・メニュー・戻る/進む・リンク）を変えても演出が同じか |
 | `features.cjs` | 今回つくった演出・パーツの個別確認（鳩、回転ワード、OUR STYLE など） |

@@ -490,3 +490,41 @@ a.lpx-other:hover { border-color: var(--x-sky); box-shadow: var(--x-shadow); tra
 @media (prefers-reduced-motion: reduce) {
   .lpx .art *, .lpx-faq-a, .lpx-faq-toggle .v, a.lpx-other, .lpx-column-thumb img { animation: none !important; transition: none !important; }
 }
+
+/* ───────── タブレット幅の並び（2026-11-22 レスポンシブの総点検）─────────
+ * 700〜980px で1列にすると、カードが大きく間延びしてページが長くなる。入る幅では横に並べる。 */
+@media (min-width: 700px) and (max-width: 980px) {
+  .lpx-point-grid, .lpx-point-grid.is-2 { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: none; gap: 14px; }
+  .lpx-point-grid.is-2, .lpx-point-grid.is-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lpx-point { padding: 10px 10px 20px; }
+  .lpx-point-art { --art-h: 124px; margin-bottom: 14px; }
+  .lpx-point h3 { font-size: 17.5px; }
+  .lpx-point h3, .lpx-point-text, .lpx-point-no { padding: 0 8px; }
+  .lpx-point-text { font-size: 14.5px; line-height: 1.75; }
+  .lpx-case-grid, .lpx-case-grid.is-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; gap: 16px; }
+  .lpx-case-grid.is-3 > :last-child { grid-column: 1 / -1; justify-self: center; width: calc(50% - 8px); }
+}
+@media (min-width: 840px) and (max-width: 980px) {
+  .lpx-plan-grid, .lpx-plan-grid.is-2 { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: none; gap: 12px; }
+  .lpx-plan-grid.is-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
+  .lpx-plan { padding: 32px 16px 18px; }
+  .lpx-plan li { font-size: 14.5px; }
+  .lpx-plan-for { padding: 10px 12px; }
+}
+
+/* スマホ：業務の一覧の見出しは、題名と「一覧を見る」を縦に（幅 360px 前後で題名が1文字ずつに折れていた） */
+@media (max-width: 760px) {
+  .lpx-scope summary { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: center; }
+  .lpx-scope-open { grid-column: 2; margin-left: 0; justify-self: start; white-space: normal; }
+  /* 注記は左寄せ（アイコンだけが左に離れて見えていた） */
+  .lpx-note { justify-content: flex-start; text-align: left; }
+  .lpx-note-legal { text-align: left; }
+}
+@media (max-width: 340px) {
+  .lpx-lang-en .lpx-hero-title { font-size: 26px; }
+}
+
+/* 押す場所の大きさ（指で押す画面）：小さなリンクは、見た目はそのまま、押せる範囲を広げる */
+.lpx-more-all { min-height: 40px; }
+.lpx-crumbs a { display: inline-flex; align-items: center; min-height: 36px; }
+.lpx-crumbs { margin-bottom: 12px; }
