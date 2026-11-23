@@ -75,7 +75,7 @@
 
 | 作成日 | テーマ# | ファイル | PR | 結果 |
 | --- | --- | --- | --- | --- |
-| 2026-11-23 | 23 | content/topics/20261123-reduce-manual-transfer.md | （この PR） | 公開待ち（チェック合格で自動公開）。記事からの入口がなかった自動化・システム開発の LP へ。見つけ方は 20261109（棚卸し）に任せ、頼む前に決めること（元・人が確かめる所・止まったときの連絡）と1件から始める進め方に絞った |
+| 2026-11-23 | 23 | content/topics/20261123-reduce-manual-transfer.md | https://github.com/ibato-byte/coana-website/pull/139 | 公開待ち（チェック合格で自動公開）。記事からの入口がなかった自動化・システム開発の LP へ。見つけ方は 20261109（棚卸し）に任せ、頼む前に決めること（元・人が確かめる所・止まったときの連絡）と1件から始める進め方に絞った |
 | 2026-11-16 | 15 | content/topics/20261116-bookkeeping-inhouse-or-outsource.md | https://github.com/ibato-byte/coana-website/pull/126 | 公開（2026-11-16、自動公開）。依頼を検討する前段階の「自社か外注か」で迷う人の入口。20261222（採用か外注か）・20260804（任せる前の整理）・20261110（費用）と重ねず、任せどきのサイン、1か月の記録での確かめ方、3つの段階の選び方に絞った |
 | 2026-11-09 | 24 | content/topics/20261109-it-inventory.md | https://github.com/ibato-byte/coana-website/pull/123 | 公開（2026-11-09、自動公開）。経理代行のテーマが3本続くため、新しい打ち出し（IT化）で記事からの入口がなかった業務改善・IT化支援のテーマを #15 より先に |
 | 2026-11-02 | 14 | content/topics/20261102-bookkeeping-outsourcing-flow.md | https://github.com/ibato-byte/coana-website/pull/106 | 公開 |
