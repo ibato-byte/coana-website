@@ -20,6 +20,7 @@ permissions:
   pull-requests: write
   issues: write
   checks: read
+  actions: read   # Hub への記録で、新しい実行に引き継がれて止まった実行を失敗と数えないため（Automation Hub 依頼 #251）
 
 concurrency:
   group: column-approval-${{ github.event.pull_request.number || inputs.pr }}
@@ -58,6 +59,7 @@ jobs:
         if: always()
         env:
           HUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           JOB_STATUS: ${{ job.status }}
           PAUSED: ${{ steps.hub.outputs.paused }}
           PR: ${{ github.event.pull_request.number || inputs.pr }}

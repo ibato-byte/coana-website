@@ -1,9 +1,12 @@
 # 引き継ぎメモ（HANDOFF）
 
-最終更新：2026-11-22（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
+最終更新：2026-11-24（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
 
 
+## 2026-11-24 コラムの公開確認の「止められた実行」を失敗と数えない（Automation Hub 依頼 #251）— PR `claude/busy-ramanujan-4aboq9`
+
+- 「コラムの公開確認」（`column-approval.yml`）に `actions: read` と記録の段の `GH_TOKEN` を足した。新しい実行に引き継がれて止まった古い実行を、Hub が「失敗」と数えていた（「コラムの自動公開」は 11/16 に同じ直しを済ませていた）。残りなし。
 
 ## 2026-11-22 「注意」まで解消・事例を絵つきに・トップ 01 を元に戻す（オーナー依頼）— PR `claude/responsive-warnings`
 
