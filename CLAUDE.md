@@ -12,6 +12,7 @@ COANA TOKYO合同会社のWebサイト（https://coana.co.jp）。オーナー�
 - **CMS の文言は、入力されたとおりに表示する**（2026-11-03 オーナー指示）。コードの側で句読点（、。）などの文字を足さない（トップのヒーローで「、」「。」を足していて、CMS で消しても表示されていた）。`npm run build` の最初に `tools/qa/cms-verbatim.mjs` が検査し、見つかるとビルド（Cloudflare Pages のチェック）が不合格になる。CMS で使う変数名を増やしたときは、その検査の `CMS_VARS` にも足す。
 - ビルド時（`vite.config.ts`）に各ページの HTML・タイトル・説明文・構造化データ・クローラー向けの本文（`.seo-fallback`）、sitemap.xml・feed.xml・llms.txt・`chat-knowledge.json` を書き出す（プリレンダー相当）。
 - 本番は Cloudflare Pages（main への push で自動デプロイ。PR ごとにプレビュー `*.coana-website.pages.dev`）。旧URLの転送は `public/_redirects`、ヘッダーは `public/_headers`。
+- **お問い合わせフォームは2か所へ送る**（2026-11-26 オーナー依頼「LP と連携して、問い合わせを自動で CRM に登録」）：①Google Apps Script（`CONTACT_ENDPOINT`。info@ への通知とスプレッドシートの記録。これまでどおり）②このサイトの受け口 `functions/api/lead.ts`（D1「coana-inbound」、バインディング名 `LEAD_DB`。本番だけ）。顧客管理（Automation Hub の CRM）がこの表を読んで見込み客として登録する。**このサイトには顧客の台帳（coana-crm）を結び付けない**（公開のリポジトリから自動で公開されるため）。受け口が失敗してもフォームの送信は止めない。表の形は CRM の `src/crm/inbound.mjs` と同じ文にそろえる。
 - サポートチャットの AI は Pages Functions（`functions/api/chat.ts`）＋ Workers AI（バインディング名 `AI`、無料枠内。任意で KV `CHAT_KV`）。AI が使えないときはサイト内検索の代替応答。
 - 予約投稿：`.github/workflows/scheduled-publish.yml`（毎朝6時）。
 - SEO の自動ブラッシュアップ：毎日の監視（GitHub Actions `.github/workflows/seo-monitor.yml`、本番に異常があれば Issue）＋毎週月曜の週次タスク（Claude のスケジュールタスク）。**SEO の作業は必ず [docs/SEO_PLAYBOOK.md](docs/SEO_PLAYBOOK.md) に従う**（技術面はテスト合格で自動マージ、文章は「要承認」の PR でオーナーがマージ）。ツールは `tools/seo/`、レポートは `docs/seo-reports/`。

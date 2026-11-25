@@ -4,6 +4,13 @@
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
 
 
+
+## 2026-11-26 お問い合わせを顧客管理（CRM）へ自動で登録（オーナー依頼）— PR `claude/lp-to-crm`
+
+- フォームの送信と同時に `/api/lead`（`functions/api/lead.ts`）へも送り、D1「coana-inbound」（`LEAD_DB`、本番のバインディングは設定済み）に1行入れる。CRM が開かれたとき（と5分ごとの取り込み）に見込み客として登録する。メールの通知（Apps Script）はそのまま。
+- 受け口の守り：このサイトからの送信だけ（Origin）、JSON だけ、20KB まで、人には見えない欄に値があれば捨てる、同じ人の同じ内容は1件に、同じ接続元から1時間に5件まで。プレビュー（バインディングなし）では何もせず成功を返す。
+- 問い合わせの直前に見ていたページ（LP など）を `sessionStorage` の `coana:from` に覚えて、CRM に「送信したページ」として残す。
+
 ## 2026-11-24 コラムの公開確認の「止められた実行」を失敗と数えない（Automation Hub 依頼 #251）— PR `claude/busy-ramanujan-4aboq9`
 
 - 「コラムの公開確認」（`column-approval.yml`）に `actions: read` と記録の段の `GH_TOKEN` を足した。新しい実行に引き継がれて止まった古い実行を、Hub が「失敗」と数えていた（「コラムの自動公開」は 11/16 に同じ直しを済ませていた）。残りなし。

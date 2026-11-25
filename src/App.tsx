@@ -950,6 +950,22 @@ function takePresetInquiryType() {
   return INQUIRY_TYPES.includes(value) ? value : "";
 }
 
+/** 顧客管理（CRM）の受け口へ送る。どこから来たか（直前に見ていたこのサイトのページ）も添える */
+function sendToCrm(data: FormData, honeypot: string) {
+  let page = "";
+  try {
+    page = sessionStorage.getItem("coana:from") || "";
+    const ref = document.referrer ? new URL(document.referrer) : null;
+    if (!page && ref && ref.origin === location.origin && ref.pathname !== location.pathname) page = ref.pathname;
+  } catch { /* 読めなければ空のまま */ }
+  const payload = {
+    company: data.company, name: data.name, email: data.email, type: data.type, message: data.message,
+    meeting: data.meeting ? ["希望する", ...[data.date1, data.date2, data.date3].map((d) => d.trim()).filter(Boolean)].join(" / ") : "",
+    page, consent: data.consent, website: honeypot,
+  };
+  fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload), keepalive: true }).catch(() => { /* フォームの送信には影響させない */ });
+}
+
 function Contact() {
   // サービス別ページ・サポートチャットからの引き継ぎ（相談種別・本文）。お客さまが確認・編集してから送信する
   const [data, setData] = useState<FormData>(() => ({ ...emptyForm, type: takePresetInquiryType(), message: takeInquiryMessage() }));
@@ -977,6 +993,8 @@ function Contact() {
         preferred_dates: [data.date1, data.date2, data.date3].map((d) => d.trim()).filter(Boolean).join(" / "),
         consent: data.consent ? "同意する" : "",
       });
+      // 顧客管理（CRM）への連携：同じ内容を、このサイトの受け口（functions/api/lead.ts）にも送る。失敗してもフォームの送信は止めない
+      sendToCrm(data, honeypot);
       const res = await fetch(CONTACT_ENDPOINT, { method: "POST", body, signal: controller.signal }).finally(() => window.clearTimeout(timer));
       const result = await res.json().catch(() => null);
       if (!res.ok || !result || !result.ok) throw new Error(String(res.status));
@@ -1242,6 +1260,8 @@ export default function App() {
   const navigate: Nav = (target, hash, slug) => {
     const base = target === "article" ? `/topics/${slug ?? ""}` : target === "solution" ? `/services/${slug ?? ""}` : target === "notfound" ? "/" : paths[target];
     const url = `${base}${hash ? `#${hash}` : ""}`;
+    // 問い合わせの直前に見ていたページ（顧客管理に「どのページから来たか」を残す）
+    try { if (target === "contact" && location.pathname !== paths.contact) sessionStorage.setItem("coana:from", location.pathname); } catch { /* 覚えられなくても動く */ }
     window.history.pushState({}, "", url);
     setPage(target);
     setRouteKey((k) => k + 1);
