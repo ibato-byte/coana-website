@@ -310,6 +310,32 @@ function Web() {
   );
 }
 
+/* ── 生成AI活用：質問 → AI → 下書き → 人が確認 ── */
+function AiSupport() {
+  return (
+    <Frame>
+      <Card x={44} y={70} w={130} h={64} className="art-float" style={d(0)}>
+        <rect x="58" y="84" width="76" height="10" rx="5" fill={DEEP} />
+        <rect x="58" y="102" width="102" height="9" rx="4.5" fill={LINE} />
+        <rect x="58" y="118" width="64" height="9" rx="4.5" fill={LINE} />
+      </Card>
+      <path d="M176 102h34m-8-8 8 8-8 8" stroke={DEEP} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <g className="art-float" style={d(.4)}>
+        <circle cx="262" cy="102" r="40" fill={NAVY} />
+        <path d="M262 76l6 18 18 6-18 6-6 18-6-18-18-6 18-6Z" fill={YELLOW} />
+      </g>
+      <Card x={196} y={190} w={170} h={86} className="art-float" style={d(.8)}>
+        <rect x="212" y="206" width="110" height="10" rx="5" fill={NAVY} />
+        <rect x="212" y="226" width="138" height="9" rx="4.5" fill={LINE} />
+        <rect x="212" y="242" width="96" height="9" rx="4.5" fill={LINE} />
+        <circle cx="338" cy="262" r="12" fill="#1fae7a" />
+        <path d="M332 262l5 5 8-9" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </Card>
+      <path d="M262 144c0 20-10 30-24 44" stroke={DEEP} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="2 8" />
+    </Frame>
+  );
+}
+
 const ARTS: Record<string, () => ReactNode> = {
   bookkeeping: Bookkeeping,
   "cloud-accounting": CloudAccounting,
@@ -318,6 +344,7 @@ const ARTS: Record<string, () => ReactNode> = {
   "startup-support-en": Startup,
   "it-consulting": ItConsulting,
   automation: Automation,
+  "ai-support": AiSupport,
   "sns-management": Sns,
   "web-production": Web,
 };

@@ -61,6 +61,7 @@ const LABELS = {
     pricing: "プランと料金の目安",
     plans: "ご利用プランの例",
     plansNote: "料金は業務範囲に応じて個別にお見積もりします。一部の業務だけのご相談も歓迎です。",
+    examplesTitle: "よくあるご依頼と費用の例",
     priceNote: "金額はすべて税別の目安です。正式な金額は、業務の量と範囲を伺ってお見積もりします（ご相談・お見積もりは無料）。",
     bestFor: "こんな方に",
     scope: "ご依頼いただける業務の一覧",
@@ -117,6 +118,7 @@ const LABELS = {
     pricing: "Plans & pricing",
     plans: "Example plans",
     plansNote: "Pricing is quoted individually based on scope. Small or partial engagements are welcome.",
+    examplesTitle: "Common requests and typical costs",
     priceNote: "All prices are estimates, excluding tax. We send a formal quote after a free consultation.",
     bestFor: "Best for",
     scope: "Examples of what you can ask us",
@@ -521,6 +523,20 @@ function Plans({ sol, L }: { sol: Solution; L: L10n }) {
               ))}
             </div>
             <p className="lpx-note lpx-plan-note"><LpIcon name="yen" size={16} /><span>{planNote}</span></p>
+            {(sol.plans?.examples ?? []).length > 0 && (
+              <div className="lpx-examples" data-reveal>
+                <h3><LpIcon name="calendar" size={18} />{L.examplesTitle}</h3>
+                <ul>
+                  {(sol.plans?.examples ?? []).map((ex) => (
+                    <li key={ex.name}>
+                      <span className="lpx-ex-name">{ex.name}</span>
+                      <span className="lpx-ex-plan">{ex.detail}</span>
+                      <span className="lpx-ex-price">{ex.price}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </>
         )}
 

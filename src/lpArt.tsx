@@ -125,6 +125,18 @@ const SCREENS: Record<string, ReactNode> = {
       ))}
     </>
   ),
+  /* 質問を入れると、下書きが返ってくる（人が確認して使う） */
+  "ai-support": (
+    <>
+      <rect x="18" y="16" width="150" height="34" rx="12" fill={PALE} />
+      {bar(30, 28, 100, DEEP, 8)}{bar(30, 40, 60, SKY, 6)}
+      <rect x="114" y="62" width="150" height="62" rx="12" fill="#fff" stroke={LINE} strokeWidth="2" />
+      {bar(126, 74, 110, NAVY, 8)}{bar(126, 90, 126, LINE, 7)}{bar(126, 104, 84, LINE, 7)}
+      <path d="M232 22l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill={YELLOW} />
+      <circle cx="40" cy="146" r="14" fill={GREEN} /><path d="M33 146l5 5 9-10" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {bar(62, 141, 96, LINE, 9)}
+    </>
+  ),
   /* ツール同士がつながり、書類が自動でできあがる */
   automation: (
     <>
@@ -268,6 +280,7 @@ function Phone({ x, y }: { x: number; y: number }) {
 const TAGS: Record<string, [string, string, string][]> = {
   "it-consulting": [["search", "業務の棚卸し", DEEP], ["tools", "ツール導入", YELLOW], ["rules", "手順書", DEEP]],
   automation: [["link", "ツール連携", DEEP], ["mail", "自動で通知", YELLOW], ["invoice", "書類を作成", DEEP]],
+  "ai-support": [["sparkle", "下書きを作る", DEEP], ["rules", "社内ルール", YELLOW], ["users", "説明会", DEEP]],
   "cloud-accounting": [["bank", "銀行・カード", DEEP], ["cloud", "自動で取込", YELLOW], ["chart", "月次の数字", DEEP]],
   "web-production": [["layout", "構成・原稿", DEEP], ["camera", "デザイン", YELLOW], ["mail", "問い合わせ", DEEP]],
   "startup-support": [["doc", "事業計画", DEEP], ["rocket", "開業", YELLOW], ["handshake", "専門家", DEEP]],

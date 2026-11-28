@@ -1,6 +1,6 @@
 {
   "slug": "startup-support-en",
-  "order": 9,
+  "order": 10,
   "lang": "en",
   "hidden": true,
   "nav_label": "Startup Support (English)",
@@ -234,7 +234,24 @@
         "price": "From ¥20,000 / month"
       }
     ],
-    "note": "All prices are estimates, excluding tax. We send a formal quote after a free consultation."
+    "note": "All prices are estimates, excluding tax. We send a formal quote after a free consultation.",
+    "examples": [
+      {
+        "name": "Turn your idea into a plan",
+        "detail": "Plan & Prepare",
+        "price": "From ¥60,000"
+      },
+      {
+        "name": "Be ready from day one",
+        "detail": "Launch Package",
+        "price": "From ¥250,000"
+      },
+      {
+        "name": "Keep a contact after launch",
+        "detail": "Launch Package + Ongoing Support",
+        "price": "From ¥250,000 + ¥20,000 / month"
+      }
+    ]
   },
   "scenarios": {
     "title": "Example situations",
