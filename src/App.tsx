@@ -1,8 +1,9 @@
 import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
+import { about, articleService, articles, CATEGORIES, home, pagesContent, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
 import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
 import PricingPage from "./PricingPage";
+import { LpIcon } from "./lpIcons";
 import { MiniIcon, ServiceArt } from "./illustrations";
 import { PointArt, SpotIcon, caseArtName } from "./lpArt";
 import { LogoMark } from "./logo";
@@ -683,14 +684,69 @@ function TopicsHome({ navigate }: { navigate: Nav }) {
   );
 }
 
+/** トップの「料金の目安」と「安心してご相談いただくために」（2026-11-28 追加：料金と安心材料を、相談の前に見つけやすくする）。金額は各LPのプランから取る */
+const HOME_PRICE_PICKS: [string, string][] = [["it-consulting", "search"], ["automation", "link"], ["ai-support", "sparkle"], ["bookkeeping", "invoice"]];
+function HomePricing({ navigate }: { navigate: Nav }) {
+  const hp = pagesContent.home_pricing;
+  const cards = HOME_PRICE_PICKS.map(([slug, icon]) => {
+    const sol = solutions.find((x) => x.slug === slug);
+    const plan = (sol?.plans?.items ?? []).find((i) => i.price);
+    return sol && plan ? { slug, icon, name: sol.nav_label || sol.title, plan: plan.name, price: String(plan.price).replace(/（[^）]*）/g, "") } : null;
+  }).filter(Boolean) as { slug: string; icon: string; name: string; plan: string; price: string }[];
+  if (!cards.length) return null;
+  return (
+    <section className="section hv-price" id="price">
+      <div className="container">
+        <h2 className="hv-price-title">{hp.title}</h2>
+        <p className="hv-price-lead">{hp.lead}</p>
+        <ul className="hv-price-grid">
+          {cards.map((c) => (
+            <li key={c.slug} data-reveal>
+              <GoLink go={navigate} args={["solution", undefined, c.slug]}>
+                <span className="hv-price-icon"><LpIcon name={c.icon} size={24} /></span>
+                <span className="hv-price-name">{c.name}</span>
+                <span className="hv-price-plan">{c.plan}</span>
+                <strong className="hv-price-num">{c.price}</strong>
+              </GoLink>
+            </li>
+          ))}
+        </ul>
+        <p className="hv-price-more"><GoLink className="text-link" go={navigate} args={["pricing"]}>{hp.button}<Icon name="arrow" size={18} /></GoLink></p>
+      </div>
+    </section>
+  );
+}
+
+function TrustBand() {
+  const t = pagesContent.trust;
+  return (
+    <section className="section hv-trust">
+      <div className="container">
+        <h2 className="hv-price-title">{t.title}</h2>
+        <ul className="hv-trust-grid">
+          {t.items.map((it) => (
+            <li key={it.name} data-reveal>
+              <span className="hv-price-icon"><LpIcon name={it.icon} size={24} /></span>
+              <h3>{it.name}</h3>
+              <p>{it.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function Home({ navigate }: { navigate: Nav }) {
   return (
     <main className="home-page">
       <HeroSection navigate={navigate} />
       <ServicesHome navigate={navigate} />
       <CasesSection navigate={navigate} />
+      <HomePricing navigate={navigate} />
       <FinderSection />
       <StyleSection />
+      <TrustBand />
       <ToolBand />
       <TopicsHome navigate={navigate} />
       <FaqSection numbered="06" />
@@ -971,7 +1027,7 @@ function sendToCrm(data: FormData, honeypot: string) {
   fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload), keepalive: true }).catch(() => { /* フォームの送信には影響させない */ });
 }
 
-function Contact() {
+function Contact({ navigate }: { navigate: Nav }) {
   // サービス別ページ・サポートチャットからの引き継ぎ（相談種別・本文）。お客さまが確認・編集してから送信する
   const [data, setData] = useState<FormData>(() => ({ ...emptyForm, type: takePresetInquiryType(), message: takeInquiryMessage() }));
   const [fromChat] = useState(() => data.message !== "");
@@ -1035,8 +1091,18 @@ function Contact() {
         <section className="section status-page">
           <div className="status-icon"><Icon name="check" size={38} /></div>
           <p className="eyebrow">Thank you</p>
-          <h2>お問い合わせを受け付けました</h2>
-          <p>お問い合わせいただき、ありがとうございます。<br />内容を確認のうえ、担当者よりご連絡いたします。</p>
+          <h2>{pagesContent.contact.thanks_title}</h2>
+          <p>{pagesContent.contact.thanks_text.split("\n").map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</p>
+          <div className="contact-next">
+            <h3>{pagesContent.contact.thanks_next_title}</h3>
+            <ol>
+              {pagesContent.contact.steps.map((st) => (
+                <li key={st.name}><span className="contact-next-icon"><LpIcon name={st.icon} size={22} /></span><span><strong>{st.name}</strong>{st.text}</span></li>
+              ))}
+            </ol>
+            <p className="contact-next-note">{pagesContent.contact.thanks_mail_note}</p>
+            <p className="contact-next-links"><GoLink className="text-link" go={navigate} args={["pricing"]}>料金の目安を見る<Icon name="arrow" size={16} /></GoLink><GoLink className="text-link" go={navigate} args={["services"]}>サービスを見る<Icon name="arrow" size={16} /></GoLink></p>
+          </div>
           <button className="button button-outline" onClick={() => { setData(emptyForm); setStep("input"); }}>入力画面へ戻る</button>
         </section>
       </main>
@@ -1097,10 +1163,20 @@ function Contact() {
             <p>まずはチャットで<small>サービスの違いや進め方など、気軽に質問できます。</small></p>
             <button type="button" className="button button-outline button-small" onClick={() => openChat("menu")}>チャットで質問する</button>
           </div>
+          <div className="line-notice contact-steps-notice">
+            <p>{pagesContent.contact.steps_title}</p>
+            <ol className="contact-steps-list">
+              {pagesContent.contact.steps.map((st) => <li key={st.name}><span className="contact-next-icon"><LpIcon name={st.icon} size={20} /></span><span><strong>{st.name}</strong>{st.text}</span></li>)}
+            </ol>
+          </div>
           <p className="form-lang-note">English inquiries are welcome. Please write your message in English and we will reply in English.</p>
         </aside>
         <form className="form-wrap contact-form-card" name="contact" onSubmit={submit} noValidate>
           <FormSteps current={0} />
+          <ul className="contact-assure">
+            {pagesContent.contact.assure.map((t) => <li key={t}><Icon name="check" size={15} />{t}</li>)}
+          </ul>
+          <p className="contact-time">{pagesContent.contact.time_note}{pagesContent.contact.reply_note}</p>
           <p className="form-note"><span>必須</span>の項目は必ずご入力ください。</p>
           <Field label="会社名" optional error={errors.company}>
             <input value={data.company} onChange={(e) => update("company", e.target.value)} placeholder="例）COANA TOKYO合同会社" />
@@ -1119,6 +1195,15 @@ function Contact() {
           </Field>
           <div className="form-honeypot" aria-hidden="true">
             <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} /></label>
+          </div>
+          <div className="contact-topics" role="group" aria-label={pagesContent.contact.topics_label}>
+            <p className="contact-topics-label">{pagesContent.contact.topics_label}</p>
+            <div>
+              {pagesContent.contact.topics.map((t) => {
+                const on = data.message.includes("・" + t);
+                return <button key={t} type="button" className={on ? "contact-chip is-on" : "contact-chip"} aria-pressed={on} onClick={() => update("message", on ? data.message.replace("・" + t + "\n", "").replace("・" + t, "").trim() : (data.message ? data.message.replace(/\s+$/, "") + "\n" : "") + "・" + t + "\n")}>{t}</button>;
+              })}
+            </div>
           </div>
           <Field label="お問い合わせ内容" error={errors.message}>
             {fromChat && <span className="field-hint">チャットの内容を引き継いでいます。必要に応じて編集・削除してください。</span>}
@@ -1226,7 +1311,7 @@ export default function App() {
   const [routeKey, setRouteKey] = useState(0);
   useEffect(() => {
     // 検索結果に表示されるタイトル（ビルド時に各ページの HTML へ書き出すタイトルと揃える）
-    const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", services: "サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行", topics: "トピックス｜業務効率化・クラウド会計のコラム・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜業務の効率化・自動化・経理代行のご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
+    const titles: Record<Page, string> = { home: "", about: "会社概要・代表あいさつ", pricing: "料金｜業務改善・自動化・生成AI活用・経理代行の料金の目安（税別）", services: "サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行", topics: "トピックス｜業務効率化・クラウド会計のコラム・お知らせ", article: "トピックス", solution: "サービス", contact: "お問い合わせ｜業務の効率化・自動化・経理代行のご相談", privacy: "プライバシーポリシー", notfound: "ページが見つかりません" };
     const base = "中小企業の業務効率化・自動化・IT化支援｜経理代行・バックオフィス代行 | COANA TOKYO合同会社（東京・港区）";
     if (page === "article" || page === "solution") return; // 記事・サービス別ページは各ページのタイトルを優先
     document.title = titles[page] ? `${titles[page]} | COANA TOKYO合同会社` : base;
@@ -1278,7 +1363,7 @@ export default function App() {
   else if (page === "topics") content = <Topics navigate={navigate} />;
   else if (page === "article") content = <ArticlePage key={routeKey} navigate={navigate} />;
   else if (page === "solution") content = <SolutionPage key={routeKey} navigate={navigate} />;
-  else if (page === "contact") content = <Contact />;
+  else if (page === "contact") content = <Contact navigate={navigate} />;
   else if (page === "privacy") content = <Privacy />;
   else if (page === "notfound") content = <NotFound navigate={navigate} />;
   else content = <Home navigate={navigate} />;

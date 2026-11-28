@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node tools/qa/cms-verbatim.mjs && vite build",
+    "build": "node tools/qa/cms-verbatim.mjs && vite build && node tools/qa/page-registry.mjs",
     "preview": "vite preview",
     "format": "oxfmt"
   },
