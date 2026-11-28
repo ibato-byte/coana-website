@@ -628,7 +628,7 @@ function coanaPageMeta(): Plugin {
         areaServed: areaServedFor('ja'),
         founder: { '@type': 'Person', name: about.profile_name, jobTitle: about.profile_role },
         foundingDate: '2025-10',
-        knowsAbout: ['業務改善・IT化支援', '業務の自動化・システム開発', 'ツール連携・業務アプリ開発', 'クラウド会計・ITツール導入支援', 'LP・Webサイト制作', '創業支援', '経理代行・経理業務の改善', 'バックオフィス代行・DX支援', 'SNS運用代行', 'ERPの導入', 'グループウェアの導入'],
+        knowsAbout: ['業務改善・IT化支援', '業務の自動化・システム開発', '生成AIの業務活用', 'ツール連携・業務アプリ開発', 'クラウド会計・ITツール導入支援', 'LP・Webサイト制作', '創業支援', '経理代行・経理業務の改善', 'バックオフィス代行・DX支援', 'SNS運用代行', 'ERPの導入', 'グループウェアの導入'],
         knowsLanguage: ['ja', 'en'],
         contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: settings.email, url: SITE + '/contact', availableLanguage: ['Japanese', 'English'], areaServed: 'JP' }],
         hasOfferCatalog: {
@@ -713,6 +713,16 @@ function coanaPageMeta(): Plugin {
           name: group.name,
           itemListElement: (group.items ?? []).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item, provider: { '@id': orgId } } })),
         }))
+        // 料金：プランごとの「◯円〜」を Offer に載せる（2026-11-28 追加。検索・AI回答で料金の目安が引用されやすくなる）。「月◯万円〜」は月額、それ以外は一括。税別
+        const planOffers = lang !== 'ja' ? [] : (sol.plans?.items ?? []).filter((plan) => plan.price).map((plan) => {
+          const text = String(plan.price)
+          const monthly = /月\s*(\d+(?:\.\d+)?)万円/.exec(text)
+          const once = /(\d+(?:\.\d+)?)万円/.exec(text.replace(/月\s*\d+(?:\.\d+)?万円〜?/, ''))
+          const spec = (man: number, unit?: string) => ({ '@type': 'UnitPriceSpecification', minPrice: Math.round(man * 10000), priceCurrency: 'JPY', valueAddedTaxIncluded: false, ...(unit ? { unitCode: 'MON', billingDuration: 1, unitText: '月' } : {}) })
+          const specs = [once ? spec(Number(once[1])) : null, monthly ? spec(Number(monthly[1]), 'month') : null].filter(Boolean)
+          if (!specs.length) return null
+          return { '@type': 'Offer', name: plan.name, itemOffered: { '@type': 'Service', name: plan.name, provider: { '@id': orgId } }, priceSpecification: specs.length === 1 ? specs[0] : specs, priceCurrency: 'JPY', availability: 'https://schema.org/InStock', url: SITE + '/contact' }
+        }).filter(Boolean)
         pages.push({
           path: '/services/' + sol.slug,
           crumb: label,
@@ -720,6 +730,7 @@ function coanaPageMeta(): Plugin {
           alternates,
           title: (sol.seo_title || sol.title) + T.suffix,
           description,
+          // 料金（2026-11-28 追加）：プランごとの「◯円〜」を Offer に載せる（検索・AI回答で料金の目安が引用されやすくなる）。「月◯万円〜」は月額、それ以外は一括。税別
           jsonld: graph(
             crumbs([{ name: T.home, url: SITE + '/' }, { name: T.services, url: SITE + '/services' }, { name: label, url }]),
             {
@@ -735,7 +746,7 @@ function coanaPageMeta(): Plugin {
               areaServed: areaServedFor(lang),
               availableLanguage: lang === 'en' ? ['English', 'Japanese'] : undefined,
               audience: { '@type': 'BusinessAudience', name: lang === 'en' ? 'Founders and small businesses in Japan' : '中小企業・小規模事業者・個人事業主' },
-              offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', description: lang === 'en' ? 'Quoted individually. Consultation is free.' : '支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。' }, availability: 'https://schema.org/InStock', url: SITE + '/contact' },
+              offers: planOffers.length ? planOffers : { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', description: lang === 'en' ? 'Quoted individually. Consultation is free.' : '支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。' }, availability: 'https://schema.org/InStock', url: SITE + '/contact' },
               hasOfferCatalog: catalog.length ? { '@type': 'OfferCatalog', name: sol.scope?.title || T.scope, itemListElement: catalog } : undefined,
             },
             ...(faqList.length ? [{ '@type': 'FAQPage', inLanguage: lang, mainEntity: faqList.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
