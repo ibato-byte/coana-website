@@ -1,9 +1,17 @@
 # 引き継ぎメモ（HANDOFF）
 
-最終更新：2026-11-24（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
+最終更新：2026-11-28（クラウドセッションから）。**作業の区切りごとに更新し、commit & push すること。**
 方針・品質チェックは CLAUDE.md、モーションの決まりは docs/motion-rules.md、チェック項目は docs/final-check.md、スクリプトは tools/qa/。
 
 
+## 2026-11-28 サイト全体のブラッシュアップ（オーナー依頼：問い合わせを増やす）— PR `claude/site-brushup-leads`
+
+- 新サービス LP「生成AI活用支援」（`content/solutions/ai-support.json`、お試し導入10万円〜）。**金額はオーナー未確認の提案**。変えるときは JSON の plans とトップ・料金ページ・チャット知識（`content/chatbot/knowledge.md`）の金額が自動で連動する（料金ページ・トップの料金は各 LP のプランから取る）。
+- 新ページ `/pricing`（料金の目安・費用の計算・よくある組み合わせ・FAQ。コードは `src/PricingPage.tsx`、文言は `content/pages.json`）。ヘッダー・フッターに「料金」。各 LP の料金の下に「よくあるご依頼と費用の例」（`plans.examples`）。
+- トップに「料金の目安」「安心してご相談いただくために」の章。お問い合わせは、安心表示・お困りごとのボタン・送信後の流れ・完了画面の次の案内を追加。返信の日数は約束していない（守れない約束をしない）。
+- SEO：/pricing の meta・FAQ、全サービスページの Offer に最低料金。
+- 再発防止：`tools/qa/page-registry.mjs`（ページの登録漏れ。build の最後）、`hero-layout.mjs` が Playwright を見つけられるように（見つからないときは警告）。
+- 実施記録は docs/site-brushup-2026-11-28.md。未着手：`/cases`・`/faq` の独立ページ（`content/pages.json` に文言は用意済み）、CMS（`public/admin/config.yml`）に pages.json の編集画面を追加。
 
 ## 2026-11-26 お問い合わせを顧客管理（CRM）へ自動で登録（オーナー依頼）— PR `claude/lp-to-crm`
 

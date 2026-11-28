@@ -1,6 +1,6 @@
 // WCAG AA のコントラスト確認：文字の色と、実際に後ろにある背景色（祖先をたどって最初の不透明な背景。グラデーションは最も明るい/暗い端で判定）
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const PAGES = ['/', '/about', '/services', '/topics', '/contact', '/privacy', '/topics/20260804-outsourcing-checklist', ...['backoffice-dx','bookkeeping','cloud-accounting','sales-support','seminar-event','sns-management','startup-support','startup-support-en','web-production'].map((s) => '/services/' + s)];
+const PAGES = ['/', '/about', '/services', '/pricing', '/topics', '/contact', '/privacy', '/topics/20260804-outsourcing-checklist', ...['backoffice-dx','bookkeeping','cloud-accounting','sales-support','seminar-event','sns-management','startup-support','startup-support-en','web-production'].map((s) => '/services/' + s)];
 (async () => { const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
  const all = new Map();
  for (const [w, h] of [[1280, 800], [390, 844]]) { const p = await b.newPage({ viewport: { width: w, height: h }, reducedMotion: 'reduce' });

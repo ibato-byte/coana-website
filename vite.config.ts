@@ -628,7 +628,7 @@ function coanaPageMeta(): Plugin {
         areaServed: areaServedFor('ja'),
         founder: { '@type': 'Person', name: about.profile_name, jobTitle: about.profile_role },
         foundingDate: '2025-10',
-        knowsAbout: ['業務改善・IT化支援', '業務の自動化・システム開発', 'ツール連携・業務アプリ開発', 'クラウド会計・ITツール導入支援', 'LP・Webサイト制作', '創業支援', '経理代行・経理業務の改善', 'バックオフィス代行・DX支援', 'SNS運用代行', 'ERPの導入', 'グループウェアの導入'],
+        knowsAbout: ['業務改善・IT化支援', '業務の自動化・システム開発', '生成AIの業務活用', 'ツール連携・業務アプリ開発', 'クラウド会計・ITツール導入支援', 'LP・Webサイト制作', '創業支援', '経理代行・経理業務の改善', 'バックオフィス代行・DX支援', 'SNS運用代行', 'ERPの導入', 'グループウェアの導入'],
         knowsLanguage: ['ja', 'en'],
         contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: settings.email, url: SITE + '/contact', availableLanguage: ['Japanese', 'English'], areaServed: 'JP' }],
         hasOfferCatalog: {
@@ -645,10 +645,14 @@ function coanaPageMeta(): Plugin {
       const faqs = ((home.faqs ?? []) as { q: string; a: string }[]).filter((f) => f.q && f.a)
       const faqPage = faqs.length ? [{ '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []
 
+      const pricingContent = readJson('content/pages.json').pricing as { title: string; intro: string; points_title: string; points: { name: string; text: string }[]; list_title: string; examples_title: string; faq_title: string; faqs: { q: string; a: string }[] }
+      const pricingFaq = pricingContent.faqs.length ? [{ '@type': 'FAQPage', mainEntity: pricingContent.faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []
+
       const pages: PageMeta[] = [
         { path: '/', title: homeTitle, description: '', jsonld: graph(...faqPage) },
         { path: '/about', crumb: '会社概要', title: '会社概要・代表あいさつ' + SUFFIX, description: '東京・港区のCOANA TOKYO合同会社の会社概要。中小企業・小規模事業者の業務を、業務の棚卸し・自動化・クラウド会計の導入、経理やバックオフィスの代行でITの仕組みにして軽くします。当社の考え方と代表のあいさつ、会社情報をご紹介します。', jsonld: graph(crumbs([homeCrumb, { name: '会社概要', url: SITE + '/about' }])) },
         { path: '/services', crumb: 'サービス', title: 'サービス｜業務改善・自動化・システム開発、クラウド会計、経理・バックオフィス代行' + SUFFIX, description: '中小企業・小規模事業者に向けた、業務の棚卸しとIT化の支援、手作業の自動化・ツール連携・業務アプリの開発、クラウド会計・ITツールの導入、LP・Webサイト制作、創業支援、そして経理代行・バックオフィス代行・SNS運用代行。料金の目安を掲載、正式な金額は個別お見積もり。', jsonld: graph(crumbs([homeCrumb, { name: 'サービス', url: SITE + '/services' }])) },
+        { path: '/pricing', crumb: '料金', title: '料金｜業務改善・自動化・生成AI活用・経理代行の料金の目安（税別）' + SUFFIX, description: '業務の棚卸し5万円〜、小さな自動化5万円〜、生成AIのお試し導入10万円〜、クラウド会計の導入10万円〜、経理代行は月1万円〜。COANA TOKYOのサービス別の料金の目安（税別）と、費用の計算・よくある組み合わせをまとめました。ご相談・お見積もりは無料です。', jsonld: graph(crumbs([homeCrumb, { name: '料金', url: SITE + '/pricing' }]), ...pricingFaq) },
         { path: '/topics', crumb: 'トピックス', title: 'トピックス｜業務効率化・クラウド会計のコラム・お知らせ' + SUFFIX, description: '業務の効率化やIT化、クラウド会計、経理代行・バックオフィス代行に役立つコラムと、セミナー登壇やメディア掲載などCOANA TOKYO合同会社の活動のお知らせ。小さな会社の経営者に向けて、業務を軽くする具体的な進め方を解説しています。', jsonld: graph(crumbs([homeCrumb, { name: 'トピックス', url: SITE + '/topics' }])) },
         { path: '/contact', crumb: 'お問い合わせ', title: 'お問い合わせ｜業務の効率化・自動化・経理代行のご相談' + SUFFIX, description: '手作業の多い業務の見直し、自動化・システム開発、クラウド会計の導入、経理・バックオフィスの代行のご相談はこちらから。中小企業・小規模事業者の小さな困りごとでもお気軽に。内容を確認のうえ担当者よりご連絡いたします。', jsonld: graph(crumbs([homeCrumb, { name: 'お問い合わせ', url: SITE + '/contact' }])) },
         { path: '/privacy', crumb: 'プライバシーポリシー', title: 'プライバシーポリシー' + SUFFIX, description: 'COANA TOKYO合同会社のプライバシーポリシー。お問い合わせフォーム・メール・LINEで取得する個人情報の利用目的、第三者提供、業務委託、安全管理措置、Google アナリティクスの利用、開示等のご請求窓口について定めています。', jsonld: graph(crumbs([homeCrumb, { name: 'プライバシーポリシー', url: SITE + '/privacy' }])) },
@@ -709,6 +713,16 @@ function coanaPageMeta(): Plugin {
           name: group.name,
           itemListElement: (group.items ?? []).map((item) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item, provider: { '@id': orgId } } })),
         }))
+        // 料金：プランごとの「◯円〜」を Offer に載せる（2026-11-28 追加。検索・AI回答で料金の目安が引用されやすくなる）。「月◯万円〜」は月額、それ以外は一括。税別
+        const planOffers = lang !== 'ja' ? [] : (sol.plans?.items ?? []).filter((plan) => plan.price).map((plan) => {
+          const text = String(plan.price)
+          const monthly = /月\s*(\d+(?:\.\d+)?)万円/.exec(text)
+          const once = /(\d+(?:\.\d+)?)万円/.exec(text.replace(/月\s*\d+(?:\.\d+)?万円〜?/, ''))
+          const spec = (man: number, unit?: string) => ({ '@type': 'UnitPriceSpecification', minPrice: Math.round(man * 10000), priceCurrency: 'JPY', valueAddedTaxIncluded: false, ...(unit ? { unitCode: 'MON', billingDuration: 1, unitText: '月' } : {}) })
+          const specs = [once ? spec(Number(once[1])) : null, monthly ? spec(Number(monthly[1]), 'month') : null].filter(Boolean)
+          if (!specs.length) return null
+          return { '@type': 'Offer', name: plan.name, itemOffered: { '@type': 'Service', name: plan.name, provider: { '@id': orgId } }, priceSpecification: specs.length === 1 ? specs[0] : specs, priceCurrency: 'JPY', availability: 'https://schema.org/InStock', url: SITE + '/contact' }
+        }).filter(Boolean)
         pages.push({
           path: '/services/' + sol.slug,
           crumb: label,
@@ -716,6 +730,7 @@ function coanaPageMeta(): Plugin {
           alternates,
           title: (sol.seo_title || sol.title) + T.suffix,
           description,
+          // 料金（2026-11-28 追加）：プランごとの「◯円〜」を Offer に載せる（検索・AI回答で料金の目安が引用されやすくなる）。「月◯万円〜」は月額、それ以外は一括。税別
           jsonld: graph(
             crumbs([{ name: T.home, url: SITE + '/' }, { name: T.services, url: SITE + '/services' }, { name: label, url }]),
             {
@@ -731,7 +746,7 @@ function coanaPageMeta(): Plugin {
               areaServed: areaServedFor(lang),
               availableLanguage: lang === 'en' ? ['English', 'Japanese'] : undefined,
               audience: { '@type': 'BusinessAudience', name: lang === 'en' ? 'Founders and small businesses in Japan' : '中小企業・小規模事業者・個人事業主' },
-              offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', description: lang === 'en' ? 'Quoted individually. Consultation is free.' : '支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。' }, availability: 'https://schema.org/InStock', url: SITE + '/contact' },
+              offers: planOffers.length ? planOffers : { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', description: lang === 'en' ? 'Quoted individually. Consultation is free.' : '支援内容と業務範囲に応じた個別お見積もり。ご相談・お見積もりは無料。' }, availability: 'https://schema.org/InStock', url: SITE + '/contact' },
               hasOfferCatalog: catalog.length ? { '@type': 'OfferCatalog', name: sol.scope?.title || T.scope, itemListElement: catalog } : undefined,
             },
             ...(faqList.length ? [{ '@type': 'FAQPage', inLanguage: lang, mainEntity: faqList.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
@@ -781,6 +796,7 @@ function coanaPageMeta(): Plugin {
         '/': { files: ['content/home.json', 'content/services.json', 'content/settings.json'], extra: latestTopic },
         '/about': { files: ['content/about.json', 'content/settings.json'] },
         '/services': { files: ['content/services.json', 'content/solutions'] },
+        '/pricing': { files: ['content/pages.json', 'content/solutions'] },
         '/topics': { files: ['content/topics'], extra: latestTopic },
         '/contact': { files: ['content/settings.json'] },
         '/privacy': { files: ['content/privacy.json'], extra: privacyDate },
@@ -859,6 +875,14 @@ function coanaPageMeta(): Plugin {
             '<section><h2>' + esc(services.flow_title) + '</h2><ol>' + flow.map((step) => '<li>' + esc(typeof step === 'string' ? step : Object.values(step as object).join(' ')) + '</li>').join('') + '</ol></section>' +
             '<p>' + anchor('/contact', 'お問い合わせ・ご相談はこちら') + '</p>'
         }
+        if (pagePath === '/pricing') {
+          const priceRows = solutionList.filter((item) => item.lang !== 'en' && (item.plans?.items ?? []).some((i) => i.price))
+          return '<h1>' + esc(pricingContent.title) + '</h1>' + paras(pricingContent.intro) +
+            '<section><h2>' + esc(pricingContent.points_title) + '</h2><ul>' + pricingContent.points.map((pt) => '<li>' + esc(pt.name) + '：' + esc(pt.text) + '</li>').join('') + '</ul></section>' +
+            '<section><h2>' + esc(pricingContent.list_title) + '</h2>' + priceRows.map((item) => '<h3>' + anchor('/services/' + item.slug, item.nav_label || item.title) + '</h3><ul>' + (item.plans?.items ?? []).filter((i) => i.price).map((i) => '<li>' + esc(i.name) + '：' + esc(String(i.price)) + '</li>').join('') + '</ul>').join('') + '</section>' +
+            '<section><h2>' + esc(pricingContent.faq_title) + '</h2>' + pricingContent.faqs.map((f) => '<h3>' + esc(f.q) + '</h3>' + paras(f.a)).join('') + '</section>' +
+            '<p>' + anchor('/contact', 'お問い合わせ・無料のご相談はこちら') + '</p>'
+        }
         if (pagePath === '/topics') return '<h1>トピックス</h1>' + paras(settings.topics_intro) + topicList(sortedTopics)
         if (pagePath === '/contact') return '<h1>お問い合わせ</h1>' + paras(settings.contact_intro)
         if (pagePath === '/privacy') return '<h1>プライバシーポリシー</h1>' + mdToHtml(privacyBody)
@@ -928,9 +952,9 @@ function coanaPageMeta(): Plugin {
       const englishPage = solutionList.find((sol) => sol.lang === 'en')
       const fallbackHeader = (lang: 'ja' | 'en') => lang === 'en'
         ? '<header>' + anchor('/', 'COANA TOKYO LLC') + '<nav aria-label="Main navigation">' +
-          [['/', 'Home (Japanese)'], ['/about', 'About us (Japanese)'], ['/services', 'Services (Japanese)'], ['/contact', 'Contact']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
+          [['/', 'Home (Japanese)'], ['/about', 'About us (Japanese)'], ['/services', 'Services (Japanese)'], ['/pricing', 'Pricing (Japanese)'], ['/contact', 'Contact']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
         : '<header>' + anchor('/', String(settings.company_name || 'COANA TOKYO')) + '<nav aria-label="メインナビゲーション">' +
-          [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
+          [['/', 'ホーム'], ['/about', '会社概要'], ['/services', 'サービス'], ['/pricing', '料金'], ['/topics', 'トピックス'], ['/contact', 'お問い合わせ']].map(([href, text]) => anchor(href, text)).join(' ') + '</nav></header>'
       const fallbackFooter = (lang: 'ja' | 'en') => lang === 'en'
         ? '<footer><p>COANA TOKYO LLC</p><address>3F, 1-3-3 Kita-Aoyama, Minato-ku, Tokyo 107-0061, Japan</address><nav aria-label="Footer">' +
           anchor('/services/startup-support', 'Startup support (Japanese)') + ' ' + anchor('/services', 'All services (Japanese)') + ' ' + anchor('/privacy', 'Privacy policy (Japanese)') + '</nav></footer>'

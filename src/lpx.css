@@ -247,6 +247,15 @@
 .lpx-plan-for { margin-top: auto; padding: 12px 16px; border-radius: 14px; background: var(--x-soft); color: var(--x-ink); font-size: 14.5px; line-height: 1.7; }
 .lpx-plan-for span { display: block; color: var(--x-blue); font-size: 13px; font-weight: 800; }
 .lpx-plan-note { margin-top: 40px; }
+.lpx-examples { margin: 36px auto 0; max-width: 860px; padding: 24px 28px; border: 1px solid var(--x-line); border-radius: 20px; background: var(--x-soft); }
+.lpx-examples h3 { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--x-ink); font-size: 16px; font-weight: 900; line-height: 1.5; }
+.lpx-examples h3 svg { color: var(--x-blue); }
+.lpx-examples ul { display: grid; gap: 10px; margin-top: 16px; }
+.lpx-examples li { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) auto; align-items: center; gap: 6px 16px; padding: 12px 16px; border-radius: 14px; background: #fff; }
+.lpx-ex-name { color: var(--x-ink); font-size: 15px; font-weight: 800; line-height: 1.6; }
+.lpx-ex-plan { color: var(--x-text); font-size: 14px; line-height: 1.6; }
+.lpx-ex-price { color: var(--x-blue-d); font-size: 15px; font-weight: 900; line-height: 1.5; text-align: right; }
+@media (max-width: 700px) { .lpx-examples { padding: 20px 16px; } .lpx-examples li { grid-template-columns: minmax(0, 1fr); } .lpx-ex-price { text-align: left; } }
 
 .lpx-scope { max-width: 980px; margin: 44px auto 0; border: 2px solid var(--x-line); border-radius: 20px; background: #fff; }
 .lpx-scope summary { display: flex; align-items: center; gap: 10px; padding: 18px 24px; cursor: pointer; list-style: none; font-weight: 900; font-size: 16px; line-height: 1.5; }
