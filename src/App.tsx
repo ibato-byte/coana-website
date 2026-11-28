@@ -958,7 +958,10 @@ function ArticlePage({ navigate }: { navigate: Nav }) {
               <p id="article-service-title" className="article-service-label">{en ? "Related service" : "この記事に関連するサービス"}</p>
               <GoLink className="article-service-card" go={navigate} args={["solution", undefined, service.slug]}>
                 <ServiceArt slug={service.slug} className="article-service-art" />
-                <span className="article-service-name">{service.nav_label}</span>
+                <span className="article-service-name">
+                  {service.nav_label}
+                  {!en && (() => { const pr = (service.plans?.items ?? []).find((i) => i.price)?.price; return pr ? <small className="article-service-price">料金の目安：{String(pr).replace(/（[^）]*）/g, "")}（税別）</small> : null; })()}
+                </span>
                 <span className="article-service-more">{en ? "See the service" : "サービスの詳細を見る"}<Icon name="arrow" size={18} /></span>
               </GoLink>
             </aside>
