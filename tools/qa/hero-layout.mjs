@@ -34,8 +34,11 @@ const DAILY = [
 
 let chromium;
 try { ({ chromium } = await import('playwright')); } catch {
-  console.log('hero-layout: Playwright がないので点検しない');
-  process.exit(0);
+  // 他の QA と同じく PLAYWRIGHT_MODULE（playwright の場所）でも探す。なければ「点検していない」と分かるよう警告を出す（黙って合格に見えないように。2026-11-28）
+  try { ({ chromium } = (await import('node:module')).createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODULE || 'playwright')); } catch {
+    console.log('hero-layout: ※Playwright がないので点検していません（PLAYWRIGHT_MODULE で playwright の場所を指定してください）');
+    process.exit(0);
+  }
 }
 
 // ブラウザの中で測る

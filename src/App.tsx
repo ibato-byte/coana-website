@@ -138,7 +138,7 @@ function Header({ page, navigate, en = false }: { page: Page; navigate: Nav; en?
 }
 
 /** ヘッダーの英語表記（英語ページのときだけ。リンク先は日本語のページ） */
-const EN_NAV: Partial<Record<Page, string>> = { home: "Home (JP)", services: "Services (JP)", about: "About (JP)", topics: "Topics (JP)" };
+const EN_NAV: Partial<Record<Page, string>> = { home: "Home (JP)", services: "Services (JP)", pricing: "Pricing (JP)", about: "About (JP)", topics: "Topics (JP)" };
 
 /** フッターの英語表記（英語ページのときだけ。リンク先の各ページは日本語なので、その旨を見出しに添える） */
 const FOOTER_EN = {
