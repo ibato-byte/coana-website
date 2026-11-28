@@ -22,7 +22,7 @@ const DIST = process.env.DIST || path.join(__dirname, '../../dist');
 const list = (dir) => (fs.existsSync(path.join(DIST, dir)) ? fs.readdirSync(path.join(DIST, dir)).filter((f) => f.endsWith('.html')).map((f) => `/${dir}/${f.replace('.html', '')}`) : []);
 const topics = list('topics');
 // 記事は形が同じなので、代表を2本（図の多いもの・短いもの）
-const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ['/', '/services', ...list('services'), '/about', '/topics', ...topics.slice(0, 1), ...topics.slice(-1), '/contact', '/privacy', '/this-page-does-not-exist'];
+const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ['/', '/services', '/pricing', ...list('services'), '/about', '/topics', ...topics.slice(0, 1), ...topics.slice(-1), '/contact', '/privacy', '/this-page-does-not-exist'];
 const VIEWPORTS = (process.env.VP || [
   // スマホ（縦）：小さい順。344 は折りたたみ（閉じた状態）
   '320x568', '344x882', '360x740', '375x667', '390x844', '412x915', '430x932',

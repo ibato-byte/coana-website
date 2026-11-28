@@ -5,11 +5,13 @@ import homeJson from "../content/home.json";
 import aboutJson from "../content/about.json";
 import servicesJson from "../content/services.json";
 import privacyJson from "../content/privacy.json";
+import pagesJson from "../content/pages.json";
 // ビルド時に外部の写真（Unsplash など）を自社ドメインに取り込んだ対応表（vite.config.ts の coanaRemoteImages）
 import remoteImages from "virtual:remote-images";
 
 export const settings = settingsJson;
 export const home = homeJson;
+export const pagesContent = pagesJson;
 export const about = aboutJson;
 export const services = servicesJson;
 export const privacy = privacyJson as { body: string };

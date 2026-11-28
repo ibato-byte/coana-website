@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const BASE = process.env.BASE || 'http://localhost:4173';
 const dir = path.join(__dirname, '../../content/solutions');
-const PAGES = (process.env.ONLY ? process.env.ONLY.split(',') : fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => '/services/' + f.replace('.json', '')).concat(['/', '/services', '/about', '/topics', '/contact']));
+const PAGES = (process.env.ONLY ? process.env.ONLY.split(',') : fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => '/services/' + f.replace('.json', '')).concat(['/', '/services', '/pricing', '/about', '/topics', '/contact']));
 const WIDTHS = (process.env.W || '320,360,390,430,768,966,1024,1280,1440,1920').split(',').map(Number);
 
 (async () => {

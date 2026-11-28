@@ -12,6 +12,7 @@ export type Page =
   | "home"
   | "about"
   | "services"
+  | "pricing"
   | "topics"
   | "article"
   | "solution"
@@ -89,6 +90,7 @@ export const paths: Record<Exclude<Page, "article" | "solution" | "notfound">, s
   home: "/",
   about: "/about",
   services: "/services",
+  pricing: "/pricing",
   topics: "/topics",
   contact: "/contact",
   privacy: "/privacy",

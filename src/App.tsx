@@ -2,6 +2,7 @@ import { FormEvent, ReactNode, useEffect, useLayoutEffect, useRef, useState } fr
 import { about, articleService, articles, CATEGORIES, home, inquiryTypeOf, privacy, renderMarkdown, services, settings, solutions } from "./content";
 import { ArticleRow, ContactBand, DiagnoseBanner, FaqSection, FlowLine, GoLink, Icon, LinkButton, LineButton, Lines, NotFound, PageHero, SectionTitle, lineUrl, NumHead, openChat, paths, setInquiryPreset, takeInquiryMessage, takeInquiryPreset, type Nav, type Page } from "./shared";
 import { SolutionPage } from "./SolutionPage";
+import PricingPage from "./PricingPage";
 import { MiniIcon, ServiceArt } from "./illustrations";
 import { PointArt, SpotIcon, caseArtName } from "./lpArt";
 import { LogoMark } from "./logo";
@@ -27,6 +28,7 @@ function pageFromPath(): Page {
   if (path.startsWith("/services/")) return "solution";
   if (path === "/about") return "about";
   if (path === "/services") return "services";
+  if (path === "/pricing") return "pricing";
   if (path === "/topics") return "topics";
   if (path === "/contact") return "contact";
   if (path === "/privacy") return "privacy";
@@ -70,12 +72,14 @@ function Header({ page, navigate, en = false }: { page: Page; navigate: Nav; en?
   }, [open]);
   const links: [Page, string, string][] = [
     ["services", "サービス", "Services"],
+    ["pricing", "料金", "Pricing"],
     ["about", "会社概要", "About"],
     ["topics", "トピックス", "Topics"],
   ];
   // PC のナビ（全ページ共通）：サービス／会社概要／トピックス＋相談する（オーナー指示：診断・進め方は入れない）。英語ページへのリンクはヘッダーに置かない（オーナー指示：英語表記は英語版の創業支援だけ）
   const navItems: [Page, string, string | undefined][] = [
     ["services", "サービス", undefined],
+    ["pricing", "料金", undefined],
     ["about", "会社概要", undefined],
     ["topics", "トピックス", undefined],
   ];
@@ -141,7 +145,7 @@ const FOOTER_EN = {
   company: "COANA TOKYO LLC.",
   address: "3F, 1-3-3 Kita-Aoyama, Minato-ku, Tokyo 107-0061, Japan",
   menuTitle: "Menu (in Japanese)",
-  menu: ["Home", "About us", "Services", "Topics", "Contact"],
+  menu: ["Home", "About us", "Services", "Pricing", "Topics", "Contact"],
   servicesTitle: "Services (in Japanese)",
   trademark: "Company, product and service names mentioned on this site are trademarks or registered trademarks of their respective owners.",
   privacy: "Privacy policy (in Japanese)",
@@ -162,8 +166,8 @@ function Footer({ navigate, en = false }: { navigate: Nav; en?: boolean }) {
         <nav className="footer-links" aria-label={en ? "Footer navigation" : "フッターナビゲーション"}>
           <div>
             <p className="footer-links-title" lang="en">{en ? E.menuTitle : "Menu"}</p>
-            {(["home", "about", "services", "topics", "contact"] as const).map((t, i) => (
-              <GoLink key={t} go={navigate} args={[t]}>{en ? E.menu[i] : ["ホーム", "会社概要", "サービス", "トピックス", "お問い合わせ"][i]}</GoLink>
+            {(["home", "about", "services", "pricing", "topics", "contact"] as const).map((t, i) => (
+              <GoLink key={t} go={navigate} args={[t]}>{en ? E.menu[i] : ["ホーム", "会社概要", "サービス", "料金", "トピックス", "お問い合わせ"][i]}</GoLink>
             ))}
           </div>
           <div className="footer-links-services">
@@ -1270,6 +1274,7 @@ export default function App() {
   let content: ReactNode;
   if (page === "about") content = <About navigate={navigate} />;
   else if (page === "services") content = <Services navigate={navigate} />;
+  else if (page === "pricing") content = <PricingPage navigate={navigate} />;
   else if (page === "topics") content = <Topics navigate={navigate} />;
   else if (page === "article") content = <ArticlePage key={routeKey} navigate={navigate} />;
   else if (page === "solution") content = <SolutionPage key={routeKey} navigate={navigate} />;
